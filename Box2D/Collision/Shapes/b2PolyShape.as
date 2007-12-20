@@ -63,8 +63,8 @@ public class b2PolyShape extends b2Shape
 	
 	//--------------- Internals Below -------------------
 	// Temp vec for PolyCentroid
-	static var tempVec:b2Vec2 = new b2Vec2();
-	static var tAbsR:b2Mat22 = new b2Mat22()
+	static private var tempVec:b2Vec2 = new b2Vec2();
+	static private var tAbsR:b2Mat22 = new b2Mat22()
 	
 	public function b2PolyShape(def:b2ShapeDef, body:b2Body, newOrigin:b2Vec2){
 		
@@ -289,8 +289,8 @@ public class b2PolyShape extends b2Shape
 	}
 
 	// Temp AABB for Synch function
-	var syncAABB:b2AABB = new b2AABB();
-	var syncMat:b2Mat22 = new b2Mat22();
+	private var syncAABB:b2AABB = new b2AABB();
+	private var syncMat:b2Mat22 = new b2Mat22();
 	public override function Synchronize(position1:b2Vec2, R1:b2Mat22,
 										position2:b2Vec2, R2:b2Mat22) : void{
 		// The body transform is copied for convenience.

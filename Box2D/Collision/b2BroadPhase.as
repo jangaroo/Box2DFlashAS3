@@ -756,7 +756,7 @@ public class b2BroadPhase
 		return true;
 	}
 	
-	public function TestOverlap(b:b2BoundValues, p:b2Proxy)
+	public function TestOverlap(b:b2BoundValues, p:b2Proxy):Boolean
 	{
 		for (var axis:int = 0; axis < 2; ++axis)
 		{

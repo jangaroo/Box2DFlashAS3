@@ -428,8 +428,8 @@ public class b2Body
 	public var m_R:b2Mat22 = new b2Mat22(0);
 	
 	// Conservative advancement data.
-	var m_position0:b2Vec2 = new b2Vec2();
-	var m_rotation0:Number;
+	public var m_position0:b2Vec2 = new b2Vec2();
+	public var m_rotation0:Number;
 
 	public var m_linearVelocity:b2Vec2;
 	public var m_angularVelocity:Number;
