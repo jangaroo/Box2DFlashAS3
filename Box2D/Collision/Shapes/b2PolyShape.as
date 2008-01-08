@@ -266,11 +266,11 @@ public class b2PolyShape extends b2Shape
 		var positionY:Number = m_position.y + (m_R.col1.y * m_localOBB.center.x + m_R.col2.y * m_localOBB.center.y);
 		
 		//aabb.minVertex = b2Math.SubtractVV(m_position, h);
-		aabb.minVertex.x = m_position.x - hX;
-		aabb.minVertex.y = m_position.y - hY;
+		aabb.minVertex.x = positionX - hX;
+		aabb.minVertex.y = positionY - hY;
 		//aabb.maxVertex = b2Math.AddVV(m_position, h);
-		aabb.maxVertex.x = m_position.x + hX;
-		aabb.maxVertex.y = m_position.y + hY;
+		aabb.maxVertex.x = positionX + hX;
+		aabb.maxVertex.y = positionY + hY;
 		
 		var broadPhase:b2BroadPhase = m_body.m_world.m_broadPhase;
 		if (broadPhase.InRange(aabb))
