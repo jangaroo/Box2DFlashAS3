@@ -19,9 +19,10 @@
 package Box2D.Common.Math{
 
 	
-import Box2D.Common.*
+import Box2D.Common.*;
 	
-
+	
+/// A 2-by-2 matrix. Stored in column-major order.
 public class b2Mat22
 {
 	public function b2Mat22(angle:Number=0, c1:b2Vec2=null, c2:b2Vec2=null)
@@ -80,6 +81,11 @@ public class b2Mat22
 	{
 		col1.x = 0.0; col2.x = 0.0;
 		col1.y = 0.0; col2.y = 0.0;
+	}
+	
+	public function GetAngle() :Number
+	{
+		return Math.atan2(col1.y, col1.x);
 	}
 
 	public function Invert(out:b2Mat22):b2Mat22

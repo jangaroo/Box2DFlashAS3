@@ -21,8 +21,8 @@ package Box2D.Dynamics.Contacts{
 	
 public class b2ContactRegister
 {
-	public var createFcn:*; // fcn pointer
-	public var destroyFcn:*;// fcn pointer
+	public var createFcn:Function; // fcn pointer
+	public var destroyFcn:Function;// fcn pointer
 	public var primary:Boolean;
 };
 	

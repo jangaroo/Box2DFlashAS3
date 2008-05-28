@@ -59,8 +59,9 @@ public class b2PairManager
 			m_pairs[i].status = 0;
 			m_pairs[i].next = (i + 1);
 		}
-		m_pairs[b2Settings.b2_maxPairs-1].next = b2Pair.b2_nullPair;
+		m_pairs[int(b2Settings.b2_maxPairs-1)].next = b2Pair.b2_nullPair;
 		m_pairCount = 0;
+		m_pairBufferCount = 0;
 	}
 	//~b2PairManager();
 	
@@ -86,6 +87,7 @@ public class b2PairManager
 	If the added pair is not a new pair, then it must be in the pair buffer (because RemovePair was called).
 	*/
 	public function AddBufferedPair(proxyId1:int, proxyId2:int) : void{
+		var bufferedPair:b2BufferedPair;
 		//b2Settings.b2Assert(id1 != b2_nullProxy && id2 != b2_nullProxy);
 		//b2Settings.b2Assert(m_pairBufferCount < b2_maxPairs);
 		
@@ -99,8 +101,9 @@ public class b2PairManager
 			
 			// Add it to the pair buffer.
 			pair.SetBuffered();
-			m_pairBuffer[m_pairBufferCount].proxyId1 = pair.proxyId1;
-			m_pairBuffer[m_pairBufferCount].proxyId2 = pair.proxyId2;
+			bufferedPair = m_pairBuffer[m_pairBufferCount];
+			bufferedPair.proxyId1 = pair.proxyId1;
+			bufferedPair.proxyId2 = pair.proxyId2;
 			++m_pairBufferCount;
 			
 			//b2Settings.b2Assert(m_pairBufferCount <= m_pairCount);
@@ -117,6 +120,8 @@ public class b2PairManager
 	
 	// Buffer a pair for removal.
 	public function RemoveBufferedPair(proxyId1:int, proxyId2:int) : void{
+		var bufferedPair:b2BufferedPair;
+		
 		//b2Settings.b2Assert(id1 != b2_nullProxy && id2 != b2_nullProxy);
 		//b2Settings.b2Assert(m_pairBufferCount < b2_maxPairs);
 		
@@ -135,8 +140,9 @@ public class b2PairManager
 			//b2Settings.b2Assert(pair.IsFinal() == true);
 			
 			pair.SetBuffered();
-			m_pairBuffer[m_pairBufferCount].proxyId1 = pair.proxyId1;
-			m_pairBuffer[m_pairBufferCount].proxyId2 = pair.proxyId2;
+			bufferedPair = m_pairBuffer[m_pairBufferCount];
+			bufferedPair.proxyId1 = pair.proxyId1;
+			bufferedPair.proxyId2 = pair.proxyId2;
 			++m_pairBufferCount;
 			
 			//b2Settings.b2Assert(m_pairBufferCount <= m_pairCount);
@@ -151,6 +157,7 @@ public class b2PairManager
 	}
 	
 	public function Commit() : void{
+		var bufferedPair:b2BufferedPair;
 		var i:int;
 		
 		var removeCount:int = 0;
@@ -159,7 +166,8 @@ public class b2PairManager
 		
 		for (i = 0; i < m_pairBufferCount; ++i)
 		{
-			var pair:b2Pair = Find(m_pairBuffer[i].proxyId1, m_pairBuffer[i].proxyId2);
+			bufferedPair = m_pairBuffer[i];
+			var pair:b2Pair = Find(bufferedPair.proxyId1, bufferedPair.proxyId2);
 			//b2Settings.b2Assert(pair.IsBuffered());
 			pair.ClearBuffered();
 			
@@ -182,8 +190,9 @@ public class b2PairManager
 				}
 				
 				// Store the ids so we can actually remove the pair below.
-				m_pairBuffer[removeCount].proxyId1 = pair.proxyId1;
-				m_pairBuffer[removeCount].proxyId2 = pair.proxyId2;
+				bufferedPair = m_pairBuffer[removeCount];
+				bufferedPair.proxyId1 = pair.proxyId1;
+				bufferedPair.proxyId2 = pair.proxyId2;
 				++removeCount;
 			}
 			else
@@ -200,7 +209,8 @@ public class b2PairManager
 		
 		for (i = 0; i < removeCount; ++i)
 		{
-			RemovePair(m_pairBuffer[i].proxyId1, m_pairBuffer[i].proxyId2);
+			bufferedPair = m_pairBuffer[i]
+			RemovePair(bufferedPair.proxyId1, bufferedPair.proxyId2);
 		}
 		
 		m_pairBufferCount = 0;
@@ -255,6 +265,7 @@ public class b2PairManager
 
 	// Remove a pair, return the pair's userData.
 	private function RemovePair(proxyId1:uint, proxyId2:uint):*{
+		var pair:b2Pair;
 		
 		//b2Settings.b2Assert(m_pairCount > 0);
 		
@@ -277,14 +288,15 @@ public class b2PairManager
 				var index:uint = node;
 				
 				//*node = m_pairs[*node].next;
+				pair = m_pairs[node];
 				if (pNode){
-					pNode.next = m_pairs[node].next;
+					pNode.next = pair.next;
 				}
 				else{
-					m_hashTable[hash] = m_pairs[node].next;
+					m_hashTable[hash] = pair.next;
 				}
 				
-				var pair:b2Pair = m_pairs[ index ];
+				pair = m_pairs[ index ];
 				var userData:* = pair.userData;
 				
 				// Scrub
@@ -324,11 +336,14 @@ public class b2PairManager
 		return FindHash(proxyId1, proxyId2, hash);
 	}
 	private function FindHash(proxyId1:uint, proxyId2:uint, hash:uint):b2Pair{
+		var pair:b2Pair;
 		var index:uint = m_hashTable[hash];
 		
-		while( index != b2Pair.b2_nullPair && Equals(m_pairs[index], proxyId1, proxyId2) == false)
+		pair = m_pairs[index];
+		while( index != b2Pair.b2_nullPair && Equals(pair, proxyId1, proxyId2) == false)
 		{
-			index = m_pairs[index].next;
+			index = pair.next;
+			pair = m_pairs[index];
 		}
 		
 		if ( index == b2Pair.b2_nullPair )
@@ -338,7 +353,7 @@ public class b2PairManager
 		
 		//b2Settings.b2Assert(index < b2_maxPairs);
 		
-		return m_pairs[ index ];
+		return pair;
 	}
 	
 	private function ValidateBuffer() : void{

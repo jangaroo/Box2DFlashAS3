@@ -18,14 +18,14 @@
 
 package Box2D.Collision{
 	
-import Box2D.Common.Math.*
+import Box2D.Common.Math.*;
 
-// A manifold for two touching convex shapes.
+/// An oriented bounding box.
 public class b2OBB
 {
-	public var R:b2Mat22 = new b2Mat22();
-	public var center:b2Vec2 = new b2Vec2();
-	public var extents:b2Vec2 = new b2Vec2();
+	public var R:b2Mat22 = new b2Mat22();		///< the rotation matrix
+	public var center:b2Vec2 = new b2Vec2();	///< the local centroid
+	public var extents:b2Vec2 = new b2Vec2();	///< the half-widths
 };
 
 

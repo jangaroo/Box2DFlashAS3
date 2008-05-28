@@ -19,10 +19,10 @@
 package Box2D.Dynamics.Contacts{
 
 
-import Box2D.Common.Math.*
-import Box2D.Collision.*
-import Box2D.Dynamics.*
-import Box2D.Common.*
+import Box2D.Common.Math.*;
+import Box2D.Collision.*;
+import Box2D.Dynamics.*;
+import Box2D.Common.*;
 
 
 public class b2ContactConstraint

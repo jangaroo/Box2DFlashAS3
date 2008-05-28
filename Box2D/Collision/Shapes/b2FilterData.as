@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
@@ -16,18 +16,35 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics{
-	
-	
-public class b2TimeStep
-{
-	public var dt:Number;			// time step
-	public var inv_dt:Number;		// inverse time step (0 if dt == 0).
-	public var dtRatio:Number;		// dt * inv_dt0
-	public var maxIterations:int;
-	public var warmStarting:Boolean;
-	public var positionCorrection:Boolean;
-};
+package Box2D.Collision.Shapes{
 
+
+
+import Box2D.Common.Math.*;
+
+
+/// This holds contact filtering data.
+public class b2FilterData
+{
+	public function Copy() : b2FilterData {
+		var copy: b2FilterData = new b2FilterData();
+		copy.categoryBits = categoryBits;
+		copy.maskBits = maskBits;
+		copy.groupIndex = groupIndex;
+		return copy;
+	}
+	
+	/// The collision category bits. Normally you would just set one bit.
+	public var categoryBits: uint = 0x0001;
+
+	/// The collision mask bits. This states the categories that this
+	/// shape would accept for collision.
+	public var maskBits: uint = 0xFFFF;
+
+	/// Collision groups allow a certain group of objects to never collide (negative)
+	/// or always collide (positive). Zero means no collision group. Non-zero group
+	/// filtering always wins against the mask bits.
+	public var groupIndex: int = 0;
+}
 
 }

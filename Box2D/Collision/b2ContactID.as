@@ -18,7 +18,7 @@
 
 package Box2D.Collision{
 	
-import Box2D.Collision.Features
+import Box2D.Collision.Features;
 
 // We use contact ids to facilitate warm starting.
 public class b2ContactID
@@ -40,13 +40,13 @@ public class b2ContactID
 	}
 	public function set key(value:uint) : void {
 		_key = value;
-		features._referenceFace = _key & 0x000000ff;
+		features._referenceEdge = _key & 0x000000ff;
 		features._incidentEdge = ((_key & 0x0000ff00) >> 8) & 0x000000ff;
 		features._incidentVertex = ((_key & 0x00ff0000) >> 16) & 0x000000ff;
 		features._flip = ((_key & 0xff000000) >> 24) & 0x000000ff;
 	}
 	public var features:Features = new Features();
-	public var _key:uint;
+	public var _key:uint;///< Used to quickly compare contact ids.
 };
 
 

@@ -24,7 +24,7 @@ import Box2D.Common.Math.*;
 import Box2D.Collision.Shapes.*;
 
 
-
+/// This structure is used to build circle shapes.
 public class b2CircleDef extends b2ShapeDef
 {
 	public function b2CircleDef()
@@ -33,6 +33,7 @@ public class b2CircleDef extends b2ShapeDef
 		radius = 1.0;
 	}
 
+	public var localPosition:b2Vec2 = new b2Vec2(0.0, 0.0);
 	public var radius:Number;
 };
 

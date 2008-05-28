@@ -23,17 +23,24 @@ import Box2D.Collision.b2AABB;
 
 public class b2Math{
 
+	/// This function is used to ensure that a floating point number is
+	/// not a NaN or infinity.
 	static public function b2IsValid(x:Number) : Boolean
 	{
 		return isFinite(x);
 	}
 	
-	/*static public function b2InvSqrt(x:Number):Number
-	{
+	/*static public function b2InvSqrt(x:Number):Number{
+		union
+		{
+			float32 x;
+			int32 i;
+		} convert;
+		
+		convert.x = x;
 		float32 xhalf = 0.5f * x;
-		int32 i = *(int32*)&x;
-		i = 0x5f3759df - (i >> 1);
-		x = *(float32*)&i;
+		convert.i = 0x5f3759df - (convert.i >> 1);
+		x = convert.x;
 		x = x * (1.5f - xhalf * x * x);
 		return x;
 	}*/
@@ -62,14 +69,37 @@ public class b2Math{
 
 	static public function b2MulMV(A:b2Mat22, v:b2Vec2):b2Vec2
 	{
+		// (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y)
+		// (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y)
 		var u:b2Vec2 = new b2Vec2(A.col1.x * v.x + A.col2.x * v.y, A.col1.y * v.x + A.col2.y * v.y);
 		return u;
 	}
 
 	static public function b2MulTMV(A:b2Mat22, v:b2Vec2):b2Vec2
 	{
+		// (tVec.x * tMat.col1.x + tVec.y * tMat.col1.y)
+		// (tVec.x * tMat.col2.x + tVec.y * tMat.col2.y)
 		var u:b2Vec2 = new b2Vec2(b2Dot(v, A.col1), b2Dot(v, A.col2));
 		return u;
+	}
+	
+	static public function b2MulX(T:b2XForm, v:b2Vec2) : b2Vec2
+	{
+		var a:b2Vec2 = b2MulMV(T.R, v);
+		a.x += T.position.x;
+		a.y += T.position.y;
+		//return T.position + b2Mul(T.R, v);
+		return a;
+	}
+
+	static public function b2MulXT(T:b2XForm, v:b2Vec2):b2Vec2
+	{
+		var a:b2Vec2 = SubtractVV(v, T.position);
+		//return b2MulT(T.R, v - T.position);
+		var tX:Number = (a.x * T.R.col1.x + a.y * T.R.col1.y );
+		a.y = (a.x * T.R.col2.x + a.y * T.R.col2.y );
+		a.x = tX;
+		return a;
 	}
 
 	static public function AddVV(a:b2Vec2, b:b2Vec2):b2Vec2
@@ -82,6 +112,18 @@ public class b2Math{
 	{
 		var v:b2Vec2 = new b2Vec2(a.x - b.x, a.y - b.y);
 		return v;
+	}
+	
+	static public function b2Distance(a:b2Vec2, b:b2Vec2) : Number{
+		var cX:Number = a.x-b.x;
+		var cY:Number = a.y-b.y;
+		return Math.sqrt(cX*cX + cY*cY);
+	}
+	
+	static public function b2DistanceSquared(a:b2Vec2, b:b2Vec2) : Number{
+		var cX:Number = a.x-b.x;
+		var cY:Number = a.y-b.y;
+		return (cX*cX + cY*cY);
 	}
 
 	static public function MulFV(s:Number, a:b2Vec2):b2Vec2
@@ -174,13 +216,12 @@ public class b2Math{
 		return Math.random() * 2 - 1;
 	}
 
-	/*inline float32 b2Random(float32 lo, float32 hi)
+	static public function b2RandomRange(lo:Number, hi:Number) : Number
 	{
-		float32 r = (float32)rand();
-		r /= RAND_MAX;
+		var r:Number = Math.random();
 		r = (hi - lo) * r + lo;
 		return r;
-	}*/
+	}
 
 	// "Next Largest Power of 2
 	// Given a binary integer value x, the next largest power of 2 can be computed by a SWAR algorithm
@@ -214,6 +255,10 @@ public class b2Math{
 	static public var tempMat:b2Mat22 = new b2Mat22();	
 	
 	static public var tempAABB:b2AABB = new b2AABB();	*/
+	
+	static public const b2Vec2_zero:b2Vec2 = new b2Vec2(0.0, 0.0);
+	static public const b2Mat22_identity:b2Mat22 = new b2Mat22(0, new b2Vec2(1.0, 0.0), new b2Vec2(0.0, 1.0));
+	static public const b2XForm_identity:b2XForm = new b2XForm(b2Vec2_zero, b2Mat22_identity);
 	
 
 }

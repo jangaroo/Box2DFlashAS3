@@ -19,20 +19,13 @@
 package Box2D.Dynamics.Joints{
 	
 	
-import Box2D.Common.Math.*
+import Box2D.Common.Math.*;
 
 
 
-// A gear joint is used to connect two joints together. Either joint
-// can be a revolute or prismatic joint. You specify a gear ratio
-// to bind the motions together:
-// coordinate1 + ratio * coordinate2 = constant
-// The ratio can be negative or positive. If one joint is a revolute joint
-// and the other joint is a prismatic joint, then the ratio will have units
-// of length or units of 1/length.
-//
-// RESTRICITON: The revolute and prismatic joints must be attached to
-// a fixed body (which must be body1 on those joints).
+/// Gear joint definition. This definition requires two existing
+/// revolute or prismatic joints (any combination will work).
+/// The provided joints must attach a dynamic body to a static body.
 
 public class b2GearJointDef extends b2JointDef
 {
@@ -44,8 +37,12 @@ public class b2GearJointDef extends b2JointDef
 		ratio = 1.0;
 	}
 
+	/// The first revolute/prismatic joint attached to the gear joint.
 	public var joint1:b2Joint;
+	/// The second revolute/prismatic joint attached to the gear joint.
 	public var joint2:b2Joint;
+	/// The gear ratio.
+	/// @see b2GearJoint for explanation.
 	public var ratio:Number;
 };
 

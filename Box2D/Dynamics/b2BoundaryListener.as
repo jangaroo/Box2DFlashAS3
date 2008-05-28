@@ -16,21 +16,25 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics.Joints{
+package Box2D.Dynamics{
 
 
-import Box2D.Common.Math.*
-import Box2D.Dynamics.*
+import Box2D.Collision.*;
+import Box2D.Collision.Shapes.*;
+import Box2D.Dynamics.Contacts.*;
+import Box2D.Dynamics.*;
+import Box2D.Common.Math.*;
+import Box2D.Common.*;
 
 
-public class b2JointNode
+/// This is called when a body's shape passes outside of the world boundary.
+public class b2BoundaryListener
 {
+
+	/// This is called for each body that leaves the world boundary.
+	/// @warning you can't modify the world inside this callback.
+	public virtual function Violation(body:b2Body) : void{};
 	
-	public var other:b2Body;
-	public var joint:b2Joint;
-	public var prev:b2JointNode;
-	public var next:b2JointNode;
-	
-}
+};
 
 }

@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
@@ -16,17 +16,22 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics{
-	
-	
-public class b2TimeStep
+package Box2D.Dynamics.Contacts{
+
+import Box2D.Collision.*;
+import Box2D.Collision.Shapes.*;
+import Box2D.Common.Math.*;
+
+/// This structure is used to report contact point results.
+public class  b2ContactResult
 {
-	public var dt:Number;			// time step
-	public var inv_dt:Number;		// inverse time step (0 if dt == 0).
-	public var dtRatio:Number;		// dt * inv_dt0
-	public var maxIterations:int;
-	public var warmStarting:Boolean;
-	public var positionCorrection:Boolean;
+	public var shape1:b2Shape;						///< the first shape
+	public var shape2:b2Shape;						///< the second shape
+	public var position:b2Vec2 = new b2Vec2();		///< position in world coordinates
+	public var normal:b2Vec2 = new b2Vec2();		///< points from shape1 to shape2
+	public var normalImpulse:Number;				///< the normal impulse applied to body2
+	public var tangentImpulse:Number;				///< the tangent impulse applied to body2
+	public var id:b2ContactID = new b2ContactID();	///< the contact id identifies the features in contact
 };
 
 

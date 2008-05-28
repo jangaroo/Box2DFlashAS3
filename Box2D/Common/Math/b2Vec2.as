@@ -19,11 +19,11 @@
 package Box2D.Common.Math{
 
 	
-import Box2D.Common.*
+import Box2D.Common.*;
 
 
-// b2Vec2 has no constructor so that it
-// can be placed in a union.
+/// A 2D column vector.
+
 public class b2Vec2
 {
 	public function b2Vec2(x_:Number=0, y_:Number=0) : void {x=x_; y=y_;};
@@ -100,18 +100,23 @@ public class b2Vec2
 	
 	public function Abs() : void
 	{
-		x = Math.abs(x);
-		y = Math.abs(y);
+		if (x < 0) x = -x;
+		if (y < 0) y = -y;
 	}
 
 	public function Length():Number
 	{
 		return Math.sqrt(x * x + y * y);
 	}
+	
+	public function LengthSquared():Number
+	{
+		return (x * x + y * y);
+	}
 
 	public function Normalize():Number
 	{
-		var length:Number = Length();
+		var length:Number = Math.sqrt(x * x + y * y);
 		if (length < Number.MIN_VALUE)
 		{
 			return 0.0;

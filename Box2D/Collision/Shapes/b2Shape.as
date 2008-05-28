@@ -22,315 +22,304 @@ package Box2D.Collision.Shapes{
 
 
 import Box2D.Common.Math.*;
-import Box2D.Common.*
-import Box2D.Dynamics.*
-import Box2D.Collision.*
+import Box2D.Common.*;
+import Box2D.Dynamics.*;
+import Box2D.Collision.*;
 
 
 
-// Shapes are created automatically when a body is created.
-// Client code does not normally interact with shapes.
+/// A shape is used for collision detection. Shapes are created in b2World.
+/// You can use shape for collision detection before they are attached to the world.
+/// @warning you cannot reuse shapes.
 public class b2Shape
 {
-	public virtual function TestPoint(p:b2Vec2):Boolean{return false};
-	
-	public function GetUserData():* {return m_userData;};
-
-	public function GetType():int{
+	/// Get the type of this shape. You can use this to down cast to the concrete shape.
+	/// @return the shape type.
+	public function GetType() : int{
 		return m_type;
 	}
 
-	// Get the parent body of this shape.
-	public function GetBody():b2Body{
+	/// Is this shape a sensor (non-solid)?
+	/// @return the true if the shape is a sensor.
+	public function IsSensor() : Boolean{
+		return m_isSensor;
+	}
+
+	/// Set the contact filtering data. You must call b2World::Refilter to correct
+	/// existing contacts/non-contacts.
+	public function SetFilterData(filter:b2FilterData) : void
+	{
+		m_filter = filter.Copy();
+	}
+
+	/// Get the contact filtering data.
+	public function GetFilterData() : b2FilterData
+	{
+		return m_filter.Copy();
+	}
+
+	/// Get the parent body of this shape. This is NULL if the shape is not attached.
+	/// @return the parent body.
+	public function GetBody() : b2Body{
 		return m_body;
 	}
 
-	public function GetPosition():b2Vec2{
-		return m_position;
-	}
-	public function GetRotationMatrix():b2Mat22{
-		return m_R;
-	}
-	
-	// Remove and then add proxy from the broad-phase.
-	// This is used to refresh the collision filters.
-	public virtual function ResetProxy(broadPhase:b2BroadPhase) : void{};
-
-	// Get the next shape in the parent body's shape list.
-	public function GetNext():b2Shape{
+	/// Get the next shape in the parent body's shape list.
+	/// @return the next shape.
+	public function GetNext() : b2Shape{
 		return m_next;
 	}
 
+	/// Get the user data that was assigned in the shape definition. Use this to
+	/// store your application specific data.
+	public function GetUserData() : *{
+		return m_userData;
+	}
+
+	/// Set the user data. Use this to store your application specific data.
+	public function SetUserData(data:*) : void
+	{
+		m_userData = data;
+	}
+
+	/// Test a point for containment in this shape. This only works for convex shapes.
+	/// @param xf the shape world transform.
+	/// @param p a point in world coordinates.
+	public virtual function TestPoint(xf:b2XForm, p:b2Vec2) : Boolean {return false};
+
+	/// Perform a ray cast against this shape.
+	/// @param xf the shape world transform.
+	/// @param lambda returns the hit fraction. You can use this to compute the contact point
+	/// p = (1 - lambda) * segment.p1 + lambda * segment.p2.
+	/// @param normal returns the normal at the contact point. If there is no intersection, the normal
+	/// is not set.
+	/// @param segment defines the begin and end point of the ray cast.
+	/// @param maxLambda a number typically in the range [0,1].
+	/// @return true if there was an intersection.
+	public virtual function  TestSegment(xf:b2XForm,
+								lambda:Array, // float pointer
+								normal:b2Vec2, // pointer
+								segment:b2Segment,
+								maxLambda:Number) : Boolean {return false};
+
+	/// Given a transform, compute the associated axis aligned bounding box for this shape.
+	/// @param aabb returns the axis aligned box.
+	/// @param xf the world transform of the shape.
+	public virtual function  ComputeAABB(aabb:b2AABB, xf:b2XForm) : void {};
+
+	/// Given two transforms, compute the associated swept axis aligned bounding box for this shape.
+	/// @param aabb returns the axis aligned box.
+	/// @param xf1 the starting shape world transform.
+	/// @param xf2 the ending shape world transform.
+	public virtual function  ComputeSweptAABB(	aabb:b2AABB,
+									xf1:b2XForm,
+									xf2:b2XForm) : void {};
+
+	/// Compute the mass properties of this shape using its dimensions and density.
+	/// The inertia tensor is computed about the local origin, not the centroid.
+	/// @param massData returns the mass data for this shape.
+	public virtual function  ComputeMass(massData:b2MassData) : void {};
+
+	/// Get the maximum radius about the parent body's center of mass.
+	public function GetSweepRadius() : Number
+	{
+		return m_sweepRadius;
+	}
+
+	/// Get the coefficient of friction.
+	public function GetFriction() : Number
+	{
+		return m_friction;
+	}
+
+	/// Get the coefficient of restitution.
+	public function GetRestitution() : Number
+	{
+		return m_restitution;
+	}
+	
 	//--------------- Internals Below -------------------
 
-	static public function Create(def:b2ShapeDef, body:b2Body, center:b2Vec2):b2Shape{
+	static public function Create(def:b2ShapeDef, allocator:*) : b2Shape
+	{
 		switch (def.type)
 		{
 		case e_circleShape:
 			{
-				//void* mem = body->m_world->m_blockAllocator.Allocate(sizeof(b2CircleShape));
-				return new b2CircleShape(def, body, center);
+				//void* mem = allocator->Allocate(sizeof(b2CircleShape));
+				return new b2CircleShape(def);
 			}
 		
-		case e_boxShape:
-		case e_polyShape:
+		case e_polygonShape:
 			{
-				//void* mem = body->m_world->m_blockAllocator.Allocate(sizeof(b2PolyShape));
-				return new b2PolyShape(def, body, center);
+				//void* mem = allocator->Allocate(sizeof(b2PolygonShape));
+				return new b2PolygonShape(def);
 			}
+		
+		default:
+			//b2Settings.b2Assert(false);
+			return null;
 		}
-		
-		//b2Settings.b2Assert(false);
-		return null;
 	}
-
-	static public function Destroy(shape:b2Shape) : void
+	
+	static public function Destroy(shape:b2Shape, allocator:*) : void
 	{
-		/*b2BlockAllocator& allocator = shape->m_body->m_world->m_blockAllocator;
-		
-		switch (shape.m_type)
+		/*switch (s.m_type)
 		{
 		case e_circleShape:
-			shape->~b2Shape();
-			allocator.Free(shape, sizeof(b2CircleShape));
+			//s->~b2Shape();
+			//allocator->Free(s, sizeof(b2CircleShape));
 			break;
 		
-		case e_polyShape:
-			shape->~b2Shape();
-			allocator.Free(shape, sizeof(b2PolyShape));
+		case e_polygonShape:
+			//s->~b2Shape();
+			//allocator->Free(s, sizeof(b2PolygonShape));
 			break;
 		
 		default:
-			b2Assert(false);
-		}
-		
-		shape = NULL;*/
-		
-		// FROM DESTRUCTOR
-		if (shape.m_proxyId != b2Pair.b2_nullProxy)
-			shape.m_body.m_world.m_broadPhase.DestroyProxy(shape.m_proxyId);
+			//b2Settings.b2Assert(false);
+		}*/
 	}
 
-
-	public function b2Shape(def:b2ShapeDef, body:b2Body){
-		m_userData = def.userData;
+	public function b2Shape(def:b2ShapeDef){
 		
+		m_userData = def.userData;
 		m_friction = def.friction;
 		m_restitution = def.restitution;
-		m_body = body;
+		m_density = def.density;
+		m_body = null;
+		m_sweepRadius = 0.0;
+		
+		m_next = null;
 		
 		m_proxyId = b2Pair.b2_nullProxy;
 		
-		m_maxRadius = 0.0;
+		m_filter = def.filter.Copy();
 		
-		m_categoryBits = def.categoryBits;
-		m_maskBits = def.maskBits;
-		m_groupIndex = def.groupIndex;
+		m_isSensor = def.isSensor;
+		
 	}
+	
+	//virtual ~b2Shape();
 
-	// Internal use only. Do not call.
-	//b2Shape::~b2Shape()
-	//{
-	//	m_body->m_world->m_broadPhase->DestroyProxy(m_proxyId);
-	//}
-	
-	
-	public function DestroyProxy() : void
-	{
-		if (m_proxyId != b2Pair.b2_nullProxy)
+	//
+	static private var s_proxyAABB:b2AABB = new b2AABB();
+	public function CreateProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
+		
+		//b2Settings.b2Assert(m_proxyId == b2_nullProxy);
+		
+		var aabb:b2AABB = s_proxyAABB;
+		ComputeAABB(aabb, transform);
+		
+		var inRange:Boolean = broadPhase.InRange(aabb);
+		
+		// You are creating a shape outside the world box.
+		//b2Settings.b2Assert(inRange);
+		
+		if (inRange)
 		{
-			m_body.m_world.m_broadPhase.DestroyProxy(m_proxyId);
+			m_proxyId = broadPhase.CreateProxy(aabb, this);
+		}
+		else
+		{
 			m_proxyId = b2Pair.b2_nullProxy;
 		}
+		
 	}
 	
-
-	// Internal use only. Do not call.
-	public virtual function Synchronize(position1:b2Vec2, R1:b2Mat22,
-										position2:b2Vec2, R2:b2Mat22) : void{};
-	public virtual function QuickSync(position:b2Vec2, R:b2Mat22) : void{};
-	public virtual function Support(dX:Number, dY:Number, out:b2Vec2) : void{};
-	public function GetMaxRadius():Number{
-		return m_maxRadius;
+	public function DestroyProxy(broadPhase:b2BroadPhase) : void{
+		
+		if (m_proxyId != b2Pair.b2_nullProxy)
+		{
+			broadPhase.DestroyProxy(m_proxyId);
+			m_proxyId = b2Pair.b2_nullProxy;
+		}
+		
+	}
+	
+	//
+	static private var s_syncAABB:b2AABB = new b2AABB();
+	//
+	public function Synchronize(broadPhase:b2BroadPhase, transform1:b2XForm, transform2:b2XForm) : Boolean{
+		
+		if (m_proxyId == b2Pair.b2_nullProxy)
+		{	
+			return false;
+		}
+		
+		// Compute an AABB that covers the swept shape (may miss some rotation effect).
+		var aabb:b2AABB = s_syncAABB;
+		ComputeSweptAABB(aabb, transform1, transform2);
+		
+		if (broadPhase.InRange(aabb))
+		{
+			broadPhase.MoveProxy(m_proxyId, aabb);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
+	
+	static private var s_resetAABB:b2AABB = new b2AABB();
+	public function RefilterProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
+		
+		if (m_proxyId == b2Pair.b2_nullProxy)
+		{
+			return;
+		}
+		
+		broadPhase.DestroyProxy(m_proxyId);
+		
+		var aabb:b2AABB = s_resetAABB;
+		ComputeAABB(aabb, transform);
+		
+		var inRange:Boolean = broadPhase.InRange(aabb);
+		
+		if (inRange)
+		{
+			m_proxyId = broadPhase.CreateProxy(aabb, this);
+		}
+		else
+		{
+			m_proxyId = b2Pair.b2_nullProxy;
+		}
+		
 	}
 
-	public var m_next:b2Shape;
-	
-	public var m_R:b2Mat22 = new b2Mat22();
-	public var m_position:b2Vec2 = new b2Vec2();
+	public virtual function UpdateSweepRadius(center:b2Vec2) : void{};
 
 	public var m_type:int;
-
-	public var m_userData:* = null;
-
+	public var m_next:b2Shape;
 	public var m_body:b2Body;
 
+	// Sweep radius relative to the parent body's center of mass.
+	public var m_sweepRadius:Number;
+
+	public var m_density:Number;
 	public var m_friction:Number;
 	public var m_restitution:Number;
 
-	public var m_maxRadius:Number;
-
 	public var m_proxyId:uint;
-	public var m_categoryBits:uint;
-	public var m_maskBits:uint;
-	public var m_groupIndex:int;
+	public var m_filter:b2FilterData;
+
+	public var m_isSensor:Boolean;
+
+	public var m_userData:*;
+
 	
 	
 	
-	// b2ShapeType
-	static public const e_unknownShape:int = 	-1;
-	static public const e_circleShape:int = 	0;
-	static public const e_boxShape:int = 		1;
-	static public const e_polyShape:int = 		2;
-	static public const e_meshShape:int = 		3;
-	static public const e_shapeTypeCount:int = 	4;
-	
-	
-	
-	
-	
-	
-	
-	static public function PolyMass(massData:b2MassData, vs:Array, count:int, rho:Number) : void
-	{
-		//b2Settings.b2Assert(count >= 3);
-		
-		//var center:b2Vec2 = new b2Vec2(0.0, 0.0);
-		var center:b2Vec2 = new b2Vec2();
-		center.SetZero();
-		
-		var area:Number = 0.0;
-		var I:Number = 0.0;
-		
-		// pRef is the reference point for forming triangles.
-		// It's location doesn't change the result (except for rounding error).
-		var pRef:b2Vec2 = new b2Vec2(0.0, 0.0);
-		
-		const inv3:Number = 1.0 / 3.0;
-		
-		for (var i:int = 0; i < count; ++i)
-		{
-			// Triangle vertices.
-			var p1:b2Vec2 = pRef;
-			var p2:b2Vec2 = vs[i];
-			var p3:b2Vec2 = i + 1 < count ? vs[i+1] : vs[0];
-			
-			var e1:b2Vec2 = b2Math.SubtractVV(p2, p1);
-			var e2:b2Vec2 = b2Math.SubtractVV(p3, p1);
-			
-			var D:Number = b2Math.b2CrossVV(e1, e2);
-			
-			var triangleArea:Number = 0.5 * D;
-			area += triangleArea;
-			
-			// Area weighted centroid
-			// center += triangleArea * inv3 * (p1 + p2 + p3);
-			var tVec:b2Vec2 = new b2Vec2();
-			tVec.SetV(p1);
-			tVec.Add(p2);
-			tVec.Add(p3);
-			tVec.Multiply(inv3*triangleArea);
-			center.Add(tVec);
-			
-			var px:Number = p1.x;
-			var py:Number = p1.y;
-			var ex1:Number = e1.x; 
-			var ey1:Number = e1.y;
-			var ex2:Number = e2.x;
-			var ey2:Number = e2.y;
-			
-			var intx2:Number = inv3 * (0.25 * (ex1*ex1 + ex2*ex1 + ex2*ex2) + (px*ex1 + px*ex2)) + 0.5*px*px;
-			var inty2:Number = inv3 * (0.25 * (ey1*ey1 + ey2*ey1 + ey2*ey2) + (py*ey1 + py*ey2)) + 0.5*py*py;
-			
-			I += D * (intx2 + inty2);
-		}
-		
-		// Total mass
-		massData.mass = rho * area;
-		
-		// Center of mass
-		//b2Settings.b2Assert(area > Number.MIN_VALUE);
-		center.Multiply( 1.0 / area );
-		massData.center = center;
-		
-		// Inertia tensor relative to the center.
-		I = rho * (I - area * b2Math.b2Dot(center, center));
-		massData.I = I;
-	}
-	
-	
-	static public function PolyCentroid(vs:Array, count:int, out:b2Vec2):void
-	{
-		//b2Settings.b2Assert(count >= 3);
-		
-		//b2Vec2 c; c.Set(0.0f, 0.0f);
-		var cX:Number = 0.0;
-		var cY:Number = 0.0;
-		//float32 area = 0.0f;
-		var area:Number = 0.0;
-		
-		// pRef is the reference point for forming triangles.
-		// It's location doesn't change the result (except for rounding error).
-		//b2Vec2 pRef(0.0f, 0.0f);
-		var pRefX:Number = 0.0;
-		var pRefY:Number = 0.0;
-	/*
-		// This code would put the reference point inside the polygon.
-		for (var i:int = 0; i < count; ++i)
-		{
-			//pRef += vs[i];
-			pRef.x += vs[i].x;
-			pRef.y += vs[i].y;
-		}
-		pRef.x *= 1.0 / count;
-		pRef.y *= 1.0 / count;
-	*/
-		
-		//const float32 inv3 = 1.0f / 3.0f;
-		const inv3:Number = 1.0 / 3.0;
-		
-		for (var i:int = 0; i < count; ++i)
-		{
-			// Triangle vertices.
-			//b2Vec2 p1 = pRef;
-			var p1X:Number = pRefX;
-			var p1Y:Number = pRefY;
-			//b2Vec2 p2 = vs[i];
-			var p2X:Number = vs[i].x;
-			var p2Y:Number = vs[i].y;
-			//b2Vec2 p3 = i + 1 < count ? vs[i+1] : vs[0];
-			var p3X:Number = i + 1 < count ? vs[i+1].x : vs[0].x;
-			var p3Y:Number = i + 1 < count ? vs[i+1].y : vs[0].y;
-			
-			//b2Vec2 e1 = p2 - p1;
-			var e1X:Number = p2X - p1X;
-			var e1Y:Number = p2Y - p1Y;
-			//b2Vec2 e2 = p3 - p1;
-			var e2X:Number = p3X - p1X;
-			var e2Y:Number = p3Y - p1Y;
-			
-			//float32 D = b2Cross(e1, e2);
-			var D:Number = (e1X * e2Y - e1Y * e2X);
-			
-			//float32 triangleArea = 0.5f * D;
-			var triangleArea:Number = 0.5 * D;
-			area += triangleArea;
-			
-			// Area weighted centroid
-			//c += triangleArea * inv3 * (p1 + p2 + p3);
-			cX += triangleArea * inv3 * (p1X + p2X + p3X);
-			cY += triangleArea * inv3 * (p1Y + p2Y + p3Y);
-		}
-		
-		// Centroid
-		//b2Settings.b2Assert(area > Number.MIN_VALUE);
-		cX *= 1.0 / area;
-		cY *= 1.0 / area;
-		
-		// Replace return with 'out' vector
-		//return c;
-		out.Set(cX, cY);
-	}
+	/// The various collision shape types supported by Box2D.
+	//enum b2ShapeType
+	//{
+		static public const e_unknownShape:int = 	-1;
+		static public const e_circleShape:int = 	0;
+		static public const e_polygonShape:int = 	1;
+		static public const e_shapeTypeCount:int = 	2;
+	//};
 	
 	
 	

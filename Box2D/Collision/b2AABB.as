@@ -18,27 +18,24 @@
 
 package Box2D.Collision{
 	
-import Box2D.Collision.*
-import Box2D.Common.Math.*
+import Box2D.Collision.*;
+import Box2D.Common.Math.*;
 
 // A manifold for two touching convex shapes.
 public class b2AABB
 {
+	/// Verify that the bounds are sorted.
 	public function IsValid():Boolean{
-		//var d:b2Vec2 = b2Math.SubtractVV(maxVertex, minVertex);
-		var dX:Number = maxVertex.x;
-		var dY:Number = maxVertex.y;
-		dX = maxVertex.x;
-		dY = maxVertex.y;
-		dX -= minVertex.x;
-		dY -= minVertex.y;
+		//b2Vec2 d = upperBound - lowerBound;;
+		var dX:Number = upperBound.x - lowerBound.x;
+		var dY:Number = upperBound.y - lowerBound.y;
 		var valid:Boolean = dX >= 0.0 && dY >= 0.0;
-		valid = valid && minVertex.IsValid() && maxVertex.IsValid();
+		valid = valid && lowerBound.IsValid() && upperBound.IsValid();
 		return valid;
 	}
 
-	public var minVertex:b2Vec2 = new b2Vec2();
-	public var maxVertex:b2Vec2 = new b2Vec2();
+	public var lowerBound:b2Vec2 = new b2Vec2();	///< the lower vertex
+	public var upperBound:b2Vec2 = new b2Vec2();	///< the upper vertex
 };
 
 

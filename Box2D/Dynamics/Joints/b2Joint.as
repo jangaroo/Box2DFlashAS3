@@ -19,39 +19,55 @@
 package Box2D.Dynamics.Joints{
 
 
-import Box2D.Common.Math.*
-import Box2D.Common.*
-import Box2D.Dynamics.*
+import Box2D.Common.Math.*;
+import Box2D.Common.*;
+import Box2D.Dynamics.*;
 
 
+/// The base joint class. Joints are used to constraint two bodies together in
+/// various fashions. Some joints also feature limits and motors.
 public class b2Joint
 {
+	/// Get the type of the concrete joint.
 	public function GetType():int{
 		return m_type;
 	}
 	
+	/// Get the anchor point on body1 in world coordinates.
 	public virtual function GetAnchor1():b2Vec2{return null};
+	/// Get the anchor point on body2 in world coordinates.
 	public virtual function GetAnchor2():b2Vec2{return null};
 	
-	public virtual function GetReactionForce(invTimeStep:Number):b2Vec2 {return null};
-	public virtual function GetReactionTorque(invTimeStep:Number):Number {return 0.0}
+	/// Get the reaction force on body2 at the joint anchor.
+	public virtual function GetReactionForce():b2Vec2 {return null};
+	/// Get the reaction torque on body2.
+	public virtual function GetReactionTorque():Number {return 0.0}
 	
+	/// Get the first body attached to this joint.
 	public function GetBody1():b2Body
 	{
 		return m_body1;
 	}
-
+	
+	/// Get the second body attached to this joint.
 	public function GetBody2():b2Body
 	{
 		return m_body2;
 	}
 
+	/// Get the next joint the world joint list.
 	public function GetNext():b2Joint{
 		return m_next;
 	}
 
+	/// Get the user data pointer.
 	public function GetUserData():*{
 		return m_userData;
+	}
+
+	/// Set the user data pointer.
+	public function SetUserData(data:*):void{
+		m_userData = data;
 	}
 
 	//--------------- Internals Below -------------------
@@ -157,20 +173,22 @@ public class b2Joint
 	}
 	//virtual ~b2Joint() {}
 
-	public virtual function PrepareVelocitySolver() : void{};
+	public virtual function InitVelocityConstraints(step:b2TimeStep) : void{};
 	public virtual function SolveVelocityConstraints(step:b2TimeStep) : void{};
 
 	// This returns true if the position errors are within tolerance.
-	public virtual function PreparePositionSolver() : void{};
+	public virtual function InitPositionConstraints() : void{};
 	public virtual function SolvePositionConstraints():Boolean{return false};
 
 	public var m_type:int;
 	public var m_prev:b2Joint;
 	public var m_next:b2Joint;
-	public var m_node1:b2JointNode = new b2JointNode();
-	public var m_node2:b2JointNode = new b2JointNode();
+	public var m_node1:b2JointEdge = new b2JointEdge();
+	public var m_node2:b2JointEdge = new b2JointEdge();
 	public var m_body1:b2Body;
 	public var m_body2:b2Body;
+
+	public var m_inv_dt:Number;
 
 	public var m_islandFlag:Boolean;
 	public var m_collideConnected:Boolean;

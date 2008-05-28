@@ -19,10 +19,17 @@
 package Box2D.Dynamics.Joints{
 
 
-import Box2D.Common.Math.*
-import Box2D.Common.*
-import Box2D.Dynamics.*
+import Box2D.Common.Math.*;
+import Box2D.Common.*;
+import Box2D.Dynamics.*;
 
+
+/// A revolute joint constrains to bodies to share a common point while they
+/// are free to rotate about the point. The relative rotation about the shared
+/// point is the joint angle. You can limit the relative rotation with
+/// a joint limit that specifies a lower and upper angle. You can use a motor
+/// to drive the relative rotation about the shared point. A maximum motor torque
+/// is provided so that infinite forces are not generated.
 
 // Point-to-point constraint
 // C = p2 - p1
@@ -39,47 +46,89 @@ import Box2D.Dynamics.*
 
 public class b2RevoluteJoint extends b2Joint
 {
-	public override function GetAnchor1():b2Vec2{
-		var tMat:b2Mat22 = m_body1.m_R;
-		return new b2Vec2(	m_body1.m_position.x + (tMat.col1.x * m_localAnchor1.x + tMat.col2.x * m_localAnchor1.y), 
-							m_body1.m_position.y + (tMat.col1.y * m_localAnchor1.x + tMat.col2.y * m_localAnchor1.y));
+	public override function GetAnchor1() :b2Vec2{
+		return m_body1.GetWorldPoint(m_localAnchor1);
 	}
-	public override function GetAnchor2():b2Vec2{
-		var tMat:b2Mat22 = m_body2.m_R;
-		return new b2Vec2(	m_body2.m_position.x + (tMat.col1.x * m_localAnchor2.x + tMat.col2.x * m_localAnchor2.y), 
-							m_body2.m_position.y + (tMat.col1.y * m_localAnchor2.x + tMat.col2.y * m_localAnchor2.y));
+	public override function GetAnchor2() :b2Vec2{
+		return m_body2.GetWorldPoint(m_localAnchor2);
 	}
-	public function GetJointAngle():Number{
-		return m_body2.m_rotation - m_body1.m_rotation;
+
+	public override function GetReactionForce() :b2Vec2{
+		return m_pivotForce;
 	}
-	public function GetJointSpeed():Number{
+	public override function GetReactionTorque() :Number{
+		return m_limitForce;
+	}
+
+	/// Get the current joint angle in radians.
+	public function GetJointAngle() :Number{
+		//b2Body* b1 = m_body1;
+		//b2Body* b2 = m_body2;
+		return m_body2.m_sweep.a - m_body1.m_sweep.a - m_referenceAngle;
+	}
+
+	/// Get the current joint angle speed in radians per second.
+	public function GetJointSpeed() :Number{
+		//b2Body* b1 = m_body1;
+		//b2Body* b2 = m_body2;
 		return m_body2.m_angularVelocity - m_body1.m_angularVelocity;
 	}
-	public function GetMotorTorque(invTimeStep:Number):Number{
-		return  invTimeStep * m_motorImpulse;
+
+	/// Is the joint limit enabled?
+	public function IsLimitEnabled() :Boolean{
+		return m_enableLimit;
 	}
-	
-	public function SetMotorSpeed(speed:Number) : void
-	{
+
+	/// Enable/disable the joint limit.
+	public function EnableLimit(flag:Boolean) :void{
+		m_enableLimit = flag;
+	}
+
+	/// Get the lower joint limit in radians.
+	public function GetLowerLimit() :Number{
+		return m_lowerAngle;
+	}
+
+	/// Get the upper joint limit in radians.
+	public function GetUpperLimit() :Number{
+		return m_upperAngle;
+	}
+
+	/// Set the joint limits in radians.
+	public function SetLimits(lower:Number, upper:Number) : void{
+		//b2Settings.b2Assert(lower <= upper);
+		m_lowerAngle = lower;
+		m_upperAngle = upper;
+	}
+
+	/// Is the joint motor enabled?
+	public function IsMotorEnabled() :Boolean{
+		return m_enableMotor;
+	}
+
+	/// Enable/disable the joint motor.
+	public function EnableMotor(flag:Boolean) :void{
+		m_enableMotor = flag;
+	}
+
+	/// Set the motor speed in radians per second.
+	public function SetMotorSpeed(speed:Number) : void{
 		m_motorSpeed = speed;
 	}
 
-	public function SetMotorTorque(torque:Number) : void
-	{
+	/// Get the motor speed in radians per second.
+	public function GetMotorSpeed() :Number{
+		return m_motorSpeed;
+	}
+
+	/// Set the maximum motor torque, usually in N-m.
+	public function SetMaxMotorTorque(torque:Number) : void{
 		m_maxMotorTorque = torque;
 	}
 
-	public override function GetReactionForce(invTimeStep:Number):b2Vec2
-	{
-		var tVec:b2Vec2 = m_ptpImpulse.Copy();
-		tVec.Multiply(invTimeStep);
-		//return invTimeStep * m_ptpImpulse;
-		return tVec;
-	}
-
-	public override function GetReactionTorque(invTimeStep:Number):Number
-	{
-		return invTimeStep * m_limitImpulse;
+	/// Get the current motor torque, usually in N-m.
+	public function GetMotorTorque() :Number{
+		return m_motorForce;
 	}
 
 	//--------------- Internals Below -------------------
@@ -87,33 +136,21 @@ public class b2RevoluteJoint extends b2Joint
 	public function b2RevoluteJoint(def:b2RevoluteJointDef){
 		super(def);
 		
-		var tMat:b2Mat22;
-		var tX:Number;
-		var tY:Number;
+		//m_localAnchor1 = def->localAnchor1;
+		m_localAnchor1.SetV(def.localAnchor1);
+		//m_localAnchor2 = def->localAnchor2;
+		m_localAnchor2.SetV(def.localAnchor2);
 		
-		//m_localAnchor1 = b2Math.b2MulTMV(m_body1.m_R, b2Math.SubtractVV( def.anchorPoint, m_body1.m_position));
-		tMat = m_body1.m_R;
-		tX = def.anchorPoint.x - m_body1.m_position.x;
-		tY = def.anchorPoint.y - m_body1.m_position.y;
-		m_localAnchor1.x = tX * tMat.col1.x + tY * tMat.col1.y;
-		m_localAnchor1.y = tX * tMat.col2.x + tY * tMat.col2.y;
-		//m_localAnchor2 = b2Math.b2MulTMV(m_body2.m_R, b2Math.SubtractVV( def.anchorPoint, m_body2.m_position));
-		tMat = m_body2.m_R;
-		tX = def.anchorPoint.x - m_body2.m_position.x;
-		tY = def.anchorPoint.y - m_body2.m_position.y;
-		m_localAnchor2.x = tX * tMat.col1.x + tY * tMat.col1.y;
-		m_localAnchor2.y = tX * tMat.col2.x + tY * tMat.col2.y;
+		m_referenceAngle = def.referenceAngle;
 		
-		m_intialAngle = m_body2.m_rotation - m_body1.m_rotation;
-		
-		m_ptpImpulse.Set(0.0, 0.0);
-		m_motorImpulse = 0.0;
-		m_limitImpulse = 0.0;
+		m_pivotForce.Set(0.0, 0.0);
+		m_motorForce = 0.0;
+		m_limitForce = 0.0;
 		m_limitPositionImpulse = 0.0;
 		
 		m_lowerAngle = def.lowerAngle;
 		m_upperAngle = def.upperAngle;
-		m_maxMotorTorque = def.motorTorque;
+		m_maxMotorTorque = def.maxMotorTorque;
 		m_motorSpeed = def.motorSpeed;
 		m_enableLimit = def.enableLimit;
 		m_enableMotor = def.enableMotor;
@@ -124,21 +161,28 @@ public class b2RevoluteJoint extends b2Joint
 	private var K1:b2Mat22 = new b2Mat22();
 	private var K2:b2Mat22 = new b2Mat22();
 	private var K3:b2Mat22 = new b2Mat22();
-	public override function PrepareVelocitySolver() : void{
+	public override function InitVelocityConstraints(step:b2TimeStep) : void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
 		var tMat:b2Mat22;
+		var tX:Number;
 		
 		// Compute the effective mass matrix.
-		//b2Vec2 r1 = b2Mul(b1->m_R, m_localAnchor1);
-		tMat = b1.m_R;
-		var r1X:Number = tMat.col1.x * m_localAnchor1.x + tMat.col2.x * m_localAnchor1.y;
-		var r1Y:Number = tMat.col1.y * m_localAnchor1.x + tMat.col2.y * m_localAnchor1.y;
-		//b2Vec2 r2 = b2Mul(b2->m_R, m_localAnchor2);
-		tMat = b2.m_R;
-		var r2X:Number = tMat.col1.x * m_localAnchor2.x + tMat.col2.x * m_localAnchor2.y;
-		var r2Y:Number = tMat.col1.y * m_localAnchor2.x + tMat.col2.y * m_localAnchor2.y;
+		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
+		tMat = b1.m_xf.R;
+		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
+		var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+		tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
+		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
+		r1X = tX;
+		//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
+		tMat = b2.m_xf.R;
+		var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
+		var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
+		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
+		r2X = tX;
 		
 		// K    = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
 		//      = [1/m1+1/m2     0    ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]
@@ -165,19 +209,20 @@ public class b2RevoluteJoint extends b2Joint
 		K.AddM(K2);
 		K.AddM(K3);
 		
-		//m_ptpMass = K.Invert();
-		K.Invert(m_ptpMass);
+		//m_pivotMass = K.Invert();
+		K.Invert(m_pivotMass);
 		
 		m_motorMass = 1.0 / (invI1 + invI2);
 		
 		if (m_enableMotor == false)
 		{
-			m_motorImpulse = 0.0;
+			m_motorForce = 0.0;
 		}
 		
 		if (m_enableLimit)
 		{
-			var jointAngle:Number = b2.m_rotation - b1.m_rotation - m_intialAngle;
+			//float32 jointAngle = b2->m_sweep.a - b1->m_sweep.a - m_referenceAngle;
+			var jointAngle:Number = b2.m_sweep.a - b1.m_sweep.a - m_referenceAngle;
 			if (b2Math.b2Abs(m_upperAngle - m_lowerAngle) < 2.0 * b2Settings.b2_angularSlop)
 			{
 				m_limitState = e_equalLimits;
@@ -186,7 +231,7 @@ public class b2RevoluteJoint extends b2Joint
 			{
 				if (m_limitState != e_atLowerLimit)
 				{
-					m_limitImpulse = 0.0;
+					m_limitForce = 0.0;
 				}
 				m_limitState = e_atLowerLimit;
 			}
@@ -194,40 +239,40 @@ public class b2RevoluteJoint extends b2Joint
 			{
 				if (m_limitState != e_atUpperLimit)
 				{
-					m_limitImpulse = 0.0;
+					m_limitForce = 0.0;
 				}
 				m_limitState = e_atUpperLimit;
 			}
 			else
 			{
 				m_limitState = e_inactiveLimit;
-				m_limitImpulse = 0.0;
+				m_limitForce = 0.0;
 			}
 		}
 		else
 		{
-			m_limitImpulse = 0.0;
+			m_limitForce = 0.0;
 		}
 		
 		// Warm starting.
-		if (b2World.s_enableWarmStarting)
+		if (step.warmStarting)
 		{
-			//b1.m_linearVelocity.Subtract( b2Math.MulFV( invMass1, m_ptpImpulse) );
-			b1.m_linearVelocity.x -= invMass1 * m_ptpImpulse.x;
-			b1.m_linearVelocity.y -= invMass1 * m_ptpImpulse.y;
-			//b1.m_angularVelocity -= invI1 * (b2Math.b2CrossVV(r1, m_ptpImpulse) + m_motorImpulse + m_limitImpulse);
-			b1.m_angularVelocity -= invI1 * ((r1X * m_ptpImpulse.y - r1Y * m_ptpImpulse.x) + m_motorImpulse + m_limitImpulse);
+			//b1->m_linearVelocity -= step.dt * invMass1 * m_pivotForce;
+			b1.m_linearVelocity.x -= step.dt * invMass1 * m_pivotForce.x;
+			b1.m_linearVelocity.y -= step.dt * invMass1 * m_pivotForce.y;
+			//b1->m_angularVelocity -= step.dt * invI1 * (b2Cross(r1, m_pivotForce) + m_motorForce + m_limitForce);
+			b1.m_angularVelocity -= step.dt * invI1 * ((r1X * m_pivotForce.y - r1Y * m_pivotForce.x) + m_motorForce + m_limitForce);
 			
-			//b2.m_linearVelocity.Add( b2Math.MulFV( invMass2 , m_ptpImpulse ));
-			b2.m_linearVelocity.x += invMass2 * m_ptpImpulse.x;
-			b2.m_linearVelocity.y += invMass2 * m_ptpImpulse.y;
-			//b2.m_angularVelocity += invI2 * (b2Math.b2CrossVV(r2, m_ptpImpulse) + m_motorImpulse + m_limitImpulse);
-			b2.m_angularVelocity += invI2 * ((r2X * m_ptpImpulse.y - r2Y * m_ptpImpulse.x) + m_motorImpulse + m_limitImpulse);
+			//b2->m_linearVelocity += step.dt * invMass2 * m_pivotForce;
+			b2.m_linearVelocity.x += step.dt * invMass2 * m_pivotForce.x;
+			b2.m_linearVelocity.y += step.dt * invMass2 * m_pivotForce.y;
+			//b2->m_angularVelocity += step.dt * invI2 * (b2Cross(r2, m_pivotForce) + m_motorForce + m_limitForce);
+			b2.m_angularVelocity += step.dt * invI2 * ((r2X * m_pivotForce.y - r2Y * m_pivotForce.x) + m_motorForce + m_limitForce);
 		}
 		else{
-			m_ptpImpulse.SetZero();
-			m_motorImpulse = 0.0;
-			m_limitImpulse = 0.0;
+			m_pivotForce.SetZero();
+			m_motorForce = 0.0;
+			m_limitForce = 0.0;
 		}
 		
 		m_limitPositionImpulse = 0.0;
@@ -239,76 +284,88 @@ public class b2RevoluteJoint extends b2Joint
 		var b2:b2Body = m_body2;
 		
 		var tMat:b2Mat22;
+		var tX:Number;
 		
-		//var r1:b2Vec2 = b2Math.b2MulMV(b1.m_R, m_localAnchor1);
-		tMat = b1.m_R;
-		var r1X:Number = tMat.col1.x * m_localAnchor1.x + tMat.col2.x * m_localAnchor1.y;
-		var r1Y:Number = tMat.col1.y * m_localAnchor1.x + tMat.col2.y * m_localAnchor1.y;
-		//var r2:b2Vec2 = b2Math.b2MulMV(b2.m_R, m_localAnchor2);
-		tMat = b2.m_R;
-		var r2X:Number = tMat.col1.x * m_localAnchor2.x + tMat.col2.x * m_localAnchor2.y;
-		var r2Y:Number = tMat.col1.y * m_localAnchor2.x + tMat.col2.y * m_localAnchor2.y;
+		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
+		tMat = b1.m_xf.R;
+		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
+		var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+		tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
+		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
+		r1X = tX;
+		//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
+		tMat = b2.m_xf.R;
+		var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
+		var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
+		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
+		r2X = tX;
 		
-		var oldLimitImpulse:Number;
+		var oldLimitForce:Number;
 		
 		// Solve point-to-point constraint
-		//b2Vec2 ptpCdot = b2.m_linearVelocity + b2Cross(b2.m_angularVelocity, r2) - b1.m_linearVelocity - b2Cross(b1.m_angularVelocity, r1);
-		var ptpCdotX:Number = b2.m_linearVelocity.x + (-b2.m_angularVelocity * r2Y) - b1.m_linearVelocity.x - (-b1.m_angularVelocity * r1Y);
-		var ptpCdotY:Number = b2.m_linearVelocity.y + (b2.m_angularVelocity * r2X) - b1.m_linearVelocity.y - (b1.m_angularVelocity * r1X);
+		//b2Vec2 pivotCdot = b2.m_linearVelocity + b2Cross(b2.m_angularVelocity, r2) - b1.m_linearVelocity - b2Cross(b1.m_angularVelocity, r1);
+		var pivotCdotX:Number = b2.m_linearVelocity.x + (-b2.m_angularVelocity * r2Y) - b1.m_linearVelocity.x - (-b1.m_angularVelocity * r1Y);
+		var pivotCdotY:Number = b2.m_linearVelocity.y + (b2.m_angularVelocity * r2X) - b1.m_linearVelocity.y - (b1.m_angularVelocity * r1X);
 		
-		//b2Vec2 ptpImpulse = -b2Mul(m_ptpMass, ptpCdot);
-		var ptpImpulseX:Number = -(m_ptpMass.col1.x * ptpCdotX + m_ptpMass.col2.x * ptpCdotY);
-		var ptpImpulseY:Number = -(m_ptpMass.col1.y * ptpCdotX + m_ptpMass.col2.y * ptpCdotY);
-		m_ptpImpulse.x += ptpImpulseX;
-		m_ptpImpulse.y += ptpImpulseY;
+		//b2Vec2 pivotForce = -step.inv_dt * b2Mul(m_pivotMass, pivotCdot);
+		var pivotForceX:Number = -step.inv_dt * (m_pivotMass.col1.x * pivotCdotX + m_pivotMass.col2.x * pivotCdotY);
+		var pivotForceY:Number = -step.inv_dt * (m_pivotMass.col1.y * pivotCdotX + m_pivotMass.col2.y * pivotCdotY);
+		m_pivotForce.x += pivotForceX;
+		m_pivotForce.y += pivotForceY;
 		
-		//b1->m_linearVelocity -= b1->m_invMass * ptpImpulse;
-		b1.m_linearVelocity.x -= b1.m_invMass * ptpImpulseX;
-		b1.m_linearVelocity.y -= b1.m_invMass * ptpImpulseY;
-		//b1->m_angularVelocity -= b1->m_invI * b2Cross(r1, ptpImpulse);
-		b1.m_angularVelocity -= b1.m_invI * (r1X * ptpImpulseY - r1Y * ptpImpulseX);
+		//b2Vec2 P = step.dt * pivotForce;
+		var PX:Number = step.dt * pivotForceX;
+		var PY:Number = step.dt * pivotForceY;
 		
-		//b2->m_linearVelocity += b2->m_invMass * ptpImpulse;
-		b2.m_linearVelocity.x += b2.m_invMass * ptpImpulseX;
-		b2.m_linearVelocity.y += b2.m_invMass * ptpImpulseY;
-		//b2->m_angularVelocity += b2->m_invI * b2Cross(r2, ptpImpulse);
-		b2.m_angularVelocity += b2.m_invI * (r2X * ptpImpulseY - r2Y * ptpImpulseX);
+		//b1->m_linearVelocity -= b1->m_invMass * P;
+		b1.m_linearVelocity.x -= b1.m_invMass * PX;
+		b1.m_linearVelocity.y -= b1.m_invMass * PY;
+		//b1->m_angularVelocity -= b1->m_invI * b2Cross(r1, P);
+		b1.m_angularVelocity -= b1.m_invI * (r1X * PY - r1Y * PX);
+		
+		//b2->m_linearVelocity += b2->m_invMass * P;
+		b2.m_linearVelocity.x += b2.m_invMass * PX;
+		b2.m_linearVelocity.y += b2.m_invMass * PY;
+		//b2->m_angularVelocity += b2->m_invI * b2Cross(r2, P);
+		b2.m_angularVelocity += b2.m_invI * (r2X * PY - r2Y * PX);
 		
 		if (m_enableMotor && m_limitState != e_equalLimits)
 		{
 			var motorCdot:Number = b2.m_angularVelocity - b1.m_angularVelocity - m_motorSpeed;
-			var motorImpulse:Number = -m_motorMass * motorCdot;
-			var oldMotorImpulse:Number = m_motorImpulse;
-			m_motorImpulse = b2Math.b2Clamp(m_motorImpulse + motorImpulse, -step.dt * m_maxMotorTorque, step.dt * m_maxMotorTorque);
-			motorImpulse = m_motorImpulse - oldMotorImpulse;
-			b1.m_angularVelocity -= b1.m_invI * motorImpulse;
-			b2.m_angularVelocity += b2.m_invI * motorImpulse;
+			var motorForce:Number = -step.inv_dt * m_motorMass * motorCdot;
+			var oldMotorForce:Number = m_motorForce;
+			m_motorForce = b2Math.b2Clamp(m_motorForce + motorForce, -m_maxMotorTorque, m_maxMotorTorque);
+			motorForce = m_motorForce - oldMotorForce;
+			
+			b1.m_angularVelocity -= b1.m_invI * step.dt * motorForce;
+			b2.m_angularVelocity += b2.m_invI * step.dt * motorForce;
 		}
 		
 		if (m_enableLimit && m_limitState != e_inactiveLimit)
 		{
 			var limitCdot:Number = b2.m_angularVelocity - b1.m_angularVelocity;
-			var limitImpulse:Number = -m_motorMass * limitCdot;
+			var limitForce:Number = -step.inv_dt * m_motorMass * limitCdot;
 			
 			if (m_limitState == e_equalLimits)
 			{
-				m_limitImpulse += limitImpulse;
+				m_limitForce += limitForce;
 			}
 			else if (m_limitState == e_atLowerLimit)
 			{
-				oldLimitImpulse = m_limitImpulse;
-				m_limitImpulse = b2Math.b2Max(m_limitImpulse + limitImpulse, 0.0);
-				limitImpulse = m_limitImpulse - oldLimitImpulse;
+				oldLimitForce = m_limitForce;
+				m_limitForce = b2Math.b2Max(m_limitForce + limitForce, 0.0);
+				limitForce = m_limitForce - oldLimitForce;
 			}
 			else if (m_limitState == e_atUpperLimit)
 			{
-				oldLimitImpulse = m_limitImpulse;
-				m_limitImpulse = b2Math.b2Min(m_limitImpulse + limitImpulse, 0.0);
-				limitImpulse = m_limitImpulse - oldLimitImpulse;
+				oldLimitForce = m_limitForce;
+				m_limitForce = b2Math.b2Min(m_limitForce + limitForce, 0.0);
+				limitForce = m_limitForce - oldLimitForce;
 			}
 			
-			b1.m_angularVelocity -= b1.m_invI * limitImpulse;
-			b2.m_angularVelocity += b2.m_invI * limitImpulse;
+			b1.m_angularVelocity -= b1.m_invI * step.dt * limitForce;
+			b2.m_angularVelocity += b2.m_invI * step.dt * limitForce;
 		}
 	}
 	
@@ -327,21 +384,27 @@ public class b2RevoluteJoint extends b2Joint
 		var tMat:b2Mat22;
 		
 		// Solve point-to-point position error.
-		//var r1:b2Vec2 = b2Math.b2MulMV(b1.m_R, m_localAnchor1);
-		tMat = b1.m_R;
-		var r1X:Number = tMat.col1.x * m_localAnchor1.x + tMat.col2.x * m_localAnchor1.y;
-		var r1Y:Number = tMat.col1.y * m_localAnchor1.x + tMat.col2.y * m_localAnchor1.y;
-		//var r2:b2Vec2 = b2Math.b2MulMV(b2.m_R, m_localAnchor2);
-		tMat = b2.m_R;
-		var r2X:Number = tMat.col1.x * m_localAnchor2.x + tMat.col2.x * m_localAnchor2.y;
-		var r2Y:Number = tMat.col1.y * m_localAnchor2.x + tMat.col2.y * m_localAnchor2.y;
+		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
+		tMat = b1.m_xf.R;
+		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
+		var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+		var tX:Number =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
+		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
+		r1X = tX;
+		//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
+		tMat = b2.m_xf.R;
+		var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
+		var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
+		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
+		r2X = tX;
 		
-		//b2Vec2 p1 = b1->m_position + r1;
-		var p1X:Number = b1.m_position.x + r1X;
-		var p1Y:Number = b1.m_position.y + r1Y;
-		//b2Vec2 p2 = b2->m_position + r2;
-		var p2X:Number = b2.m_position.x + r2X;
-		var p2Y:Number = b2.m_position.y + r2Y;
+		//b2Vec2 p1 = b1->m_sweep.c + r1;
+		var p1X:Number = b1.m_sweep.c.x + r1X;
+		var p1Y:Number = b1.m_sweep.c.y + r1Y;
+		//b2Vec2 p2 = b2->m_sweep.c + r2;
+		var p2X:Number = b2.m_sweep.c.x + r2X;
+		var p2Y:Number = b2.m_sweep.c.y + r2Y;
 		
 		//b2Vec2 ptpC = p2 - p1;
 		var ptpCX:Number = p2X - p1X;
@@ -382,19 +445,20 @@ public class b2RevoluteJoint extends b2Joint
 		var impulseX:Number = tImpulse.x;
 		var impulseY:Number = tImpulse.y;
 		
-		//b1.m_position -= b1.m_invMass * impulse;
-		b1.m_position.x -= b1.m_invMass * impulseX;
-		b1.m_position.y -= b1.m_invMass * impulseY;
-		//b1.m_rotation -= b1.m_invI * b2Cross(r1, impulse);
-		b1.m_rotation -= b1.m_invI * (r1X * impulseY - r1Y * impulseX);
-		b1.m_R.Set(b1.m_rotation);
+		//b1.m_sweep.c -= b1.m_invMass * impulse;
+		b1.m_sweep.c.x -= b1.m_invMass * impulseX;
+		b1.m_sweep.c.y -= b1.m_invMass * impulseY;
+		//b1.m_sweep.a -= b1.m_invI * b2Cross(r1, impulse);
+		b1.m_sweep.a -= b1.m_invI * (r1X * impulseY - r1Y * impulseX);
 		
-		//b2.m_position += b2.m_invMass * impulse;
-		b2.m_position.x += b2.m_invMass * impulseX;
-		b2.m_position.y += b2.m_invMass * impulseY;
-		//b2.m_rotation += b2.m_invI * b2Cross(r2, impulse);
-		b2.m_rotation += b2.m_invI * (r2X * impulseY - r2Y * impulseX);
-		b2.m_R.Set(b2.m_rotation);
+		//b2.m_sweep.c += b2.m_invMass * impulse;
+		b2.m_sweep.c.x += b2.m_invMass * impulseX;
+		b2.m_sweep.c.y += b2.m_invMass * impulseY;
+		//b2.m_sweep.a += b2.m_invI * b2Cross(r2, impulse);
+		b2.m_sweep.a += b2.m_invI * (r2X * impulseY - r2Y * impulseX);
+		
+		b1.SynchronizeTransform();
+		b2.SynchronizeTransform();
 		
 		
 		// Handle limits.
@@ -402,7 +466,7 @@ public class b2RevoluteJoint extends b2Joint
 		
 		if (m_enableLimit && m_limitState != e_inactiveLimit)
 		{
-			var angle:Number = b2.m_rotation - b1.m_rotation - m_intialAngle;
+			var angle:Number = b2.m_sweep.a - b1.m_sweep.a - m_referenceAngle;
 			var limitImpulse:Number = 0.0;
 			
 			if (m_limitState == e_equalLimits)
@@ -437,32 +501,33 @@ public class b2RevoluteJoint extends b2Joint
 				limitImpulse = m_limitPositionImpulse - oldLimitImpulse;
 			}
 			
-			b1.m_rotation -= b1.m_invI * limitImpulse;
-			b1.m_R.Set(b1.m_rotation);
-			b2.m_rotation += b2.m_invI * limitImpulse;
-			b2.m_R.Set(b2.m_rotation);
+			b1.m_sweep.a -= b1.m_invI * limitImpulse;
+			b2.m_sweep.a += b2.m_invI * limitImpulse;
+			
+			b1.SynchronizeTransform();
+			b2.SynchronizeTransform();
 		}
 		
 		return positionError <= b2Settings.b2_linearSlop && angularError <= b2Settings.b2_angularSlop;
 	}
 
-	public var m_localAnchor1:b2Vec2 = new b2Vec2();
+	public var m_localAnchor1:b2Vec2 = new b2Vec2(); // relative
 	public var m_localAnchor2:b2Vec2 = new b2Vec2();
-	public var m_ptpImpulse:b2Vec2 = new b2Vec2();
-	public var m_motorImpulse:Number;
-	public var m_limitImpulse:Number;
+	public var m_pivotForce:b2Vec2 = new b2Vec2();
+	public var m_motorForce:Number;
+	public var m_limitForce:Number;
 	public var m_limitPositionImpulse:Number;
 
-	public var m_ptpMass:b2Mat22 = new b2Mat22();		// effective mass for point-to-point constraint.
+	public var m_pivotMass:b2Mat22 = new b2Mat22();		// effective mass for point-to-point constraint.
 	public var m_motorMass:Number;	// effective mass for motor/limit angular constraint.
-	public var m_intialAngle:Number;
-	public var m_lowerAngle:Number;
-	public var m_upperAngle:Number;
+	public var m_enableMotor:Boolean;
 	public var m_maxMotorTorque:Number;
 	public var m_motorSpeed:Number;
 
 	public var m_enableLimit:Boolean;
-	public var m_enableMotor:Boolean;
+	public var m_referenceAngle:Number;
+	public var m_lowerAngle:Number;
+	public var m_upperAngle:Number;
 	public var m_limitState:int;
 };
 

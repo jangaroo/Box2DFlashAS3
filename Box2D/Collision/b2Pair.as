@@ -23,7 +23,7 @@
 package Box2D.Collision{
 
 
-import Box2D.Common.*
+import Box2D.Common.*;
 
 
 public class b2Pair

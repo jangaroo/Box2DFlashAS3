@@ -19,7 +19,7 @@
 package Box2D.Dynamics.Joints{
 
 
-import Box2D.Common.Math.*
+import Box2D.Common.Math.*;
 
 
 public class b2Jacobian

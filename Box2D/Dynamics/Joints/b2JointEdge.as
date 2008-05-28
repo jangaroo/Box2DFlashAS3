@@ -16,31 +16,27 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics{
-	
-	
-	
-import Box2D.Dynamics.Joints.*
-import Box2D.Collision.Shapes.*
+package Box2D.Dynamics.Joints{
 
 
+import Box2D.Common.Math.*;
+import Box2D.Dynamics.*;
 
-public class b2CollisionFilter
+
+/// A joint edge is used to connect bodies and joints together
+/// in a joint graph where each body is a node and each joint
+/// is an edge. A joint edge belongs to a doubly linked list
+/// maintained in each attached body. Each joint has two joint
+/// nodes, one for each attached body.
+
+public class b2JointEdge
 {
-
-	// Return true if contact calculations should be performed between these two shapes.
-	public virtual function ShouldCollide(shape1:b2Shape, shape2:b2Shape):Boolean{
-		if (shape1.m_groupIndex == shape2.m_groupIndex && shape1.m_groupIndex != 0)
-		{
-			return shape1.m_groupIndex > 0;
-		}
-		
-		var collide:Boolean = (shape1.m_maskBits & shape2.m_categoryBits) != 0 && (shape1.m_categoryBits & shape2.m_maskBits) != 0;
-		return collide;
-	}
 	
-	static public var b2_defaultFilter:b2CollisionFilter = new b2CollisionFilter;
+	public var other:b2Body;		///< provides quick access to the other body attached.
+	public var joint:b2Joint;		///< the joint
+	public var prev:b2JointEdge;	///< the previous joint edge in the body's joint list
+	public var next:b2JointEdge;	///< the next joint edge in the body's joint list
 	
-};
+}
 
 }

@@ -16,24 +16,26 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision.Shapes{
-
-
-
+package Box2D.Collision{
+	
+import Box2D.Collision.*;
 import Box2D.Common.Math.*;
-import Box2D.Collision.Shapes.*;
 
-
-
-public class b2BoxDef extends b2ShapeDef
+// This is used for polygon-vs-circle distance.
+public class b2Point
 {
-	public function b2BoxDef()
+	public function Support(xf:b2XForm, vX:Number, vY:Number) : b2Vec2
 	{
-		type = b2Shape.e_boxShape;
-		extents = new b2Vec2(1.0, 1.0);
+		return p;
 	}
 
-	public var extents:b2Vec2;
+	public function GetFirstVertex(xf:b2XForm) : b2Vec2
+	{
+		return p;
+	}
+	
+	public var p:b2Vec2 = new b2Vec2();
 };
+
 
 }
