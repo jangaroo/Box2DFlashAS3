@@ -91,9 +91,9 @@ public class b2DistanceJoint extends b2Joint
 		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
 		r2X = tX;
 		
-		//m_u = b2->m_sweep.c + r2 - b1->m_sweep.c
-		m_u.x = b2.m_sweep.c.x + r2X - b1.m_sweep.c.x;
-		m_u.y = b2.m_sweep.c.y + r2Y - b1.m_sweep.c.y;
+		//m_u = b2->m_sweep.c + r2 - b1->m_sweep.c - r1;
+		m_u.x = b2.m_sweep.c.x + r2X - b1.m_sweep.c.x - r1X;
+		m_u.y = b2.m_sweep.c.y + r2Y - b1.m_sweep.c.y - r1Y;
 		
 		// Handle singularity.
 		//float32 length = m_u.Length();
