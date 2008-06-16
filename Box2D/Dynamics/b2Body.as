@@ -76,16 +76,22 @@ public class b2Body
 		//b2Settings.b2Assert(m_shapeCount > 0);
 		//b2Shape** node = &m_shapeList;
 		var node:b2Shape = m_shapeList;
+		var ppS:b2Shape = null; // Fix pointer-pointer stuff
 		var found:Boolean = false;
 		while (node != null)
 		{
 			if (node == s)
 			{
-				node = s.m_next;
+				if (ppS)
+					ppS.m_next = s.m_next;
+				else
+					m_shapeList = s.m_next;
+				//node = s.m_next;
 				found = true;
 				break;
 			}
 			
+			ppS = node;
 			node = node.m_next;
 		}
 		
