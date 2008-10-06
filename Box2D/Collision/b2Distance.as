@@ -290,7 +290,7 @@ static public function DistanceGeneric(x1:b2Vec2, x2:b2Vec2,
 		//float32 vw = b2Dot(v, w);
 		var vw:Number = (vX*wX + vY*wY);
 		//if (vSqr - b2Dot(v, w) <= 0.01f * vSqr) // or w in points
-		if (vSqr - (vX * wX + vY * wY) <= 0.01 * vSqr) // or w in points
+		if (vSqr - vw <= 0.01 * vSqr) // or w in points
 		{
 			if (pointCount == 0)
 			{
@@ -413,7 +413,7 @@ static public function DistanceCC(
 	if (dSqr > r * r)
 	{
 		//var dLen:Number = d.Normalize();
-		var dLen:Number = Math.sqrt(dX*dX + dY*dY);
+		var dLen:Number = Math.sqrt(dSqr);
 		dX /= dLen;
 		dY /= dLen;
 		var distance:Number = dLen - r;
@@ -428,7 +428,7 @@ static public function DistanceCC(
 	else if (dSqr > Number.MIN_VALUE * Number.MIN_VALUE)
 	{
 		//d.Normalize();
-		dLen = Math.sqrt(dX*dX + dY*dY);
+		dLen = Math.sqrt(dSqr);
 		dX /= dLen;
 		dY /= dLen;
 		//*x1 = p1 + r1 * d;

@@ -156,7 +156,7 @@ public class b2ContactManager extends b2PairCallback
 			var manifolds:Array  = c.GetManifolds();
 			var cp:b2ContactPoint = s_evalCP;
 			cp.shape1 = c.m_shape1;
-			cp.shape2 = c.m_shape1;
+			cp.shape2 = c.m_shape2;
 			cp.friction = c.m_friction;
 			cp.restitution = c.m_restitution;
 			

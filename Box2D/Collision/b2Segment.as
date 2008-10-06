@@ -73,7 +73,7 @@ public class b2Segment
 			
 			if (0.0 <= a && a <= maxLambda * denom)
 			{
-				var mu2:Number = -rY * bY + rY * bX;
+				var mu2:Number = -rX * bY + rY * bX;
 				
 				// Does the segment intersect this segment?
 				if (-k_slop * denom <= mu2 && mu2 <= denom * (1.0 + k_slop))

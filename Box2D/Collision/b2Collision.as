@@ -683,7 +683,7 @@ public class b2Collision{
 			pX = eX * u + tVec.x;
 			pY = eY * u + tVec.y;
 			tPoint.id.features.incidentEdge = normalIndex;
-			tPoint.id.features.incidentVertex = 0;
+			tPoint.id.features.incidentVertex = b2_nullFeature;
 		}
 		
 		//d = b2Math.SubtractVV(xLocal , p);
