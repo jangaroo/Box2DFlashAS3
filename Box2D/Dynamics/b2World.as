@@ -371,7 +371,7 @@ public class b2World
 		return m_bodyCount;
 	}
 	
-	/// Get the number joints.
+	/// Get the number of joints.
 	public function GetJointCount() : int
 	{
 		return m_jointCount;

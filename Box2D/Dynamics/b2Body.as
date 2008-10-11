@@ -503,8 +503,8 @@ public class b2Body
 	public function GetLinearVelocityFromWorldPoint(worldPoint:b2Vec2) : b2Vec2
 	{
 		//return          m_linearVelocity   + b2Cross(m_angularVelocity,   worldPoint   - m_sweep.c);
-		return new b2Vec2(m_linearVelocity.x +         m_angularVelocity * (worldPoint.y - m_sweep.c.y), 
-		                  m_linearVelocity.x -         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
+		return new b2Vec2(	m_linearVelocity.x -         m_angularVelocity * (worldPoint.y - m_sweep.c.y), 
+							m_linearVelocity.y +         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
 	}
 	
 	/// Get the world velocity of a local point.

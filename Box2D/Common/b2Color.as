@@ -55,7 +55,7 @@ public class b2Color
 	
 	// Color
 	public function get color() : uint{
-		return (_r) | (_g << 8) | (_b << 16);
+		return (_r << 16) | (_g << 8) | (_b);
 	}
 	
 	private var _r:uint = 0;

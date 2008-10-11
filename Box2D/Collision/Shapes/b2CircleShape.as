@@ -53,7 +53,7 @@ public class b2CircleShape extends b2Shape
 		//b2Vec2 position = transform.position + b2Mul(transform.R, m_localPosition);
 		var tMat:b2Mat22 = transform.R;
 		var positionX:Number = transform.position.x + (tMat.col1.x * m_localPosition.x + tMat.col2.x * m_localPosition.y);
-		var positionY:Number = transform.position.x + (tMat.col1.y * m_localPosition.x + tMat.col2.y * m_localPosition.y);
+		var positionY:Number = transform.position.y + (tMat.col1.y * m_localPosition.x + tMat.col2.y * m_localPosition.y);
 		
 		//b2Vec2 s = segment.p1 - position;
 		var sX:Number = segment.p1.x - positionX;
