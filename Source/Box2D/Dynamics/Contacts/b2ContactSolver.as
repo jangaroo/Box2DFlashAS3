@@ -130,20 +130,18 @@ public class b2ContactSolver
 					r2X = tX;
 					ccp.r2.Set(r2X,r2Y);
 					
-					var r1Sqr:Number = r1X * r1X + r1Y * r1Y;//b2Math.b2Dot(r1, r1);
-					var r2Sqr:Number = r2X * r2X + r2Y * r2Y;//b2Math.b2Dot(r2, r2);
+					var rn1:Number = r1X * normalY - r1Y * normalX;//b2Math.b2Cross(r1, normal);
+					var rn2:Number = r2X * normalY - r2Y * normalX;//b2Math.b2Cross(r2, normal);
 					
-					//var rn1:Number = b2Math.b2Dot(r1, normal);
-					var rn1:Number = r1X*normalX + r1Y*normalY;
-					//var rn2:Number = b2Math.b2Dot(r2, normal);
-					var rn2:Number = r2X*normalX + r2Y*normalY;
-					var kNormal:Number = b1.m_invMass + b2.m_invMass;
-					kNormal += b1.m_invI * (r1Sqr - rn1 * rn1) + b2.m_invI * (r2Sqr - rn2 * rn2);
+					rn1 *= rn1;
+					rn2 *= rn2;
+					
+					var kNormal:Number = b1.m_invMass + b2.m_invMass + b1.m_invI * rn1 + b2.m_invI * rn2;
 					//b2Settings.b2Assert(kNormal > Number.MIN_VALUE);
 					ccp.normalMass = 1.0 / kNormal;
 					
 					var kEqualized:Number = b1.m_mass * b1.m_invMass + b2.m_mass * b2.m_invMass;
-					kEqualized += b1.m_mass * b1.m_invI * (r1Sqr - rn1 * rn1) + b2.m_mass * b2.m_invI * (r2Sqr - rn2 * rn2);
+					kEqualized += b1.m_mass * b1.m_invI * rn1 + b2.m_mass * b2.m_invI * rn2;
 					//b2Assert(kEqualized > Number.MIN_VALUE);
 					ccp.equalizedMass = 1.0 / kEqualized;
 					
@@ -151,12 +149,11 @@ public class b2ContactSolver
 					var tangentX:Number = normalY
 					var tangentY:Number = -normalX;
 					
-					//var rt1:Number = b2Math.b2Dot(r1, tangent);
-					var rt1:Number = r1X*tangentX + r1Y*tangentY;
-					//var rt2:Number = b2Math.b2Dot(r2, tangent);
-					var rt2:Number = r2X*tangentX + r2Y*tangentY;
-					var kTangent:Number = b1.m_invMass + b2.m_invMass;
-					kTangent += b1.m_invI * (r1Sqr - rt1 * rt1) + b2.m_invI * (r2Sqr - rt2 * rt2);
+					//var rt1:Number = b2Math.b2Cross(r1, tangent);
+					var rt1:Number = r1X*tangentY - r1Y*tangentX;
+					//var rt2:Number = b2Math.b2Cross(r2, tangent);
+					var rt2:Number = r2X*tangentY - r2Y*tangentX;
+					var kTangent:Number = b1.m_invMass + b2.m_invMass + b1.m_invI * rt1 + b2.m_invI * rt2;
 					//b2Settings.b2Assert(kTangent > Number.MIN_VALUE);
 					ccp.tangentMass = 1.0 /  kTangent;
 					

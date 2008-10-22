@@ -188,6 +188,12 @@ package TestBed{
 			
 			var djd:b2DistanceJointDef = new b2DistanceJointDef();
 			
+			// Using a soft distance constraint can reduce some jitter.
+			// It also makes the structure seem a bit more fluid by
+			// acting like a suspension system.
+			djd.dampingRatio = 0.5;
+			djd.frequencyHz = 10.0;
+			
 			djd.Initialize(body1, body2, b2Math.AddVV(p2, m_offset), b2Math.AddVV(p5, m_offset));
 			m_world.CreateJoint(djd);
 			

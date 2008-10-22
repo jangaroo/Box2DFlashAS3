@@ -388,7 +388,12 @@ public class b2World
 	{
 		m_gravity = gravity;
 	}
-	
+
+	/// Get the global gravity vector.
+	public function GetGravity():b2Vec2{
+		return m_gravity;
+	}
+
 	/// The world provides a single static ground body with no collision shapes.
 	/// You can use this to simplify the creation of joints and static shapes.
 	public function GetGroundBody() : b2Body{
@@ -464,6 +469,11 @@ public class b2World
 		//m_stackAllocator.Free(results);
 		return count;
 		
+	}
+
+	/// Check if the AABB is within the broadphase limits.
+	public function InRange(aabb:b2AABB):Boolean{
+		 return m_broadPhase.InRange(aabb);
 	}
 
 	/// Get the world body list. With the returned body, use b2Body::GetNext to get
