@@ -153,6 +153,10 @@ public class b2ContactSolver
 					var rt1:Number = r1X*tangentY - r1Y*tangentX;
 					//var rt2:Number = b2Math.b2Cross(r2, tangent);
 					var rt2:Number = r2X*tangentY - r2Y*tangentX;
+					
+					rt1 *= rt1;
+					rt2 *= rt2;
+					
 					var kTangent:Number = b1.m_invMass + b2.m_invMass + b1.m_invI * rt1 + b2.m_invI * rt2;
 					//b2Settings.b2Assert(kTangent > Number.MIN_VALUE);
 					ccp.tangentMass = 1.0 /  kTangent;
