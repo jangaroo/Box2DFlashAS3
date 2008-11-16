@@ -26,6 +26,9 @@ import Box2D.Dynamics.Joints.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// Joints and shapes are destroyed when their associated
 /// body is destroyed. Implement this listener so that you

@@ -23,6 +23,9 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// The base joint class. Joints are used to constraint two bodies together in
 /// various fashions. Some joints also feature limits and motors.
@@ -180,20 +183,20 @@ public class b2Joint
 	public virtual function InitPositionConstraints() : void{};
 	public virtual function SolvePositionConstraints():Boolean{return false};
 
-	public var m_type:int;
-	public var m_prev:b2Joint;
-	public var m_next:b2Joint;
-	public var m_node1:b2JointEdge = new b2JointEdge();
-	public var m_node2:b2JointEdge = new b2JointEdge();
-	public var m_body1:b2Body;
-	public var m_body2:b2Body;
+	b2internal var m_type:int;
+	b2internal var m_prev:b2Joint;
+	b2internal var m_next:b2Joint;
+	b2internal var m_node1:b2JointEdge = new b2JointEdge();
+	b2internal var m_node2:b2JointEdge = new b2JointEdge();
+	b2internal var m_body1:b2Body;
+	b2internal var m_body2:b2Body;
 
-	public var m_inv_dt:Number;
+	b2internal var m_inv_dt:Number;
 
-	public var m_islandFlag:Boolean;
-	public var m_collideConnected:Boolean;
+	b2internal var m_islandFlag:Boolean;
+	b2internal var m_collideConnected:Boolean;
 
-	public var m_userData:*;
+	private var m_userData:*;
 	
 	
 	// ENUMS

@@ -24,6 +24,9 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 	
 /// The pulley joint is connected to two bodies and two fixed ground points.
 /// The pulley supports a ratio such that:
@@ -613,39 +616,39 @@ public class b2PulleyJoint extends b2Joint
 	
 	
 
-	public var m_ground:b2Body;
-	public var m_groundAnchor1:b2Vec2 = new b2Vec2();
-	public var m_groundAnchor2:b2Vec2 = new b2Vec2();
-	public var m_localAnchor1:b2Vec2 = new b2Vec2();
-	public var m_localAnchor2:b2Vec2 = new b2Vec2();
+	private var m_ground:b2Body;
+	private var m_groundAnchor1:b2Vec2 = new b2Vec2();
+	private var m_groundAnchor2:b2Vec2 = new b2Vec2();
+	private var m_localAnchor1:b2Vec2 = new b2Vec2();
+	private var m_localAnchor2:b2Vec2 = new b2Vec2();
 
-	public var m_u1:b2Vec2 = new b2Vec2();
-	public var m_u2:b2Vec2 = new b2Vec2();
+	private var m_u1:b2Vec2 = new b2Vec2();
+	private var m_u2:b2Vec2 = new b2Vec2();
 	
-	public var m_constant:Number;
-	public var m_ratio:Number;
+	private var m_constant:Number;
+	private var m_ratio:Number;
 	
-	public var m_maxLength1:Number;
-	public var m_maxLength2:Number;
+	private var m_maxLength1:Number;
+	private var m_maxLength2:Number;
 
 	// Effective masses
-	public var m_pulleyMass:Number;
-	public var m_limitMass1:Number;
-	public var m_limitMass2:Number;
+	private var m_pulleyMass:Number;
+	private var m_limitMass1:Number;
+	private var m_limitMass2:Number;
 
 	// Impulses for accumulation/warm starting.
-	public var m_force:Number;
-	public var m_limitForce1:Number;
-	public var m_limitForce2:Number;
+	private var m_force:Number;
+	private var m_limitForce1:Number;
+	private var m_limitForce2:Number;
 
 	// Position impulses for accumulation.
-	public var m_positionImpulse:Number;
-	public var m_limitPositionImpulse1:Number;
-	public var m_limitPositionImpulse2:Number;
+	private var m_positionImpulse:Number;
+	private var m_limitPositionImpulse1:Number;
+	private var m_limitPositionImpulse2:Number;
 
-	public var m_state:int;
-	public var m_limitState1:int;
-	public var m_limitState2:int;
+	private var m_state:int;
+	private var m_limitState1:int;
+	private var m_limitState2:int;
 	
 	// static
 	static public const b2_minPulleyLength:Number = 2.0;

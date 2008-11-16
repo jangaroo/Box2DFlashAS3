@@ -21,6 +21,9 @@ package Box2D.Dynamics.Joints{
 	
 import Box2D.Common.Math.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// Mouse joint definition. This requires a world target point,
 /// tuning parameters, and the time step.

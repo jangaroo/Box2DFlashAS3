@@ -25,6 +25,9 @@ import Box2D.Dynamics.*;
 import Box2D.Common.*;
 import Box2D.Common.Math.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 public class b2PolygonContact extends b2Contact
 {
@@ -175,7 +178,7 @@ public class b2PolygonContact extends b2Contact
 	}
 
 	private var m_manifolds:Array = [new b2Manifold()];
-	public var m_manifold:b2Manifold;
+	private var m_manifold:b2Manifold;
 };
 
 }

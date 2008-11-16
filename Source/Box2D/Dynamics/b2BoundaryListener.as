@@ -26,6 +26,9 @@ import Box2D.Dynamics.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// This is called when a body's shape passes outside of the world boundary.
 public class b2BoundaryListener

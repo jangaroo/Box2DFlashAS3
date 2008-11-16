@@ -22,6 +22,9 @@ import Box2D.Collision.*;
 import Box2D.Collision.Shapes.*;
 import Box2D.Common.Math.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 /// This structure is used to report contact point results.
 public class  b2ContactResult
 {

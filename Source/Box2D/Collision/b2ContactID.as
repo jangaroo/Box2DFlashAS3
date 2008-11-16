@@ -19,6 +19,8 @@
 package Box2D.Collision{
 	
 import Box2D.Collision.Features;
+import Box2D.Common.b2internal;
+use namespace b2internal;
 
 // We use contact ids to facilitate warm starting.
 public class b2ContactID

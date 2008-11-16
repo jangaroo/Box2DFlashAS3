@@ -25,6 +25,9 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Dynamics.Contacts.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 public class b2ContactSolver
 {
@@ -475,10 +478,10 @@ public class b2ContactSolver
 		return minSeparation >= -1.5 * b2Settings.b2_linearSlop;
 	}
 
-	public var m_step:b2TimeStep = new b2TimeStep();
-	public var m_allocator:*;
-	public var m_constraints:Array = new Array();
-	public var m_constraintCount:int;
+	private var m_step:b2TimeStep = new b2TimeStep();
+	private var m_allocator:*;
+	b2internal var m_constraints:Array = new Array();
+	private var m_constraintCount:int;
 };
 
 }

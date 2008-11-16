@@ -26,6 +26,9 @@ import Box2D.Dynamics.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// Implement this class to get collision results. You can use these results for
 /// things like sounds and game logic. You can also get contact results by

@@ -23,6 +23,9 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// A revolute joint constrains to bodies to share a common point while they
 /// are free to rotate about the point. The relative rotation about the shared
@@ -511,24 +514,24 @@ public class b2RevoluteJoint extends b2Joint
 		return positionError <= b2Settings.b2_linearSlop && angularError <= b2Settings.b2_angularSlop;
 	}
 
-	public var m_localAnchor1:b2Vec2 = new b2Vec2(); // relative
-	public var m_localAnchor2:b2Vec2 = new b2Vec2();
-	public var m_pivotForce:b2Vec2 = new b2Vec2();
-	public var m_motorForce:Number;
-	public var m_limitForce:Number;
-	public var m_limitPositionImpulse:Number;
+	b2internal var m_localAnchor1:b2Vec2 = new b2Vec2(); // relative
+	b2internal var m_localAnchor2:b2Vec2 = new b2Vec2();
+	private var m_pivotForce:b2Vec2 = new b2Vec2();
+	private var m_motorForce:Number;
+	private var m_limitForce:Number;
+	private var m_limitPositionImpulse:Number;
 
-	public var m_pivotMass:b2Mat22 = new b2Mat22();		// effective mass for point-to-point constraint.
-	public var m_motorMass:Number;	// effective mass for motor/limit angular constraint.
-	public var m_enableMotor:Boolean;
-	public var m_maxMotorTorque:Number;
-	public var m_motorSpeed:Number;
+	private var m_pivotMass:b2Mat22 = new b2Mat22();		// effective mass for point-to-point constraint.
+	private var m_motorMass:Number;	// effective mass for motor/limit angular constraint.
+	private var m_enableMotor:Boolean;
+	private var m_maxMotorTorque:Number;
+	private var m_motorSpeed:Number;
 
-	public var m_enableLimit:Boolean;
-	public var m_referenceAngle:Number;
-	public var m_lowerAngle:Number;
-	public var m_upperAngle:Number;
-	public var m_limitState:int;
+	private var m_enableLimit:Boolean;
+	private var m_referenceAngle:Number;
+	private var m_lowerAngle:Number;
+	private var m_upperAngle:Number;
+	private var m_limitState:int;
 };
 
 }

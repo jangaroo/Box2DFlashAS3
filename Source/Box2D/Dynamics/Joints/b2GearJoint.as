@@ -24,6 +24,9 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 
 
@@ -297,33 +300,33 @@ public class b2GearJoint extends b2Joint
 		return linearError < b2Settings.b2_linearSlop;
 	}
 
-	public var m_ground1:b2Body;
-	public var m_ground2:b2Body;
+	private var m_ground1:b2Body;
+	private var m_ground2:b2Body;
 
 	// One of these is NULL.
-	public var m_revolute1:b2RevoluteJoint;
-	public var m_prismatic1:b2PrismaticJoint;
+	private var m_revolute1:b2RevoluteJoint;
+	private var m_prismatic1:b2PrismaticJoint;
 
 	// One of these is NULL.
-	public var m_revolute2:b2RevoluteJoint;
-	public var m_prismatic2:b2PrismaticJoint;
+	private var m_revolute2:b2RevoluteJoint;
+	private var m_prismatic2:b2PrismaticJoint;
 
-	public var m_groundAnchor1:b2Vec2 = new b2Vec2();
-	public var m_groundAnchor2:b2Vec2 = new b2Vec2();
+	private var m_groundAnchor1:b2Vec2 = new b2Vec2();
+	private var m_groundAnchor2:b2Vec2 = new b2Vec2();
 
-	public var m_localAnchor1:b2Vec2 = new b2Vec2();
-	public var m_localAnchor2:b2Vec2 = new b2Vec2();
+	private var m_localAnchor1:b2Vec2 = new b2Vec2();
+	private var m_localAnchor2:b2Vec2 = new b2Vec2();
 
-	public var m_J:b2Jacobian = new b2Jacobian();
+	private var m_J:b2Jacobian = new b2Jacobian();
 
-	public var m_constant:Number;
-	public var m_ratio:Number;
+	private var m_constant:Number;
+	private var m_ratio:Number;
 
 	// Effective mass
-	public var m_mass:Number;
+	private var m_mass:Number;
 
 	// Impulse for accumulation/warm starting.
-	public var m_force:Number;
+	private var m_force:Number;
 };
 
 

@@ -25,6 +25,9 @@ import Box2D.Dynamics.Contacts.*;
 import Box2D.Dynamics.Joints.*;
 import Box2D.Collision.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /*
 Position Correction Notes
@@ -455,22 +458,22 @@ public class b2Island
 		m_joints[m_jointCount++] = joint;
 	}
 
-	public var m_allocator:*;
-	public var m_listener:b2ContactListener;
+	private var m_allocator:*;
+	private var m_listener:b2ContactListener;
 
-	public var m_bodies:Array;
-	public var m_contacts:Array;
-	public var m_joints:Array;
+	b2internal var m_bodies:Array;
+	b2internal var m_contacts:Array;
+	private var m_joints:Array;
 
-	public var m_bodyCount:int;
-	public var m_jointCount:int;
-	public var m_contactCount:int;
+	b2internal var m_bodyCount:int;
+	private var m_jointCount:int;
+	b2internal var m_contactCount:int;
 
-	public var m_bodyCapacity:int;
-	public var m_contactCapacity:int;
-	public var m_jointCapacity:int;
+	private var m_bodyCapacity:int;
+	b2internal var m_contactCapacity:int;
+	private var m_jointCapacity:int;
 
-	public var m_positionIterationCount:int;
+	b2internal var m_positionIterationCount:int;
 	
 };
 

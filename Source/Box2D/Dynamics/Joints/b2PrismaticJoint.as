@@ -23,6 +23,9 @@ import Box2D.Common.*;
 import Box2D.Common.Math.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 // Linear constraint (point-to-line)
 // d = p2 - p1 = x2 + r2 - x1 - r1
@@ -669,33 +672,33 @@ public class b2PrismaticJoint extends b2Joint
 		
 	}
 
-	public var m_localAnchor1:b2Vec2 = new b2Vec2();
-	public var m_localAnchor2:b2Vec2 = new b2Vec2();
-	public var m_localXAxis1:b2Vec2 = new b2Vec2();
-	public var m_localYAxis1:b2Vec2 = new b2Vec2();
-	public var m_refAngle:Number;
+	b2internal var m_localAnchor1:b2Vec2 = new b2Vec2();
+	b2internal var m_localAnchor2:b2Vec2 = new b2Vec2();
+	b2internal var m_localXAxis1:b2Vec2 = new b2Vec2();
+	private var m_localYAxis1:b2Vec2 = new b2Vec2();
+	private var m_refAngle:Number;
 
-	public var m_linearJacobian:b2Jacobian = new b2Jacobian();
-	public var m_linearMass:Number;				// effective mass for point-to-line constraint.
-	public var m_force:Number;
+	private var m_linearJacobian:b2Jacobian = new b2Jacobian();
+	private var m_linearMass:Number;				// effective mass for point-to-line constraint.
+	private var m_force:Number;
 	
-	public var m_angularMass:Number;			// effective mass for angular constraint.
-	public var m_torque:Number;
+	private var m_angularMass:Number;			// effective mass for angular constraint.
+	private var m_torque:Number;
 
-	public var m_motorJacobian:b2Jacobian = new b2Jacobian();
-	public var m_motorMass:Number;			// effective mass for motor/limit translational constraint.
-	public var m_motorForce:Number;
-	public var m_limitForce:Number;
-	public var m_limitPositionImpulse:Number;
+	private var m_motorJacobian:b2Jacobian = new b2Jacobian();
+	private var m_motorMass:Number;			// effective mass for motor/limit translational constraint.
+	private var m_motorForce:Number;
+	private var m_limitForce:Number;
+	private var m_limitPositionImpulse:Number;
 
-	public var m_lowerTranslation:Number;
-	public var m_upperTranslation:Number;
-	public var m_maxMotorForce:Number;
-	public var m_motorSpeed:Number;
+	private var m_lowerTranslation:Number;
+	private var m_upperTranslation:Number;
+	private var m_maxMotorForce:Number;
+	private var m_motorSpeed:Number;
 	
-	public var m_enableLimit:Boolean;
-	public var m_enableMotor:Boolean;
-	public var m_limitState:int;
+	private var m_enableLimit:Boolean;
+	private var m_enableMotor:Boolean;
+	private var m_limitState:int;
 };
 
 }

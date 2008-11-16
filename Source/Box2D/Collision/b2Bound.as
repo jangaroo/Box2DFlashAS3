@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision{
+package Box2D.Collision {
 	
 	
 public class b2Bound{

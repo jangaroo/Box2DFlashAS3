@@ -58,11 +58,11 @@ package TestBed{
 			var dbgDraw:b2DebugDraw = new b2DebugDraw();
 			//var dbgSprite:Sprite = new Sprite();
 			//m_sprite.addChild(dbgSprite);
-			dbgDraw.m_sprite = m_sprite;
-			dbgDraw.m_drawScale = 30.0;
-			dbgDraw.m_fillAlpha = 0.3;
-			dbgDraw.m_lineThickness = 1.0;
-			dbgDraw.m_drawFlags = b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit;
+			dbgDraw.SetSprite(m_sprite);
+			dbgDraw.SetDrawScale(30.0);
+			dbgDraw.SetFillAlpha(0.3);
+			dbgDraw.SetLineThickness(1.0);
+			dbgDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 			m_world.SetDebugDraw(dbgDraw);
 			
 			

@@ -27,6 +27,9 @@ import Box2D.Common.*;
 import Box2D.Common.Math.*;
 import Box2D.Collision.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 public class b2PairManager
 {
@@ -365,16 +368,16 @@ public class b2PairManager
 	}
 
 //public:
-	public var m_broadPhase:b2BroadPhase;
-	public var m_callback:b2PairCallback;
-	public var m_pairs:Array;
-	public var m_freePair:uint;
-	public var m_pairCount:int;
+	private var m_broadPhase:b2BroadPhase;
+	private var m_callback:b2PairCallback;
+	b2internal var m_pairs:Array;
+	private var m_freePair:uint;
+	b2internal var m_pairCount:int;
 	
-	public var m_pairBuffer:Array;
-	public var m_pairBufferCount:int;
+	private var m_pairBuffer:Array;
+	private var m_pairBufferCount:int;
 
-	public var m_hashTable:Array;
+	b2internal var m_hashTable:Array;
 	
 	
 // static

@@ -26,6 +26,9 @@ import Box2D.Common.*;
 import Box2D.Dynamics.*;
 import Box2D.Collision.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 
 /// A shape is used for collision detection. Shapes are created in b2World.
@@ -291,23 +294,23 @@ public class b2Shape
 
 	public virtual function UpdateSweepRadius(center:b2Vec2) : void{};
 
-	public var m_type:int;
-	public var m_next:b2Shape;
-	public var m_body:b2Body;
+	b2internal var m_type:int;
+	b2internal var m_next:b2Shape;
+	b2internal var m_body:b2Body;
 
 	// Sweep radius relative to the parent body's center of mass.
-	public var m_sweepRadius:Number;
+	b2internal var m_sweepRadius:Number;
 
-	public var m_density:Number;
-	public var m_friction:Number;
-	public var m_restitution:Number;
+	b2internal var m_density:Number;
+	b2internal var m_friction:Number;
+	b2internal var m_restitution:Number;
 
-	public var m_proxyId:uint;
-	public var m_filter:b2FilterData;
+	private var m_proxyId:uint;
+	private var m_filter:b2FilterData;
 
-	public var m_isSensor:Boolean;
+	private var m_isSensor:Boolean;
 
-	public var m_userData:*;
+	private var m_userData:*;
 
 	
 	

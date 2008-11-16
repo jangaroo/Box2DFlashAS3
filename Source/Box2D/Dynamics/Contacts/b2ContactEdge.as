@@ -21,6 +21,9 @@ package Box2D.Dynamics.Contacts{
 	
 import Box2D.Dynamics.b2Body;
 import Box2D.Dynamics.Contacts.*;
+
+import Box2D.Common.b2internal;
+use namespace b2internal;
 	
 /// A contact edge is used to connect bodies and contacts together
 /// in a contact graph where each body is a node and each contact

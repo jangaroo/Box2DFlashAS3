@@ -22,6 +22,8 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Collision.*;
 import Box2D.Collision.Shapes.*;
+import Box2D.Common.b2internal;
+use namespace b2internal;
 
 
 public class b2Collision{

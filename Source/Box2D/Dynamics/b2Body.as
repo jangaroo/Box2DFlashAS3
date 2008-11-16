@@ -26,6 +26,9 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 
 /// A rigid body.
@@ -799,38 +802,38 @@ public class b2Body
 		SynchronizeTransform();
 	}
 
-	public var m_flags:uint;
-	public var m_type:int;
+	b2internal var m_flags:uint;
+	private var m_type:int;
 
-	public var m_xf:b2XForm = new b2XForm();		// the body origin transform
+	b2internal var m_xf:b2XForm = new b2XForm();		// the body origin transform
 
-	public var m_sweep:b2Sweep = new b2Sweep();	// the swept motion for CCD
+	b2internal var m_sweep:b2Sweep = new b2Sweep();	// the swept motion for CCD
 
-	public var m_linearVelocity:b2Vec2 = new b2Vec2();
-	public var m_angularVelocity:Number;
+	b2internal var m_linearVelocity:b2Vec2 = new b2Vec2();
+	b2internal var m_angularVelocity:Number;
 
-	public var m_force:b2Vec2 = new b2Vec2();
-	public var m_torque:Number;
+	b2internal var m_force:b2Vec2 = new b2Vec2();
+	b2internal var m_torque:Number;
 
-	public var m_world:b2World;
-	public var m_prev:b2Body;
-	public var m_next:b2Body;
+	b2internal var m_world:b2World;
+	b2internal var m_prev:b2Body;
+	b2internal var m_next:b2Body;
 
-	public var m_shapeList:b2Shape;
-	public var m_shapeCount:int;
+	b2internal var m_shapeList:b2Shape;
+	b2internal var m_shapeCount:int;
 
-	public var m_jointList:b2JointEdge;
-	public var m_contactList:b2ContactEdge;
+	b2internal var m_jointList:b2JointEdge;
+	b2internal var m_contactList:b2ContactEdge;
 
-	public var m_mass:Number, m_invMass:Number;
-	public var m_I:Number, m_invI:Number;
+	b2internal var m_mass:Number, m_invMass:Number;
+	b2internal var m_I:Number, m_invI:Number;
 
-	public var m_linearDamping:Number;
-	public var m_angularDamping:Number;
+	b2internal var m_linearDamping:Number;
+	b2internal var m_angularDamping:Number;
 
-	public var m_sleepTime:Number;
+	b2internal var m_sleepTime:Number;
 
-	public var m_userData:*;
+	private var m_userData:*;
 	
 	
 	// m_flags

@@ -26,6 +26,9 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 import Box2D.Collision.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 /// Convex polygon. The vertices must be in CCW order for a right-handed
 /// coordinate system with the z-axis coming out of the screen.
 
@@ -540,15 +543,15 @@ public class b2PolygonShape extends b2Shape
 	}
 
 	// Local position of the polygon centroid.
-	public var m_centroid:b2Vec2;
+	b2internal var m_centroid:b2Vec2;
 
-	public var m_obb:b2OBB = new b2OBB();
+	private var m_obb:b2OBB = new b2OBB();
 
-	public var m_vertices:Array = new Array(b2Settings.b2_maxPolygonVertices);
-	public var m_normals:Array = new Array(b2Settings.b2_maxPolygonVertices);
-	public var m_coreVertices:Array = new Array(b2Settings.b2_maxPolygonVertices);
+	b2internal var m_vertices:Array = new Array(b2Settings.b2_maxPolygonVertices);
+	b2internal var m_normals:Array = new Array(b2Settings.b2_maxPolygonVertices);
+	private var m_coreVertices:Array = new Array(b2Settings.b2_maxPolygonVertices);
 
-	public var m_vertexCount:int;
+	b2internal var m_vertexCount:int;
 	
 	
 	

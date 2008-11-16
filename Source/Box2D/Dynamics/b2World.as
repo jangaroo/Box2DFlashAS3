@@ -26,6 +26,9 @@ import Box2D.Dynamics.*;
 import Box2D.Dynamics.Contacts.*;
 import Box2D.Dynamics.Joints.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 public class b2World
 {
@@ -1235,47 +1238,47 @@ public class b2World
 		}
 	}
 
-	public var m_blockAllocator:*;
-	public var m_stackAllocator:*;
+	b2internal var m_blockAllocator:*;
+	b2internal var m_stackAllocator:*;
 
-	public var m_lock:Boolean;
+	b2internal var m_lock:Boolean;
 
-	public var m_broadPhase:b2BroadPhase;
-	public var m_contactManager:b2ContactManager = new b2ContactManager();
+	b2internal var m_broadPhase:b2BroadPhase;
+	private var m_contactManager:b2ContactManager = new b2ContactManager();
 
-	public var m_bodyList:b2Body;
-	public var m_jointList:b2Joint;
+	b2internal var m_bodyList:b2Body;
+	private var m_jointList:b2Joint;
 
 	// Do not access
-	public var m_contactList:b2Contact;
+	b2internal var m_contactList:b2Contact;
 
-	public var m_bodyCount:int;
-	public var m_contactCount:int;
-	public var m_jointCount:int;
+	private var m_bodyCount:int;
+	b2internal var m_contactCount:int;
+	private var m_jointCount:int;
 
-	public var m_gravity:b2Vec2;
-	public var m_allowSleep:Boolean;
+	private var m_gravity:b2Vec2;
+	private var m_allowSleep:Boolean;
 
-	public var m_groundBody:b2Body;
+	b2internal var m_groundBody:b2Body;
 
-	public var m_destructionListener:b2DestructionListener;
-	public var m_boundaryListener:b2BoundaryListener;
-	public var m_contactFilter:b2ContactFilter;
-	public var m_contactListener:b2ContactListener;
-	public var m_debugDraw:b2DebugDraw;
+	private var m_destructionListener:b2DestructionListener;
+	private var m_boundaryListener:b2BoundaryListener;
+	b2internal var m_contactFilter:b2ContactFilter;
+	b2internal var m_contactListener:b2ContactListener;
+	private var m_debugDraw:b2DebugDraw;
 
-	public var m_inv_dt0:Number;
+	private var m_inv_dt0:Number;
 
-	public var m_positionIterationCount:int;
-
-	// This is for debugging the solver.
-	static public var m_positionCorrection:Boolean;
+	private var m_positionIterationCount:int;
 
 	// This is for debugging the solver.
-	static public var m_warmStarting:Boolean;
+	static private var m_positionCorrection:Boolean;
 
 	// This is for debugging the solver.
-	static public var m_continuousPhysics:Boolean;
+	static private var m_warmStarting:Boolean;
+
+	// This is for debugging the solver.
+	static private var m_continuousPhysics:Boolean;
 	
 };
 

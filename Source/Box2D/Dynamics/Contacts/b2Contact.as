@@ -26,6 +26,9 @@ import Box2D.Collision.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 //typedef b2Contact* b2ContactCreateFcn(b2Shape* shape1, b2Shape* shape2, b2BlockAllocator* allocator);
 //typedef void b2ContactDestroyFcn(b2Contact* contact, b2BlockAllocator* allocator);
@@ -232,26 +235,26 @@ public class b2Contact
 	static public var s_registers:Array; //[][]
 	static public var s_initialized:Boolean = false;
 
-	public var m_flags:uint;
+	b2internal var m_flags:uint;
 
 	// World pool and list pointers.
-	public var m_prev:b2Contact;
-	public var m_next:b2Contact;
+	b2internal var m_prev:b2Contact;
+	b2internal var m_next:b2Contact;
 
 	// Nodes for connecting bodies.
-	public var m_node1:b2ContactEdge = new b2ContactEdge();
-	public var m_node2:b2ContactEdge = new b2ContactEdge();
+	b2internal var m_node1:b2ContactEdge = new b2ContactEdge();
+	b2internal var m_node2:b2ContactEdge = new b2ContactEdge();
 
-	public var m_shape1:b2Shape;
-	public var m_shape2:b2Shape;
+	b2internal var m_shape1:b2Shape;
+	b2internal var m_shape2:b2Shape;
 
-	public var m_manifoldCount:int;
+	b2internal var m_manifoldCount:int;
 
 	// Combined friction
-	public var m_friction:Number;
-	public var m_restitution:Number;
+	b2internal var m_friction:Number;
+	b2internal var m_restitution:Number;
 	
-	public var m_toi:Number;
+	b2internal var m_toi:Number;
 
 };
 

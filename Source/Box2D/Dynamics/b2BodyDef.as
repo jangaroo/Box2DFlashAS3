@@ -27,6 +27,9 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Common.b2Settings;
 import Box2D.Common.Math.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// A body definition holds all the data needed to construct a rigid body.
 /// You can safely re-use body definitions.

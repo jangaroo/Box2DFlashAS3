@@ -20,6 +20,8 @@ package Box2D.Collision{
 	
 import Box2D.Collision.*;
 import Box2D.Common.Math.*;
+import Box2D.Common.b2internal;
+use namespace b2internal;
 
 // This is used for polygon-vs-circle distance.
 public class b2Point

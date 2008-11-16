@@ -26,6 +26,9 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 import Box2D.Collision.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 
 public class b2CircleShape extends b2Shape
@@ -182,8 +185,8 @@ public class b2CircleShape extends b2Shape
 	}
 
 	// Local position in parent body
-	public var m_localPosition:b2Vec2 = new b2Vec2();
-	public var m_radius:Number;
+	b2internal var m_localPosition:b2Vec2 = new b2Vec2();
+	b2internal var m_radius:Number;
 	
 };
 

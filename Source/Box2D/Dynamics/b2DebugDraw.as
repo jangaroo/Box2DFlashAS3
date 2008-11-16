@@ -26,6 +26,9 @@ import Box2D.Dynamics.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 import flash.display.Sprite;
 
 
@@ -67,10 +70,70 @@ public class b2DebugDraw
 	}
 
 	/// Clear flags from the current flags.
-	public function ClearFlags(flags:uint) : void{
+	public function ClearFlags(flags:uint) : void {
 		m_drawFlags &= ~flags;
 	}
 
+	/// Set the sprite
+	public function SetSprite(sprite:Sprite) : void {
+		m_sprite = sprite; 
+	}
+	
+	/// Get the sprite
+	public function GetSprite() : Sprite {
+		return m_sprite;
+	}
+	
+	/// Set the draw scale
+	public function SetDrawScale(drawScale:Number) : void {
+		m_drawScale = drawScale; 
+	}
+	
+	/// Get the draw
+	public function GetDrawScale() : Number {
+		return m_drawScale;
+	}
+	
+	/// Set the line thickness
+	public function SetLineThickness(lineThickness:Number) : void {
+		m_lineThickness = lineThickness; 
+	}
+	
+	/// Get the line thickness
+	public function GetLineThickness() : Number {
+		return m_lineThickness;
+	}
+	
+	/// Set the alpha value used for lines
+	public function SetAlpha(alpha:Number) : void {
+		m_alpha = alpha; 
+	}
+	
+	/// Get the alpha value used for lines
+	public function GetAlpha() : Number {
+		return m_alpha;
+	}
+	
+	/// Set the alpha value used for fills
+	public function SetFillAlpha(alpha:Number) : void {
+		m_fillAlpha = alpha; 
+	}
+	
+	/// Get the alpha value used for fills
+	public function GetFillAlpha() : Number {
+		return m_fillAlpha;
+	}
+	
+	/// Set the scale used for drawing XForms
+	public function SetXFormScale(xformScale:Number) : void {
+		m_xformScale = xformScale; 
+	}
+	
+	/// Get the scale used for drawing XForms
+	public function GetXFormScale() : Number {
+		return m_xformScale;
+	}
+	
 	/// Draw a closed polygon provided in CCW order.
 	public virtual function DrawPolygon(vertices:Array, vertexCount:int, color:b2Color) : void{
 		
@@ -144,14 +207,14 @@ public class b2DebugDraw
 	
 	
 	
-	public var m_drawFlags:uint;
-	public var m_sprite:Sprite;
-	public var m_drawScale:Number = 1.0;
+	private var m_drawFlags:uint;
+	b2internal var m_sprite:Sprite;
+	private var m_drawScale:Number = 1.0;
 	
-	public var m_lineThickness:Number = 1.0;
-	public var m_alpha:Number = 1.0;
-	public var m_fillAlpha:Number = 1.0;
-	public var m_xformScale:Number = 1.0;
+	private var m_lineThickness:Number = 1.0;
+	private var m_alpha:Number = 1.0;
+	private var m_fillAlpha:Number = 1.0;
+	private var m_xformScale:Number = 1.0;
 	
 };
 

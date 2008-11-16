@@ -121,11 +121,12 @@
 			m_world.Step(m_timeStep, m_iterations);
 			
 			// Go through body list and update sprite positions/rotations
-			for (var bb:b2Body = m_world.m_bodyList; bb; bb = bb.m_next){
-				if (bb.m_userData is Sprite){
-					bb.m_userData.x = bb.GetPosition().x * 30;
-					bb.m_userData.y = bb.GetPosition().y * 30;
-					bb.m_userData.rotation = bb.GetAngle() * (180/Math.PI);
+			for (var bb:b2Body = m_world.GetBodyList(); bb; bb = bb.GetNext()){
+				if (bb.GetUserData() is Sprite){
+					var sprite:Sprite = bb.GetUserData() as Sprite;
+					sprite.x = bb.GetPosition().x * 30;
+					sprite.y = bb.GetPosition().y * 30;
+					sprite.rotation = bb.GetAngle() * (180/Math.PI);
 				}
 			}
 			

@@ -23,6 +23,9 @@ import Box2D.Common.Math.*;
 import Box2D.Dynamics.Joints.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /// Distance joint definition. This requires defining an
 /// anchor point on both bodies and the non-zero length of the

@@ -23,6 +23,9 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 // p = attached point, m = mouse point
 // C = p - m
@@ -213,15 +216,15 @@ public class b2MouseJoint extends b2Joint
 		return true; 
 	}
 
-	public var m_localAnchor:b2Vec2 = new b2Vec2();
-	public var m_target:b2Vec2 = new b2Vec2();
-	public var m_impulse:b2Vec2 = new b2Vec2();
+	private var m_localAnchor:b2Vec2 = new b2Vec2();
+	private var m_target:b2Vec2 = new b2Vec2();
+	private var m_impulse:b2Vec2 = new b2Vec2();
 
-	public var m_mass:b2Mat22 = new b2Mat22();	// effective mass for point-to-point constraint.
-	public var m_C:b2Vec2 = new b2Vec2();			// position error
-	public var m_maxForce:Number;
-	public var m_beta:Number;						// bias factor
-	public var m_gamma:Number;						// softness
+	private var m_mass:b2Mat22 = new b2Mat22();	// effective mass for point-to-point constraint.
+	private var m_C:b2Vec2 = new b2Vec2();			// position error
+	private var m_maxForce:Number;
+	private var m_beta:Number;						// bias factor
+	private var m_gamma:Number;						// softness
 };
 
 }

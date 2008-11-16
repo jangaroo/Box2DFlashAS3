@@ -22,6 +22,9 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 // 1-D constrained system
 // m (v2 - v1) = lambda
 // v2 + (beta/h) * x1 + gamma * lambda = 0, gamma has units of inverse mass.
@@ -298,16 +301,16 @@ public class b2DistanceJoint extends b2Joint
 		return 0.0;
 	}
 
-	public var m_localAnchor1:b2Vec2 = new b2Vec2();
-	public var m_localAnchor2:b2Vec2 = new b2Vec2();
-	public var m_u:b2Vec2 = new b2Vec2();
-	public var m_frequencyHz:Number;
-	public var m_dampingRatio:Number;
-	public var m_gamma:Number;
-	public var m_bias:Number;
-	public var m_impulse:Number;
-	public var m_mass:Number;	// effective mass for the constraint.
-	public var m_length:Number;
+	private var m_localAnchor1:b2Vec2 = new b2Vec2();
+	private var m_localAnchor2:b2Vec2 = new b2Vec2();
+	private var m_u:b2Vec2 = new b2Vec2();
+	private var m_frequencyHz:Number;
+	private var m_dampingRatio:Number;
+	private var m_gamma:Number;
+	private var m_bias:Number;
+	private var m_impulse:Number;
+	private var m_mass:Number;	// effective mass for the constraint.
+	private var m_length:Number;
 };
 
 }

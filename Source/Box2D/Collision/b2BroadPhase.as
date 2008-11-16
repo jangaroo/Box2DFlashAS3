@@ -23,6 +23,9 @@ import Box2D.Common.*;
 import Box2D.Collision.*;
 import Box2D.Common.Math.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 /*
 This broad phase uses the Sweep and Prune algorithm as described in:
@@ -935,21 +938,20 @@ public class b2BroadPhase
 		}
 	}
 
-//public:
-	public var m_pairManager:b2PairManager = new b2PairManager();
+	b2internal var m_pairManager:b2PairManager = new b2PairManager();
 
-	public var m_proxyPool:Array = new Array(b2Settings.b2_maxPairs);
-	public var m_freeProxy:uint;
+	b2internal var m_proxyPool:Array = new Array(b2Settings.b2_maxPairs);
+	private var m_freeProxy:uint;
 
-	public var m_bounds:Array = new Array(2*b2Settings.b2_maxProxies);
+	b2internal var m_bounds:Array = new Array(2*b2Settings.b2_maxProxies);
 
-	public var m_queryResults:Array = new Array(b2Settings.b2_maxProxies);
-	public var m_queryResultCount:int;
+	private var m_queryResults:Array = new Array(b2Settings.b2_maxProxies);
+	private var m_queryResultCount:int;
 
-	public var m_worldAABB:b2AABB;
-	public var m_quantizationFactor:b2Vec2 = new b2Vec2();
-	public var m_proxyCount:int;
-	public var m_timeStamp:uint;
+	b2internal var m_worldAABB:b2AABB;
+	b2internal var m_quantizationFactor:b2Vec2 = new b2Vec2();
+	b2internal var m_proxyCount:int;
+	private var m_timeStamp:uint;
 
 	static public var s_validate:Boolean = false;
 	

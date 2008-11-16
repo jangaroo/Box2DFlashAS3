@@ -26,6 +26,9 @@ import Box2D.Dynamics.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 // Delegate of b2World.
 public class b2ContactManager extends b2PairCallback
@@ -255,12 +258,12 @@ public class b2ContactManager extends b2PairCallback
 		}
 	}
 
-	public var m_world:b2World;
+	b2internal var m_world:b2World;
 
 	// This lets us provide broadphase proxy pair user data for
 	// contacts that shouldn't exist.
-	public var m_nullContact:b2NullContact = new b2NullContact();
-	public var m_destroyImmediate:Boolean;
+	private var m_nullContact:b2NullContact = new b2NullContact();
+	private var m_destroyImmediate:Boolean;
 	
 };
 

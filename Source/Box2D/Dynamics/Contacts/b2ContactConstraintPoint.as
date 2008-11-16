@@ -21,6 +21,9 @@ package Box2D.Dynamics.Contacts{
 
 import Box2D.Common.Math.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 public class b2ContactConstraintPoint
 {

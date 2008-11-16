@@ -16,7 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision{
+package Box2D.Collision {
+	import Box2D.Common.b2internal;
+use namespace b2internal;
 
 // We use contact ids to facilitate warm starting.
 public class Features

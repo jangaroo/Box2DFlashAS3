@@ -22,6 +22,9 @@ package Box2D.Dynamics.Joints{
 import Box2D.Common.Math.*;
 import Box2D.Dynamics.*;
 
+import Box2D.Common.b2internal;
+use namespace b2internal;
+
 
 
 /// Revolute joint definition. This requires defining an
