@@ -506,8 +506,8 @@ public class b2Body
 	public function GetLinearVelocityFromWorldPoint(worldPoint:b2Vec2) : b2Vec2
 	{
 		//return          m_linearVelocity   + b2Cross(m_angularVelocity,   worldPoint   - m_sweep.c);
-		return new b2Vec2(	m_linearVelocity.x -         m_angularVelocity * (worldPoint.y - m_sweep.c.y), 
-							m_linearVelocity.y +         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
+		return new b2Vec2(m_linearVelocity.x -         m_angularVelocity * (worldPoint.y - m_sweep.c.y), 
+		                  m_linearVelocity.y +         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
 	}
 	
 	/// Get the world velocity of a local point.
@@ -518,11 +518,11 @@ public class b2Body
 		//return GetLinearVelocityFromWorldPoint(GetWorldPoint(localPoint));
 		var A:b2Mat22 = m_xf.R;
 		var worldPoint:b2Vec2 = new b2Vec2(A.col1.x * localPoint.x + A.col2.x * localPoint.y, 
-								  A.col1.y * localPoint.x + A.col2.y * localPoint.y);
+		                                   A.col1.y * localPoint.x + A.col2.y * localPoint.y);
 		worldPoint.x += m_xf.position.x;
 		worldPoint.y += m_xf.position.y;
-		return new b2Vec2(m_linearVelocity.x +         m_angularVelocity * (worldPoint.y - m_sweep.c.y), 
-		                  m_linearVelocity.x -         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
+		return new b2Vec2(m_linearVelocity.x -         m_angularVelocity * (worldPoint.y - m_sweep.c.y), 
+		                  m_linearVelocity.y +         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
 	}
 	
 	/// Is this body treated like a bullet for continuous collision detection?
