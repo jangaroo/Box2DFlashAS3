@@ -39,7 +39,9 @@ public class b2ContactConstraint
 		
 	}
 	public var points:Array;
-	public var normal:b2Vec2=new b2Vec2();
+	public var normal:b2Vec2 = new b2Vec2();
+	public var normalMass:b2Mat22 = new b2Mat22();
+	public var K:b2Mat22 = new b2Mat22();
 	public var manifold:b2Manifold;
 	public var body1:b2Body;
 	public var body2:b2Body;
