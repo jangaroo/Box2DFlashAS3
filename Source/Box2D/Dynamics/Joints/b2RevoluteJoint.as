@@ -314,8 +314,24 @@ public class b2RevoluteJoint extends b2Joint
 		//b2Vec2 pivotForce = -step.inv_dt * b2Mul(m_pivotMass, pivotCdot);
 		var pivotForceX:Number = -step.inv_dt * (m_pivotMass.col1.x * pivotCdotX + m_pivotMass.col2.x * pivotCdotY);
 		var pivotForceY:Number = -step.inv_dt * (m_pivotMass.col1.y * pivotCdotX + m_pivotMass.col2.y * pivotCdotY);
-		m_pivotForce.x += pivotForceX;
-		m_pivotForce.y += pivotForceY;
+		
+//#ifdef B2_TOI_JOINTS
+		if (step.warmStarting)
+		{
+			m_pivotForce.x += pivotForceX;
+			m_pivotForce.y += pivotForceY;
+		}
+		else
+		{
+			m_pivotForce.x = m_lastWarmStartingPivotForce.x;
+			m_pivotForce.y = m_lastWarmStartingPivotForce.y;
+			//Do not update warm starting value!
+		}
+//#else
+//		//m_pivotForce += pivotForce;
+//		m_pivotForce.x += pivotForceX;
+//		m_pivotForce.y += pivotForceY;
+//#endif
 		
 		//b2Vec2 P = step.dt * pivotForce;
 		var PX:Number = step.dt * pivotForceX;
@@ -532,6 +548,10 @@ public class b2RevoluteJoint extends b2Joint
 	private var m_lowerAngle:Number;
 	private var m_upperAngle:Number;
 	private var m_limitState:int;
+	
+//#ifdef B2_TOI_JOINTS
+	private var m_lastWarmStartingPivotForce:b2Vec2 = new b2Vec2();
+//#endif
 };
 
 }

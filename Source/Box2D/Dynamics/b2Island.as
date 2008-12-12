@@ -347,14 +347,34 @@ public class b2Island
 	public function SolveTOI(subStep:b2TimeStep) : void
 	{
 		var i:int;
+		var j:int;
 		var contactSolver:b2ContactSolver = new b2ContactSolver(subStep, m_contacts, m_contactCount, m_allocator);
 		
 		// No warm starting needed for TOI events.
+		
+//#ifdef B2_TOI_JOINTS
+		// For joints, initialize with the last full step warm starting values
+		subStep.warmStarting = true;
+		
+		for (i = 0; i < m_jointCount;++i)
+		{
+			m_joints[i].InitVelocityConstraints(subStep);
+		}
+		
+		// ...but don't update the warm starting during TOI solve!
+		subStep.warmStarting = false;
+//#endif
 		
 		// Solve velocity constraints.
 		for (i = 0; i < subStep.maxIterations; ++i)
 		{
 			contactSolver.SolveVelocityConstraints();
+//#ifdef B2_TOI_JOINTS
+			for (j = 0; j < m_jointCount;++j)
+			{
+				m_joints[j].InitVelocityConstraints(subStep);
+			}
+//#endif
 		}
 		
 		// Don't store the TOI contact forces for warm starting
@@ -388,10 +408,24 @@ public class b2Island
 		for (i = 0; i < subStep.maxIterations; ++i)
 		{
 			var contactsOkay:Boolean = contactSolver.SolvePositionConstraints(k_toiBaumgarte);
-			if (contactsOkay)
+//#ifdef B2_TOI_JOINTS
+			var jointsOkay:Boolean = true;
+			for (j = 0; j < m_jointCount;++j)
+			{
+				var jointOkay:Boolean = m_joints[j].SolvePositionConstraints();
+				jointsOkay = jointsOkay && jointOkay;
+			}
+			
+			if (contactsOkay && jointsOkay)
 			{
 				break;
 			}
+//#else
+//			if (contactsOkay)
+//			{
+//				break;
+//			}
+//#endif
 		}
 		
 		Report(contactSolver.m_constraints);
@@ -463,15 +497,15 @@ public class b2Island
 
 	b2internal var m_bodies:Array;
 	b2internal var m_contacts:Array;
-	private var m_joints:Array;
+	b2internal var m_joints:Array;
 
 	b2internal var m_bodyCount:int;
-	private var m_jointCount:int;
+	b2internal var m_jointCount:int;
 	b2internal var m_contactCount:int;
 
 	private var m_bodyCapacity:int;
 	b2internal var m_contactCapacity:int;
-	private var m_jointCapacity:int;
+	b2internal var m_jointCapacity:int;
 
 	b2internal var m_positionIterationCount:int;
 	

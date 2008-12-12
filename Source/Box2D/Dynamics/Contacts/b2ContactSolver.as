@@ -310,6 +310,12 @@ public class b2ContactSolver
 		var newImpulse_t:Number;
 		var PX:Number;
 		var PY:Number;
+		var dX:Number;
+		var dY:Number;
+		var P1X:Number;
+		var P1Y:Number;
+		var P2X:Number;
+		var P2Y:Number;
 		
 		var tMat:b2Mat22;
 		var tVec:b2Vec2;
@@ -466,17 +472,17 @@ public class b2ContactSolver
 					
 					if (xX >= 0.0 && xY >= 0.0) {
 						// Resubstitute for the incremental impulse
-						//var d:b2Vec2 = x - a;
-						var dX:Number = xX - aX;
-						var dY:Number = xY - aY;
+						//d = x - a;
+						dX = xX - aX;
+						dY = xY - aY;
 						
 						//Aply incremental impulse
-						//var P1:b2Vec2 = d.x * normal;
-						var P1X:Number = dX * normalX;
-						var P1Y:Number = dX * normalY;
-						//var P2:b2Vec2 = d.y * normal;
-						var P2X:Number = dY * normalX;
-						var P2Y:Number = dY * normalY;
+						//P1 = d.x * normal;
+						P1X = dX * normalX;
+						P1Y = dX * normalY;
+						//P2 = d.y * normal;
+						P2X = dY * normalX;
+						P2Y = dY * normalY;
 						
 						//v1 -= invMass1 * (P1 + P2)
 						v1.x -= invMass1 * (P1X + P2X);
@@ -529,15 +535,15 @@ public class b2ContactSolver
 					if (xX >= 0.0 && vn2 >= 0.0)
 					{
 						// Resubstitute for the incremental impulse
-						//var d:b2Vec2 = x - a;
+						//d = x - a;
 						dX = xX - aX;
 						dY = xY - aY;
 						
 						//Aply incremental impulse
-						//var P1:b2Vec2 = d.x * normal;
+						//P1 = d.x * normal;
 						P1X = dX * normalX;
 						P1Y = dX * normalY;
-						//var P2:b2Vec2 = d.y * normal;
+						//P2 = d.y * normal;
 						P2X = dY * normalX;
 						P2Y = dY * normalY;
 						
@@ -591,17 +597,17 @@ public class b2ContactSolver
 					if (xY >= 0.0 && vn1 >= 0.0)
 					{
 						// Resubstitute for the incremental impulse
-						//var d:b2Vec2 = x - a;
-						var dX:Number = xX - aX;
-						var dY:Number = xY - aY;
+						//d = x - a;
+						dX = xX - aX;
+						dY = xY - aY;
 						
 						//Aply incremental impulse
-						//var P1:b2Vec2 = d.x * normal;
-						var P1X:Number = dX * normalX;
-						var P1Y:Number = dX * normalY;
-						//var P2:b2Vec2 = d.y * normal;
-						var P2X:Number = dY * normalX;
-						var P2Y:Number = dY * normalY;
+						//P1 = d.x * normal;
+						P1X = dX * normalX;
+						P1Y = dX * normalY;
+						//P2 = d.y * normal;
+						P2X = dY * normalX;
+						P2Y = dY * normalY;
 						
 						//v1 -= invMass1 * (P1 + P2)
 						v1.x -= invMass1 * (P1X + P2X);
@@ -652,17 +658,17 @@ public class b2ContactSolver
 					
 					if (vn1 >= 0.0 && vn2 >= 0.0 ) {
 						// Resubstitute for the incremental impulse
-						//var d:b2Vec2 = x - a;
-						var dX:Number = xX - aX;
-						var dY:Number = xY - aY;
+						//d = x - a;
+						dX = xX - aX;
+						dY = xY - aY;
 						
 						//Aply incremental impulse
-						//var P1:b2Vec2 = d.x * normal;
-						var P1X:Number = dX * normalX;
-						var P1Y:Number = dX * normalY;
-						//var P2:b2Vec2 = d.y * normal;
-						var P2X:Number = dY * normalX;
-						var P2Y:Number = dY * normalY;
+						//P1 = d.x * normal;
+						P1X = dX * normalX;
+						P1Y = dX * normalY;
+						//P2 = d.y * normal;
+						P2X = dY * normalX;
+						P2Y = dY * normalY;
 						
 						//v1 -= invMass1 * (P1 + P2)
 						v1.x -= invMass1 * (P1X + P2X);

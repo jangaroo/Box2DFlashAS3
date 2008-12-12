@@ -56,6 +56,9 @@ public class b2Settings{
 	/// Maximum number of contacts to be handled to solve a TOI island.
 	static public const b2_maxTOIContactsPerIsland:int = 32;
 	
+	/// Maximum number of joints to be handled to solve a TOI island.
+	static public const b2_maxTOIJointsPerIsland:int = 32;
+	
 	/// A velocity threshold for elastic collisions. Any collision with a relative linear
 	/// velocity below this threshold will be treated as inelastic.
 	static public const b2_velocityThreshold:Number = 1.0;		// 1 m/s

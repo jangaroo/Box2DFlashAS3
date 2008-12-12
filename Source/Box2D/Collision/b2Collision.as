@@ -22,7 +22,8 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Collision.*;
 import Box2D.Collision.Shapes.*;
-import Box2D.Common.b2internal;
+
+import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
@@ -458,7 +459,7 @@ public class b2Collision{
 		cp1.id.features.flip = flip;
 		
 		cv = clipPoints2[1];
-		var cp1:b2ManifoldPoint = manifold.points[ 1 ];
+		cp1 = manifold.points[ 1 ];
 		cp1.separation = b2Math.b2Dot(frontNormal, cv.v) - frontOffset;
 		cp1.localPoint1 = b2Math.b2MulXT(xfA, cv.v);
 		cp1.localPoint2 = b2Math.b2MulXT(xfB, cv.v);

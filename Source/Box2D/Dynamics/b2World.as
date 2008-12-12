@@ -677,13 +677,22 @@ public class b2World
 		var b1:b2Body;
 		var b2:b2Body;
 		var cn:b2ContactEdge;
+		var j:b2Joint;
 		
-		// Reserve an island and a stack for TOI island solution.
-		var island:b2Island = new b2Island(m_bodyCount, b2Settings.b2_maxTOIContactsPerIsland, 0, m_stackAllocator, m_contactListener);
-		var stackSize:int = m_bodyCount;
+		// Reserve an island and a queue for TOI island solution.
+		var island:b2Island = new b2Island(m_bodyCount, b2Settings.b2_maxTOIContactsPerIsland, b2Settings.b2_maxTOIJointsPerIsland, m_stackAllocator, m_contactListener);
 		
-		//b2Body** stack = (b2Body**)m_stackAllocator.Allocate(stackSize * sizeof(b2Body*));
-		var stack:Array = new Array(stackSize);
+		//Simple one pass queue
+		//Relies on the fact that we're only making one pass
+		//through and each body can only be pushed/popped one.
+		//To push:
+		//  queue[queueStart+queueSize++] = newElement;
+		//To pop:
+		//  poppedElement = queue[queueStart++];
+		//  --queueSize;
+		
+		var queueCapacity:int = m_bodyCount;
+		var queue:Array/*b2Body*/ = new Array(queueCapacity);
 		
 		for (b = m_bodyList; b; b = b.m_next)
 		{
@@ -697,6 +706,13 @@ public class b2World
 			// Invalidate TOI
 			c.m_flags &= ~(b2Contact.e_toiFlag | b2Contact.e_islandFlag);
 		}
+		
+//#ifdef B2_TOI_JOINTS
+		for (j = m_jointList; j; j = j.m_next)
+		{
+			j.m_islandFlag = false;
+		}
+//#endif
 		
 		// Find TOI events and solve them.
 		for (;;)
@@ -805,17 +821,20 @@ public class b2World
 				seed = b2;
 			}
 			
-			// Reset island and stack.
+			// Reset island and queue.
 			island.Clear();
-			var stackCount:int = 0;
-			stack[stackCount++] = seed;
+			var queueStart:int = 0;	//start index for queue
+			var queueSize:int = 0;	//elements in queue
+			queue[queueStart + queueSize++] = seed;
 			seed.m_flags |= b2Body.e_islandFlag;
 			
-			// Perform a depth first search (DFS) on the contact graph.
-			while (stackCount > 0)
+			// Perform a breadth first search (BFS) on the contact graph.
+			while (queueSize > 0)
 			{
 				// Grab the next body off the stack and add it to the island.
-				b = stack[--stackCount];
+				b = queue[queueStart++];
+				--queueSize;
+				
 				island.AddBody(b);
 				
 				// Make sure the body is awake.
@@ -868,13 +887,42 @@ public class b2World
 						other.WakeUp();
 					}
 					
-					//b2Settings.b2Assert(stackCount < stackSize);
-					stack[stackCount++] = other;
+					//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
+					 queue[queueStart + queueSize++] = other;
 					other.m_flags |= b2Body.e_islandFlag;
 				}
 			}
 			
+//#ifdef B2_TOI_JOINTS
+			for (var jn:b2JointEdge = b.m_jointList; jn; jn = jn.next) 
+			{
+				if (island.m_jointCount == island.m_jointCapacity) 
+					continue;
+				
+				if (jn.joint.m_islandFlag == true)
+					continue;
+				
+				island.AddJoint(jn.joint);
+				jn.joint.m_islandFlag = true;
+				other = jn.other;
+				
+				if (other.m_flags & b2Body.e_islandFlag)
+					continue;
+					
+				if (!other.IsStatic())
+				{
+					other.Advance(minTOI);
+					other.WakeUp();
+				}
+				
+				//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
+				queue[queueStart + queueSize++] = other;
+				other.m_flags |= b2Body.e_islandFlag;
+			}
+//#endif
+			
 			var subStep:b2TimeStep = new b2TimeStep();
+			subStep.warmStarting = false;
 			subStep.dt = (1.0 - minTOI) * step.dt;
 			//b2Settings.b2Assert(subStep.dt > Number.MIN_VALUE);
 			subStep.inv_dt = 1.0 / subStep.dt;
@@ -926,12 +974,19 @@ public class b2World
 				c.m_flags &= ~(b2Contact.e_toiFlag | b2Contact.e_islandFlag);
 			}
 			
+			for (i = 0; i < island.m_jointCount;++i)
+			{
+				// Allow joints to participate in future TOI islands
+				j = island.m_joints[i];
+				j.m_islandFlag = false;
+			}
+			
 			// Commit shape proxy movements to the broad-phase so that new contacts are created.
 			// Also, some contacts can be destroyed.
 			m_broadPhase.Commit();
 		}
 		
-		//m_stackAllocator.Free(stack);
+		//m_stackAllocator.Free(queue);
 		
 	}
 	
