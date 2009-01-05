@@ -25,9 +25,14 @@ import Box2D.Common.*;
 use namespace b2internal;
 
 // A manifold for two touching convex shapes.
+/**
+* @private
+*/
 public class b2Segment
 {
-	/// Ray cast against this segment with another segment.
+	/**
+	* Ray cast against this segment with another segment.
+	*/
 	// Collision Detection in Interactive 3D Environments by Gino van den Bergen
 	// From Section 3.4.1
 	// x = mu1 * p1 + mu2 * p2
@@ -97,9 +102,7 @@ public class b2Segment
 		return false;
 	}
 	
-	public var p1:b2Vec2 = new b2Vec2();	///< the starting point
-	public var p2:b2Vec2 = new b2Vec2();	///< the ending point
-};
+	/** The starting point */	public var p1:b2Vec2 = new b2Vec2();	/** The ending point */	public var p2:b2Vec2 = new b2Vec2();};
 
 
 }

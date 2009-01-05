@@ -26,6 +26,9 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 	
 
+/**
+* @private
+*/
 public class b2PrismaticJointDef extends b2JointDef
 {
 	public function b2PrismaticJointDef()
@@ -53,34 +56,54 @@ public class b2PrismaticJointDef extends b2JointDef
 		referenceAngle = body2.GetAngle() - body1.GetAngle();
 	}
 
-	/// The local anchor point relative to body1's origin.
+	/**
+	* The local anchor point relative to body1's origin.
+	*/
 	public var localAnchor1:b2Vec2 = new b2Vec2();
 
-	/// The local anchor point relative to body2's origin.
+	/**
+	* The local anchor point relative to body2's origin.
+	*/
 	public var localAnchor2:b2Vec2 = new b2Vec2();
 
-	/// The local translation axis in body1.
+	/**
+	* The local translation axis in body1.
+	*/
 	public var localAxis1:b2Vec2 = new b2Vec2();
 
-	/// The constrained angle between the bodies: body2_angle - body1_angle.
+	/**
+	* The constrained angle between the bodies: body2_angle - body1_angle.
+	*/
 	public var referenceAngle:Number;
 
-	/// Enable/disable the joint limit.
+	/**
+	* Enable/disable the joint limit.
+	*/
 	public var enableLimit:Boolean;
 
-	/// The lower translation limit, usually in meters.
+	/**
+	* The lower translation limit, usually in meters.
+	*/
 	public var lowerTranslation:Number;
 
-	/// The upper translation limit, usually in meters.
+	/**
+	* The upper translation limit, usually in meters.
+	*/
 	public var upperTranslation:Number;
 
-	/// Enable/disable the joint motor.
+	/**
+	* Enable/disable the joint motor.
+	*/
 	public var enableMotor:Boolean;
 
-	/// The maximum motor torque, usually in N-m.
+	/**
+	* The maximum motor torque, usually in N-m.
+	*/
 	public var maxMotorForce:Number;
 
-	/// The desired motor speed in radians per second.
+	/**
+	* The desired motor speed in radians per second.
+	*/
 	public var motorSpeed:Number;
 };
 

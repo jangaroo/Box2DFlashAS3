@@ -28,6 +28,9 @@ import Box2D.Common.*;
 use namespace b2internal;
 
 
+/**
+* @private
+*/
 public class b2Pair
 {
 	

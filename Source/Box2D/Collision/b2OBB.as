@@ -22,13 +22,12 @@ import Box2D.Common.Math.*;
 import Box2D.Common.b2internal;
 use namespace b2internal;
 
-/// An oriented bounding box.
+/**
+* An oriented bounding box.
+*/
 public class b2OBB
 {
-	public var R:b2Mat22 = new b2Mat22();		///< the rotation matrix
-	public var center:b2Vec2 = new b2Vec2();	///< the local centroid
-	public var extents:b2Vec2 = new b2Vec2();	///< the half-widths
-};
+	/** The rotation matrix */	public var R:b2Mat22 = new b2Mat22();	/** The local centroid */	public var center:b2Vec2 = new b2Vec2();	/** The half-widths */	public var extents:b2Vec2 = new b2Vec2();};
 
 
 }

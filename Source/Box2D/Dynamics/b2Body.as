@@ -31,12 +31,16 @@ use namespace b2internal;
 
 
 
-/// A rigid body.
+/**
+* A rigid body.
+*/
 public class b2Body
 {
-	/// Creates a shape and attach it to this body.
-	/// @param shapeDef the shape definition.
-	/// @warning This function is locked during callbacks.
+	/**
+	* Creates a shape and attach it to this body.
+	* @param shapeDef the shape definition.
+	* @warning This function is locked during callbacks.
+	*/
 	public function CreateShape(def:b2ShapeDef) : b2Shape{
 		//b2Settings.b2Assert(m_world.m_lock == false);
 		if (m_world.m_lock == true)
@@ -61,11 +65,13 @@ public class b2Body
 		return s;
 	}
 
-	/// Destroy a shape. This removes the shape from the broad-phase and
-	/// therefore destroys any contacts associated with this shape. All shapes
-	/// attached to a body are implicitly destroyed when the body is destroyed.
-	/// @param shape the shape to be removed.
-	/// @warning This function is locked during callbacks.
+	/**
+	* Destroy a shape. This removes the shape from the broad-phase and
+	* therefore destroys any contacts associated with this shape. All shapes
+	* attached to a body are implicitly destroyed when the body is destroyed.
+	* @param shape the shape to be removed.
+	* @warning This function is locked during callbacks.
+	*/
 	public function DestroyShape(s:b2Shape) : void{
 		//b2Settings.b2Assert(m_world.m_lock == false);
 		if (m_world.m_lock == true)
@@ -109,10 +115,12 @@ public class b2Body
 		b2Shape.Destroy(s, m_world.m_blockAllocator);
 	}
 
-	/// Set the mass properties. Note that this changes the center of mass position.
-	/// If you are not sure how to compute mass properties, use SetMassFromShapes.
-	/// The inertia tensor is assumed to be relative to the center of mass.
-	/// @param massData the mass properties.
+	/**
+	* Set the mass properties. Note that this changes the center of mass position.
+	* If you are not sure how to compute mass properties, use SetMassFromShapes.
+	* The inertia tensor is assumed to be relative to the center of mass.
+	* @param massData the mass properties.
+	*/
 	public function SetMass(massData:b2MassData) : void{
 		var s:b2Shape;
 		
@@ -185,9 +193,11 @@ public class b2Body
 		}
 	}
 
-	/// Compute the mass properties from the attached shapes. You typically call this
-	/// after adding all the shapes. If you add or remove shapes later, you may want
-	/// to call this again. Note that this changes the center of mass position.
+	/**
+	* Compute the mass properties from the attached shapes. You typically call this
+	* after adding all the shapes. If you add or remove shapes later, you may want
+	* to call this again. Note that this changes the center of mass position.
+	*/
 	static private var s_massData:b2MassData = new b2MassData();
 	public function SetMassFromShapes() : void{
 		
@@ -283,13 +293,15 @@ public class b2Body
 		}
 	}
 
-	/// Set the position of the body's origin and rotation (radians).
-	/// This breaks any contacts and wakes the other bodies.
-	/// @param position the new world position of the body's origin (not necessarily
-	/// the center of mass).
-	/// @param angle the new world rotation angle of the body in radians.
-	/// @return false if the movement put a shape outside the world. In this case the
-	/// body is automatically frozen.
+	/**
+	* Set the position of the body's origin and rotation (radians).
+	* This breaks any contacts and wakes the other bodies.
+	* @param position the new world position of the body's origin (not necessarily
+	* the center of mass).
+	* @param angle the new world rotation angle of the body in radians.
+	* @return false if the movement put a shape outside the world. In this case the
+	* body is automatically frozen.
+	*/
 	public function SetXForm(position:b2Vec2, angle:Number) : Boolean{
 		
 		var s:b2Shape;
@@ -356,63 +368,83 @@ public class b2Body
 		
 	}
 
-	/// Get the body transform for the body's origin.
-	/// @return the world transform of the body's origin.
+	/**
+	* Get the body transform for the body's origin.
+	* @return the world transform of the body's origin.
+	*/
 	public function GetXForm() : b2XForm{
 		return m_xf;
 	}
 
-	/// Get the world body origin position.
-	/// @return the world position of the body's origin.
+	/**
+	* Get the world body origin position.
+	* @return the world position of the body's origin.
+	*/
 	public function GetPosition() : b2Vec2{
 		return m_xf.position;
 	}
 
-	/// Get the angle in radians.
-	/// @return the current world rotation angle in radians.
+	/**
+	* Get the angle in radians.
+	* @return the current world rotation angle in radians.
+	*/
 	public function GetAngle() : Number{
 		return m_sweep.a;
 	}
 
-	/// Get the world position of the center of mass.
+	/**
+	* Get the world position of the center of mass.
+	*/
 	public function GetWorldCenter() : b2Vec2{
 		return m_sweep.c;
 	}
 
-	/// Get the local position of the center of mass.
+	/**
+	* Get the local position of the center of mass.
+	*/
 	public function GetLocalCenter() : b2Vec2{
 		return m_sweep.localCenter;
 	}
 
-	/// Set the linear velocity of the center of mass.
-	/// @param v the new linear velocity of the center of mass.
+	/**
+	* Set the linear velocity of the center of mass.
+	* @param v the new linear velocity of the center of mass.
+	*/
 	public function SetLinearVelocity(v:b2Vec2) : void{
 		m_linearVelocity.SetV(v);
 	}
 
-	/// Get the linear velocity of the center of mass.
-	/// @return the linear velocity of the center of mass.
+	/**
+	* Get the linear velocity of the center of mass.
+	* @return the linear velocity of the center of mass.
+	*/
 	public function GetLinearVelocity() : b2Vec2{
 		return m_linearVelocity;
 	}
 
-	/// Set the angular velocity.
-	/// @param omega the new angular velocity in radians/second.
+	/**
+	* Set the angular velocity.
+	* @param omega the new angular velocity in radians/second.
+	*/
 	public function SetAngularVelocity(omega:Number) : void{
 		m_angularVelocity = omega;
 	}
 
-	/// Get the angular velocity.
-	/// @return the angular velocity in radians/second.
+	/**
+	* Get the angular velocity.
+	* @return the angular velocity in radians/second.
+	*/
 	public function GetAngularVelocity() : Number{
 		return m_angularVelocity;
 	}
 
-	/// Apply a force at a world point. If the force is not
-	/// applied at the center of mass, it will generate a torque and
-	/// affect the angular velocity. This wakes up the body.
-	/// @param force the world force vector, usually in Newtons (N).
-	/// @param point the world position of the point of application.
+	/**
+	* Apply a force at a world point. If the force is not
+	* applied at the center of mass, it will generate a torque and
+	* affect the angular velocity. This wakes up the body.
+	* @param force the world force vector, usually in Newtons (N).
+	* @param point the world position of the point of application.
+	*/
 	public function ApplyForce(force:b2Vec2, point:b2Vec2) : void{
 		if (IsSleeping())
 		{
@@ -425,10 +457,12 @@ public class b2Body
 		m_torque += ((point.x - m_sweep.c.x) * force.y - (point.y - m_sweep.c.y) * force.x);
 	}
 
-	/// Apply a torque. This affects the angular velocity
-	/// without affecting the linear velocity of the center of mass.
-	/// This wakes up the body.
-	/// @param torque about the z-axis (out of the screen), usually in N-m.
+	/**
+	* Apply a torque. This affects the angular velocity
+	* without affecting the linear velocity of the center of mass.
+	* This wakes up the body.
+	* @param torque about the z-axis (out of the screen), usually in N-m.
+	*/
 	public function ApplyTorque(torque:Number) : void{
 		if (IsSleeping())
 		{
@@ -437,11 +471,13 @@ public class b2Body
 		m_torque += torque;
 	}
 
-	/// Apply an impulse at a point. This immediately modifies the velocity.
-	/// It also modifies the angular velocity if the point of application
-	/// is not at the center of mass. This wakes up the body.
-	/// @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
-	/// @param point the world position of the point of application.
+	/**
+	* Apply an impulse at a point. This immediately modifies the velocity.
+	* It also modifies the angular velocity if the point of application
+	* is not at the center of mass. This wakes up the body.
+	* @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
+	* @param point the world position of the point of application.
+	*/
 	public function ApplyImpulse(impulse:b2Vec2, point:b2Vec2) : void{
 		if (IsSleeping())
 		{
@@ -454,21 +490,27 @@ public class b2Body
 		m_angularVelocity += m_invI * ((point.x - m_sweep.c.x) * impulse.y - (point.y - m_sweep.c.y) * impulse.x);
 	}
 
-	/// Get the total mass of the body.
-	/// @return the mass, usually in kilograms (kg).
+	/**
+	* Get the total mass of the body.
+	* @return the mass, usually in kilograms (kg).
+	*/
 	public function GetMass() : Number{
 		return m_mass;
 	}
 
-	/// Get the central rotational inertia of the body.
-	/// @return the rotational inertia, usually in kg-m^2.
+	/**
+	* Get the central rotational inertia of the body.
+	* @return the rotational inertia, usually in kg-m^2.
+	*/
 	public function GetInertia() : Number{
 		return m_I;
 	}
 
-	/// Get the world coordinates of a point given the local coordinates.
-	/// @param localPoint a point on the body measured relative the the body's origin.
-	/// @return the same point expressed in world coordinates.
+	/**
+	* Get the world coordinates of a point given the local coordinates.
+	* @param localPoint a point on the body measured relative the the body's origin.
+	* @return the same point expressed in world coordinates.
+	*/
 	public function GetWorldPoint(localPoint:b2Vec2) : b2Vec2{
 		//return b2Math.b2MulX(m_xf, localPoint);
 		var A:b2Mat22 = m_xf.R;
@@ -479,30 +521,38 @@ public class b2Body
 		return u;
 	}
 
-	/// Get the world coordinates of a vector given the local coordinates.
-	/// @param localVector a vector fixed in the body.
-	/// @return the same vector expressed in world coordinates.
+	/**
+	* Get the world coordinates of a vector given the local coordinates.
+	* @param localVector a vector fixed in the body.
+	* @return the same vector expressed in world coordinates.
+	*/
 	public function GetWorldVector(localVector:b2Vec2) : b2Vec2{
 		return b2Math.b2MulMV(m_xf.R, localVector);
 	}
 
-	/// Gets a local point relative to the body's origin given a world point.
-	/// @param a point in world coordinates.
-	/// @return the corresponding local point relative to the body's origin.
+	/**
+	* Gets a local point relative to the body's origin given a world point.
+	* @param a point in world coordinates.
+	* @return the corresponding local point relative to the body's origin.
+	*/
 	public function GetLocalPoint(worldPoint:b2Vec2) : b2Vec2{
 		return b2Math.b2MulXT(m_xf, worldPoint);
 	}
 
-	/// Gets a local vector given a world vector.
-	/// @param a vector in world coordinates.
-	/// @return the corresponding local vector.
+	/**
+	* Gets a local vector given a world vector.
+	* @param a vector in world coordinates.
+	* @return the corresponding local vector.
+	*/
 	public function GetLocalVector(worldVector:b2Vec2) : b2Vec2{
 		return b2Math.b2MulTMV(m_xf.R, worldVector);
 	}
 	
-	/// Get the world linear velocity of a world point attached to this body.
-	/// @param a point in world coordinates.
-	/// @return the world velocity of a point.
+	/**
+	* Get the world linear velocity of a world point attached to this body.
+	* @param a point in world coordinates.
+	* @return the world velocity of a point.
+	*/
 	public function GetLinearVelocityFromWorldPoint(worldPoint:b2Vec2) : b2Vec2
 	{
 		//return          m_linearVelocity   + b2Cross(m_angularVelocity,   worldPoint   - m_sweep.c);
@@ -510,9 +560,11 @@ public class b2Body
 		                  m_linearVelocity.y +         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
 	}
 	
-	/// Get the world velocity of a local point.
-	/// @param a point in local coordinates.
-	/// @return the world velocity of a point.
+	/**
+	* Get the world velocity of a local point.
+	* @param a point in local coordinates.
+	* @return the world velocity of a point.
+	*/
 	public function GetLinearVelocityFromLocalPoint(localPoint:b2Vec2) : b2Vec2
 	{
 		//return GetLinearVelocityFromWorldPoint(GetWorldPoint(localPoint));
@@ -525,12 +577,16 @@ public class b2Body
 		                  m_linearVelocity.y +         m_angularVelocity * (worldPoint.x - m_sweep.c.x));
 	}
 	
-	/// Is this body treated like a bullet for continuous collision detection?
+	/**
+	* Is this body treated like a bullet for continuous collision detection?
+	*/
 	public function IsBullet() : Boolean{
 		return (m_flags & e_bulletFlag) == e_bulletFlag;
 	}
 
-	/// Should this body be treated like a bullet for continuous collision detection?
+	/**
+	* Should this body be treated like a bullet for continuous collision detection?
+	*/
 	public function SetBullet(flag:Boolean) : void{
 		if (flag)
 		{
@@ -542,27 +598,37 @@ public class b2Body
 		}
 	}
 
-	/// Is this body static (immovable)?
+	/**
+	* Is this body static (immovable)?
+	*/
 	public function IsStatic() : Boolean{
 		return m_type == e_staticType;
 	}
 
-	/// Is this body dynamic (movable)?
+	/**
+	* Is this body dynamic (movable)?
+	*/
 	public function IsDynamic() :Boolean{
 		return m_type == e_dynamicType;
 	}
 
-	/// Is this body frozen?
+	/**
+	* Is this body frozen?
+	*/
 	public function IsFrozen() : Boolean{
 		return (m_flags & e_frozenFlag) == e_frozenFlag;
 	}
 
-	/// Is this body sleeping (not simulating).
+	/**
+	* Is this body sleeping (not simulating).
+	*/
 	public function IsSleeping() : Boolean{
 		return (m_flags & e_sleepFlag) == e_sleepFlag;
 	}
 
-	/// You can disable sleeping on this body.
+	/**
+	* You can disable sleeping on this body.
+	*/
 	public function AllowSleeping(flag:Boolean) : void{
 		if (flag)
 		{
@@ -575,14 +641,18 @@ public class b2Body
 		}
 	}
 
-	/// Wake up this body so it will begin simulating.
+	/**
+	* Wake up this body so it will begin simulating.
+	*/
 	public function WakeUp() : void{
 		m_flags &= ~e_sleepFlag;
 		m_sleepTime = 0.0;
 	}
 
-	/// Put this body to sleep so it will stop simulating.
-	/// This also sets the velocity to zero.
+	/**
+	* Put this body to sleep so it will stop simulating.
+	* This also sets the velocity to zero.
+	*/
 	public function PutToSleep() : void
 	{
 		m_flags |= e_sleepFlag;
@@ -593,33 +663,45 @@ public class b2Body
 		m_torque = 0.0;
 	}
 
-	/// Get the list of all shapes attached to this body.
+	/**
+	* Get the list of all shapes attached to this body.
+	*/
 	public function GetShapeList() : b2Shape{
 		return m_shapeList;
 	}
 
-	/// Get the list of all joints attached to this body.
+	/**
+	* Get the list of all joints attached to this body.
+	*/
 	public function GetJointList() : b2JointEdge{
 		return m_jointList;
 	}
 
-	/// Get the next body in the world's body list.
+	/**
+	* Get the next body in the world's body list.
+	*/
 	public function GetNext() : b2Body{
 		return m_next;
 	}
 
-	/// Get the user data pointer that was provided in the body definition.
+	/**
+	* Get the user data pointer that was provided in the body definition.
+	*/
 	public function GetUserData() : *{
 		return m_userData;
 	}
 
-	/// Set the user data. Use this to store your application specific data.
+	/**
+	* Set the user data. Use this to store your application specific data.
+	*/
 	public function SetUserData(data:*) : void
 	{
 		m_userData = data;
 	}
 
-	/// Get the parent world of this body.
+	/**
+	* Get the parent world of this body.
+	*/
 	public function GetWorld(): b2World
 	{
 		return m_world;

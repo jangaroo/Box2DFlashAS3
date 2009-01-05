@@ -25,6 +25,9 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
+/**
+* @private
+*/
 public class b2Jacobian
 {
 	public var linear1:b2Vec2 = new b2Vec2();

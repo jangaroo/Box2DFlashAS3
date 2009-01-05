@@ -29,6 +29,9 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
+/**
+* @private
+*/
 public class b2PolyAndCircleContact extends b2Contact{
 	
 	static public function Create(shape1:b2Shape, shape2:b2Shape, allocator:*):b2Contact{

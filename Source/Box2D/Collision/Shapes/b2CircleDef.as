@@ -27,7 +27,9 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
-/// This structure is used to build circle shapes.
+/**
+* This structure is used to build circle shapes.
+*/
 public class b2CircleDef extends b2ShapeDef
 {
 	public function b2CircleDef()

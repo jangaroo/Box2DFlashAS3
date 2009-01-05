@@ -23,11 +23,13 @@ import Box2D.Common.Math.*;
 import Box2D.Common.b2internal;
 use namespace b2internal;
 
-/// A manifold point is a contact point belonging to a contact
-/// manifold. It holds details related to the geometry and dynamics
-/// of the contact points.
-/// The point is stored in local coordinates because CCD
-/// requires sub-stepping in which the separation is stale.
+/**
+* A manifold point is a contact point belonging to a contact
+* manifold. It holds details related to the geometry and dynamics
+* of the contact points.
+* The point is stored in local coordinates because CCD
+* requires sub-stepping in which the separation is stale.
+*/
 public class b2ManifoldPoint
 {
 	public function Reset() : void{

@@ -30,18 +30,24 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
-/// Joints and shapes are destroyed when their associated
-/// body is destroyed. Implement this listener so that you
-/// may nullify references to these joints and shapes.
+/**
+* Joints and shapes are destroyed when their associated
+* body is destroyed. Implement this listener so that you
+* may nullify references to these joints and shapes.
+*/
 public class b2DestructionListener
 {
 
-	/// Called when any joint is about to be destroyed due
-	/// to the destruction of one of its attached bodies.
+	/**
+	* Called when any joint is about to be destroyed due
+	* to the destruction of one of its attached bodies.
+	*/
 	public virtual function SayGoodbyeJoint(joint:b2Joint) : void{};
 
-	/// Called when any shape is about to be destroyed due
-	/// to the destruction of its parent body.
+	/**
+	* Called when any shape is about to be destroyed due
+	* to the destruction of its parent body.
+	*/
 	public virtual function SayGoodbyeShape(shape:b2Shape) : void{};
 	
 };

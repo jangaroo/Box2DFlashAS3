@@ -35,35 +35,48 @@ use namespace b2internal;
 
 
 
+/**
+* @private
+*/
 public class b2Contact
 {
 	public virtual function GetManifolds():Array{return null};
 	
-	/// Get the number of manifolds. This is 0 or 1 between convex shapes.
-	/// This may be greater than 1 for convex-vs-concave shapes. Each
-	/// manifold holds up to two contact points with a shared contact normal.
+	/**
+	* Get the number of manifolds. This is 0 or 1 between convex shapes.
+	* This may be greater than 1 for convex-vs-concave shapes. Each
+	* manifold holds up to two contact points with a shared contact normal.
+	*/
 	public function GetManifoldCount():int
 	{
 		return m_manifoldCount;
 	}
 	
-	/// Is this contact solid?
-	/// @return true if this contact should generate a response.
+	/**
+	* Is this contact solid?
+	* @return true if this contact should generate a response.
+	*/
 	public function IsSolid():Boolean{
 		return (m_flags & e_nonSolidFlag) == 0;
 	}
 	
-	/// Get the next contact in the world's contact list.
+	/**
+	* Get the next contact in the world's contact list.
+	*/
 	public function GetNext():b2Contact{
 		return m_next;
 	}
 	
-	/// Get the first shape in this contact.
+	/**
+	* Get the first shape in this contact.
+	*/
 	public function GetShape1():b2Shape{
 		return m_shape1;
 	}
 	
-	/// Get the second shape in this contact.
+	/**
+	* Get the second shape in this contact.
+	*/
 	public function GetShape2():b2Shape{
 		return m_shape2;
 	}

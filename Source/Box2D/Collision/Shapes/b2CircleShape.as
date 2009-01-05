@@ -31,9 +31,14 @@ use namespace b2internal;
 
 
 
+/**
+* @private
+*/
 public class b2CircleShape extends b2Shape
 {
-	/// @see b2Shape::TestPoint
+	/**
+	* @see b2Shape::TestPoint
+	*/
 	public override function TestPoint(transform:b2XForm, p:b2Vec2) : Boolean{
 		//b2Vec2 center = transform.position + b2Mul(transform.R, m_localPosition);
 		var tMat:b2Mat22 = transform.R;
@@ -46,7 +51,9 @@ public class b2CircleShape extends b2Shape
 		return (dX*dX + dY*dY) <= m_radius * m_radius;
 	}
 
-	/// @see b2Shape::TestSegment
+	/**
+	* @see b2Shape::TestSegment
+	*/
 	public override function TestSegment(	transform:b2XForm,
 						lambda:Array, // float pointer
 						normal:b2Vec2, // pointer
@@ -105,7 +112,9 @@ public class b2CircleShape extends b2Shape
 		return false;
 	}
 
-	/// @see b2Shape::ComputeAABB
+	/**
+	* @see b2Shape::ComputeAABB
+	*/
 	public override function ComputeAABB(aabb:b2AABB, transform:b2XForm) : void{
 		//b2Vec2 p = transform.position + b2Mul(transform.R, m_localPosition);
 		var tMat:b2Mat22 = transform.R;
@@ -115,7 +124,9 @@ public class b2CircleShape extends b2Shape
 		aabb.upperBound.Set(pX + m_radius, pY + m_radius);
 	}
 
-	/// @see b2Shape::ComputeSweptAABB
+	/**
+	* @see b2Shape::ComputeSweptAABB
+	*/
 	public override function ComputeSweptAABB(	aabb:b2AABB,
 							transform1:b2XForm,
 							transform2:b2XForm) : void
@@ -139,7 +150,9 @@ public class b2CircleShape extends b2Shape
 		aabb.upperBound.Set((p1X > p2X ? p1X : p2X) + m_radius, (p1Y > p2Y ? p1Y : p2Y) + m_radius);
 	}
 
-	/// @see b2Shape::ComputeMass
+	/**
+	* @see b2Shape::ComputeMass
+	*/
 	public override function ComputeMass(massData:b2MassData) : void{
 		massData.mass = m_density * b2Settings.b2_pi * m_radius * m_radius;
 		massData.center.SetV(m_localPosition);
@@ -149,12 +162,16 @@ public class b2CircleShape extends b2Shape
 		massData.I = massData.mass * (0.5 * m_radius * m_radius + (m_localPosition.x*m_localPosition.x + m_localPosition.y*m_localPosition.y));
 	}
 
-	/// Get the local position of this circle in its parent body.
+	/**
+	* Get the local position of this circle in its parent body.
+	*/
 	public function GetLocalPosition() : b2Vec2{
 		return m_localPosition;
 	}
 
-	/// Get the radius of this circle.
+	/**
+	* Get the radius of this circle.
+	*/
 	public function GetRadius() : Number{
 		return m_radius;
 	}

@@ -22,14 +22,18 @@ package Box2D.Common.Math{
 import Box2D.Common.*;
 	
 	
-/// This describes the motion of a body/shape for TOI computation.
-/// Shapes are defined with respect to the body origin, which may
-/// no coincide with the center of mass. However, to support dynamics
-/// we must interpolate the center of mass position.
+/**
+* This describes the motion of a body/shape for TOI computation.
+* Shapes are defined with respect to the body origin, which may
+* no coincide with the center of mass. However, to support dynamics
+* we must interpolate the center of mass position.
+*/
 public class b2Sweep
 {
-	/// Get the interpolated transform at a specific time.
-	/// @param t the normalized time in [0,1].
+	/**
+	* Get the interpolated transform at a specific time.
+	* @param t the normalized time in [0,1].
+	*/
 	public function GetXForm(xf:b2XForm, t:Number) : void{
 		
 		// center = p + R * localCenter
@@ -55,8 +59,10 @@ public class b2Sweep
 		
 	}
 
-	/// Advance the sweep forward, yielding a new initial state.
-	/// @param t the new initial time.
+	/**
+	* Advance the sweep forward, yielding a new initial state.
+	* @param t the new initial time.
+	*/
 	public function Advance(t:Number) : void{
 		if (t0 < t && 1.0 - t0 > Number.MIN_VALUE)
 		{
@@ -69,11 +75,7 @@ public class b2Sweep
 		}
 	}
 
-	public var localCenter:b2Vec2 = new b2Vec2();	///< local center of mass position
-	public var c0:b2Vec2 = new b2Vec2;				///< center world positions
-	public var c:b2Vec2 = new b2Vec2();
-	public var a0:Number, a:Number;					///< world angles
-	public var t0:Number;							///< time interval = [t0,1], where t0 is in [0,1]
-};
+	/** Local center of mass position */	public var localCenter:b2Vec2 = new b2Vec2();	/** Center world positions */	public var c0:b2Vec2 = new b2Vec2;	public var c:b2Vec2 = new b2Vec2();
+	/** World angles */	public var a0:Number, a:Number;	/** Time interval = [t0,1], where t0 is in [0,1] */	public var t0:Number;};
 
 }

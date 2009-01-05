@@ -27,12 +27,14 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
-/// Distance joint definition. This requires defining an
-/// anchor point on both bodies and the non-zero length of the
-/// distance joint. The definition uses local anchor points
-/// so that the initial configuration can violate the constraint
-/// slightly. This helps when saving and loading a game.
-/// @warning Do not use a zero or short length.
+/**
+* Distance joint definition. This requires defining an
+* anchor point on both bodies and the non-zero length of the
+* distance joint. The definition uses local anchor points
+* so that the initial configuration can violate the constraint
+* slightly. This helps when saving and loading a game.
+* @warning Do not use a zero or short length.
+*/
 public class b2DistanceJointDef extends b2JointDef
 {
 	public function b2DistanceJointDef()
@@ -45,8 +47,10 @@ public class b2DistanceJointDef extends b2JointDef
 		dampingRatio = 0.0;
 	}
 	
-	/// Initialize the bodies, anchors, and length using the world
-	/// anchors.
+	/**
+	* Initialize the bodies, anchors, and length using the world
+	* anchors.
+	*/
 	public function Initialize(b1:b2Body, b2:b2Body,
 								anchor1:b2Vec2, anchor2:b2Vec2) : void
 	{
@@ -61,19 +65,29 @@ public class b2DistanceJointDef extends b2JointDef
 		dampingRatio = 0.0;
 	}
 
-	/// The local anchor point relative to body1's origin.
+	/**
+	* The local anchor point relative to body1's origin.
+	*/
 	public var localAnchor1:b2Vec2 = new b2Vec2();
 
-	/// The local anchor point relative to body2's origin.
+	/**
+	* The local anchor point relative to body2's origin.
+	*/
 	public var localAnchor2:b2Vec2 = new b2Vec2();
 
-	/// The equilibrium length between the anchor points.
+	/**
+	* The equilibrium length between the anchor points.
+	*/
 	public var length:Number;
 
-	/// The response speed.
+	/**
+	* The response speed.
+	*/
 	public var frequencyHz:Number;
 
-	/// The damping ratio. 0 = no damping, 1 = critical damping.
+	/**
+	* The damping ratio. 0 = no damping, 1 = critical damping.
+	*/
 	public var dampingRatio:Number;
 };
 

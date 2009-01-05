@@ -29,6 +29,9 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
+/**
+* @private
+*/
 public class b2ContactSolver
 {
 	public function b2ContactSolver(step:b2TimeStep, contacts:Array, contactCount:int, allocator:*){

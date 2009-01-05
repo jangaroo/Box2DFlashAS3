@@ -20,6 +20,9 @@ package Box2D.Collision{
 import Box2D.Common.b2internal;
 use namespace b2internal;
 	
+/**
+* @private
+*/
 public class b2Proxy{
 	public function GetNext():uint { return lowerBounds[0]; }
 	public function SetNext(next:uint) : void { lowerBounds[0] = next & 0x0000ffff; }

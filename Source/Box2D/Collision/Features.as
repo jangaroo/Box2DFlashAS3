@@ -21,9 +21,14 @@ package Box2D.Collision {
 use namespace b2internal;
 
 // We use contact ids to facilitate warm starting.
+/**
+* @private
+*/
 public class Features
 {
-	///< The edge that defines the outward contact normal.
+	/**
+	* < The edge that defines the outward contact normal.
+	*/
 	public function set referenceEdge(value:int) : void{
 		_referenceEdge = value;
 		_m_id._key = (_m_id._key & 0xffffff00) | (_referenceEdge & 0x000000ff);
@@ -33,7 +38,9 @@ public class Features
 	}
 	public var _referenceEdge:int;
 	
-	///< The edge most anti-parallel to the reference edge.
+	/**
+	* < The edge most anti-parallel to the reference edge.
+	*/
 	public function set incidentEdge(value:int) : void{
 		_incidentEdge = value;
 		_m_id._key = (_m_id._key & 0xffff00ff) | ((_incidentEdge << 8) & 0x0000ff00);
@@ -43,7 +50,9 @@ public class Features
 	}
 	public var _incidentEdge:int;
 	
-	///< The vertex (0 or 1) on the incident edge that was clipped.
+	/**
+	* < The vertex (0 or 1) on the incident edge that was clipped.
+	*/
 	public function set incidentVertex(value:int) : void{
 		_incidentVertex = value;
 		_m_id._key = (_m_id._key & 0xff00ffff) | ((_incidentVertex << 16) & 0x00ff0000);
@@ -53,7 +62,9 @@ public class Features
 	}
 	public var _incidentVertex:int;
 	
-	///< A value of 1 indicates that the reference edge is on shape2.
+	/**
+	* < A value of 1 indicates that the reference edge is on shape2.
+	*/
 	public function set flip(value:int) : void{
 		_flip = value;
 		_m_id._key = (_m_id._key & 0x00ffffff) | ((_flip << 24) & 0xff000000);

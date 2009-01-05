@@ -25,9 +25,14 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 // A manifold for two touching convex shapes.
+/**
+* @private
+*/
 public class b2AABB
 {
-	/// Verify that the bounds are sorted.
+	/**
+	* Verify that the bounds are sorted.
+	*/
 	public function IsValid():Boolean{
 		//b2Vec2 d = upperBound - lowerBound;;
 		var dX:Number = upperBound.x - lowerBound.x;
@@ -37,9 +42,7 @@ public class b2AABB
 		return valid;
 	}
 
-	public var lowerBound:b2Vec2 = new b2Vec2();	///< the lower vertex
-	public var upperBound:b2Vec2 = new b2Vec2();	///< the upper vertex
-};
+	/** The lower vertex */	public var lowerBound:b2Vec2 = new b2Vec2();	/** The upper vertex */	public var upperBound:b2Vec2 = new b2Vec2();};
 
 
 }

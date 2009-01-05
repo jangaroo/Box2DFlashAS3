@@ -30,13 +30,18 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
+/**
+* @private
+*/
 public class b2World
 {
 	
 	// Construct a world object.
-	/// @param worldAABB a bounding box that completely encompasses all your shapes.
-	/// @param gravity the world gravity vector.
-	/// @param doSleep improve performance by not simulating inactive bodies.
+	/**
+	* @param worldAABB a bounding box that completely encompasses all your shapes.
+	* @param gravity the world gravity vector.
+	* @param doSleep improve performance by not simulating inactive bodies.
+	*/
 	public function b2World(worldAABB:b2AABB, gravity:b2Vec2, doSleep:Boolean){
 		
 		m_destructionListener = null;
@@ -72,58 +77,78 @@ public class b2World
 		m_groundBody = CreateBody(bd);
 	}
 
-	/// Destruct the world. All physics entities are destroyed and all heap memory is released.
+	/**
+	* Destruct the world. All physics entities are destroyed and all heap memory is released.
+	*/
 	//~b2World();
 
-	/// Register a destruction listener.
+	/**
+	* Register a destruction listener.
+	*/
 	public function SetDestructionListener(listener:b2DestructionListener) : void{
 		m_destructionListener = listener;
 	}
 
-	/// Register a broad-phase boundary listener.
+	/**
+	* Register a broad-phase boundary listener.
+	*/
 	public function SetBoundaryListener(listener:b2BoundaryListener) : void{
 		m_boundaryListener = listener;
 	}
 
-	/// Register a contact filter to provide specific control over collision.
-	/// Otherwise the default filter is used (b2_defaultFilter).
+	/**
+	* Register a contact filter to provide specific control over collision.
+	* Otherwise the default filter is used (b2_defaultFilter).
+	*/
 	public function SetContactFilter(filter:b2ContactFilter) : void{
 		m_contactFilter = filter;
 	}
 
-	/// Register a contact event listener
+	/**
+	* Register a contact event listener
+	*/
 	public function SetContactListener(listener:b2ContactListener) : void{
 		m_contactListener = listener;
 	}
 
-	/// Register a routine for debug drawing. The debug draw functions are called
-	/// inside the b2World::Step method, so make sure your renderer is ready to
-	/// consume draw commands when you call Step().
+	/**
+	* Register a routine for debug drawing. The debug draw functions are called
+	* inside the b2World::Step method, so make sure your renderer is ready to
+	* consume draw commands when you call Step().
+	*/
 	public function SetDebugDraw(debugDraw:b2DebugDraw) : void{
 		m_debugDraw = debugDraw;
 	}
 	
-	/// Perform validation of internal data structures.
+	/**
+	* Perform validation of internal data structures.
+	*/
 	public function Validate() : void
 	{
 		m_broadPhase.Validate();
 	}
 	
-	/// Get the number of broad-phase proxies.
+	/**
+	* Get the number of broad-phase proxies.
+	*/
 	public function GetProxyCount() : int
 	{
 		return m_broadPhase.m_proxyCount;
 	}
 	
-	/// Get the number of broad-phase pairs.
+	/**
+	* Get the number of broad-phase pairs.
+	*/
 	public function GetPairCount() : int
 	{
 		return m_broadPhase.m_pairManager.m_pairCount;
 	}
 	
-	/// Create a rigid body given a definition. No reference to the definition
-	/// is retained.
-	/// @warning This function is locked during callbacks.
+	/**
+	* Create a rigid body given a definition. No reference to the definition
+	* is retained.
+	* @warning This function is locked during callbacks.
+	*/
 	public function CreateBody(def:b2BodyDef) : b2Body{
 		
 		//b2Settings.b2Assert(m_lock == false);
@@ -149,10 +174,12 @@ public class b2World
 		
 	}
 
-	/// Destroy a rigid body given a definition. No reference to the definition
-	/// is retained. This function is locked during callbacks.
-	/// @warning This automatically deletes all associated shapes and joints.
-	/// @warning This function is locked during callbacks.
+	/**
+	* Destroy a rigid body given a definition. No reference to the definition
+	* is retained. This function is locked during callbacks.
+	* @warning This automatically deletes all associated shapes and joints.
+	* @warning This function is locked during callbacks.
+	*/
 	public function DestroyBody(b:b2Body) : void{
 		
 		//b2Settings.b2Assert(m_bodyCount > 0);
@@ -216,9 +243,11 @@ public class b2World
 		
 	}
 
-	/// Create a joint to constrain bodies together. No reference to the definition
-	/// is retained. This may cause the connected bodies to cease colliding.
-	/// @warning This function is locked during callbacks.
+	/**
+	* Create a joint to constrain bodies together. No reference to the definition
+	* is retained. This may cause the connected bodies to cease colliding.
+	* @warning This function is locked during callbacks.
+	*/
 	public function CreateJoint(def:b2JointDef) : b2Joint{
 		
 		//b2Settings.b2Assert(m_lock == false);
@@ -265,8 +294,10 @@ public class b2World
 		
 	}
 
-	/// Destroy a joint. This may cause the connected bodies to begin colliding.
-	/// @warning This function is locked during callbacks.
+	/**
+	* Destroy a joint. This may cause the connected bodies to begin colliding.
+	* @warning This function is locked during callbacks.
+	*/
 	public function DestroyJoint(j:b2Joint) : void{
 		
 		//b2Settings.b2Assert(m_lock == false);
@@ -353,60 +384,82 @@ public class b2World
 		
 	}
 
-	/// Re-filter a shape. This re-runs contact filtering on a shape.
+	/**
+	* Re-filter a shape. This re-runs contact filtering on a shape.
+	*/
 	public function Refilter(shape:b2Shape) : void
 	{
 		shape.RefilterProxy(m_broadPhase, shape.m_body.m_xf);
 	}
 	
-	/// Enable/disable warm starting. For testing.
+	/**
+	* Enable/disable warm starting. For testing.
+	*/
 	public function SetWarmStarting(flag: Boolean) : void { m_warmStarting = flag; }
 
-	/// Enable/disable position correction. For testing.
+	/**
+	* Enable/disable position correction. For testing.
+	*/
 	public function SetPositionCorrection(flag: Boolean) : void { m_positionCorrection = flag; }
 
-	/// Enable/disable continuous physics. For testing.
+	/**
+	* Enable/disable continuous physics. For testing.
+	*/
 	public function SetContinuousPhysics(flag: Boolean) : void { m_continuousPhysics = flag; }
 	
-	/// Get the number of bodies.
+	/**
+	* Get the number of bodies.
+	*/
 	public function GetBodyCount() : int
 	{
 		return m_bodyCount;
 	}
 	
-	/// Get the number of joints.
+	/**
+	* Get the number of joints.
+	*/
 	public function GetJointCount() : int
 	{
 		return m_jointCount;
 	}
 	
-	/// Get the number of contacts (each may have 0 or more contact points).
+	/**
+	* Get the number of contacts (each may have 0 or more contact points).
+	*/
 	public function GetContactCount() : int
 	{
 		return m_contactCount;
 	}
 	
-	/// Change the global gravity vector.
+	/**
+	* Change the global gravity vector.
+	*/
 	public function SetGravity(gravity: b2Vec2): void
 	{
 		m_gravity = gravity;
 	}
 
-	/// Get the global gravity vector.
+	/**
+	* Get the global gravity vector.
+	*/
 	public function GetGravity():b2Vec2{
 		return m_gravity;
 	}
 
-	/// The world provides a single static ground body with no collision shapes.
-	/// You can use this to simplify the creation of joints and static shapes.
+	/**
+	* The world provides a single static ground body with no collision shapes.
+	* You can use this to simplify the creation of joints and static shapes.
+	*/
 	public function GetGroundBody() : b2Body{
 		return m_groundBody;
 	}
 
-	/// Take a time step. This performs collision detection, integration,
-	/// and constraint solution.
-	/// @param timeStep the amount of time to simulate, this should not vary.
-	/// @param iterations the number of iterations to be used by the constraint solver.
+	/**
+	* Take a time step. This performs collision detection, integration,
+	* and constraint solution.
+	* @param timeStep the amount of time to simulate, this should not vary.
+	* @param iterations the number of iterations to be used by the constraint solver.
+	*/
 	public function Step(dt:Number, iterations:int) : void{
 		
 		m_lock = true;
@@ -450,13 +503,15 @@ public class b2World
 		m_lock = false;
 	}
 
-	/// Query the world for all shapes that potentially overlap the
-	/// provided AABB. You provide a shape pointer buffer of specified
-	/// size. The number of shapes found is returned.
-	/// @param aabb the query box.
-	/// @param shapes a user allocated shape pointer array of size maxCount (or greater).
-	/// @param maxCount the capacity of the shapes array.
-	/// @return the number of shapes found in aabb.
+	/**
+	* Query the world for all shapes that potentially overlap the
+	* provided AABB. You provide a shape pointer buffer of specified
+	* size. The number of shapes found is returned.
+	* @param aabb the query box.
+	* @param shapes a user allocated shape pointer array of size maxCount (or greater).
+	* @param maxCount the capacity of the shapes array.
+	* @return the number of shapes found in aabb.
+	*/
 	public function Query(aabb:b2AABB, shapes:Array, maxCount:int) : int{
 		
 		//void** results = (void**)m_stackAllocator.Allocate(maxCount * sizeof(void*));
@@ -474,21 +529,27 @@ public class b2World
 		
 	}
 
-	/// Check if the AABB is within the broadphase limits.
+	/**
+	* Check if the AABB is within the broadphase limits.
+	*/
 	public function InRange(aabb:b2AABB):Boolean{
 		 return m_broadPhase.InRange(aabb);
 	}
 
-	/// Get the world body list. With the returned body, use b2Body::GetNext to get
-	/// the next body in the world list. A NULL body indicates the end of the list.
-	/// @return the head of the world body list.
+	/**
+	* Get the world body list. With the returned body, use b2Body::GetNext to get
+	* the next body in the world list. A NULL body indicates the end of the list.
+	* @return the head of the world body list.
+	*/
 	public function GetBodyList() : b2Body{
 		return m_bodyList;
 	}
 
-	/// Get the world joint list. With the returned joint, use b2Joint::GetNext to get
-	/// the next joint in the world list. A NULL joint indicates the end of the list.
-	/// @return the head of the world joint list.
+	/**
+	* Get the world joint list. With the returned joint, use b2Joint::GetNext to get
+	* the next joint in the world list. A NULL joint indicates the end of the list.
+	* @return the head of the world joint list.
+	*/
 	public function GetJointList() : b2Joint{
 		return m_jointList;
 	}

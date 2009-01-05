@@ -21,10 +21,15 @@ package Box2D.Common.Math{
 import Box2D.Common.b2Settings;
 import Box2D.Collision.b2AABB;
 
+/**
+* @private
+*/
 public class b2Math{
 
-	/// This function is used to ensure that a floating point number is
-	/// not a NaN or infinity.
+	/**
+	* This function is used to ensure that a floating point number is
+	* not a NaN or infinity.
+	*/
 	static public function b2IsValid(x:Number) : Boolean
 	{
 		return isFinite(x);

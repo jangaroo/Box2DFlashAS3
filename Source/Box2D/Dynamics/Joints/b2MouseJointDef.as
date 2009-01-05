@@ -25,8 +25,10 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
-/// Mouse joint definition. This requires a world target point,
-/// tuning parameters, and the time step.
+/**
+* Mouse joint definition. This requires a world target point,
+* tuning parameters, and the time step.
+*/
 public class b2MouseJointDef extends b2JointDef
 {
 	public function b2MouseJointDef()
@@ -38,18 +40,28 @@ public class b2MouseJointDef extends b2JointDef
 		timeStep = 1.0 / 60.0;
 	}
 
-	/// The initial world target point. This is assumed
-	/// to coincide with the body anchor initially.
+	/**
+	* The initial world target point. This is assumed
+	* to coincide with the body anchor initially.
+	*/
 	public var target:b2Vec2 = new b2Vec2();
-	/// The maximum constraint force that can be exerted
-	/// to move the candidate body. Usually you will express
-	/// as some multiple of the weight (multiplier * mass * gravity).
+	/**
+	* The maximum constraint force that can be exerted
+	* to move the candidate body. Usually you will express
+	* as some multiple of the weight (multiplier * mass * gravity).
+	*/
 	public var maxForce:Number;
-	/// The response speed.
+	/**
+	* The response speed.
+	*/
 	public var frequencyHz:Number;
-	/// The damping ratio. 0 = no damping, 1 = critical damping.
+	/**
+	* The damping ratio. 0 = no damping, 1 = critical damping.
+	*/
 	public var dampingRatio:Number;
-	/// The time step used in the simulation.
+	/**
+	* The time step used in the simulation.
+	*/
 	public var timeStep:Number;
 };
 

@@ -25,6 +25,9 @@ import Box2D.Collision.*;
 import Box2D.Common.b2internal;
 use namespace b2internal;
 
+/**
+* @private
+*/
 public class b2Distance
 {
 
@@ -456,7 +459,8 @@ static public function DistanceCC(
 // GJK is more robust with polygon-vs-point than polygon-vs-circle.
 // So we convert polygon-vs-circle to polygon-vs-point.
 static private var gPoint:b2Point = new b2Point();
-///
+/**
+* */
 static public function DistancePC(
 	x1:b2Vec2, x2:b2Vec2,
 	polygon:b2PolygonShape, xf1:b2XForm,

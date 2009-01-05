@@ -27,12 +27,14 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
-/// A revolute joint constrains to bodies to share a common point while they
-/// are free to rotate about the point. The relative rotation about the shared
-/// point is the joint angle. You can limit the relative rotation with
-/// a joint limit that specifies a lower and upper angle. You can use a motor
-/// to drive the relative rotation about the shared point. A maximum motor torque
-/// is provided so that infinite forces are not generated.
+/**
+* A revolute joint constrains to bodies to share a common point while they
+* are free to rotate about the point. The relative rotation about the shared
+* point is the joint angle. You can limit the relative rotation with
+* a joint limit that specifies a lower and upper angle. You can use a motor
+* to drive the relative rotation about the shared point. A maximum motor torque
+* is provided so that infinite forces are not generated.
+*/
 
 // Point-to-point constraint
 // C = p2 - p1
@@ -47,6 +49,9 @@ use namespace b2internal;
 // J = [0 0 -1 0 0 1]
 // K = invI1 + invI2
 
+/**
+* @private
+*/
 public class b2RevoluteJoint extends b2Joint
 {
 	public override function GetAnchor1() :b2Vec2{
@@ -63,73 +68,99 @@ public class b2RevoluteJoint extends b2Joint
 		return m_limitForce;
 	}
 
-	/// Get the current joint angle in radians.
+	/**
+	* Get the current joint angle in radians.
+	*/
 	public function GetJointAngle() :Number{
 		//b2Body* b1 = m_body1;
 		//b2Body* b2 = m_body2;
 		return m_body2.m_sweep.a - m_body1.m_sweep.a - m_referenceAngle;
 	}
 
-	/// Get the current joint angle speed in radians per second.
+	/**
+	* Get the current joint angle speed in radians per second.
+	*/
 	public function GetJointSpeed() :Number{
 		//b2Body* b1 = m_body1;
 		//b2Body* b2 = m_body2;
 		return m_body2.m_angularVelocity - m_body1.m_angularVelocity;
 	}
 
-	/// Is the joint limit enabled?
+	/**
+	* Is the joint limit enabled?
+	*/
 	public function IsLimitEnabled() :Boolean{
 		return m_enableLimit;
 	}
 
-	/// Enable/disable the joint limit.
+	/**
+	* Enable/disable the joint limit.
+	*/
 	public function EnableLimit(flag:Boolean) :void{
 		m_enableLimit = flag;
 	}
 
-	/// Get the lower joint limit in radians.
+	/**
+	* Get the lower joint limit in radians.
+	*/
 	public function GetLowerLimit() :Number{
 		return m_lowerAngle;
 	}
 
-	/// Get the upper joint limit in radians.
+	/**
+	* Get the upper joint limit in radians.
+	*/
 	public function GetUpperLimit() :Number{
 		return m_upperAngle;
 	}
 
-	/// Set the joint limits in radians.
+	/**
+	* Set the joint limits in radians.
+	*/
 	public function SetLimits(lower:Number, upper:Number) : void{
 		//b2Settings.b2Assert(lower <= upper);
 		m_lowerAngle = lower;
 		m_upperAngle = upper;
 	}
 
-	/// Is the joint motor enabled?
+	/**
+	* Is the joint motor enabled?
+	*/
 	public function IsMotorEnabled() :Boolean{
 		return m_enableMotor;
 	}
 
-	/// Enable/disable the joint motor.
+	/**
+	* Enable/disable the joint motor.
+	*/
 	public function EnableMotor(flag:Boolean) :void{
 		m_enableMotor = flag;
 	}
 
-	/// Set the motor speed in radians per second.
+	/**
+	* Set the motor speed in radians per second.
+	*/
 	public function SetMotorSpeed(speed:Number) : void{
 		m_motorSpeed = speed;
 	}
 
-	/// Get the motor speed in radians per second.
+	/**
+	* Get the motor speed in radians per second.
+	*/
 	public function GetMotorSpeed() :Number{
 		return m_motorSpeed;
 	}
 
-	/// Set the maximum motor torque, usually in N-m.
+	/**
+	* Set the maximum motor torque, usually in N-m.
+	*/
 	public function SetMaxMotorTorque(torque:Number) : void{
 		m_maxMotorTorque = torque;
 	}
 
-	/// Get the current motor torque, usually in N-m.
+	/**
+	* Get the current motor torque, usually in N-m.
+	*/
 	public function GetMotorTorque() :Number{
 		return m_motorForce;
 	}

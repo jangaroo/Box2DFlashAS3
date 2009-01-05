@@ -28,6 +28,9 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
+/**
+* @private
+*/
 public class b2ContactConstraint
 {
 	public function b2ContactConstraint(){

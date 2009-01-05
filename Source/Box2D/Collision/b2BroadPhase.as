@@ -47,6 +47,9 @@ Bullet (http:/www.bulletphysics.com).
 // - no broadphase is perfect and neither is this one: it is not great for huge
 //   worlds (use a multi-SAP instead), it is not great for large objects.
 
+/**
+* @private
+*/
 public class b2BroadPhase
 {
 //public:

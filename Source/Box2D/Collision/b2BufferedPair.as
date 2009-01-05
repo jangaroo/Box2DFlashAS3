@@ -18,6 +18,9 @@
 
 package Box2D.Collision{
 	
+/**
+* @private
+*/
 public class b2BufferedPair{
 	public var proxyId1:uint;
 	public var proxyId2:uint;

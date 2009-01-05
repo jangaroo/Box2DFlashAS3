@@ -31,111 +31,145 @@ use namespace b2internal;
 
 
 
-/// A shape is used for collision detection. Shapes are created in b2World.
-/// You can use shape for collision detection before they are attached to the world.
-/// @warning you cannot reuse shapes.
+/**
+* A shape is used for collision detection. Shapes are created in b2World.
+* You can use shape for collision detection before they are attached to the world.
+* @warning you cannot reuse shapes.
+*/
 public class b2Shape
 {
-	/// Get the type of this shape. You can use this to down cast to the concrete shape.
-	/// @return the shape type.
+	/**
+	* Get the type of this shape. You can use this to down cast to the concrete shape.
+	* @return the shape type.
+	*/
 	public function GetType() : int{
 		return m_type;
 	}
 
-	/// Is this shape a sensor (non-solid)?
-	/// @return the true if the shape is a sensor.
+	/**
+	* Is this shape a sensor (non-solid)?
+	* @return the true if the shape is a sensor.
+	*/
 	public function IsSensor() : Boolean{
 		return m_isSensor;
 	}
 
-	/// Set the contact filtering data. You must call b2World::Refilter to correct
-	/// existing contacts/non-contacts.
+	/**
+	* Set the contact filtering data. You must call b2World::Refilter to correct
+	* existing contacts/non-contacts.
+	*/
 	public function SetFilterData(filter:b2FilterData) : void
 	{
 		m_filter = filter.Copy();
 	}
 
-	/// Get the contact filtering data.
+	/**
+	* Get the contact filtering data.
+	*/
 	public function GetFilterData() : b2FilterData
 	{
 		return m_filter.Copy();
 	}
 
-	/// Get the parent body of this shape. This is NULL if the shape is not attached.
-	/// @return the parent body.
+	/**
+	* Get the parent body of this shape. This is NULL if the shape is not attached.
+	* @return the parent body.
+	*/
 	public function GetBody() : b2Body{
 		return m_body;
 	}
 
-	/// Get the next shape in the parent body's shape list.
-	/// @return the next shape.
+	/**
+	* Get the next shape in the parent body's shape list.
+	* @return the next shape.
+	*/
 	public function GetNext() : b2Shape{
 		return m_next;
 	}
 
-	/// Get the user data that was assigned in the shape definition. Use this to
-	/// store your application specific data.
+	/**
+	* Get the user data that was assigned in the shape definition. Use this to
+	* store your application specific data.
+	*/
 	public function GetUserData() : *{
 		return m_userData;
 	}
 
-	/// Set the user data. Use this to store your application specific data.
+	/**
+	* Set the user data. Use this to store your application specific data.
+	*/
 	public function SetUserData(data:*) : void
 	{
 		m_userData = data;
 	}
 
-	/// Test a point for containment in this shape. This only works for convex shapes.
-	/// @param xf the shape world transform.
-	/// @param p a point in world coordinates.
+	/**
+	* Test a point for containment in this shape. This only works for convex shapes.
+	* @param xf the shape world transform.
+	* @param p a point in world coordinates.
+	*/
 	public virtual function TestPoint(xf:b2XForm, p:b2Vec2) : Boolean {return false};
 
-	/// Perform a ray cast against this shape.
-	/// @param xf the shape world transform.
-	/// @param lambda returns the hit fraction. You can use this to compute the contact point
-	/// p = (1 - lambda) * segment.p1 + lambda * segment.p2.
-	/// @param normal returns the normal at the contact point. If there is no intersection, the normal
-	/// is not set.
-	/// @param segment defines the begin and end point of the ray cast.
-	/// @param maxLambda a number typically in the range [0,1].
-	/// @return true if there was an intersection.
+	/**
+	* Perform a ray cast against this shape.
+	* @param xf the shape world transform.
+	* @param lambda returns the hit fraction. You can use this to compute the contact point
+	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
+	* @param normal returns the normal at the contact point. If there is no intersection, the normal
+	* is not set.
+	* @param segment defines the begin and end point of the ray cast.
+	* @param maxLambda a number typically in the range [0,1].
+	* @return true if there was an intersection.
+	*/
 	public virtual function  TestSegment(xf:b2XForm,
 								lambda:Array, // float pointer
 								normal:b2Vec2, // pointer
 								segment:b2Segment,
 								maxLambda:Number) : Boolean {return false};
 
-	/// Given a transform, compute the associated axis aligned bounding box for this shape.
-	/// @param aabb returns the axis aligned box.
-	/// @param xf the world transform of the shape.
+	/**
+	* Given a transform, compute the associated axis aligned bounding box for this shape.
+	* @param aabb returns the axis aligned box.
+	* @param xf the world transform of the shape.
+	*/
 	public virtual function  ComputeAABB(aabb:b2AABB, xf:b2XForm) : void {};
 
-	/// Given two transforms, compute the associated swept axis aligned bounding box for this shape.
-	/// @param aabb returns the axis aligned box.
-	/// @param xf1 the starting shape world transform.
-	/// @param xf2 the ending shape world transform.
+	/**
+	* Given two transforms, compute the associated swept axis aligned bounding box for this shape.
+	* @param aabb returns the axis aligned box.
+	* @param xf1 the starting shape world transform.
+	* @param xf2 the ending shape world transform.
+	*/
 	public virtual function  ComputeSweptAABB(	aabb:b2AABB,
 									xf1:b2XForm,
 									xf2:b2XForm) : void {};
 
-	/// Compute the mass properties of this shape using its dimensions and density.
-	/// The inertia tensor is computed about the local origin, not the centroid.
-	/// @param massData returns the mass data for this shape.
+	/**
+	* Compute the mass properties of this shape using its dimensions and density.
+	* The inertia tensor is computed about the local origin, not the centroid.
+	* @param massData returns the mass data for this shape.
+	*/
 	public virtual function  ComputeMass(massData:b2MassData) : void {};
 
-	/// Get the maximum radius about the parent body's center of mass.
+	/**
+	* Get the maximum radius about the parent body's center of mass.
+	*/
 	public function GetSweepRadius() : Number
 	{
 		return m_sweepRadius;
 	}
 
-	/// Get the coefficient of friction.
+	/**
+	* Get the coefficient of friction.
+	*/
 	public function GetFriction() : Number
 	{
 		return m_friction;
 	}
 
-	/// Get the coefficient of restitution.
+	/**
+	* Get the coefficient of restitution.
+	*/
 	public function GetRestitution() : Number
 	{
 		return m_restitution;
@@ -315,7 +349,9 @@ public class b2Shape
 	
 	
 	
-	/// The various collision shape types supported by Box2D.
+	/**
+	* The various collision shape types supported by Box2D.
+	*/
 	//enum b2ShapeType
 	//{
 		static public const e_unknownShape:int = 	-1;

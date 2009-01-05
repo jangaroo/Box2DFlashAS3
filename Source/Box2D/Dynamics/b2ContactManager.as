@@ -31,6 +31,9 @@ use namespace b2internal;
 
 
 // Delegate of b2World.
+/**
+* @private
+*/
 public class b2ContactManager extends b2PairCallback
 {
 	public function b2ContactManager() {

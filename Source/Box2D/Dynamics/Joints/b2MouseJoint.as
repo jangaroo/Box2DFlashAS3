@@ -35,32 +35,44 @@ use namespace b2internal;
 // Identity used:
 // w k % (rx i + ry j) = w * (-ry i + rx j)
 
-/// A mouse joint is used to make a point on a body track a
-/// specified world point. This a soft constraint with a maximum
-/// force. This allows the constraint to stretch and without
-/// applying huge forces.
+/**
+* A mouse joint is used to make a point on a body track a
+* specified world point. This a soft constraint with a maximum
+* force. This allows the constraint to stretch and without
+* applying huge forces.
+*/
 
 public class b2MouseJoint extends b2Joint
 {
-	/// Implements b2Joint.
+	/**
+	* Implements b2Joint.
+	*/
 	public override function GetAnchor1():b2Vec2{
 		return m_target;
 	}
-	/// Implements b2Joint.
+	/**
+	* Implements b2Joint.
+	*/
 	public override function GetAnchor2():b2Vec2{
 		return m_body2.GetWorldPoint(m_localAnchor);
 	}
-	/// Implements b2Joint.
+	/**
+	* Implements b2Joint.
+	*/
 	public override function GetReactionForce():b2Vec2
 	{
 		return m_impulse;
 	}
-	/// Implements b2Joint.
+	/**
+	* Implements b2Joint.
+	*/
 	public override function GetReactionTorque():Number
 	{
 		return 0.0;
 	}
-	/// Use this to update the target point.
+	/**
+	* Use this to update the target point.
+	*/
 	public function SetTarget(target:b2Vec2) : void{
 		if (m_body2.IsSleeping()){
 			m_body2.WakeUp();

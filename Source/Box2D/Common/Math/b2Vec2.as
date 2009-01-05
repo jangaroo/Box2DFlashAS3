@@ -22,7 +22,9 @@ package Box2D.Common.Math{
 import Box2D.Common.*;
 
 
-/// A 2D column vector.
+/**
+* A 2D column vector.
+*/
 
 public class b2Vec2
 {

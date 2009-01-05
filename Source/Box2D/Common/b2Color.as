@@ -23,7 +23,9 @@ import Box2D.Common.*;
 import Box2D.Common.Math.*;
 
 
-/// A 2D column vector.
+/**
+* A 2D column vector.
+*/
 
 public class b2Color
 {

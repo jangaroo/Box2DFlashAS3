@@ -45,6 +45,9 @@ use namespace b2internal;
 // J = [-ax1 -cross(d+r1,ax1) ax1 cross(r2,ax1)]
 
 
+/**
+* @private
+*/
 public class b2PrismaticJoint extends b2Joint
 {
 	public override function GetAnchor1():b2Vec2{
@@ -72,7 +75,9 @@ public class b2PrismaticJoint extends b2Joint
 		return m_torque;
 	}
 	
-	/// Get the current joint translation, usually in meters.
+	/**
+	* Get the current joint translation, usually in meters.
+	*/
 	public function GetJointTranslation():Number{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
@@ -92,7 +97,9 @@ public class b2PrismaticJoint extends b2Joint
 		return translation;
 	}
 	
-	/// Get the current joint translation speed, usually in meters per second.
+	/**
+	* Get the current joint translation speed, usually in meters per second.
+	*/
 	public function GetJointSpeed():Number{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
@@ -139,60 +146,82 @@ public class b2PrismaticJoint extends b2Joint
 		return speed;
 	}
 	
-	/// Is the joint limit enabled?
+	/**
+	* Is the joint limit enabled?
+	*/
 	public function IsLimitEnabled() : Boolean
 	{
 		return m_enableLimit;
 	}
-	/// Enable/disable the joint limit.
+	/**
+	* Enable/disable the joint limit.
+	*/
 	public function EnableLimit(flag:Boolean) : void
 	{
 		m_enableLimit = flag;
 	}
-	/// Get the lower joint limit, usually in meters.
+	/**
+	* Get the lower joint limit, usually in meters.
+	*/
 	public function GetLowerLimit() : Number
 	{
 		return m_lowerTranslation;
 	}
-	/// Get the upper joint limit, usually in meters.
+	/**
+	* Get the upper joint limit, usually in meters.
+	*/
 	public function GetUpperLimit() : Number
 	{
 		return m_upperTranslation;
 	}
-	/// Set the joint limits, usually in meters.
+	/**
+	* Set the joint limits, usually in meters.
+	*/
 	public function SetLimits(lower:Number, upper:Number) : void
 	{
 		//b2Settings.b2Assert(lower <= upper);
 		m_lowerTranslation = lower;
 		m_upperTranslation = upper;
 	}
-	/// Is the joint motor enabled?
+	/**
+	* Is the joint motor enabled?
+	*/
 	public function IsMotorEnabled() : Boolean
 	{
 		return m_enableMotor;
 	}
-	/// Enable/disable the joint motor.
+	/**
+	* Enable/disable the joint motor.
+	*/
 	public function EnableMotor(flag:Boolean) : void
 	{
 		m_enableMotor = flag;
 	}
-	/// Set the motor speed, usually in meters per second.
+	/**
+	* Set the motor speed, usually in meters per second.
+	*/
 	public function SetMotorSpeed(speed:Number) : void
 	{
 		m_motorSpeed = speed;
 	}
-	/// Get the motor speed, usually in meters per second.
+	/**
+	* Get the motor speed, usually in meters per second.
+	*/
 	public function GetMotorSpeed() :Number
 	{
 		return m_motorSpeed;
 	}
 	
-	/// Set the maximum motor force, usually in N.
+	/**
+	* Set the maximum motor force, usually in N.
+	*/
 	public function SetMaxMotorForce(force:Number) : void
 	{
 		m_maxMotorForce = force;
 	}
-	/// Get the current motor force, usually in N.
+	/**
+	* Get the current motor force, usually in N.
+	*/
 	public function GetMotorForce() : Number
 	{
 		return m_motorForce;

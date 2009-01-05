@@ -109,6 +109,9 @@ Baumgarte method in performance critical scenarios.
 */
 
 
+/**
+* @private
+*/
 public class b2Island
 {
 	public function b2Island(

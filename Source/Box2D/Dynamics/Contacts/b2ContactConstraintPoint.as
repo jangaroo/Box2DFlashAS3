@@ -25,6 +25,9 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
+/**
+* @private
+*/
 public class b2ContactConstraintPoint
 {
 	public var localAnchor1:b2Vec2=new b2Vec2();

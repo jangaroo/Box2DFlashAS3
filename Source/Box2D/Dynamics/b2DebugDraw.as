@@ -32,8 +32,10 @@ use namespace b2internal;
 import flash.display.Sprite;
 
 
-/// Implement and register this class with a b2World to provide debug drawing of physics
-/// entities in your game.
+/**
+* Implement and register this class with a b2World to provide debug drawing of physics
+* entities in your game.
+*/
 public class b2DebugDraw
 {
 
@@ -45,96 +47,123 @@ public class b2DebugDraw
 
 	//enum
 	//{
-		static public var e_shapeBit:uint 			= 0x0001; ///< draw shapes
-		static public var e_jointBit:uint			= 0x0002; ///< draw joint connections
-		static public var e_coreShapeBit:uint		= 0x0004; ///< draw core (TOI) shapes
-		static public var e_aabbBit:uint			= 0x0008; ///< draw axis aligned bounding boxes
-		static public var e_obbBit:uint				= 0x0010; ///< draw oriented bounding boxes
-		static public var e_pairBit:uint			= 0x0020; ///< draw broad-phase pairs
-		static public var e_centerOfMassBit:uint	= 0x0040; ///< draw center of mass frame
-	//};
+	/** Draw shapes */	static public var e_shapeBit:uint 			= 0x0001;	/** Draw joint connections */	static public var e_jointBit:uint			= 0x0002;	/** Draw core (toi) shapes */	static public var e_coreShapeBit:uint		= 0x0004;	/** Draw axis aligned bounding boxes */	static public var e_aabbBit:uint			= 0x0008;	/** Draw oriented bounding boxes */	static public var e_obbBit:uint				= 0x0010;	/** Draw broad-phase pairs */	static public var e_pairBit:uint			= 0x0020;	/** Draw center of mass frame */	static public var e_centerOfMassBit:uint	= 0x0040;	//};
 
-	/// Set the drawing flags.
+	/**
+	* Set the drawing flags.
+	*/
 	public function SetFlags(flags:uint) : void{
 		m_drawFlags = flags;
 	}
 
-	/// Get the drawing flags.
+	/**
+	* Get the drawing flags.
+	*/
 	public function GetFlags() : uint{
 		return m_drawFlags;
 	}
 	
-	/// Append flags to the current flags.
+	/**
+	* Append flags to the current flags.
+	*/
 	public function AppendFlags(flags:uint) : void{
 		m_drawFlags |= flags;
 	}
 
-	/// Clear flags from the current flags.
+	/**
+	* Clear flags from the current flags.
+	*/
 	public function ClearFlags(flags:uint) : void {
 		m_drawFlags &= ~flags;
 	}
 
-	/// Set the sprite
+	/**
+	* Set the sprite
+	*/
 	public function SetSprite(sprite:Sprite) : void {
 		m_sprite = sprite; 
 	}
 	
-	/// Get the sprite
+	/**
+	* Get the sprite
+	*/
 	public function GetSprite() : Sprite {
 		return m_sprite;
 	}
 	
-	/// Set the draw scale
+	/**
+	* Set the draw scale
+	*/
 	public function SetDrawScale(drawScale:Number) : void {
 		m_drawScale = drawScale; 
 	}
 	
-	/// Get the draw
+	/**
+	* Get the draw
+	*/
 	public function GetDrawScale() : Number {
 		return m_drawScale;
 	}
 	
-	/// Set the line thickness
+	/**
+	* Set the line thickness
+	*/
 	public function SetLineThickness(lineThickness:Number) : void {
 		m_lineThickness = lineThickness; 
 	}
 	
-	/// Get the line thickness
+	/**
+	* Get the line thickness
+	*/
 	public function GetLineThickness() : Number {
 		return m_lineThickness;
 	}
 	
-	/// Set the alpha value used for lines
+	/**
+	* Set the alpha value used for lines
+	*/
 	public function SetAlpha(alpha:Number) : void {
 		m_alpha = alpha; 
 	}
 	
-	/// Get the alpha value used for lines
+	/**
+	* Get the alpha value used for lines
+	*/
 	public function GetAlpha() : Number {
 		return m_alpha;
 	}
 	
-	/// Set the alpha value used for fills
+	/**
+	* Set the alpha value used for fills
+	*/
 	public function SetFillAlpha(alpha:Number) : void {
 		m_fillAlpha = alpha; 
 	}
 	
-	/// Get the alpha value used for fills
+	/**
+	* Get the alpha value used for fills
+	*/
 	public function GetFillAlpha() : Number {
 		return m_fillAlpha;
 	}
 	
-	/// Set the scale used for drawing XForms
+	/**
+	* Set the scale used for drawing XForms
+	*/
 	public function SetXFormScale(xformScale:Number) : void {
 		m_xformScale = xformScale; 
 	}
 	
-	/// Get the scale used for drawing XForms
+	/**
+	* Get the scale used for drawing XForms
+	*/
 	public function GetXFormScale() : Number {
 		return m_xformScale;
 	}
 	
-	/// Draw a closed polygon provided in CCW order.
+	/**
+	* Draw a closed polygon provided in CCW order.
+	*/
 	public virtual function DrawPolygon(vertices:Array, vertexCount:int, color:b2Color) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, color.color, m_alpha);
@@ -146,7 +175,9 @@ public class b2DebugDraw
 		
 	}
 
-	/// Draw a solid closed polygon provided in CCW order.
+	/**
+	* Draw a solid closed polygon provided in CCW order.
+	*/
 	public virtual function DrawSolidPolygon(vertices:Array, vertexCount:int, color:b2Color) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, color.color, m_alpha);
@@ -160,7 +191,9 @@ public class b2DebugDraw
 		
 	}
 
-	/// Draw a circle.
+	/**
+	* Draw a circle.
+	*/
 	public virtual function DrawCircle(center:b2Vec2, radius:Number, color:b2Color) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, color.color, m_alpha);
@@ -168,7 +201,9 @@ public class b2DebugDraw
 		
 	}
 	
-	/// Draw a solid circle.
+	/**
+	* Draw a solid circle.
+	*/
 	public virtual function DrawSolidCircle(center:b2Vec2, radius:Number, axis:b2Vec2, color:b2Color) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, color.color, m_alpha);
@@ -182,7 +217,9 @@ public class b2DebugDraw
 	}
 
 	
-	/// Draw a line segment.
+	/**
+	* Draw a line segment.
+	*/
 	public virtual function DrawSegment(p1:b2Vec2, p2:b2Vec2, color:b2Color) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, color.color, m_alpha);
@@ -191,8 +228,10 @@ public class b2DebugDraw
 		
 	}
 
-	/// Draw a transform. Choose your own length scale.
-	/// @param xf a transform.
+	/**
+	* Draw a transform. Choose your own length scale.
+	* @param xf a transform.
+	*/
 	public virtual function DrawXForm(xf:b2XForm) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, 0xff0000, m_alpha);

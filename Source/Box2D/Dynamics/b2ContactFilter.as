@@ -30,13 +30,17 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
-/// Implement this class to provide collision filtering. In other words, you can implement
-/// this class if you want finer control over contact creation.
+/**
+* Implement this class to provide collision filtering. In other words, you can implement
+* this class if you want finer control over contact creation.
+*/
 public class b2ContactFilter
 {
 
-	/// Return true if contact calculations should be performed between these two shapes.
-	/// @warning for performance reasons this is only called when the AABBs begin to overlap.
+	/**
+	* Return true if contact calculations should be performed between these two shapes.
+	* @warning for performance reasons this is only called when the AABBs begin to overlap.
+	*/
 	public virtual function ShouldCollide(shape1:b2Shape, shape2:b2Shape) : Boolean{
 		var filter1:b2FilterData = shape1.GetFilterData();
 		var filter2:b2FilterData = shape2.GetFilterData();

@@ -29,12 +29,16 @@ import Box2D.Collision.*;
 import Box2D.Common.b2internal;
 use namespace b2internal;
 
-/// Convex polygon. The vertices must be in CCW order for a right-handed
-/// coordinate system with the z-axis coming out of the screen.
+/**
+* Convex polygon. The vertices must be in CCW order for a right-handed
+* coordinate system with the z-axis coming out of the screen.
+*/
 
 public class b2PolygonShape extends b2Shape
 {
-	/// @see b2Shape::TestPoint
+	/**
+	* @see b2Shape::TestPoint
+	*/
 	public override function TestPoint(xf:b2XForm, p:b2Vec2) : Boolean{
 		var tVec:b2Vec2;
 		
@@ -62,7 +66,9 @@ public class b2PolygonShape extends b2Shape
 		return true;
 	}
 
-	/// @see b2Shape::TestSegment
+	/**
+	* @see b2Shape::TestSegment
+	*/
 	public override function TestSegment( xf:b2XForm,
 		lambda:Array, // float ptr
 		normal:b2Vec2, // ptr
@@ -151,7 +157,9 @@ public class b2PolygonShape extends b2Shape
 		return false;
 	}
 
-	/// @see b2Shape::ComputeAABB
+	/**
+	* @see b2Shape::ComputeAABB
+	*/
 	//
 	static private var s_computeMat:b2Mat22 = new b2Mat22();
 	//
@@ -190,7 +198,9 @@ public class b2PolygonShape extends b2Shape
 		aabb.upperBound.Set(positionX + hX, positionY + hY);
 	}
 
-	/// @see b2Shape::ComputeSweptAABB
+	/**
+	* @see b2Shape::ComputeSweptAABB
+	*/
 	//
 	static private var s_sweptAABB1:b2AABB = new b2AABB();
 	static private var s_sweptAABB2:b2AABB = new b2AABB();
@@ -212,7 +222,9 @@ public class b2PolygonShape extends b2Shape
 							(aabb1.upperBound.y > aabb2.upperBound.y ? aabb1.upperBound.y : aabb2.upperBound.y));
 	}
 
-	/// @see b2Shape::ComputeMass
+	/**
+	* @see b2Shape::ComputeMass
+	*/
 	//
 	
 	//
@@ -327,51 +339,69 @@ public class b2PolygonShape extends b2Shape
 		massData.I = m_density * I;
 	}
 
-	/// Get the oriented bounding box relative to the parent body.
+	/**
+	* Get the oriented bounding box relative to the parent body.
+	*/
 	public function GetOBB() : b2OBB{
 		return m_obb;
 	}
 
-	/// Get local centroid relative to the parent body.
+	/**
+	* Get local centroid relative to the parent body.
+	*/
 	public function GetCentroid() : b2Vec2{
 		return m_centroid;
 	}
 
-	/// Get the vertex count.
+	/**
+	* Get the vertex count.
+	*/
 	public function GetVertexCount() : int{
 		return m_vertexCount;
 	}
 
-	/// Get the vertices in local coordinates.
+	/**
+	* Get the vertices in local coordinates.
+	*/
 	public function GetVertices() : Array{
 		return m_vertices;
 	}
 
-	/// Get the core vertices in local coordinates. These vertices
-	/// represent a smaller polygon that is used for time of impact
-	/// computations.
+	/**
+	* Get the core vertices in local coordinates. These vertices
+	* represent a smaller polygon that is used for time of impact
+	* computations.
+	*/
 	public function GetCoreVertices() : Array{
 		return m_coreVertices;
 	}
 	
-	/// Get the edge normal vectors. There is one for each vertex.
+	/**
+	* Get the edge normal vectors. There is one for each vertex.
+	*/
 	public function GetNormals() : Array
 	{
 		return m_normals;
 	}
 
-	/// Get the first vertex and apply the supplied transform.
+	/**
+	* Get the first vertex and apply the supplied transform.
+	*/
 	public function GetFirstVertex(xf:b2XForm) : b2Vec2{
 		return b2Math.b2MulX(xf, m_coreVertices[0]);
 	}
 
-	/// Get the centroid and apply the supplied transform.
+	/**
+	* Get the centroid and apply the supplied transform.
+	*/
 	public function Centroid(xf:b2XForm) : b2Vec2{
 		return b2Math.b2MulX(xf, m_centroid);
 	}
 
-	/// Get the support point in the given world direction.
-	/// Use the supplied transform.
+	/**
+	* Get the support point in the given world direction.
+	* Use the supplied transform.
+	*/
 	private var s_supportVec:b2Vec2 = new b2Vec2();
 	public function Support(xf:b2XForm, dX:Number, dY:Number) : b2Vec2{
 		var tVec:b2Vec2;

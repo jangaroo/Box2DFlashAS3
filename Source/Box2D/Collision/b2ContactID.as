@@ -23,6 +23,9 @@ import Box2D.Collision.Features;
 use namespace b2internal;
 
 // We use contact ids to facilitate warm starting.
+/**
+* @private
+*/
 public class b2ContactID
 {
 	public function b2ContactID(){
@@ -48,8 +51,7 @@ public class b2ContactID
 		features._flip = ((_key & 0xff000000) >> 24) & 0x000000ff;
 	}
 	public var features:Features = new Features();
-	public var _key:uint;///< Used to quickly compare contact ids.
-};
+	/** Used to quickly compare contact ids. */	public var _key:uint;};
 
 
 }

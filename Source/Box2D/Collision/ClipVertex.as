@@ -25,6 +25,9 @@ import Box2D.Collision.*;
 use namespace b2internal;
 	
 	
+/**
+* @private
+*/
 public class ClipVertex
 {
 	public var v:b2Vec2 = new b2Vec2();

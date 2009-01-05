@@ -19,6 +19,9 @@
 package Box2D.Collision{
 	
 	
+/**
+* @private
+*/
 public class b2PairCallback
 {
 	//virtual ~b2PairCallback() {}
