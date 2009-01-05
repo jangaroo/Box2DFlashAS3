@@ -31,7 +31,8 @@ use namespace b2internal;
 
 
 /**
-* @private
+* The world class manages all physics entities, dynamic simulation,
+* and asynchronous queries. 
 */
 public class b2World
 {

@@ -37,7 +37,14 @@ use namespace b2internal;
 public class b2JointEdge
 {
 	
-	/** Provides quick access to the other body attached. */	public var other:b2Body;	/** The joint */	public var joint:b2Joint;	/** The previous joint edge in the body's joint list */	public var prev:b2JointEdge;	/** The next joint edge in the body's joint list */	public var next:b2JointEdge;	
+	/** Provides quick access to the other body attached. */
+	public var other:b2Body;
+	/** The joint */
+	public var joint:b2Joint;
+	/** The previous joint edge in the body's joint list */
+	public var prev:b2JointEdge;
+	/** The next joint edge in the body's joint list */
+	public var next:b2JointEdge;	
 }
 
 }

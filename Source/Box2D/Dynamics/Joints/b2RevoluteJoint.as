@@ -26,16 +26,6 @@ import Box2D.Dynamics.*;
 import Box2D.Common.b2internal;
 use namespace b2internal;
 
-
-/**
-* A revolute joint constrains to bodies to share a common point while they
-* are free to rotate about the point. The relative rotation about the shared
-* point is the joint angle. You can limit the relative rotation with
-* a joint limit that specifies a lower and upper angle. You can use a motor
-* to drive the relative rotation about the shared point. A maximum motor torque
-* is provided so that infinite forces are not generated.
-*/
-
 // Point-to-point constraint
 // C = p2 - p1
 // Cdot = v2 - v1
@@ -50,20 +40,30 @@ use namespace b2internal;
 // K = invI1 + invI2
 
 /**
-* @private
+* A revolute joint constrains to bodies to share a common point while they
+* are free to rotate about the point. The relative rotation about the shared
+* point is the joint angle. You can limit the relative rotation with
+* a joint limit that specifies a lower and upper angle. You can use a motor
+* to drive the relative rotation about the shared point. A maximum motor torque
+* is provided so that infinite forces are not generated.
+* @see b2RevoluteJointDef
 */
 public class b2RevoluteJoint extends b2Joint
 {
+	/** @inheritDoc */
 	public override function GetAnchor1() :b2Vec2{
 		return m_body1.GetWorldPoint(m_localAnchor1);
 	}
+	/** @inheritDoc */
 	public override function GetAnchor2() :b2Vec2{
 		return m_body2.GetWorldPoint(m_localAnchor2);
 	}
 
+	/** @inheritDoc */
 	public override function GetReactionForce() :b2Vec2{
 		return m_pivotForce;
 	}
+	/** @inheritDoc */
 	public override function GetReactionTorque() :Number{
 		return m_limitForce;
 	}
@@ -420,7 +420,7 @@ public class b2RevoluteJoint extends b2Joint
 	}
 	
 	
-	public static var tImpulse:b2Vec2 = new b2Vec2();
+	private static var tImpulse:b2Vec2 = new b2Vec2();
 	public override function SolvePositionConstraints():Boolean{
 		
 		var oldLimitImpulse:Number;

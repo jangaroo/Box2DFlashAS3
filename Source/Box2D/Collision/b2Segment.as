@@ -21,17 +21,26 @@ package Box2D.Collision{
 import Box2D.Collision.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
-import Box2D.Common.b2internal;
+
+import Box2D.Common.b2internal;
 use namespace b2internal;
 
-// A manifold for two touching convex shapes.
 /**
-* @private
+* A manifold for two touching convex shapes.
 */
 public class b2Segment
 {
 	/**
-	* Ray cast against this segment with another segment.
+	* Ray cast against this segment with another segment
+	* @param xf the shape world transform.
+	* @param lambda returns the hit fraction. You can use this to compute the contact point
+	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
+	* @param normal returns the normal at the contact point. If there is no intersection, the normal
+	* is not set.
+	* @param segment defines the begin and end point of the ray cast.
+	* @param maxLambda a number typically in the range [0,1].
+	* @return true if there was an intersection.
+	* @see Box2D.Collision.Shapes.b2Shape#TestSegment
 	*/
 	// Collision Detection in Interactive 3D Environments by Gino van den Bergen
 	// From Section 3.4.1
@@ -102,7 +111,11 @@ public class b2Segment
 		return false;
 	}
 	
-	/** The starting point */	public var p1:b2Vec2 = new b2Vec2();	/** The ending point */	public var p2:b2Vec2 = new b2Vec2();};
+	/** The starting point */
+	public var p1:b2Vec2 = new b2Vec2();
+	/** The ending point */
+	public var p2:b2Vec2 = new b2Vec2();
+};
 
 
 }

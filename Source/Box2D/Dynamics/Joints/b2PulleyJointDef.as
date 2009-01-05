@@ -31,6 +31,7 @@ use namespace b2internal;
 * Pulley joint definition. This requires two ground anchors,
 * two dynamic body anchor points, max lengths for each side,
 * and a pulley ratio.
+* @see b2PulleyJoint
 */
 
 public class b2PulleyJointDef extends b2JointDef

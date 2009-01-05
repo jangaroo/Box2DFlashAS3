@@ -35,17 +35,20 @@ use namespace b2internal;
 * Yes, the force transmitted is scaled by the ratio.
 * The pulley also enforces a maximum length limit on both sides. This is
 * useful to prevent one side of the pulley hitting the top.
+* @see b2PulleyJointDef
 */
-	
 public class b2PulleyJoint extends b2Joint
 {
+	/** @inheritDoc */
 	public override function GetAnchor1():b2Vec2{
 		return m_body1.GetWorldPoint(m_localAnchor1);
 	}
+	/** @inheritDoc */
 	public override function GetAnchor2():b2Vec2{
 		return m_body2.GetWorldPoint(m_localAnchor2);
 	}
 
+	/** @inheritDoc */
 	public override function GetReactionForce() :b2Vec2
 	{
 		//b2Vec2 F = m_force * m_u2;
@@ -54,11 +57,15 @@ public class b2PulleyJoint extends b2Joint
 		return F;
 	}
 
+	/** @inheritDoc */
 	public override function GetReactionTorque() :Number
 	{
 		return 0.0;
 	}
 
+	/**
+	 * Get the first ground anchor.
+	 */
 	public function GetGroundAnchor1() :b2Vec2
 	{
 		//return m_ground.m_xf.position + m_groundAnchor1;
@@ -67,6 +74,9 @@ public class b2PulleyJoint extends b2Joint
 		return a;
 	}
 
+	/**
+	 * Get the second ground anchor.
+	 */
 	public function GetGroundAnchor2() :b2Vec2
 	{
 		//return m_ground.m_xf.position + m_groundAnchor2;
@@ -75,6 +85,9 @@ public class b2PulleyJoint extends b2Joint
 		return a;
 	}
 
+	/**
+	 * Get the current length of the segment attached to body1.
+	 */
 	public function GetLength1() :Number
 	{
 		var p:b2Vec2 = m_body1.GetWorldPoint(m_localAnchor1);
@@ -88,6 +101,9 @@ public class b2PulleyJoint extends b2Joint
 		return Math.sqrt(dX*dX + dY*dY);
 	}
 
+	/**
+	 * Get the current length of the segment attached to body2.
+	 */
 	public function GetLength2() :Number
 	{
 		var p:b2Vec2 = m_body2.GetWorldPoint(m_localAnchor2);
@@ -101,6 +117,9 @@ public class b2PulleyJoint extends b2Joint
 		return Math.sqrt(dX*dX + dY*dY);
 	}
 
+	/**
+	 * Get the pulley ratio.
+	 */
 	public function GetRatio():Number{
 		return m_ratio;
 	}

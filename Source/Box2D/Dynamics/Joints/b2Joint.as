@@ -30,6 +30,7 @@ use namespace b2internal;
 /**
 * The base joint class. Joints are used to constraint two bodies together in
 * various fashions. Some joints also feature limits and motors.
+* @see b2JointDef
 */
 public class b2Joint
 {

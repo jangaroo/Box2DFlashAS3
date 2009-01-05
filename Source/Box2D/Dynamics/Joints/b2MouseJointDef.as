@@ -28,6 +28,7 @@ use namespace b2internal;
 /**
 * Mouse joint definition. This requires a world target point,
 * tuning parameters, and the time step.
+* @see b2MouseJoint
 */
 public class b2MouseJointDef extends b2JointDef
 {

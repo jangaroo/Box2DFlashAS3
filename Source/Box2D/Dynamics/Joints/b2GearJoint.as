@@ -40,24 +40,28 @@ use namespace b2internal;
 * of length or units of 1/length.
 * @warning The revolute and prismatic joints must be attached to
 * fixed bodies (which must be body1 on those joints).
+* @see b2GearJointDef
 */
 
 public class b2GearJoint extends b2Joint
 {
+	/** @inheritDoc */
 	public override function GetAnchor1():b2Vec2{
 		//return m_body1->GetWorldPoint(m_localAnchor1);
 		return m_body1.GetWorldPoint(m_localAnchor1);
 	}
+	/** @inheritDoc */
 	public override function GetAnchor2():b2Vec2{
 		//return m_body2->GetWorldPoint(m_localAnchor2);
 		return m_body2.GetWorldPoint(m_localAnchor2);
 	}
-
+	/** @inheritDoc */
 	public override function GetReactionForce():b2Vec2{
 		// TODO_ERIN not tested
 		var F:b2Vec2 = new b2Vec2(m_force * m_J.linear2.x, m_force * m_J.linear2.y);
 		return F;
 	}
+	/** @inheritDoc */
 	public override function GetReactionTorque():Number{
 		// TODO_ERIN not tested
 		//b2Vec2 r = b2Mul(m_body2->m_xf.R, m_localAnchor2 - m_body2->GetLocalCenter());
@@ -73,6 +77,9 @@ public class b2GearJoint extends b2Joint
 		return tX;
 	}
 
+	/**
+	 * Get the gear ratio.
+	 */
 	public function GetRatio():Number{
 		return m_ratio;
 	}

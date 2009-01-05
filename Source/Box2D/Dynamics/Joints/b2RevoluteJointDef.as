@@ -39,6 +39,7 @@ use namespace b2internal;
 * 1. you might not know where the center of mass will be.
 * 2. if you add/remove shapes from a body and recompute the mass,
 * the joints will be broken.
+* @see b2RevoluteJoint
 */
 
 public class b2RevoluteJointDef extends b2JointDef

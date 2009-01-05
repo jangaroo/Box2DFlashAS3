@@ -30,6 +30,7 @@ use namespace b2internal;
 * Gear joint definition. This definition requires two existing
 * revolute or prismatic joints (any combination will work).
 * The provided joints must attach a dynamic body to a static body.
+* @see b2GearJoint
 */
 
 public class b2GearJointDef extends b2JointDef

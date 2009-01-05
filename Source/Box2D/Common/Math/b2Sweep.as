@@ -75,7 +75,18 @@ public class b2Sweep
 		}
 	}
 
-	/** Local center of mass position */	public var localCenter:b2Vec2 = new b2Vec2();	/** Center world positions */	public var c0:b2Vec2 = new b2Vec2;	public var c:b2Vec2 = new b2Vec2();
-	/** World angles */	public var a0:Number, a:Number;	/** Time interval = [t0,1], where t0 is in [0,1] */	public var t0:Number;};
+	/** Local center of mass position */
+	public var localCenter:b2Vec2 = new b2Vec2();
+	/** Center world position */
+	public var c0:b2Vec2 = new b2Vec2;
+	/** Center world position */
+	public var c:b2Vec2 = new b2Vec2();
+	/** World angle */
+	public var a0:Number;
+	/** World angle */
+	public var a:Number;
+	/** Time interval = [t0,1], where t0 is in [0,1] */
+	public var t0:Number;
+};
 
 }

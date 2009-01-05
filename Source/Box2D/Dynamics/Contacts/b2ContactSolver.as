@@ -206,9 +206,9 @@ public class b2ContactSolver
 					var rn21:Number = ccp2.r1.x * normalY - ccp2.r1.y * normalX;
 					var rn22:Number = ccp2.r2.x * normalY - ccp2.r2.y * normalX;
 					
-					var k11 = invMass1 + invMass2 + invI1 * rn11 * rn11 + invI2 * rn12 * rn12;
-					var k22 = invMass1 + invMass2 + invI1 * rn21 * rn21 + invI2 * rn22 * rn22;
-					var k12 = invMass1 + invMass2 + invI1 * rn11 * rn21 + invI2 * rn12 * rn22;
+					var k11:Number = invMass1 + invMass2 + invI1 * rn11 * rn11 + invI2 * rn12 * rn12;
+					var k22:Number = invMass1 + invMass2 + invI1 * rn21 * rn21 + invI2 * rn22 * rn22;
+					var k12:Number = invMass1 + invMass2 + invI1 * rn11 * rn21 + invI2 * rn12 * rn22;
 					
 					// Ensure a reasonable condition number.
 					const k_maxConditionNumber:Number = 100.0;
@@ -447,8 +447,8 @@ public class b2ContactSolver
 				//var vn2:Number = b2Dot(dv2, normal);
 				var vn2:Number = dv2X * normalX + dv2Y * normalY;
 				
-				var bX = vn1 - cp1.velocityBias;
-				var bY = vn2 - cp2.velocityBias;
+				var bX:Number = vn1 - cp1.velocityBias;
+				var bY:Number = vn2 - cp2.velocityBias;
 				
 				//b -= b2Mul(c.K,a);
 				tMat = c.K;

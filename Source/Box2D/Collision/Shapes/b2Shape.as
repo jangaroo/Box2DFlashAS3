@@ -218,6 +218,9 @@ public class b2Shape
 		}*/
 	}
 
+	/**
+	 * @private
+	 */
 	public function b2Shape(def:b2ShapeDef){
 		
 		m_userData = def.userData;

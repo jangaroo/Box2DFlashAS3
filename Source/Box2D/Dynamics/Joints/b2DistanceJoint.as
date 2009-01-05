@@ -44,10 +44,36 @@ use namespace b2internal;
 * A distance joint constrains two points on two bodies
 * to remain at a fixed distance from each other. You can view
 * this as a massless, rigid rod.
+* @see b2DistanceJointDef
 */
-
 public class b2DistanceJoint extends b2Joint
 {
+	/** @inheritDoc */
+	public override function GetAnchor1():b2Vec2{
+		return m_body1.GetWorldPoint(m_localAnchor1);
+	}
+	/** @inheritDoc */
+	public override function GetAnchor2():b2Vec2{
+		return m_body2.GetWorldPoint(m_localAnchor2);
+	}
+	
+	/** @inheritDoc */
+	public override function GetReactionForce():b2Vec2
+	{
+		//b2Vec2 F = (m_inv_dt * m_impulse) * m_u;
+		var F:b2Vec2 = new b2Vec2();
+		F.SetV(m_u);
+		F.Multiply(m_inv_dt * m_impulse);
+		return F;
+	}
+
+	/** @inheritDoc */
+	public override function GetReactionTorque():Number
+	{
+		//NOT_USED(invTimeStep);
+		return 0.0;
+	}
+	
 	//--------------- Internals Below -------------------
 
 	public function b2DistanceJoint(def:b2DistanceJointDef){
@@ -279,28 +305,6 @@ public class b2DistanceJoint extends b2Joint
 		
 		return b2Math.b2Abs(C) < b2Settings.b2_linearSlop;
 		
-	}
-	
-	public override function GetAnchor1():b2Vec2{
-		return m_body1.GetWorldPoint(m_localAnchor1);
-	}
-	public override function GetAnchor2():b2Vec2{
-		return m_body2.GetWorldPoint(m_localAnchor2);
-	}
-	
-	public override function GetReactionForce():b2Vec2
-	{
-		//b2Vec2 F = (m_inv_dt * m_impulse) * m_u;
-		var F:b2Vec2 = new b2Vec2();
-		F.SetV(m_u);
-		F.Multiply(m_inv_dt * m_impulse);
-		return F;
-	}
-
-	public override function GetReactionTorque():Number
-	{
-		//NOT_USED(invTimeStep);
-		return 0.0;
 	}
 
 	private var m_localAnchor1:b2Vec2 = new b2Vec2();

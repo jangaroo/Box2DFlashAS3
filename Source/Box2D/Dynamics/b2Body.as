@@ -711,6 +711,9 @@ public class b2Body
 
 	
 	// Constructor
+	/**
+	 * @private
+	 */
 	public function b2Body(bd:b2BodyDef, world:b2World){
 		//b2Settings.b2Assert(world.m_lock == false);
 		
@@ -921,20 +924,20 @@ public class b2Body
 	// m_flags
 	//enum
 	//{
-		static public var e_frozenFlag:uint			= 0x0002;
-		static public var e_islandFlag:uint			= 0x0004;
-		static public var e_sleepFlag:uint			= 0x0008;
-		static public var e_allowSleepFlag:uint		= 0x0010;
-		static public var e_bulletFlag:uint			= 0x0020;
-		static public var e_fixedRotationFlag:uint	= 0x0040;
+		static b2internal var e_frozenFlag:uint			= 0x0002;
+		static b2internal var e_islandFlag:uint			= 0x0004;
+		static b2internal var e_sleepFlag:uint			= 0x0008;
+		static b2internal var e_allowSleepFlag:uint		= 0x0010;
+		static b2internal var e_bulletFlag:uint			= 0x0020;
+		static b2internal var e_fixedRotationFlag:uint	= 0x0040;
 	//};
 
 	// m_type
 	//enum
 	//{
-		static public var e_staticType:uint 	= 1;
-		static public var e_dynamicType:uint 	= 2;
-		static public var e_maxTypes:uint 		= 3;
+		static b2internal var e_staticType:uint 	= 1;
+		static b2internal var e_dynamicType:uint 	= 2;
+		static b2internal var e_maxTypes:uint 		= 3;
 	//};
 	
 };

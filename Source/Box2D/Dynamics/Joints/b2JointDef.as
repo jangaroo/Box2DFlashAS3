@@ -28,6 +28,7 @@ use namespace b2internal;
 
 /**
 * Joint definitions are used to construct joints.
+* @see b2Joint
 */
 public class b2JointDef
 {

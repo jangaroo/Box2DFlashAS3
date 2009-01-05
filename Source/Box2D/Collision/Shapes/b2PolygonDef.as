@@ -23,13 +23,15 @@ package Box2D.Collision.Shapes{
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Collision.Shapes.*;
-import Box2D.Common.b2internal;
+
+import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
 
 /**
-* @private
+* This structure is used to build polygon shapes.
+* @see b2PolygonShape
 */
 public class b2PolygonDef extends b2ShapeDef
 {

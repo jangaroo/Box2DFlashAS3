@@ -47,7 +47,21 @@ public class b2DebugDraw
 
 	//enum
 	//{
-	/** Draw shapes */	static public var e_shapeBit:uint 			= 0x0001;	/** Draw joint connections */	static public var e_jointBit:uint			= 0x0002;	/** Draw core (toi) shapes */	static public var e_coreShapeBit:uint		= 0x0004;	/** Draw axis aligned bounding boxes */	static public var e_aabbBit:uint			= 0x0008;	/** Draw oriented bounding boxes */	static public var e_obbBit:uint				= 0x0010;	/** Draw broad-phase pairs */	static public var e_pairBit:uint			= 0x0020;	/** Draw center of mass frame */	static public var e_centerOfMassBit:uint	= 0x0040;	//};
+	/** Draw shapes */
+	static public var e_shapeBit:uint 			= 0x0001;
+	/** Draw joint connections */
+	static public var e_jointBit:uint			= 0x0002;
+	/** Draw core (toi) shapes */
+	static public var e_coreShapeBit:uint		= 0x0004;
+	/** Draw axis aligned bounding boxes */
+	static public var e_aabbBit:uint			= 0x0008;
+	/** Draw oriented bounding boxes */
+	static public var e_obbBit:uint				= 0x0010;
+	/** Draw broad-phase pairs */
+	static public var e_pairBit:uint			= 0x0020;
+	/** Draw center of mass frame */
+	static public var e_centerOfMassBit:uint	= 0x0040;
+	//};
 
 	/**
 	* Set the drawing flags.

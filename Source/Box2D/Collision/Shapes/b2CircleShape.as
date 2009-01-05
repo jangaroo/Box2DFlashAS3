@@ -32,12 +32,13 @@ use namespace b2internal;
 
 
 /**
-* @private
+* A circle shape.
+* @see b2CircleDef
 */
 public class b2CircleShape extends b2Shape
 {
 	/**
-	* @see b2Shape::TestPoint
+	* @inheritDoc
 	*/
 	public override function TestPoint(transform:b2XForm, p:b2Vec2) : Boolean{
 		//b2Vec2 center = transform.position + b2Mul(transform.R, m_localPosition);
@@ -52,7 +53,7 @@ public class b2CircleShape extends b2Shape
 	}
 
 	/**
-	* @see b2Shape::TestSegment
+	* @inheritDoc
 	*/
 	public override function TestSegment(	transform:b2XForm,
 						lambda:Array, // float pointer
@@ -113,7 +114,7 @@ public class b2CircleShape extends b2Shape
 	}
 
 	/**
-	* @see b2Shape::ComputeAABB
+	* @inheritDoc
 	*/
 	public override function ComputeAABB(aabb:b2AABB, transform:b2XForm) : void{
 		//b2Vec2 p = transform.position + b2Mul(transform.R, m_localPosition);
@@ -125,7 +126,7 @@ public class b2CircleShape extends b2Shape
 	}
 
 	/**
-	* @see b2Shape::ComputeSweptAABB
+	* @inheritDoc
 	*/
 	public override function ComputeSweptAABB(	aabb:b2AABB,
 							transform1:b2XForm,
@@ -151,7 +152,7 @@ public class b2CircleShape extends b2Shape
 	}
 
 	/**
-	* @see b2Shape::ComputeMass
+	* @inheritDoc
 	*/
 	public override function ComputeMass(massData:b2MassData) : void{
 		massData.mass = m_density * b2Settings.b2_pi * m_radius * m_radius;
@@ -178,6 +179,9 @@ public class b2CircleShape extends b2Shape
 
 	//--------------- Internals Below -------------------
 
+	/**
+	* @private
+	*/
 	public function b2CircleShape(def:b2ShapeDef){
 		super(def);
 		

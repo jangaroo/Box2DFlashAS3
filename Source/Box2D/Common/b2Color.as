@@ -24,7 +24,7 @@ import Box2D.Common.Math.*;
 
 
 /**
-* A 2D column vector.
+* Color for debug drawing. Each value has the range [0,1].
 */
 
 public class b2Color

@@ -34,6 +34,7 @@ use namespace b2internal;
 * so that the initial configuration can violate the constraint
 * slightly. This helps when saving and loading a game.
 * @warning Do not use a zero or short length.
+* @see b2DistanceJoint
 */
 public class b2DistanceJointDef extends b2JointDef
 {

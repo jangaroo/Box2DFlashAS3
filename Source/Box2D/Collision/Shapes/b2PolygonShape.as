@@ -32,12 +32,13 @@ use namespace b2internal;
 /**
 * Convex polygon. The vertices must be in CCW order for a right-handed
 * coordinate system with the z-axis coming out of the screen.
+* @see b2PolygonDef
 */
 
 public class b2PolygonShape extends b2Shape
 {
 	/**
-	* @see b2Shape::TestPoint
+	* @inheritDoc
 	*/
 	public override function TestPoint(xf:b2XForm, p:b2Vec2) : Boolean{
 		var tVec:b2Vec2;
@@ -67,7 +68,7 @@ public class b2PolygonShape extends b2Shape
 	}
 
 	/**
-	* @see b2Shape::TestSegment
+	* @inheritDoc
 	*/
 	public override function TestSegment( xf:b2XForm,
 		lambda:Array, // float ptr
@@ -157,12 +158,12 @@ public class b2PolygonShape extends b2Shape
 		return false;
 	}
 
-	/**
-	* @see b2Shape::ComputeAABB
-	*/
+
 	//
 	static private var s_computeMat:b2Mat22 = new b2Mat22();
-	//
+	/**
+	* @inheritDoc
+	*/
 	public override function ComputeAABB(aabb:b2AABB, xf:b2XForm) : void{
 		var tMat:b2Mat22;
 		var tVec:b2Vec2;
@@ -198,13 +199,13 @@ public class b2PolygonShape extends b2Shape
 		aabb.upperBound.Set(positionX + hX, positionY + hY);
 	}
 
-	/**
-	* @see b2Shape::ComputeSweptAABB
-	*/
+
 	//
 	static private var s_sweptAABB1:b2AABB = new b2AABB();
 	static private var s_sweptAABB2:b2AABB = new b2AABB();
-	//
+	/**
+	* @inheritDoc
+	*/
 	public override function ComputeSweptAABB(	aabb:b2AABB,
 		transform1:b2XForm,
 		transform2:b2XForm) : void
@@ -222,12 +223,10 @@ public class b2PolygonShape extends b2Shape
 							(aabb1.upperBound.y > aabb2.upperBound.y ? aabb1.upperBound.y : aabb2.upperBound.y));
 	}
 
+
 	/**
-	* @see b2Shape::ComputeMass
+	* @inheritDoc
 	*/
-	//
-	
-	//
 	public override function ComputeMass(massData:b2MassData) : void{
 		// Polygon mass, centroid, and inertia.
 		// Let rho be the polygon density in mass per unit area.
@@ -398,11 +397,11 @@ public class b2PolygonShape extends b2Shape
 		return b2Math.b2MulX(xf, m_centroid);
 	}
 
+	private var s_supportVec:b2Vec2 = new b2Vec2();
 	/**
 	* Get the support point in the given world direction.
 	* Use the supplied transform.
 	*/
-	private var s_supportVec:b2Vec2 = new b2Vec2();
 	public function Support(xf:b2XForm, dX:Number, dY:Number) : b2Vec2{
 		var tVec:b2Vec2;
 		
@@ -439,6 +438,9 @@ public class b2PolygonShape extends b2Shape
 
 	//--------------- Internals Below -------------------
 	
+	/**
+	 * @private
+	 */
 	public function b2PolygonShape(def:b2ShapeDef){
 		super(def);
 		

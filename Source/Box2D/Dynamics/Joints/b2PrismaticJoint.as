@@ -44,18 +44,24 @@ use namespace b2internal;
 // Cdot = = -dot(ax1, v1) - dot(cross(d + r1, ax1), w1) + dot(ax1, v2) + dot(cross(r2, ax1), v2)
 // J = [-ax1 -cross(d+r1,ax1) ax1 cross(r2,ax1)]
 
-
 /**
-* @private
+* A prismatic joint. This joint provides one degree of freedom: translation
+* along an axis fixed in body1. Relative rotation is prevented. You can
+* use a joint limit to restrict the range of motion and a joint motor to
+* drive the motion or to model joint friction.
+* @see b2PrismaticJointDef
 */
 public class b2PrismaticJoint extends b2Joint
 {
+	/** @inheritDoc */
 	public override function GetAnchor1():b2Vec2{
 		return m_body1.GetWorldPoint(m_localAnchor1);
 	}
+	/** @inheritDoc */
 	public override function GetAnchor2():b2Vec2{
 		return m_body2.GetWorldPoint(m_localAnchor2);
 	}
+	/** @inheritDoc */
 	public override function GetReactionForce() : b2Vec2
 	{
 		var tMat:b2Mat22 = m_body1.m_xf.R;
@@ -70,6 +76,7 @@ public class b2PrismaticJoint extends b2Joint
 		return new b2Vec2( m_limitForce*ax1X + m_force*ay1X,  m_limitForce*ax1Y + m_force*ay1Y);
 	}
 
+	/** @inheritDoc */
 	public override function GetReactionTorque() : Number
 	{
 		return m_torque;

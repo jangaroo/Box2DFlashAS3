@@ -21,11 +21,12 @@ package Box2D.Collision{
 import Box2D.Collision.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
-import Box2D.Common.b2internal;
+
+import Box2D.Common.b2internal;
 use namespace b2internal;
 
-// A manifold for two touching convex shapes.
 /**
+* A manifold for two touching convex shapes.
 * @private
 */
 public class b2Manifold

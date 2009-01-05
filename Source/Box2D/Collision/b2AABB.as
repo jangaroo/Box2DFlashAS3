@@ -24,9 +24,8 @@ import Box2D.Common.Math.*;
 import Box2D.Common.b2internal;
 use namespace b2internal;
 
-// A manifold for two touching convex shapes.
 /**
-* @private
+* An axis aligned bounding box.
 */
 public class b2AABB
 {
@@ -42,7 +41,11 @@ public class b2AABB
 		return valid;
 	}
 
-	/** The lower vertex */	public var lowerBound:b2Vec2 = new b2Vec2();	/** The upper vertex */	public var upperBound:b2Vec2 = new b2Vec2();};
+	/** The lower vertex */
+	public var lowerBound:b2Vec2 = new b2Vec2();
+	/** The upper vertex */
+	public var upperBound:b2Vec2 = new b2Vec2();
+};
 
 
 }

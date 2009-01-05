@@ -40,32 +40,25 @@ use namespace b2internal;
 * specified world point. This a soft constraint with a maximum
 * force. This allows the constraint to stretch and without
 * applying huge forces.
+* @see b2MouseJointDef
 */
 
 public class b2MouseJoint extends b2Joint
 {
-	/**
-	* Implements b2Joint.
-	*/
+	/** @inheritDoc */
 	public override function GetAnchor1():b2Vec2{
 		return m_target;
 	}
-	/**
-	* Implements b2Joint.
-	*/
+	/** @inheritDoc */
 	public override function GetAnchor2():b2Vec2{
 		return m_body2.GetWorldPoint(m_localAnchor);
 	}
-	/**
-	* Implements b2Joint.
-	*/
+	/** @inheritDoc */
 	public override function GetReactionForce():b2Vec2
 	{
 		return m_impulse;
 	}
-	/**
-	* Implements b2Joint.
-	*/
+	/** @inheritDoc */
 	public override function GetReactionTorque():Number
 	{
 		return 0.0;
