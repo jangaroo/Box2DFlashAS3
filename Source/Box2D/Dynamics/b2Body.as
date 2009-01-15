@@ -193,12 +193,13 @@ public class b2Body
 		}
 	}
 
+
+	static private var s_massData:b2MassData = new b2MassData();
 	/**
 	* Compute the mass properties from the attached shapes. You typically call this
 	* after adding all the shapes. If you add or remove shapes later, you may want
 	* to call this again. Note that this changes the center of mass position.
 	*/
-	static private var s_massData:b2MassData = new b2MassData();
 	public function SetMassFromShapes() : void{
 		
 		var s:b2Shape;
@@ -817,7 +818,7 @@ public class b2Body
 	//
 	static private var s_xf1:b2XForm = new b2XForm();
 	//
-	public function SynchronizeShapes() : Boolean{
+	b2internal function SynchronizeShapes() : Boolean{
 		
 		var xf1:b2XForm = s_xf1;
 		xf1.R.Set(m_sweep.a0);
@@ -858,7 +859,7 @@ public class b2Body
 		
 	}
 
-	public function SynchronizeTransform() : void{
+	b2internal function SynchronizeTransform() : void{
 		m_xf.R.Set(m_sweep.a);
 		//m_xf.position = m_sweep.c - b2Mul(m_xf.R, m_sweep.localCenter);
 		var tMat:b2Mat22 = m_xf.R;
@@ -869,7 +870,7 @@ public class b2Body
 
 	// This is used to prevent connected bodies from colliding.
 	// It may lie, depending on the collideConnected flag.
-	public function IsConnected(other:b2Body) : Boolean{
+	b2internal function IsConnected(other:b2Body) : Boolean{
 		for (var jn:b2JointEdge = m_jointList; jn; jn = jn.next)
 		{
 			if (jn.other == other)
@@ -879,7 +880,7 @@ public class b2Body
 		return false;
 	}
 
-	public function Advance(t:Number) : void{
+	b2internal function Advance(t:Number) : void{
 		// Advance to the new safe time.
 		m_sweep.Advance(t);
 		m_sweep.c.SetV(m_sweep.c0);

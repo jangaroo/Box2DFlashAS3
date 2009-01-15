@@ -54,7 +54,7 @@ public class b2ContactFilter
 		return collide;
 	}
 	
-	static public var b2_defaultFilter:b2ContactFilter = new b2ContactFilter();
+	static b2internal var b2_defaultFilter:b2ContactFilter = new b2ContactFilter();
 	
 };
 

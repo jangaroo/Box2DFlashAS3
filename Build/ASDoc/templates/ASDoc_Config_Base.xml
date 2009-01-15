@@ -33,7 +33,7 @@
    	<namespace hide="true">mx_internal</namespace>
 	<namespace hide="false" summaryDisplay="protected">flash_proxy</namespace>
 	<namespace hide="false" summaryDisplay="protected">object_proxy</namespace>
-	<namespace hide="false">mx_inner</namespace>
+	<namespace hide="false">mx_inner</namespace>http://opensource.adobe.com/svn/opensource/flex/sdk/trunk/asdoc/build.xml
     <namespace hide="true">b2internal</namespace>
   </namespaces>
   <!--
@@ -48,4 +48,7 @@
 	</item>
   </annotate>
   -->
+  <appendixes show="true">
+    <appendix label="Manual" overview="manual-appendix" href="http://www.box2d.org/wiki/index.php?title=Manual/AS3&amp;amp;printable=yes"/>
+  </appendixes>
 </asDocConfig>

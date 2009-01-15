@@ -126,6 +126,7 @@ public class b2PulleyJoint extends b2Joint
 
 	//--------------- Internals Below -------------------
 
+	/** @private */
 	public function b2PulleyJoint(def:b2PulleyJointDef){
 		
 		// parent
@@ -161,7 +162,7 @@ public class b2PulleyJoint extends b2Joint
 		
 	}
 
-	public override function InitVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function InitVelocityConstraints(step:b2TimeStep) : void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -305,7 +306,7 @@ public class b2PulleyJoint extends b2Joint
 		}
 	}
 	
-	public override function SolveVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -420,9 +421,7 @@ public class b2PulleyJoint extends b2Joint
 		}
 	}
 	
-	
-	
-	public override function SolvePositionConstraints():Boolean{
+	b2internal override function SolvePositionConstraints():Boolean{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -672,7 +671,7 @@ public class b2PulleyJoint extends b2Joint
 	private var m_limitState2:int;
 	
 	// static
-	static public const b2_minPulleyLength:Number = 2.0;
+	static b2internal const b2_minPulleyLength:Number = 2.0;
 };
 	
 	

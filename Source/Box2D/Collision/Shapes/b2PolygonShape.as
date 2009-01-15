@@ -556,7 +556,7 @@ public class b2PolygonShape extends b2Shape
 		}
 	}
 
-	public override function UpdateSweepRadius(center:b2Vec2) : void{
+	b2internal override function UpdateSweepRadius(center:b2Vec2) : void{
 		var tVec:b2Vec2;
 		
 		// Update the sweep radius (maximum radius) as measured from
@@ -587,7 +587,12 @@ public class b2PolygonShape extends b2Shape
 	
 	
 	
-	
+	/**
+	 * Computes the centroid of the given polygon
+	 * @param	vs		array of b2Vec specifying a polygon
+	 * @param	count	length of vs
+	 * @return the polygon centroid
+	 */
 	static public function ComputeCentroid(vs:Array, count:int) : b2Vec2
 	{
 		//b2Settings.b2Assert(count >= 3);
@@ -650,8 +655,11 @@ public class b2PolygonShape extends b2Shape
 		return c;
 	}
 
-	// http://www.geometrictools.com/Documentation/MinimumAreaRectangle.pdf
-	static public function ComputeOBB(obb:b2OBB, vs:Array, count:int) : void
+	/**
+	 * Computes a polygon's OBB
+	 * @see http://www.geometrictools.com/Documentation/MinimumAreaRectangle.pdf
+	 */
+	static b2internal function ComputeOBB(obb:b2OBB, vs:Array, count:int) : void
 	{
 		var i:int;
 		//b2Settings.b2Assert(count <= b2Settings.b2_maxPolygonVertices);

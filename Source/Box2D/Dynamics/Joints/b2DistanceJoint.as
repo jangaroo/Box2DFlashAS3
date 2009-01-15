@@ -76,6 +76,7 @@ public class b2DistanceJoint extends b2Joint
 	
 	//--------------- Internals Below -------------------
 
+	/** @private */
 	public function b2DistanceJoint(def:b2DistanceJointDef){
 		super(def);
 		
@@ -96,7 +97,7 @@ public class b2DistanceJoint extends b2Joint
 		m_inv_dt = 0.0;
 	}
 
-	public override function InitVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function InitVelocityConstraints(step:b2TimeStep) : void{
 		
 		var tMat:b2Mat22;
 		var tX:Number;
@@ -193,7 +194,7 @@ public class b2DistanceJoint extends b2Joint
 	
 	
 	
-	public override function SolveVelocityConstraints(step:b2TimeStep): void{
+	b2internal override function SolveVelocityConstraints(step:b2TimeStep): void{
 		
 		var tMat:b2Mat22;
 		
@@ -243,7 +244,7 @@ public class b2DistanceJoint extends b2Joint
 		b2.m_angularVelocity += b2.m_invI * (r2X * PY - r2Y * PX);
 	}
 	
-	public override function SolvePositionConstraints():Boolean{
+	b2internal override function SolvePositionConstraints():Boolean{
 		
 		var tMat:b2Mat22;
 		

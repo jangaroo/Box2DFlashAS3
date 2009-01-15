@@ -86,6 +86,7 @@ public class b2GearJoint extends b2Joint
 
 	//--------------- Internals Below -------------------
 
+	/** @private */
 	public function b2GearJoint(def:b2GearJointDef){
 		// parent constructor
 		super(def);
@@ -148,7 +149,7 @@ public class b2GearJoint extends b2Joint
 		
 	}
 
-	public override function InitVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function InitVelocityConstraints(step:b2TimeStep) : void{
 		var g1:b2Body = m_ground1;
 		var g2:b2Body = m_ground2;
 		var b1:b2Body = m_body1;
@@ -246,8 +247,7 @@ public class b2GearJoint extends b2Joint
 		}
 	}
 	
-	
-	public override function SolveVelocityConstraints(step:b2TimeStep): void{
+	b2internal override function SolveVelocityConstraints(step:b2TimeStep): void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -266,7 +266,7 @@ public class b2GearJoint extends b2Joint
 		b2.m_angularVelocity  += b2.m_invI * P * m_J.angular2;
 	}
 	
-	public override function SolvePositionConstraints():Boolean{
+	b2internal override function SolvePositionConstraints():Boolean{
 		var linearError:Number = 0.0;
 		
 		var b1:b2Body = m_body1;

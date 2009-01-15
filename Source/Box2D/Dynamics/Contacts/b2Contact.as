@@ -87,12 +87,12 @@ public class b2Contact
 	
 	// m_flags
 	// enum
-	static public var e_nonSolidFlag:uint	= 0x0001;
-	static public var e_slowFlag:uint		= 0x0002;
-	static public var e_islandFlag:uint		= 0x0004;
-	static public var e_toiFlag:uint		= 0x0008;
+	static b2internal var e_nonSolidFlag:uint	= 0x0001;
+	static b2internal var e_slowFlag:uint		= 0x0002;
+	static b2internal var e_islandFlag:uint		= 0x0004;
+	static b2internal var e_toiFlag:uint		= 0x0008;
 
-	static public function AddType(createFcn:Function, destroyFcn:Function, type1:int, type2:int) : void
+	static b2internal function AddType(createFcn:Function, destroyFcn:Function, type1:int, type2:int) : void
 	{
 		//b2Settings.b2Assert(b2Shape.e_unknownShape < type1 && type1 < b2Shape.e_shapeTypeCount);
 		//b2Settings.b2Assert(b2Shape.e_unknownShape < type2 && type2 < b2Shape.e_shapeTypeCount);
@@ -108,7 +108,7 @@ public class b2Contact
 			s_registers[type2][type1].primary = false;
 		}
 	}
-	static public function InitializeRegisters() : void{
+	static b2internal function InitializeRegisters() : void{
 		s_registers = new Array(b2Shape.e_shapeTypeCount);
 		for (var i:int = 0; i < b2Shape.e_shapeTypeCount; i++){
 			s_registers[i] = new Array(b2Shape.e_shapeTypeCount);
@@ -122,7 +122,7 @@ public class b2Contact
 		AddType(b2PolygonContact.Create, b2PolygonContact.Destroy, b2Shape.e_polygonShape, b2Shape.e_polygonShape);
 		
 	}
-	static public function Create(shape1:b2Shape, shape2:b2Shape, allocator:*):b2Contact{
+	static b2internal function Create(shape1:b2Shape, shape2:b2Shape, allocator:*):b2Contact{
 		if (s_initialized == false)
 		{
 			InitializeRegisters();
@@ -159,7 +159,7 @@ public class b2Contact
 			return null;
 		}
 	}
-	static public function Destroy(contact:b2Contact, allocator:*) : void{
+	static b2internal function Destroy(contact:b2Contact, allocator:*) : void{
 		//b2Settings.b2Assert(s_initialized == true);
 		
 		if (contact.m_manifoldCount > 0)
@@ -179,6 +179,7 @@ public class b2Contact
 		destroyFcn(contact, allocator);
 	}
 
+	/** @private */
 	public function b2Contact(s1:b2Shape=null, s2:b2Shape=null)
 	{
 		m_flags = 0;
@@ -216,7 +217,7 @@ public class b2Contact
 		m_node2.other = null;
 	}
 	
-	public function Update(listener:b2ContactListener) : void
+	b2internal function Update(listener:b2ContactListener) : void
 	{
 		var oldCount:int = m_manifoldCount;
 		
@@ -246,9 +247,9 @@ public class b2Contact
 
 	//virtual ~b2Contact() {}
 
-	public virtual function Evaluate(listener:b2ContactListener) : void{};
-	static public var s_registers:Array; //[][]
-	static public var s_initialized:Boolean = false;
+	b2internal virtual function Evaluate(listener:b2ContactListener) : void{};
+	static b2internal var s_registers:Array; //[][]
+	static b2internal var s_initialized:Boolean = false;
 
 	b2internal var m_flags:uint;
 

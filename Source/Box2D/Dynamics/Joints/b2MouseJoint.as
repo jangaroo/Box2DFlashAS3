@@ -75,6 +75,7 @@ public class b2MouseJoint extends b2Joint
 
 	//--------------- Internals Below -------------------
 
+	/** @private */
 	public function b2MouseJoint(def:b2MouseJointDef){
 		super(def);
 		
@@ -110,7 +111,7 @@ public class b2MouseJoint extends b2Joint
 	private var K:b2Mat22 = new b2Mat22();
 	private var K1:b2Mat22 = new b2Mat22();
 	private var K2:b2Mat22 = new b2Mat22();
-	public override function InitVelocityConstraints(step:b2TimeStep): void{
+	b2internal override function InitVelocityConstraints(step:b2TimeStep): void{
 		var b:b2Body = m_body2;
 		
 		var tMat:b2Mat22;
@@ -165,8 +166,7 @@ public class b2MouseJoint extends b2Joint
 		b.m_angularVelocity += invI * (rX * PY - rY * PX);
 	}
 	
-	
-	public override function SolveVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
 		var b:b2Body = m_body2;
 		
 		var tMat:b2Mat22;
@@ -217,7 +217,8 @@ public class b2MouseJoint extends b2Joint
 		//b->m_angularVelocity += b->m_invI * b2Cross(r, P);
 		b.m_angularVelocity += b.m_invI * (rX * PY - rY * PX);
 	}
-	public override function SolvePositionConstraints():Boolean { 
+
+	b2internal override function SolvePositionConstraints():Boolean { 
 		return true; 
 	}
 

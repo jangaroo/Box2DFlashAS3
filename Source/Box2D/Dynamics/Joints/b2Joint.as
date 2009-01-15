@@ -98,7 +98,7 @@ public class b2Joint
 
 	//--------------- Internals Below -------------------
 
-	static public function Create(def:b2JointDef, allocator:*):b2Joint{
+	static b2internal function Create(def:b2JointDef, allocator:*):b2Joint{
 		var joint:b2Joint = null;
 		
 		switch (def.type)
@@ -153,7 +153,7 @@ public class b2Joint
 		return joint;
 	}
 	
-	static public function Destroy(joint:b2Joint, allocator:*) : void{
+	static b2internal function Destroy(joint:b2Joint, allocator:*) : void{
 		/*joint->~b2Joint();
 		switch (joint.m_type)
 		{
@@ -187,6 +187,7 @@ public class b2Joint
 		}*/
 	}
 
+	/** @private */
 	public function b2Joint(def:b2JointDef){
 		m_type = def.type;
 		m_prev = null;
@@ -199,12 +200,12 @@ public class b2Joint
 	}
 	//virtual ~b2Joint() {}
 
-	public virtual function InitVelocityConstraints(step:b2TimeStep) : void{};
-	public virtual function SolveVelocityConstraints(step:b2TimeStep) : void{};
+	b2internal virtual function InitVelocityConstraints(step:b2TimeStep) : void{};
+	b2internal virtual function SolveVelocityConstraints(step:b2TimeStep) : void{};
 
 	// This returns true if the position errors are within tolerance.
-	public virtual function InitPositionConstraints() : void{};
-	public virtual function SolvePositionConstraints():Boolean{return false};
+	b2internal virtual function InitPositionConstraints() : void{};
+	b2internal virtual function SolvePositionConstraints():Boolean{return false};
 
 	b2internal var m_type:int;
 	b2internal var m_prev:b2Joint;
@@ -225,19 +226,19 @@ public class b2Joint
 	// ENUMS
 	
 	// enum b2JointType
-	static public const e_unknownJoint:int = 0;
-	static public const e_revoluteJoint:int = 1;
-	static public const e_prismaticJoint:int = 2;
-	static public const e_distanceJoint:int = 3;
-	static public const e_pulleyJoint:int = 4;
-	static public const e_mouseJoint:int = 5;
-	static public const e_gearJoint:int = 6;
+	static b2internal const e_unknownJoint:int = 0;
+	static b2internal const e_revoluteJoint:int = 1;
+	static b2internal const e_prismaticJoint:int = 2;
+	static b2internal const e_distanceJoint:int = 3;
+	static b2internal const e_pulleyJoint:int = 4;
+	static b2internal const e_mouseJoint:int = 5;
+	static b2internal const e_gearJoint:int = 6;
 
 	// enum b2LimitState
-	static public const e_inactiveLimit:int = 0;
-	static public const e_atLowerLimit:int = 1;
-	static public const e_atUpperLimit:int = 2;
-	static public const e_equalLimits:int = 3;
+	static b2internal const e_inactiveLimit:int = 0;
+	static b2internal const e_atLowerLimit:int = 1;
+	static b2internal const e_atUpperLimit:int = 2;
+	static b2internal const e_equalLimits:int = 3;
 	
 };
 

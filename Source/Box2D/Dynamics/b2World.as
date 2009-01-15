@@ -560,7 +560,7 @@ public class b2World
 	// Internal yet public to make life easier.
 
 	// Find islands, integrate and solve constraints, solve position constraints
-	public function Solve(step:b2TimeStep) : void{
+	b2internal function Solve(step:b2TimeStep) : void{
 		
 		var b:b2Body;
 		
@@ -731,7 +731,7 @@ public class b2World
 	}
 	
 	// Find TOI contacts and solve them.
-	public function SolveTOI(step:b2TimeStep) : void{
+	b2internal function SolveTOI(step:b2TimeStep) : void{
 		
 		var b:b2Body;
 		var s1:b2Shape;
@@ -1054,7 +1054,7 @@ public class b2World
 	
 	static private var s_jointColor:b2Color = new b2Color(0.5, 0.8, 0.8);
 	//
-	public function DrawJoint(joint:b2Joint) : void{
+	b2internal function DrawJoint(joint:b2Joint) : void{
 		
 		var b1:b2Body = joint.m_body1;
 		var b2:b2Body = joint.m_body2;
@@ -1099,7 +1099,7 @@ public class b2World
 	}
 	
 	static private var s_coreColor:b2Color = new b2Color(0.9, 0.6, 0.6);
-	public function DrawShape(shape:b2Shape, xf:b2XForm, color:b2Color, core:Boolean) : void{
+	b2internal function DrawShape(shape:b2Shape, xf:b2XForm, color:b2Color, core:Boolean) : void{
 		
 		var coreColor:b2Color = s_coreColor;
 		
@@ -1155,7 +1155,7 @@ public class b2World
 	
 	
 	static private var s_xf:b2XForm = new b2XForm();
-	public function DrawDebugData() : void{
+	b2internal function DrawDebugData() : void{
 		
 		if (m_debugDraw == null)
 		{

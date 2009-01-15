@@ -237,6 +237,7 @@ public class b2PrismaticJoint extends b2Joint
 
 	//--------------- Internals Below -------------------
 
+	/** @private */
 	public function b2PrismaticJoint(def:b2PrismaticJointDef){
 		super(def);
 		
@@ -275,7 +276,7 @@ public class b2PrismaticJoint extends b2Joint
 		m_enableMotor = def.enableMotor;
 	}
 
-	public override function InitVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function InitVelocityConstraints(step:b2TimeStep) : void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -436,7 +437,7 @@ public class b2PrismaticJoint extends b2Joint
 		
 	}
 	
-	public override function SolveVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -535,9 +536,7 @@ public class b2PrismaticJoint extends b2Joint
 		}
 	}
 	
-	
-	
-	public override function SolvePositionConstraints():Boolean{
+	b2internal override function SolvePositionConstraints():Boolean{
 		
 		var limitC:Number;
 		var oldLimitImpulse:Number;

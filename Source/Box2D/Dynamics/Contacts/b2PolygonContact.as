@@ -56,7 +56,7 @@ public class b2PolygonContact extends b2Contact
 	private var m0:b2Manifold = new b2Manifold();
 	static private const s_evalCP:b2ContactPoint = new b2ContactPoint();
 	
-	public override function Evaluate(listener:b2ContactListener): void{
+	b2internal override function Evaluate(listener:b2ContactListener): void{
 		var v1:b2Vec2;
 		var v2:b2Vec2;
 		var mp0:b2ManifoldPoint;

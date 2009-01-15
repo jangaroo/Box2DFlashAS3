@@ -194,7 +194,7 @@ public class b2CircleShape extends b2Shape
 		
 	}
 
-	public override function UpdateSweepRadius(center:b2Vec2) : void{
+	b2internal override function UpdateSweepRadius(center:b2Vec2) : void{
 		// Update the sweep radius (maximum radius) as measured from
 		// a local center point.
 		//b2Vec2 d = m_localPosition - center;

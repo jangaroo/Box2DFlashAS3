@@ -26,7 +26,7 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 /**
-* A manifold for two touching convex shapes.
+* A line in space between two given vertices.
 */
 public class b2Segment
 {

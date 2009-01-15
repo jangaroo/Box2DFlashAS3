@@ -177,7 +177,7 @@ public class b2Shape
 	
 	//--------------- Internals Below -------------------
 
-	static public function Create(def:b2ShapeDef, allocator:*) : b2Shape
+	static b2internal function Create(def:b2ShapeDef, allocator:*) : b2Shape
 	{
 		switch (def.type)
 		{
@@ -199,7 +199,7 @@ public class b2Shape
 		}
 	}
 	
-	static public function Destroy(shape:b2Shape, allocator:*) : void
+	static b2internal function Destroy(shape:b2Shape, allocator:*) : void
 	{
 		/*switch (s.m_type)
 		{
@@ -244,7 +244,7 @@ public class b2Shape
 
 	//
 	static private var s_proxyAABB:b2AABB = new b2AABB();
-	public function CreateProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
+	b2internal function CreateProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
 		
 		//b2Settings.b2Assert(m_proxyId == b2_nullProxy);
 		
@@ -267,7 +267,7 @@ public class b2Shape
 		
 	}
 	
-	public function DestroyProxy(broadPhase:b2BroadPhase) : void{
+	b2internal function DestroyProxy(broadPhase:b2BroadPhase) : void{
 		
 		if (m_proxyId != b2Pair.b2_nullProxy)
 		{
@@ -280,7 +280,7 @@ public class b2Shape
 	//
 	static private var s_syncAABB:b2AABB = new b2AABB();
 	//
-	public function Synchronize(broadPhase:b2BroadPhase, transform1:b2XForm, transform2:b2XForm) : Boolean{
+	b2internal function Synchronize(broadPhase:b2BroadPhase, transform1:b2XForm, transform2:b2XForm) : Boolean{
 		
 		if (m_proxyId == b2Pair.b2_nullProxy)
 		{	
@@ -304,7 +304,7 @@ public class b2Shape
 	}
 	
 	static private var s_resetAABB:b2AABB = new b2AABB();
-	public function RefilterProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
+	b2internal function RefilterProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
 		
 		if (m_proxyId == b2Pair.b2_nullProxy)
 		{
@@ -329,7 +329,7 @@ public class b2Shape
 		
 	}
 
-	public virtual function UpdateSweepRadius(center:b2Vec2) : void{};
+	b2internal virtual function UpdateSweepRadius(center:b2Vec2) : void{};
 
 	b2internal var m_type:int;
 	b2internal var m_next:b2Shape;
@@ -357,10 +357,10 @@ public class b2Shape
 	*/
 	//enum b2ShapeType
 	//{
-		static public const e_unknownShape:int = 	-1;
-		static public const e_circleShape:int = 	0;
-		static public const e_polygonShape:int = 	1;
-		static public const e_shapeTypeCount:int = 	2;
+		static b2internal const e_unknownShape:int = 	-1;
+		static b2internal const e_circleShape:int = 	0;
+		static b2internal const e_polygonShape:int = 	1;
+		static b2internal const e_shapeTypeCount:int = 	2;
 	//};
 	
 	

@@ -167,6 +167,7 @@ public class b2RevoluteJoint extends b2Joint
 
 	//--------------- Internals Below -------------------
 
+	/** @private */
 	public function b2RevoluteJoint(def:b2RevoluteJointDef){
 		super(def);
 		
@@ -195,7 +196,7 @@ public class b2RevoluteJoint extends b2Joint
 	private var K1:b2Mat22 = new b2Mat22();
 	private var K2:b2Mat22 = new b2Mat22();
 	private var K3:b2Mat22 = new b2Mat22();
-	public override function InitVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function InitVelocityConstraints(step:b2TimeStep) : void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -312,8 +313,7 @@ public class b2RevoluteJoint extends b2Joint
 		m_limitPositionImpulse = 0.0;
 	}
 	
-	
-	public override function SolveVelocityConstraints(step:b2TimeStep) : void{
+	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -419,9 +419,8 @@ public class b2RevoluteJoint extends b2Joint
 		}
 	}
 	
-	
 	private static var tImpulse:b2Vec2 = new b2Vec2();
-	public override function SolvePositionConstraints():Boolean{
+	b2internal override function SolvePositionConstraints():Boolean{
 		
 		var oldLimitImpulse:Number;
 		var limitC:Number;
