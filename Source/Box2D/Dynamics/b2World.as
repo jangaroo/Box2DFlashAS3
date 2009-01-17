@@ -536,6 +536,72 @@ public class b2World
 	public function InRange(aabb:b2AABB):Boolean{
 		 return m_broadPhase.InRange(aabb);
 	}
+	
+	/**
+	* Query the world for all shapes that intersect a given segment. You provide a shap
+	* pointer buffer of specified size. The number of shapes found is returned, and the buffer
+	* is filled in order of intersection
+	* @param segment defines the begin and end point of the ray cast, from p1 to p2.
+	* Use b2Segment.Extend to create (semi-)infinite rays
+	* @param shapes a user allocated shape pointer array of size maxCount (or greater).
+	* @param maxCount the capacity of the shapes array
+	* @param solidShapes determines if shapes that the ray starts in are counted as hits.
+	* @param userData passed through the worlds contact filter, with method RayCollide. This can be used to filter valid shapes
+	* @returns the number of shapes found
+	* @see #Query
+	*/
+	public function Raycast(segment:b2Segment, shapes:Array, maxCount:int, solidShapes:Boolean, userData:*) : int{
+		var results:Array = new Array(maxCount);
+		
+		m_raycastSegment = segment;
+		m_raycastUserData = userData;
+		var count:int;
+		if(solidShapes)
+			count = m_broadPhase.QuerySegment(segment, results, maxCount, RaycastSortKey);
+		else
+			count = m_broadPhase.QuerySegment(segment, results, maxCount, RaycastSortKey2);
+		
+		
+		for (var i:int = 0; i < count; ++i)
+		{
+			shapes[i] = results[i];
+		}
+		
+		//m_stackAllocator.Free(results);
+		return count;
+	}
+	
+	/**
+	* Performs a raycast as with Raycast, finding the first intersecting shape.
+	* @param segment defines the begin and end point of the ray cast, from p1 to p2.
+	* Use b2Segment.Extend to create (semi-)infinite rays	
+	* @param lambda returns the hit fraction. You can use this to compute the contact point
+	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
+	* @param normal returns the normal at the contact point. If there is no intersection, the normal
+	* is not set.
+	* @param solidShapes determines if shapes that the ray starts in are counted as hits.
+	* @returns the colliding shape shape, or null if not found
+	* @see Box2D.Collision.Shapes.b2Shape#TestSegment
+	*/
+	public function RaycastOne(segment:b2Segment,
+								lambda:Array, // float pointer
+								normal:b2Vec2, // pointer
+								solidShapes:Boolean, 
+								userData:*
+								) : b2Shape {
+		var shapes:Array = new Array(1);
+		var count:Number = Raycast(segment,shapes,1,solidShapes,userData);
+		if(count==0)
+			return null;
+		if(count>1)
+			trace(count);
+		//Redundantly do TestSegment a second time, as the previous one's results are inaccessible
+		var shape:b2Shape = shapes[0];
+		var xf:b2XForm = shape.GetBody().GetXForm();
+		shape.TestSegment(xf,lambda,normal,segment,1);
+		//We already know it returned true
+		return shape;
+	}
 
 	/**
 	* Get the world body list. With the returned body, use b2Body::GetNext to get
@@ -1354,7 +1420,35 @@ public class b2World
 			}
 		}
 	}
-
+	
+	
+	b2internal var m_raycastUserData:*;
+	b2internal var m_raycastSegment:b2Segment;
+	b2internal var m_raycastNormal:b2Vec2 = new b2Vec2();
+	b2internal function RaycastSortKey(shape:b2Shape){
+		if(m_contactFilter && !m_contactFilter.RayCollide(m_raycastUserData,shape))
+			return -1;
+		
+		var body:b2Body = shape.GetBody();
+		var xf:b2XForm = body.GetXForm();
+		var lambda:Array = [0];
+		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)==b2Shape.e_missCollide)
+			return -1;
+		return lambda[0];
+	}
+	
+	b2internal function RaycastSortKey2(shape:b2Shape){
+		if(m_contactFilter && !m_contactFilter.RayCollide(m_raycastUserData,shape))
+			return -1;
+		
+		var body:b2Body = shape.GetBody();
+		var xf:b2XForm = body.GetXForm();
+		var lambda:Array = [0];
+		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)!=b2Shape.e_hitCollide)
+			return -1;
+		return lambda[0];
+	}
+	
 	b2internal var m_blockAllocator:*;
 	b2internal var m_stackAllocator:*;
 

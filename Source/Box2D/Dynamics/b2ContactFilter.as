@@ -54,6 +54,16 @@ public class b2ContactFilter
 		return collide;
 	}
 	
+	/**
+	* Return true if the given shape should be considered for ray intersection
+	*/
+	public virtual function RayCollide(userData:*, shape:b2Shape) : Boolean{
+		//By default, cast userData as a shape, and then collide if the shapes would collide
+		if(!userData)
+			return true;
+		return ShouldCollide(userData as b2Shape,shape);
+	}
+	
 	static b2internal var b2_defaultFilter:b2ContactFilter = new b2ContactFilter();
 	
 };

@@ -119,13 +119,13 @@ public class b2Shape
 	* is not set.
 	* @param segment defines the begin and end point of the ray cast.
 	* @param maxLambda a number typically in the range [0,1].
-	* @return true if there was an intersection.
+	* @return e_hitCollide if there was an intersection, e_startsInsideCollide if the point is inside and e_missCollide otherwise
 	*/
 	public virtual function  TestSegment(xf:b2XForm,
 								lambda:Array, // float pointer
 								normal:b2Vec2, // pointer
 								segment:b2Segment,
-								maxLambda:Number) : Boolean {return false};
+								maxLambda:Number) : int {return e_missCollide};
 
 	/**
 	* Given a transform, compute the associated axis aligned bounding box for this shape.
@@ -363,6 +363,13 @@ public class b2Shape
 		static b2internal const e_shapeTypeCount:int = 	2;
 	//};
 	
+	/// Possible return values for TestSegment
+		/** Return value for TestSegment indicating a hit */
+		static public const e_hitCollide:int = 1;
+		/** Return value for TestSegment indicating a miss */
+		static public const e_missCollide:int = 0;
+		/** Return value for TestSegment indicating that the segment starting point, p1, is already inside the shape. */
+		static public const e_startsInsideCollide:int = -1;
 	
 	
 };

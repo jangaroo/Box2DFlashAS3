@@ -59,7 +59,7 @@ public class b2CircleShape extends b2Shape
 						lambda:Array, // float pointer
 						normal:b2Vec2, // pointer
 						segment:b2Segment,
-						maxLambda:Number) :Boolean
+						maxLambda:Number) :int
 	{
 		//b2Vec2 position = transform.position + b2Mul(transform.R, m_localPosition);
 		var tMat:b2Mat22 = transform.R;
@@ -75,7 +75,8 @@ public class b2CircleShape extends b2Shape
 		// Does the segment start inside the circle?
 		if (b < 0.0)
 		{
-			return false;
+			lambda[0]=0;
+			return e_startsInsideCollide;
 		}
 		
 		// Solve quadratic equation.
@@ -91,7 +92,7 @@ public class b2CircleShape extends b2Shape
 		// Check for negative discriminant and short segment.
 		if (sigma < 0.0 || rr < Number.MIN_VALUE)
 		{
-			return false;
+			return e_missCollide;
 		}
 		
 		// Find the point of intersection of the line with the circle.
@@ -107,10 +108,10 @@ public class b2CircleShape extends b2Shape
 			normal.x = sX + a * rX;
 			normal.y = sY + a * rY;
 			normal.Normalize();
-			return true;
+			return e_hitCollide;
 		}
 		
-		return false;
+		return e_missCollide;
 	}
 
 	/**

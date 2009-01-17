@@ -95,6 +95,9 @@ import flash.display.MovieClip;
 				m_currTest = null
 			}
 			
+            var testCount:int = 8;
+			m_currId = (m_currId + testCount) % testCount;
+			
 			// if null, set new test
 			if (!m_currTest){
 				switch(m_currId){
@@ -126,16 +129,9 @@ import flash.display.MovieClip;
 					case 6:
 						m_currTest = new TestTheoJansen();
 						break;
-					// Wrap around
-					default:
-						if (m_currId < 0){
-							m_currId = 6;
-							m_currTest = new TestTheoJansen();
-						}
-						else{
-							m_currId = 0;
-							m_currTest = new TestRagdoll();
-						}
+					// Raycast
+					case 7:
+						m_currTest = new TestRaycast();
 						break;
 				}
 			}

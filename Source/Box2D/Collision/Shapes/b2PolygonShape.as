@@ -74,7 +74,7 @@ public class b2PolygonShape extends b2Shape
 		lambda:Array, // float ptr
 		normal:b2Vec2, // ptr
 		segment:b2Segment,
-		maxLambda:Number) : Boolean
+		maxLambda:Number) : int
 	{
 		var lower:Number = 0.0;
 		var upper:Number = maxLambda;
@@ -137,7 +137,7 @@ public class b2PolygonShape extends b2Shape
 			
 			if (upper < lower)
 			{
-				return false;
+				return e_missCollide;
 			}
 		}
 		
@@ -152,10 +152,11 @@ public class b2PolygonShape extends b2Shape
 			tVec = m_normals[index];
 			normal.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
 			normal.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
-			return true;
+			return e_hitCollide;
 		}
 		
-		return false;
+		lambda[0] = 0;
+		return e_startsInsideCollide;
 	}
 
 
