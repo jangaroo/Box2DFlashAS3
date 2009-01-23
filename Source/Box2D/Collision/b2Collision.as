@@ -440,36 +440,39 @@ public class b2Collision{
 		np = ClipSegmentToLine(clipPoints1, incidentEdge, sideNormal.Negative(), sideOffset1);
 
 		if (np < 2)
+		{
 			return;
+		}
 
 		// Clip to negative box side 1
 		np = ClipSegmentToLine(clipPoints2, clipPoints1,  sideNormal, sideOffset2);
 
 		if (np < 2)
+		{
 			return;
-			
-		// We are guaranteed to have two contact points.
+		}
 
 		// Now clipPoints2 contains the clipped points.
 		manifold.normal = flip ? frontNormal.Negative() : frontNormal.Copy();
-
-		cv = clipPoints2[0];
-		var cp1:b2ManifoldPoint = manifold.points[ 0 ];
-		cp1.separation = b2Math.b2Dot(frontNormal, cv.v) - frontOffset;
-		cp1.localPoint1 = b2Math.b2MulXT(xfA, cv.v);
-		cp1.localPoint2 = b2Math.b2MulXT(xfB, cv.v);
-		cp1.id.key = cv.id._key;
-		cp1.id.features.flip = flip;
 		
-		cv = clipPoints2[1];
-		cp1 = manifold.points[ 1 ];
-		cp1.separation = b2Math.b2Dot(frontNormal, cv.v) - frontOffset;
-		cp1.localPoint1 = b2Math.b2MulXT(xfA, cv.v);
-		cp1.localPoint2 = b2Math.b2MulXT(xfB, cv.v);
-		cp1.id.key = cv.id._key;
-		cp1.id.features.flip = flip;
-
-		manifold.pointCount = 2;
+		var pointCount:int = 0;
+		for (var i = 0; i < b2Settings.b2_maxManifoldPoints;++i)
+		{
+			cv = clipPoints2[i];
+			var separation:Number = frontNormal.x * cv.v.x + frontNormal.y * cv.v.y - frontOffset;
+			if (separation <= 0.0)
+			{
+				var cp:b2ManifoldPoint = manifold.points[ pointCount ];
+				cp.separation = separation;
+				cp.localPoint1 = b2Math.b2MulXT(xfA, cv.v);
+				cp.localPoint2 = b2Math.b2MulXT(xfB, cv.v);
+				cp.id.key = cv.id._key;
+				cp.id.features.flip = flip;
+				++pointCount;
+			}
+		}
+		
+		manifold.pointCount = pointCount;
 	}
 	
 	

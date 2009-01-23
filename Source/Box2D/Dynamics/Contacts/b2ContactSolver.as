@@ -40,7 +40,8 @@ public class b2ContactSolver
 		//m_step = step;
 		m_step.dt = step.dt;
 		m_step.inv_dt = step.inv_dt;
-		m_step.maxIterations = step.maxIterations;
+		m_step.positionIterations = step.positionIterations;
+		m_step.velocityIterations = step.velocityIterations;
 		
 		m_allocator = allocator;
 		
@@ -217,11 +218,12 @@ public class b2ContactSolver
 						// K is safe to invert.
 						cc.K.col1.Set(k11, k12);
 						cc.K.col2.Set(k12, k22);
-						cc.K.Invert(cc.normalMass);
+						cc.K.GetInverse(cc.normalMass);
 					}
 					else
 					{
 						// The constraints are redundant, just use one.
+						// TODO_ERIN use deepest?
 						cc.pointCount = 1;
 					}
 				}
@@ -777,7 +779,8 @@ public class b2ContactSolver
 		}
 	}
 	
-	
+//#if 1
+// Sequential solver
 	public function SolvePositionConstraints(baumgarte:Number):Boolean{
 		var minSeparation:Number = 0.0;
 		
@@ -878,7 +881,10 @@ public class b2ContactSolver
 		// push the separation above -b2_linearSlop.
 		return minSeparation >= -1.5 * b2Settings.b2_linearSlop;
 	}
-
+//#else
+// Block solver
+// TODO: Port block solver if it is ever enabled
+//#endif
 	private var m_step:b2TimeStep = new b2TimeStep();
 	private var m_allocator:*;
 	b2internal var m_constraints:Array = new Array();

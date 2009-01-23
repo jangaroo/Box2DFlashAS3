@@ -59,7 +59,6 @@ public class b2World
 		m_contactCount = 0;
 		m_jointCount = 0;
 		
-		m_positionCorrection = true;
 		m_warmStarting = true;
 		m_continuousPhysics = true;
 		
@@ -399,11 +398,6 @@ public class b2World
 	public function SetWarmStarting(flag: Boolean) : void { m_warmStarting = flag; }
 
 	/**
-	* Enable/disable position correction. For testing.
-	*/
-	public function SetPositionCorrection(flag: Boolean) : void { m_positionCorrection = flag; }
-
-	/**
 	* Enable/disable continuous physics. For testing.
 	*/
 	public function SetContinuousPhysics(flag: Boolean) : void { m_continuousPhysics = flag; }
@@ -459,15 +453,17 @@ public class b2World
 	* Take a time step. This performs collision detection, integration,
 	* and constraint solution.
 	* @param timeStep the amount of time to simulate, this should not vary.
-	* @param iterations the number of iterations to be used by the constraint solver.
+	* @param velocityIterations for the velocity constraint solver.
+	* @param positionIterations for the position constraint solver.
 	*/
-	public function Step(dt:Number, iterations:int) : void{
+	public function Step(dt:Number, velocityIterations:int, positionIterations:int) : void{
 		
 		m_lock = true;
 		
 		var step:b2TimeStep = new b2TimeStep();
 		step.dt = dt;
-		step.maxIterations	= iterations;
+		step.velocityIterations = velocityIterations;
+		step.positionIterations = positionIterations;
 		if (dt > 0.0)
 		{
 			step.inv_dt = 1.0 / dt;
@@ -479,7 +475,6 @@ public class b2World
 		
 		step.dtRatio = m_inv_dt0 * dt;
 		
-		step.positionCorrection = m_positionCorrection;
 		step.warmStarting = m_warmStarting;
 		
 		// Update contacts.
@@ -630,8 +625,6 @@ public class b2World
 		
 		var b:b2Body;
 		
-		m_positionIterationCount = 0;
-		
 		// Size the island for the worst case.
 		var island:b2Island = new b2Island(m_bodyCount, m_contactCount, m_jointCount, m_stackAllocator, m_contactListener);
 		
@@ -745,11 +738,7 @@ public class b2World
 				}
 			}
 			
-			island.Solve(step, m_gravity, m_positionCorrection, m_allowSleep);
-			//m_positionIterationCount = Math.max(m_positionIterationCount, island.m_positionIterationCount);
-			if (island.m_positionIterationCount > m_positionIterationCount) {
-				m_positionIterationCount = island.m_positionIterationCount;
-			}
+			island.Solve(step, m_gravity, m_allowSleep);
 			
 			// Post solve cleanup.
 			for (var i:int = 0; i < island.m_bodyCount; ++i)
@@ -836,10 +825,10 @@ public class b2World
 		}
 		
 //#ifdef B2_TOI_JOINTS
-		for (j = m_jointList; j; j = j.m_next)
-		{
-			j.m_islandFlag = false;
-		}
+//		for (j = m_jointList; j; j = j.m_next)
+//		{
+//			j.m_islandFlag = false;
+//		}
 //#endif
 		
 		// Find TOI events and solve them.
@@ -1022,31 +1011,31 @@ public class b2World
 			}
 			
 //#ifdef B2_TOI_JOINTS
-			for (var jn:b2JointEdge = b.m_jointList; jn; jn = jn.next) 
-			{
-				if (island.m_jointCount == island.m_jointCapacity) 
-					continue;
-				
-				if (jn.joint.m_islandFlag == true)
-					continue;
-				
-				island.AddJoint(jn.joint);
-				jn.joint.m_islandFlag = true;
-				other = jn.other;
-				
-				if (other.m_flags & b2Body.e_islandFlag)
-					continue;
-					
-				if (!other.IsStatic())
-				{
-					other.Advance(minTOI);
-					other.WakeUp();
-				}
-				
-				//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
-				queue[queueStart + queueSize++] = other;
-				other.m_flags |= b2Body.e_islandFlag;
-			}
+//			for (var jn:b2JointEdge = b.m_jointList; jn; jn = jn.next) 
+//			{
+//				if (island.m_jointCount == island.m_jointCapacity) 
+//					continue;
+//				
+//				if (jn.joint.m_islandFlag == true)
+//					continue;
+//				
+//				island.AddJoint(jn.joint);
+//				jn.joint.m_islandFlag = true;
+//				other = jn.other;
+//				
+//				if (other.m_flags & b2Body.e_islandFlag)
+//					continue;
+//					
+//				if (!other.IsStatic())
+//				{
+//					other.Advance(minTOI);
+//					other.WakeUp();
+//				}
+//				
+//				//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
+//				queue[queueStart + queueSize++] = other;
+//				other.m_flags |= b2Body.e_islandFlag;
+//			}
 //#endif
 			
 			var subStep:b2TimeStep = new b2TimeStep();
@@ -1054,7 +1043,8 @@ public class b2World
 			subStep.dt = (1.0 - minTOI) * step.dt;
 			//b2Settings.b2Assert(subStep.dt > Number.MIN_VALUE);
 			subStep.inv_dt = 1.0 / subStep.dt;
-			subStep.maxIterations = step.maxIterations;
+			subStep.velocityIterations = step.velocityIterations;
+			subStep.positionIterations = step.positionIterations;
 			
 			island.SolveTOI(subStep);
 			
@@ -1478,12 +1468,8 @@ public class b2World
 	b2internal var m_contactListener:b2ContactListener;
 	private var m_debugDraw:b2DebugDraw;
 
+	// This is used to compute the time step ratio to support a variable time step.
 	private var m_inv_dt0:Number;
-
-	private var m_positionIterationCount:int;
-
-	// This is for debugging the solver.
-	static private var m_positionCorrection:Boolean;
 
 	// This is for debugging the solver.
 	static private var m_warmStarting:Boolean;

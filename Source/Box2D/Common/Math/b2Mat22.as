@@ -90,7 +90,10 @@ public class b2Mat22
 		return Math.atan2(col1.y, col1.x);
 	}
 
-	public function Invert(out:b2Mat22):b2Mat22
+	/**
+	 * Compute the inverse of this matrix, such that inv(A) * A = identity.
+	 */
+	public function GetInverse(out:b2Mat22):b2Mat22
 	{
 		var a:Number = col1.x; 
 		var b:Number = col2.x; 

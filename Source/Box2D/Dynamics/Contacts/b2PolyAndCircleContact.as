@@ -48,9 +48,6 @@ public class b2PolyAndCircleContact extends b2Contact{
 		b2Settings.b2Assert(m_shape1.m_type == b2Shape.e_polygonShape);
 		b2Settings.b2Assert(m_shape2.m_type == b2Shape.e_circleShape);
 		m_manifold.pointCount = 0;
-		var point:b2ManifoldPoint = m_manifold.points[0];
-		point.normalImpulse = 0.0;
-		point.tangentImpulse = 0.0;
 	}
 	//~b2PolyAndCircleContact() {}
 

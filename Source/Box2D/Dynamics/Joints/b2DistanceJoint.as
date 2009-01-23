@@ -58,19 +58,17 @@ public class b2DistanceJoint extends b2Joint
 	}
 	
 	/** @inheritDoc */
-	public override function GetReactionForce():b2Vec2
+	public override function GetReactionForce(inv_dt:Number):b2Vec2
 	{
 		//b2Vec2 F = (m_inv_dt * m_impulse) * m_u;
-		var F:b2Vec2 = new b2Vec2();
-		F.SetV(m_u);
-		F.Multiply(m_inv_dt * m_impulse);
-		return F;
+		//return F;
+		return new b2Vec2(inv_dt * m_impulse * m_u.x, inv_dt * m_impulse * m_u.y);
 	}
 
 	/** @inheritDoc */
-	public override function GetReactionTorque():Number
+	public override function GetReactionTorque(inv_dt:Number):Number
 	{
-		//NOT_USED(invTimeStep);
+		//B2_NOT_USED(inv_dt);
 		return 0.0;
 	}
 	
@@ -94,7 +92,6 @@ public class b2DistanceJoint extends b2Joint
 		m_impulse = 0.0;
 		m_gamma = 0.0;
 		m_bias = 0.0;
-		m_inv_dt = 0.0;
 	}
 
 	b2internal override function InitVelocityConstraints(step:b2TimeStep) : void{
@@ -102,8 +99,6 @@ public class b2DistanceJoint extends b2Joint
 		var tMat:b2Mat22;
 		var tX:Number;
 		
-		m_inv_dt = step.inv_dt;
-
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
@@ -171,7 +166,9 @@ public class b2DistanceJoint extends b2Joint
 		
 		if (step.warmStarting)
 		{
+			// Scale the impulse to support a variable time step
 			m_impulse *= step.dtRatio;
+			
 			//b2Vec2 P = m_impulse * m_u;
 			var PX:Number = m_impulse * m_u.x;
 			var PY:Number = m_impulse * m_u.y;
@@ -244,12 +241,15 @@ public class b2DistanceJoint extends b2Joint
 		b2.m_angularVelocity += b2.m_invI * (r2X * PY - r2Y * PX);
 	}
 	
-	b2internal override function SolvePositionConstraints():Boolean{
+	b2internal override function SolvePositionConstraints(baumgarte:Number):Boolean
+	{
+		//B2_NOT_USED(baumgarte);
 		
 		var tMat:b2Mat22;
 		
 		if (m_frequencyHz > 0.0)
 		{
+			// There is no position correction for soft distance constraints
 			return true;
 		}
 		

@@ -105,7 +105,7 @@ package TestBed{
 			
 			// Update physics
 			var physStart:uint = getTimer();
-			m_world.Step(m_timeStep, m_iterations);
+			m_world.Step(m_timeStep, m_velocityIterations, m_positionIterations);
 			Main.m_fpsCounter.updatePhys(physStart);
 			
 			// Render
@@ -132,7 +132,8 @@ package TestBed{
 		public var m_world:b2World;
 		public var m_bomb:b2Body;
 		public var m_mouseJoint:b2MouseJoint;
-		public var m_iterations:int = 10;
+		public var m_velocityIterations:int = 10;
+		public var m_positionIterations:int = 10;
 		public var m_timeStep:Number = 1/30;
 		public var m_physScale:Number = 30;
 		// world mouse position
@@ -174,7 +175,6 @@ package TestBed{
 					md.body2 = body;
 					md.target.Set(mouseXWorldPhys, mouseYWorldPhys);
 					md.maxForce = 300.0 * body.GetMass();
-					md.timeStep = m_timeStep;
 					m_mouseJoint = m_world.CreateJoint(md) as b2MouseJoint;
 					body.WakeUp();
 				}

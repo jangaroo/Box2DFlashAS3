@@ -890,6 +890,8 @@ public class b2Body
 
 	b2internal var m_flags:uint;
 	private var m_type:int;
+	
+	b2internal var m_islandIndex:int;
 
 	b2internal var m_xf:b2XForm = new b2XForm();		// the body origin transform
 

@@ -53,11 +53,11 @@ public class b2Joint
 	/**
 	* Get the reaction force on body2 at the joint anchor.
 	*/
-	public virtual function GetReactionForce():b2Vec2 {return null};
+	public virtual function GetReactionForce(inv_dt:Number):b2Vec2 {return null};
 	/**
 	* Get the reaction torque on body2.
 	*/
-	public virtual function GetReactionTorque():Number {return 0.0}
+	public virtual function GetReactionTorque(inv_dt:Number):Number {return 0.0}
 	
 	/**
 	* Get the first body attached to this joint.
@@ -204,8 +204,14 @@ public class b2Joint
 	b2internal virtual function SolveVelocityConstraints(step:b2TimeStep) : void{};
 
 	// This returns true if the position errors are within tolerance.
-	b2internal virtual function InitPositionConstraints() : void{};
-	b2internal virtual function SolvePositionConstraints():Boolean{return false};
+	b2internal virtual function SolvePositionConstraints(baumgarte:Number):Boolean { return false };
+	
+	b2internal function ComputeXForm(xf:b2XForm, center:b2Vec2, localCenter:b2Vec2, angle:Number):void
+	{
+		xf.R.Set(angle);
+		//xf->position = center - b2Mul(xf->R, localCenter);
+		xf.position.SetV(b2Math.SubtractVV(center, b2Math.b2MulMV(xf.R, localCenter)));
+	}
 
 	b2internal var m_type:int;
 	b2internal var m_prev:b2Joint;
@@ -215,13 +221,18 @@ public class b2Joint
 	b2internal var m_body1:b2Body;
 	b2internal var m_body2:b2Body;
 
-	b2internal var m_inv_dt:Number;
-
 	b2internal var m_islandFlag:Boolean;
 	b2internal var m_collideConnected:Boolean;
 
 	private var m_userData:*;
 	
+	// Cache here per time step to reduce cache misses.
+	b2internal var m_localCenter1:b2Vec2 = new b2Vec2();
+	b2internal var m_localCenter2:b2Vec2 = new b2Vec2();
+	b2internal var m_invMass1:Number;
+	b2internal var m_invMass2:Number;
+	b2internal var m_invI1:Number;
+	b2internal var m_invI2:Number;
 	
 	// ENUMS
 	

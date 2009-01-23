@@ -54,12 +54,12 @@ public class b2MouseJoint extends b2Joint
 		return m_body2.GetWorldPoint(m_localAnchor);
 	}
 	/** @inheritDoc */
-	public override function GetReactionForce():b2Vec2
+	public override function GetReactionForce(inv_dt:Number):b2Vec2
 	{
-		return m_impulse;
+		return new b2Vec2(inv_dt * m_impulse.x, inv_dt * m_impulse.y);
 	}
 	/** @inheritDoc */
-	public override function GetReactionTorque():Number
+	public override function GetReactionTorque(inv_dt:Number):Number
 	{
 		return 0.0;
 	}
@@ -90,21 +90,11 @@ public class b2MouseJoint extends b2Joint
 		m_maxForce = def.maxForce;
 		m_impulse.SetZero();
 		
-		var mass:Number = m_body2.m_mass;
+		m_frequencyHz = def.frequencyHz;
+		m_dampingRatio = def.dampingRatio;
 		
-		// Frequency
-		var omega:Number = 2.0 * b2Settings.b2_pi * def.frequencyHz;
-		
-		// Damping coefficient
-		var d:Number = 2.0 * mass * def.dampingRatio * omega;
-		
-		// Spring stiffness
-		var k:Number = (def.timeStep * mass) * (omega * omega);
-		
-		// magic formulas
-		//b2Assert(d + k > B2_FLT_EPSILON);
-		m_gamma = 1.0 / (d + k);
-		m_beta = k / (d + k);
+		m_beta = 0.0;
+		m_gamma = 0.0;
 	}
 
 	// Presolve vars
@@ -113,6 +103,24 @@ public class b2MouseJoint extends b2Joint
 	private var K2:b2Mat22 = new b2Mat22();
 	b2internal override function InitVelocityConstraints(step:b2TimeStep): void{
 		var b:b2Body = m_body2;
+		
+		var mass:Number = b.GetMass();
+		
+		// Frequency
+		var omega:Number = 2.0 * Math.PI * m_frequencyHz;
+		
+		// Damping co-efficient
+		var d:Number = 2.0 * mass * m_dampingRatio * omega;
+		
+		// Spring stiffness
+		var k:Number = mass * omega * omega;
+		
+		// magic formulas
+		// gamma has units of inverse mass
+		// beta hs units of inverse time
+		//b2Settings.b2Assert(d + step.dt * k > Number.MIN_VALUE)
+		m_gamma = 1.0 / (step.dt * (d + step.dt * k));
+		m_beta = step.dt * k * m_gamma;
 		
 		var tMat:b2Mat22;
 		
@@ -145,8 +153,8 @@ public class b2MouseJoint extends b2Joint
 		K.col1.x += m_gamma;
 		K.col2.y += m_gamma;
 		
-		//m_ptpMass = K.Invert();
-		K.Invert(m_mass);
+		//m_ptpMass = K.GetInverse();
+		K.GetInverse(m_mass);
 		
 		//m_C = b.m_position + r - m_target;
 		m_C.x = b.m_sweep.c.x + rX - m_target.x;
@@ -156,14 +164,13 @@ public class b2MouseJoint extends b2Joint
 		b.m_angularVelocity *= 0.98;
 		
 		// Warm starting.
-		//b2Vec2 P = m_impulse;
-		var PX:Number = step.dt * m_impulse.x;
-		var PY:Number = step.dt * m_impulse.y;
-		//b.m_linearVelocity += invMass * P;
-		b.m_linearVelocity.x += invMass * PX;
-		b.m_linearVelocity.y += invMass * PY;
-		//b.m_angularVelocity += invI * b2Cross(r, P);
-		b.m_angularVelocity += invI * (rX * PY - rY * PX);
+		m_impulse.x *= step.dtRatio;
+		m_impulse.y *= step.dtRatio;
+		//b.m_linearVelocity += invMass * m_impulse;
+		b.m_linearVelocity.x += invMass * m_impulse.x;
+		b.m_linearVelocity.y += invMass * m_impulse.y;
+		//b.m_angularVelocity += invI * b2Cross(r, m_impulse);
+		b.m_angularVelocity += invI * (rX * m_impulse.y - rY * m_impulse.x);
 	}
 	
 	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
@@ -186,39 +193,37 @@ public class b2MouseJoint extends b2Joint
 		//b2Vec2 Cdot = b->m_linearVelocity + b2Cross(b->m_angularVelocity, r);
 		var CdotX:Number = b.m_linearVelocity.x + (-b.m_angularVelocity * rY);
 		var CdotY:Number = b.m_linearVelocity.y + (b.m_angularVelocity * rX);
-		//b2Vec2 force = -step.inv_dt * b2Mul(m_mass, Cdot + (m_beta * step.inv_dt) * m_C + m_gamma * step.dt * m_force);
+		//b2Vec2 impulse = - b2Mul(m_mass, Cdot + m_beta * m_C + m_gamma * m_impulse);
 		tMat = m_mass;
-		tX = CdotX + (m_beta * step.inv_dt) * m_C.x + m_gamma * step.dt * m_impulse.x;
-		tY = CdotY + (m_beta * step.inv_dt) * m_C.y + m_gamma * step.dt * m_impulse.y;
-		var forceX:Number = -step.inv_dt * (tMat.col1.x * tX + tMat.col2.x * tY);
-		var forceY:Number = -step.inv_dt * (tMat.col1.y * tX + tMat.col2.y * tY);
+		tX = CdotX + m_beta * m_C.x + m_gamma * m_impulse.x;
+		tY = CdotY + m_beta * m_C.y + m_gamma * m_impulse.y;
+		var impulseX:Number = -(tMat.col1.x * tX + tMat.col2.x * tY);
+		var impulseY:Number = -(tMat.col1.y * tX + tMat.col2.y * tY);
 		
-		var oldForceX:Number = m_impulse.x;
-		var oldForceY:Number = m_impulse.y;
-		//m_force += force;
-		m_impulse.x += forceX;
-		m_impulse.y += forceY;
-		var forceMagnitude:Number = m_impulse.Length();
-		if (forceMagnitude > m_maxForce)
+		var oldImpulseX:Number = m_impulse.x;
+		var oldImpulseY:Number = m_impulse.y;
+		//m_impulse += impulse;
+		m_impulse.x += impulseX;
+		m_impulse.y += impulseY;
+		var maxImpulse:Number = step.dt * m_maxForce;
+		if (m_impulse.LengthSquared() > maxImpulse*maxImpulse)
 		{
-			//m_impulse *= m_maxForce / forceMagnitude;
-			m_impulse.Multiply(m_maxForce / forceMagnitude);
+			//m_impulse *= m_maxImpulse / m_impulse.Length();
+			m_impulse.Multiply(maxImpulse / m_impulse.Length());
 		}
-		//force = m_impulse - oldForce;
-		forceX = m_impulse.x - oldForceX;
-		forceY = m_impulse.y - oldForceY;
+		//impulse = m_impulse - oldImpulse;
+		impulseX = m_impulse.x - oldImpulseX;
+		impulseY = m_impulse.y - oldImpulseY;
 		
-		//b2Vec2 P = step.dt * force;
-		var PX:Number = step.dt * forceX;
-		var PY:Number = step.dt * forceY;
-		//b->m_linearVelocity += b->m_invMass * P;
-		b.m_linearVelocity.x += b.m_invMass * PX;
-		b.m_linearVelocity.y += b.m_invMass * PY;
+		//b->m_linearVelocity += b->m_invMass * impulse;
+		b.m_linearVelocity.x += b.m_invMass * impulseX;
+		b.m_linearVelocity.y += b.m_invMass * impulseY;
 		//b->m_angularVelocity += b->m_invI * b2Cross(r, P);
-		b.m_angularVelocity += b.m_invI * (rX * PY - rY * PX);
+		b.m_angularVelocity += b.m_invI * (rX * impulseY - rY * impulseX);
 	}
 
-	b2internal override function SolvePositionConstraints():Boolean { 
+	b2internal override function SolvePositionConstraints(baumgarte:Number):Boolean { 
+		//B2_NOT_USED(baumgarte);
 		return true; 
 	}
 
@@ -229,6 +234,8 @@ public class b2MouseJoint extends b2Joint
 	private var m_mass:b2Mat22 = new b2Mat22();	// effective mass for point-to-point constraint.
 	private var m_C:b2Vec2 = new b2Vec2();			// position error
 	private var m_maxForce:Number;
+	private var m_frequencyHz:Number;
+	private var m_dampingRatio:Number;
 	private var m_beta:Number;						// bias factor
 	private var m_gamma:Number;						// softness
 };

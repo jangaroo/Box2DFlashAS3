@@ -60,12 +60,12 @@ public class b2RevoluteJoint extends b2Joint
 	}
 
 	/** @inheritDoc */
-	public override function GetReactionForce() :b2Vec2{
-		return m_pivotForce;
+	public override function GetReactionForce(inv_dt:Number) :b2Vec2{
+		return new b2Vec2(inv_dt * m_impulse.x, inv_dt * m_impulse.y);
 	}
 	/** @inheritDoc */
-	public override function GetReactionTorque() :Number{
-		return m_limitForce;
+	public override function GetReactionTorque(inv_dt:Number) :Number{
+		return inv_dt * m_impulse.z;
 	}
 
 	/**
@@ -126,7 +126,9 @@ public class b2RevoluteJoint extends b2Joint
 	/**
 	* Is the joint motor enabled?
 	*/
-	public function IsMotorEnabled() :Boolean{
+	public function IsMotorEnabled() :Boolean {
+		m_body1.WakeUp();
+		m_body2.WakeUp();
 		return m_enableMotor;
 	}
 
@@ -140,7 +142,9 @@ public class b2RevoluteJoint extends b2Joint
 	/**
 	* Set the motor speed in radians per second.
 	*/
-	public function SetMotorSpeed(speed:Number) : void{
+	public function SetMotorSpeed(speed:Number) : void {
+		m_body1.WakeUp();
+		m_body2.WakeUp();
 		m_motorSpeed = speed;
 	}
 
@@ -162,7 +166,7 @@ public class b2RevoluteJoint extends b2Joint
 	* Get the current motor torque, usually in N-m.
 	*/
 	public function GetMotorTorque() :Number{
-		return m_motorForce;
+		return m_maxMotorTorque;
 	}
 
 	//--------------- Internals Below -------------------
@@ -178,10 +182,8 @@ public class b2RevoluteJoint extends b2Joint
 		
 		m_referenceAngle = def.referenceAngle;
 		
-		m_pivotForce.Set(0.0, 0.0);
-		m_motorForce = 0.0;
-		m_limitForce = 0.0;
-		m_limitPositionImpulse = 0.0;
+		m_impulse.SetZero();
+		m_motorImpulse = 0.0;
 		
 		m_lowerAngle = def.lowerAngle;
 		m_upperAngle = def.upperAngle;
@@ -204,6 +206,7 @@ public class b2RevoluteJoint extends b2Joint
 		var tX:Number;
 		
 		// Compute the effective mass matrix.
+		
 		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
 		tMat = b1.m_xf.R;
 		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
@@ -219,39 +222,36 @@ public class b2RevoluteJoint extends b2Joint
 		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
 		r2X = tX;
 		
-		// K    = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
-		//      = [1/m1+1/m2     0    ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]
-		//        [    0     1/m1+1/m2]           [-r1.x*r1.y r1.x*r1.x]           [-r1.x*r1.y r1.x*r1.x]
-		var invMass1:Number = b1.m_invMass;
-		var invMass2:Number = b2.m_invMass;
-		var invI1:Number = b1.m_invI;
-		var invI2:Number = b2.m_invI;
+		// J = [-I -r1_skew I r2_skew] 
+		// [ 0 -1 0 1]
+		// r_skew = [-ry; rx] 
 		
-		//var K1:b2Mat22 = new b2Mat22();
-		K1.col1.x = invMass1 + invMass2;	K1.col2.x = 0.0;
-		K1.col1.y = 0.0;					K1.col2.y = invMass1 + invMass2;
+		// Matlab
+		// K = [ m1+r1y^2*i1+m2+r2y^2*i2, -r1y*i1*r1x-r2y*i2*r2x, -r1y*i1-r2y*i2]
+		//     [ -r1y*i1*r1x-r2y*i2*r2x, m1+r1x^2*i1+m2+r2x^2*i2, r1x*i1+r2x*i2] 
+		//     [ -r1y*i1-r2y*i2, r1x*i1+r2x*i2, i1+i2] 
 		
-		//var K2:b2Mat22 = new b2Mat22();
-		K2.col1.x =  invI1 * r1Y * r1Y;	K2.col2.x = -invI1 * r1X * r1Y;
-		K2.col1.y = -invI1 * r1X * r1Y;	K2.col2.y =  invI1 * r1X * r1X;
+		var m1:Number = b1.m_invMass;
+		var m2:Number = b2.m_invMass;
+		var i1:Number = b1.m_invI;
+		var i2:Number = b2.m_invI;
 		
-		//var K3:b2Mat22 = new b2Mat22();
-		K3.col1.x =  invI2 * r2Y * r2Y;	K3.col2.x = -invI2 * r2X * r2Y;
-		K3.col1.y = -invI2 * r2X * r2Y;	K3.col2.y =  invI2 * r2X * r2X;
+		m_mass.col1.x = m1 + m2 + r1Y * r1Y * i1 + r2Y * r2Y * i2;
+		m_mass.col2.x = -r1Y * r1X * i1 - r2Y * r2X * i2;
+		m_mass.col3.x = -r1Y * i1 - r2Y * i2;
+		m_mass.col1.y = m_mass.col2.x;
+		m_mass.col2.y = m1 + m2 + r1X * r1X * i1 + r2X * r2X * i2;
+		m_mass.col3.y = r1X * i1 + r2X * i2;
+		m_mass.col1.z = m_mass.col3.x;
+		m_mass.col2.z = m_mass.col3.y;
+		m_mass.col3.z = i1 + i2;
 		
-		//var K:b2Mat22 = b2Math.AddMM(b2Math.AddMM(K1, K2), K3);
-		K.SetM(K1);
-		K.AddM(K2);
-		K.AddM(K3);
 		
-		//m_pivotMass = K.Invert();
-		K.Invert(m_pivotMass);
-		
-		m_motorMass = 1.0 / (invI1 + invI2);
+		m_motorMass = 1.0 / (i1 + i2);
 		
 		if (m_enableMotor == false)
 		{
-			m_motorForce = 0.0;
+			m_motorImpulse = 0.0;
 		}
 		
 		if (m_enableLimit)
@@ -266,7 +266,7 @@ public class b2RevoluteJoint extends b2Joint
 			{
 				if (m_limitState != e_atLowerLimit)
 				{
-					m_limitForce = 0.0;
+					m_impulse.z = 0.0;
 				}
 				m_limitState = e_atLowerLimit;
 			}
@@ -274,43 +274,45 @@ public class b2RevoluteJoint extends b2Joint
 			{
 				if (m_limitState != e_atUpperLimit)
 				{
-					m_limitForce = 0.0;
+					m_impulse.z = 0.0;
 				}
 				m_limitState = e_atUpperLimit;
 			}
 			else
 			{
 				m_limitState = e_inactiveLimit;
-				m_limitForce = 0.0;
+				m_impulse.z = 0.0;
 			}
-		}
-		else
-		{
-			m_limitForce = 0.0;
 		}
 		
 		// Warm starting.
 		if (step.warmStarting)
 		{
-			//b1->m_linearVelocity -= step.dt * invMass1 * m_pivotForce;
-			b1.m_linearVelocity.x -= step.dt * invMass1 * m_pivotForce.x;
-			b1.m_linearVelocity.y -= step.dt * invMass1 * m_pivotForce.y;
-			//b1->m_angularVelocity -= step.dt * invI1 * (b2Cross(r1, m_pivotForce) + m_motorForce + m_limitForce);
-			b1.m_angularVelocity -= step.dt * invI1 * ((r1X * m_pivotForce.y - r1Y * m_pivotForce.x) + m_motorForce + m_limitForce);
+			//Scale impulses to support a variable time step
+			m_impulse.x *= step.dtRatio;
+			m_impulse.y *= step.dtRatio;
+			m_motorImpulse *= step.dtRatio;
 			
-			//b2->m_linearVelocity += step.dt * invMass2 * m_pivotForce;
-			b2.m_linearVelocity.x += step.dt * invMass2 * m_pivotForce.x;
-			b2.m_linearVelocity.y += step.dt * invMass2 * m_pivotForce.y;
-			//b2->m_angularVelocity += step.dt * invI2 * (b2Cross(r2, m_pivotForce) + m_motorForce + m_limitForce);
-			b2.m_angularVelocity += step.dt * invI2 * ((r2X * m_pivotForce.y - r2Y * m_pivotForce.x) + m_motorForce + m_limitForce);
+			var PX:Number = m_impulse.x;
+			var PY:Number = m_impulse.y;
+			
+			//b1->m_linearVelocity -= m1 * P;
+			b1.m_linearVelocity.x -= m1 * PX;
+			b1.m_linearVelocity.y -= m1 * PY;
+			//b1->m_angularVelocity -= i1 * (b2Cross(r1, P) + m_motorImpulse + m_impulse.z);
+			b1.m_angularVelocity -= i1 * ((r1X * PY - r1Y * PX) + m_motorImpulse + m_impulse.z);
+			
+			//b2->m_linearVelocity += m2 * P;
+			b2.m_linearVelocity.x += m2 * PX;
+			b2.m_linearVelocity.y += m2 * PY;
+			//b2->m_angularVelocity += i2 * (b2Cross(r2, P) + m_motorImpulse + m_impulse.z);
+			b2.m_angularVelocity += i2 * ((r2X * PY - r2Y * PX) + m_motorImpulse + m_impulse.z);
 		}
-		else{
-			m_pivotForce.SetZero();
-			m_motorForce = 0.0;
-			m_limitForce = 0.0;
+		else
+		{
+			m_impulse.SetZero();
+			m_motorImpulse = 0.0;
 		}
-		
-		m_limitPositionImpulse = 0.0;
 	}
 	
 	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
@@ -320,199 +322,168 @@ public class b2RevoluteJoint extends b2Joint
 		var tMat:b2Mat22;
 		var tX:Number;
 		
-		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
-		tMat = b1.m_xf.R;
-		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
-		var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
-		tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
-		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
-		r1X = tX;
-		//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
-		tMat = b2.m_xf.R;
-		var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
-		var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
-		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
-		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
-		r2X = tX;
+		var newImpulse:Number;
+		var reduced:b2Vec2;
+		var r1X:Number;
+		var r1Y:Number;
+		var r2X:Number;
+		var r2Y:Number;
 		
-		var oldLimitForce:Number;
+		var v1:b2Vec2 = b1.m_linearVelocity;
+		var w1:Number = b1.m_angularVelocity;
+		var v2:b2Vec2 = b2.m_linearVelocity;
+		var w2:Number = b2.m_angularVelocity;
 		
-		// Solve point-to-point constraint
-		//b2Vec2 pivotCdot = b2.m_linearVelocity + b2Cross(b2.m_angularVelocity, r2) - b1.m_linearVelocity - b2Cross(b1.m_angularVelocity, r1);
-		var pivotCdotX:Number = b2.m_linearVelocity.x + (-b2.m_angularVelocity * r2Y) - b1.m_linearVelocity.x - (-b1.m_angularVelocity * r1Y);
-		var pivotCdotY:Number = b2.m_linearVelocity.y + (b2.m_angularVelocity * r2X) - b1.m_linearVelocity.y - (b1.m_angularVelocity * r1X);
-		
-		//b2Vec2 pivotForce = -step.inv_dt * b2Mul(m_pivotMass, pivotCdot);
-		var pivotForceX:Number = -step.inv_dt * (m_pivotMass.col1.x * pivotCdotX + m_pivotMass.col2.x * pivotCdotY);
-		var pivotForceY:Number = -step.inv_dt * (m_pivotMass.col1.y * pivotCdotX + m_pivotMass.col2.y * pivotCdotY);
-		
-//#ifdef B2_TOI_JOINTS
-		if (step.warmStarting)
-		{
-			m_pivotForce.x += pivotForceX;
-			m_pivotForce.y += pivotForceY;
-		}
-		else
-		{
-			m_pivotForce.x = m_lastWarmStartingPivotForce.x;
-			m_pivotForce.y = m_lastWarmStartingPivotForce.y;
-			//Do not update warm starting value!
-		}
-//#else
-//		//m_pivotForce += pivotForce;
-//		m_pivotForce.x += pivotForceX;
-//		m_pivotForce.y += pivotForceY;
-//#endif
-		
-		//b2Vec2 P = step.dt * pivotForce;
-		var PX:Number = step.dt * pivotForceX;
-		var PY:Number = step.dt * pivotForceY;
-		
-		//b1->m_linearVelocity -= b1->m_invMass * P;
-		b1.m_linearVelocity.x -= b1.m_invMass * PX;
-		b1.m_linearVelocity.y -= b1.m_invMass * PY;
-		//b1->m_angularVelocity -= b1->m_invI * b2Cross(r1, P);
-		b1.m_angularVelocity -= b1.m_invI * (r1X * PY - r1Y * PX);
-		
-		//b2->m_linearVelocity += b2->m_invMass * P;
-		b2.m_linearVelocity.x += b2.m_invMass * PX;
-		b2.m_linearVelocity.y += b2.m_invMass * PY;
-		//b2->m_angularVelocity += b2->m_invI * b2Cross(r2, P);
-		b2.m_angularVelocity += b2.m_invI * (r2X * PY - r2Y * PX);
+		var m1:Number = b1.m_invMass;
+		var m2:Number = b2.m_invMass;
+		var i1:Number = b1.m_invI;
+		var i2:Number = b2.m_invI;
 		
 		if (m_enableMotor && m_limitState != e_equalLimits)
 		{
-			var motorCdot:Number = b2.m_angularVelocity - b1.m_angularVelocity - m_motorSpeed;
-			var motorForce:Number = -step.inv_dt * m_motorMass * motorCdot;
-			var oldMotorForce:Number = m_motorForce;
-			m_motorForce = b2Math.b2Clamp(m_motorForce + motorForce, -m_maxMotorTorque, m_maxMotorTorque);
-			motorForce = m_motorForce - oldMotorForce;
+			var Cdot:Number = w2 - w1 - m_motorSpeed;
+			var impulse:Number = m_motorMass * ( -Cdot);
+			var oldImpulse:Number = m_motorImpulse;
+			var maxImpulse:Number = step.dt * m_maxMotorTorque;
 			
-			b1.m_angularVelocity -= b1.m_invI * step.dt * motorForce;
-			b2.m_angularVelocity += b2.m_invI * step.dt * motorForce;
+			m_motorImpulse = b2Math.b2Clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+			impulse = m_motorImpulse - oldImpulse;
+			
+			w1 -= i1 * impulse;
+			w2 += i2 * impulse;
 		}
 		
 		if (m_enableLimit && m_limitState != e_inactiveLimit)
 		{
-			var limitCdot:Number = b2.m_angularVelocity - b1.m_angularVelocity;
-			var limitForce:Number = -step.inv_dt * m_motorMass * limitCdot;
+			//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
+			tMat = b1.m_xf.R;
+			r1X = m_localAnchor1.x - b1.m_sweep.localCenter.x;
+			r1Y = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+			tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
+			r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
+			r1X = tX;
+			//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
+			tMat = b2.m_xf.R;
+			r2X = m_localAnchor2.x - b2.m_sweep.localCenter.x;
+			r2Y = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+			tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
+			r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
+			r2X = tX;
+			
+			// Solve point-to-point constraint
+			//b2Vec2 Cdot1 = v2 + b2Cross(w2, r2) - v1 - b2Cross(w1, r1);
+			var Cdot1X:Number = v2.x + (-w2 * r2Y) - v1.x - (-w1 * r1Y);
+			var Cdot1Y:Number = v2.y + (w2 * r2X) - v1.y - (w1 * r1X);
+			var Cdot2:Number  = w2 - w1;
+			
+			var impulse3:b2Vec3 = m_mass.Solve33(new b2Vec3(), -Cdot1X, -Cdot1Y, -Cdot2);
 			
 			if (m_limitState == e_equalLimits)
 			{
-				m_limitForce += limitForce;
+				m_impulse.Add(impulse3);
 			}
 			else if (m_limitState == e_atLowerLimit)
 			{
-				oldLimitForce = m_limitForce;
-				m_limitForce = b2Math.b2Max(m_limitForce + limitForce, 0.0);
-				limitForce = m_limitForce - oldLimitForce;
+				newImpulse = m_impulse.z + impulse3.z;
+				if (newImpulse < 0.0)
+				{
+					reduced = m_mass.Solve22(new b2Vec2(), -Cdot1X, -Cdot1Y);
+					impulse3.x = reduced.x;
+					impulse3.y = reduced.y;
+					impulse3.z = -m_impulse.z;
+					m_impulse.x += reduced.x;
+					m_impulse.y += reduced.y;
+					m_impulse.z = 0.0;
+				}
 			}
 			else if (m_limitState == e_atUpperLimit)
 			{
-				oldLimitForce = m_limitForce;
-				m_limitForce = b2Math.b2Min(m_limitForce + limitForce, 0.0);
-				limitForce = m_limitForce - oldLimitForce;
+				newImpulse = m_impulse.z + impulse3.z;
+				if (newImpulse > 0.0)
+				{
+					reduced = m_mass.Solve22(new b2Vec2(), -Cdot1X, -Cdot1Y);
+					impulse3.x = reduced.x;
+					impulse3.y = reduced.y;
+					impulse3.z = -m_impulse.z;
+					m_impulse.x += reduced.x;
+					m_impulse.y += reduced.y;
+					m_impulse.z = 0.0;
+				}
 			}
 			
-			b1.m_angularVelocity -= b1.m_invI * step.dt * limitForce;
-			b2.m_angularVelocity += b2.m_invI * step.dt * limitForce;
+			v1.x -= m1 * impulse3.x;
+			v1.y -= m1 * impulse3.y;
+			w1 -= i1 * (r1X * impulse3.y - r1Y * impulse3.x + impulse3.z);
+			
+			v2.x += m2 * impulse3.x;
+			v2.y += m2 * impulse3.y;
+			w2 += i2 * (r2X * impulse3.y - r2Y * impulse3.x + impulse3.z);
 		}
+		else
+		{
+			//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
+			tMat = b1.m_xf.R;
+			r1X = m_localAnchor1.x - b1.m_sweep.localCenter.x;
+			r1Y = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+			tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
+			r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
+			r1X = tX;
+			//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
+			tMat = b2.m_xf.R;
+			r2X = m_localAnchor2.x - b2.m_sweep.localCenter.x;
+			r2Y = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+			tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
+			r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
+			r2X = tX;
+			
+			//b2Vec2 Cdot = v2 + b2Cross(w2, r2) - v1 - b2Cross(w1, r1);
+			var CdotX:Number = v2.x + ( -w2 * r2Y) - v1.x - ( -w1 * r1Y);
+			var CdotY:Number = v2.y + (w2 * r2X) - v1.y - (w1 * r1X);
+			
+			var impulse2:b2Vec2 = m_mass.Solve22(new b2Vec2(), -CdotX, -CdotY);
+			
+			m_impulse.x += impulse2.x;
+			m_impulse.y += impulse2.y;
+			
+			v1.x -= m1 * impulse2.x;
+			v1.y -= m1 * impulse2.y;
+			//w1 -= i1 * b2Cross(r1, impulse2); 
+			w1 -= i1 * ( r1X * impulse2.y - r1Y * impulse2.x);
+			
+			v2.x += m2 * impulse2.x;
+			v2.y += m2 * impulse2.y;
+			//w2 += i2 * b2Cross(r2, impulse2); 
+			w2 += i2 * ( r2X * impulse2.y - r2Y * impulse2.x);
+		}
+		
+		b1.m_linearVelocity.SetV(v1);
+		b1.m_angularVelocity = w1;
+		b2.m_linearVelocity.SetV(v2);
+		b2.m_angularVelocity = w2;
 	}
 	
 	private static var tImpulse:b2Vec2 = new b2Vec2();
-	b2internal override function SolvePositionConstraints():Boolean{
+	b2internal override function SolvePositionConstraints(baumgarte:Number):Boolean{
+		
+		// TODO_ERIN block solve with limit
 		
 		var oldLimitImpulse:Number;
-		var limitC:Number;
+		var C:Number;
+		
+		var tMat:b2Mat22;
 		
 		var b1:b2Body = m_body1;
 		var b2:b2Body = m_body2;
 		
+		var angularError:Number = 0.0;
 		var positionError:Number = 0.0;
 		
-		var tMat:b2Mat22;
+		var tX:Number;
 		
-		// Solve point-to-point position error.
-		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
-		tMat = b1.m_xf.R;
-		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
-		var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
-		var tX:Number =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
-		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
-		r1X = tX;
-		//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
-		tMat = b2.m_xf.R;
-		var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
-		var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
-		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
-		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
-		r2X = tX;
+		var impulseX:Number;
+		var impulseY:Number;
 		
-		//b2Vec2 p1 = b1->m_sweep.c + r1;
-		var p1X:Number = b1.m_sweep.c.x + r1X;
-		var p1Y:Number = b1.m_sweep.c.y + r1Y;
-		//b2Vec2 p2 = b2->m_sweep.c + r2;
-		var p2X:Number = b2.m_sweep.c.x + r2X;
-		var p2Y:Number = b2.m_sweep.c.y + r2Y;
-		
-		//b2Vec2 ptpC = p2 - p1;
-		var ptpCX:Number = p2X - p1X;
-		var ptpCY:Number = p2Y - p1Y;
-		
-		//float32 positionError = ptpC.Length();
-		positionError = Math.sqrt(ptpCX*ptpCX + ptpCY*ptpCY);
-		
-		// Prevent overly large corrections.
-		//b2Vec2 dpMax(b2_maxLinearCorrection, b2_maxLinearCorrection);
-		//ptpC = b2Clamp(ptpC, -dpMax, dpMax);
-		
-		//float32 invMass1 = b1->m_invMass, invMass2 = b2->m_invMass;
-		var invMass1:Number = b1.m_invMass;
-		var invMass2:Number = b2.m_invMass;
-		//float32 invI1 = b1->m_invI, invI2 = b2->m_invI;
-		var invI1:Number = b1.m_invI;
-		var invI2:Number = b2.m_invI;
-		
-		//b2Mat22 K1;
-		K1.col1.x = invMass1 + invMass2;	K1.col2.x = 0.0;
-		K1.col1.y = 0.0;					K1.col2.y = invMass1 + invMass2;
-		
-		//b2Mat22 K2;
-		K2.col1.x =  invI1 * r1Y * r1Y;	K2.col2.x = -invI1 * r1X * r1Y;
-		K2.col1.y = -invI1 * r1X * r1Y;	K2.col2.y =  invI1 * r1X * r1X;
-		
-		//b2Mat22 K3;
-		K3.col1.x =  invI2 * r2Y * r2Y;		K3.col2.x = -invI2 * r2X * r2Y;
-		K3.col1.y = -invI2 * r2X * r2Y;		K3.col2.y =  invI2 * r2X * r2X;
-		
-		//b2Mat22 K = K1 + K2 + K3;
-		K.SetM(K1);
-		K.AddM(K2);
-		K.AddM(K3);
-		//b2Vec2 impulse = K.Solve(-ptpC);
-		K.Solve(tImpulse, -ptpCX, -ptpCY);
-		var impulseX:Number = tImpulse.x;
-		var impulseY:Number = tImpulse.y;
-		
-		//b1.m_sweep.c -= b1.m_invMass * impulse;
-		b1.m_sweep.c.x -= b1.m_invMass * impulseX;
-		b1.m_sweep.c.y -= b1.m_invMass * impulseY;
-		//b1.m_sweep.a -= b1.m_invI * b2Cross(r1, impulse);
-		b1.m_sweep.a -= b1.m_invI * (r1X * impulseY - r1Y * impulseX);
-		
-		//b2.m_sweep.c += b2.m_invMass * impulse;
-		b2.m_sweep.c.x += b2.m_invMass * impulseX;
-		b2.m_sweep.c.y += b2.m_invMass * impulseY;
-		//b2.m_sweep.a += b2.m_invI * b2Cross(r2, impulse);
-		b2.m_sweep.a += b2.m_invI * (r2X * impulseY - r2Y * impulseX);
-		
-		b1.SynchronizeTransform();
-		b2.SynchronizeTransform();
-		
-		
-		// Handle limits.
-		var angularError:Number = 0.0;
-		
+		// Solve angular limit constraint.
 		if (m_enableLimit && m_limitState != e_inactiveLimit)
 		{
 			var angle:Number = b2.m_sweep.a - b1.m_sweep.a - m_referenceAngle;
@@ -521,37 +492,121 @@ public class b2RevoluteJoint extends b2Joint
 			if (m_limitState == e_equalLimits)
 			{
 				// Prevent large angular corrections
-				limitC = b2Math.b2Clamp(angle, -b2Settings.b2_maxAngularCorrection, b2Settings.b2_maxAngularCorrection);
-				limitImpulse = -m_motorMass * limitC;
-				angularError = b2Math.b2Abs(limitC);
+				C= b2Math.b2Clamp(angle, -b2Settings.b2_maxAngularCorrection, b2Settings.b2_maxAngularCorrection);
+				limitImpulse = -m_motorMass * C;
+				angularError = b2Math.b2Abs(C);
 			}
 			else if (m_limitState == e_atLowerLimit)
 			{
-				limitC = angle - m_lowerAngle;
-				angularError = b2Math.b2Max(0.0, -limitC);
+				C = angle - m_lowerAngle;
+				angularError = -C;
 				
 				// Prevent large angular corrections and allow some slop.
-				limitC = b2Math.b2Clamp(limitC + b2Settings.b2_angularSlop, -b2Settings.b2_maxAngularCorrection, 0.0);
-				limitImpulse = -m_motorMass * limitC;
-				oldLimitImpulse = m_limitPositionImpulse;
-				m_limitPositionImpulse = b2Math.b2Max(m_limitPositionImpulse + limitImpulse, 0.0);
-				limitImpulse = m_limitPositionImpulse - oldLimitImpulse;
+				C = b2Math.b2Clamp(C + b2Settings.b2_angularSlop, -b2Settings.b2_maxAngularCorrection, 0.0);
+				limitImpulse = -m_motorMass * C;
 			}
 			else if (m_limitState == e_atUpperLimit)
 			{
-				limitC = angle - m_upperAngle;
-				angularError = b2Math.b2Max(0.0, limitC);
+				C = angle - m_upperAngle;
+				angularError = C;
 				
 				// Prevent large angular corrections and allow some slop.
-				limitC = b2Math.b2Clamp(limitC - b2Settings.b2_angularSlop, 0.0, b2Settings.b2_maxAngularCorrection);
-				limitImpulse = -m_motorMass * limitC;
-				oldLimitImpulse = m_limitPositionImpulse;
-				m_limitPositionImpulse = b2Math.b2Min(m_limitPositionImpulse + limitImpulse, 0.0);
-				limitImpulse = m_limitPositionImpulse - oldLimitImpulse;
+				C = b2Math.b2Clamp(C - b2Settings.b2_angularSlop, 0.0, b2Settings.b2_maxAngularCorrection);
+				limitImpulse = -m_motorMass * C;
 			}
 			
 			b1.m_sweep.a -= b1.m_invI * limitImpulse;
 			b2.m_sweep.a += b2.m_invI * limitImpulse;
+			
+			b1.SynchronizeTransform();
+			b2.SynchronizeTransform();
+		}
+		
+		// Solve point-to-point constraint
+		{
+			//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
+			tMat = b1.m_xf.R;
+			var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
+			var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+			tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
+			r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
+			r1X = tX;
+			//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
+			tMat = b2.m_xf.R;
+			var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
+			var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+			tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
+			r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
+			r2X = tX;
+			
+			//b2Vec2 C = b2->m_sweep.c + r2 - b1->m_sweep.c - r1;
+			var CX:Number = b2.m_sweep.c.x + r2X - b1.m_sweep.c.x - r1X;
+			var CY:Number = b2.m_sweep.c.y + r2Y - b1.m_sweep.c.y - r1Y;
+			var CLengthSquared:Number = CX * CX + CY * CY;
+			var CLength:Number = Math.sqrt(CLengthSquared);
+			positionError = CLength;
+			
+			var invMass1:Number = b1.m_invMass;
+			var invMass2:Number = b2.m_invMass;
+			var invI1:Number = b1.m_invI;
+			var invI2:Number = b2.m_invI;
+			
+			//Handle large detachment.
+			const k_allowedStretch:Number = 10.0 * b2Settings.b2_linearSlop;
+			if (CLengthSquared > k_allowedStretch * k_allowedStretch)
+			{
+				// Use a particle solution (no rotation)
+				//b2Vec2 u = C; u.Normalize(); 
+				var uX:Number = CX / CLength;
+				var uY:Number = CY / CLength;
+				var k:Number = invMass1 + invMass2;
+				//b2Settings.b2Assert(k>Number.MIN_VALUE)
+				var m:Number = 1.0 / k;
+				impulseX = m * ( -CX);
+				impulseY = m * ( -CY);
+				const k_beta:Number = 0.5;
+				b1.m_sweep.c.x -= k_beta * invMass1 * impulseX;
+				b1.m_sweep.c.y -= k_beta * invMass1 * impulseY;
+				b2.m_sweep.c.x += k_beta * invMass2 * impulseX;
+				b2.m_sweep.c.y += k_beta * invMass2 * impulseY;
+				
+				//C = b2->m_sweep.c + r2 - b1->m_sweep.c - r1;
+				CX = b2.m_sweep.c.x + r2X - b1.m_sweep.c.x - r1X;
+				CY = b2.m_sweep.c.y + r2Y - b1.m_sweep.c.y - r1Y;
+			}
+			
+			//b2Mat22 K1;
+			K1.col1.x = invMass1 + invMass2;	K1.col2.x = 0.0;
+			K1.col1.y = 0.0;					K1.col2.y = invMass1 + invMass2;
+			
+			//b2Mat22 K2;
+			K2.col1.x =  invI1 * r1Y * r1Y;	K2.col2.x = -invI1 * r1X * r1Y;
+			K2.col1.y = -invI1 * r1X * r1Y;	K2.col2.y =  invI1 * r1X * r1X;
+			
+			//b2Mat22 K3;
+			K3.col1.x =  invI2 * r2Y * r2Y;		K3.col2.x = -invI2 * r2X * r2Y;
+			K3.col1.y = -invI2 * r2X * r2Y;		K3.col2.y =  invI2 * r2X * r2X;
+			
+			//b2Mat22 K = K1 + K2 + K3;
+			K.SetM(K1);
+			K.AddM(K2);
+			K.AddM(K3);
+			//b2Vec2 impulse = K.Solve(-C);
+			K.Solve(tImpulse, -CX, -CY);
+			impulseX = tImpulse.x;
+			impulseY = tImpulse.y;
+			
+			//b1.m_sweep.c -= b1.m_invMass * impulse;
+			b1.m_sweep.c.x -= b1.m_invMass * impulseX;
+			b1.m_sweep.c.y -= b1.m_invMass * impulseY;
+			//b1.m_sweep.a -= b1.m_invI * b2Cross(r1, impulse);
+			b1.m_sweep.a -= b1.m_invI * (r1X * impulseY - r1Y * impulseX);
+			
+			//b2.m_sweep.c += b2.m_invMass * impulse;
+			b2.m_sweep.c.x += b2.m_invMass * impulseX;
+			b2.m_sweep.c.y += b2.m_invMass * impulseY;
+			//b2.m_sweep.a += b2.m_invI * b2Cross(r2, impulse);
+			b2.m_sweep.a += b2.m_invI * (r2X * impulseY - r2Y * impulseX);
 			
 			b1.SynchronizeTransform();
 			b2.SynchronizeTransform();
@@ -562,12 +617,10 @@ public class b2RevoluteJoint extends b2Joint
 
 	b2internal var m_localAnchor1:b2Vec2 = new b2Vec2(); // relative
 	b2internal var m_localAnchor2:b2Vec2 = new b2Vec2();
-	private var m_pivotForce:b2Vec2 = new b2Vec2();
-	private var m_motorForce:Number;
-	private var m_limitForce:Number;
-	private var m_limitPositionImpulse:Number;
+	private var m_impulse:b2Vec3 = new b2Vec3();
+	private var m_motorImpulse:Number;
 
-	private var m_pivotMass:b2Mat22 = new b2Mat22();		// effective mass for point-to-point constraint.
+	private var m_mass:b2Mat33 = new b2Mat33();		// effective mass for point-to-point constraint.
 	private var m_motorMass:Number;	// effective mass for motor/limit angular constraint.
 	private var m_enableMotor:Boolean;
 	private var m_maxMotorTorque:Number;
@@ -580,7 +633,7 @@ public class b2RevoluteJoint extends b2Joint
 	private var m_limitState:int;
 	
 //#ifdef B2_TOI_JOINTS
-	private var m_lastWarmStartingPivotForce:b2Vec2 = new b2Vec2();
+//	private var m_lastWarmStartingPivotForce:b2Vec2 = new b2Vec2();
 //#endif
 };
 

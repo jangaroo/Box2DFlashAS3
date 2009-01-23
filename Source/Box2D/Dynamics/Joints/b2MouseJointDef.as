@@ -38,7 +38,6 @@ public class b2MouseJointDef extends b2JointDef
 		maxForce = 0.0;
 		frequencyHz = 5.0;
 		dampingRatio = 0.7;
-		timeStep = 1.0 / 60.0;
 	}
 
 	/**
@@ -60,10 +59,6 @@ public class b2MouseJointDef extends b2JointDef
 	* The damping ratio. 0 = no damping, 1 = critical damping.
 	*/
 	public var dampingRatio:Number;
-	/**
-	* The time step used in the simulation.
-	*/
-	public var timeStep:Number;
 };
 
 }
