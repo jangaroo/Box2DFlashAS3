@@ -541,9 +541,10 @@ public class b2World
 	* @param shapes a user allocated shape pointer array of size maxCount (or greater).
 	* @param maxCount the capacity of the shapes array
 	* @param solidShapes determines if shapes that the ray starts in are counted as hits.
-	* @param userData passed through the worlds contact filter, with method RayCollide. This can be used to filter valid shapes
-	* @returns the number of shapes found
-	* @see #Query
+	* @param userData passed through the world's contact filter, with method RayCollide. This can be used to filter valid shapes
+	* @return the number of shapes found.
+	* @see #Query()
+	* @see b2ContactFilter#RayCollide()
 	*/
 	public function Raycast(segment:b2Segment, shapes:Array, maxCount:int, solidShapes:Boolean, userData:*) : int{
 		var results:Array = new Array(maxCount);
@@ -575,8 +576,10 @@ public class b2World
 	* @param normal returns the normal at the contact point. If there is no intersection, the normal
 	* is not set.
 	* @param solidShapes determines if shapes that the ray starts in are counted as hits.
-	* @returns the colliding shape shape, or null if not found
-	* @see Box2D.Collision.Shapes.b2Shape#TestSegment
+	* @param userData passed through the world's contact filter, with method RayCollide. This can be used to filter valid shapes.
+	* @return the colliding shape shape, or null if not found.
+	* @see Box2D.Collision.Shapes.b2Shape#TestSegment()
+	* @see b2ContactFilter#RayCollide()
 	*/
 	public function RaycastOne(segment:b2Segment,
 								lambda:Array, // float pointer
@@ -1415,7 +1418,7 @@ public class b2World
 	b2internal var m_raycastUserData:*;
 	b2internal var m_raycastSegment:b2Segment;
 	b2internal var m_raycastNormal:b2Vec2 = new b2Vec2();
-	b2internal function RaycastSortKey(shape:b2Shape){
+	b2internal function RaycastSortKey(shape:b2Shape):Number{
 		if(m_contactFilter && !m_contactFilter.RayCollide(m_raycastUserData,shape))
 			return -1;
 		
@@ -1427,7 +1430,7 @@ public class b2World
 		return lambda[0];
 	}
 	
-	b2internal function RaycastSortKey2(shape:b2Shape){
+	b2internal function RaycastSortKey2(shape:b2Shape):Number{
 		if(m_contactFilter && !m_contactFilter.RayCollide(m_raycastUserData,shape))
 			return -1;
 		

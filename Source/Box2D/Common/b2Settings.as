@@ -23,7 +23,7 @@ import Box2D.Common.Math.*;
 	
 	
 /**
-* @private
+* This class controls Box2D global settings
 */
 public class b2Settings{
     
@@ -39,9 +39,21 @@ public class b2Settings{
 
 
 	// Collision
+    /**
+    *   Number of manifold points in a b2Manifold. This should NEVER change.
+    */
 	static public const b2_maxManifoldPoints:int = 2;
+    /**
+    * The maximun allowed vertices in a polygon. As polygons must be convex, there is usually little point increasing this.
+    */
 	static public const b2_maxPolygonVertices:int = 8;
+    /**
+    * The maximun number of proxies allowed in the broadphase.Proxies are a reference to a shape, so this effectively bounds shapes
+    */
 	static public const b2_maxProxies:int = 512;				// this must be a power of two
+    /**
+    * The maximun number of pairs allowed in the broadphase. A pair is formed when any two shapes have overlapping AABBs.
+    */
 	static public const b2_maxPairs:int = 8 * b2_maxProxies;	// this must be a power of two
 
 
@@ -64,6 +76,7 @@ public class b2Settings{
 	* Continuous collision detection (CCD) works with core, shrunken shapes. This is the
 	* amount by which shapes are automatically shrunk to work with CCD. This must be
 	* larger than b2_linearSlop.
+    * @see b2_linearSlop
 	*/
 	static public const b2_toiSlop:Number = 8.0 * b2_linearSlop;
 	
@@ -134,6 +147,10 @@ public class b2Settings{
 	static public const b2_angularSleepTolerance:Number = 2.0 / 180.0;	// 2 degrees/s
 	
 	// assert
+    /**
+    * b2Assert is used internally to handle assertions. By default, calls are commented out to save performance,
+    * so they serve more as documentation than anything else.
+    */
 	static public function b2Assert(a:Boolean) : void
 	{
 		if (!a){

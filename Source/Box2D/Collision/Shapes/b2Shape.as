@@ -55,8 +55,9 @@ public class b2Shape
 	}
 
 	/**
-	* Set the contact filtering data. You must call b2World::Refilter to correct
+	* Set the contact filtering data. You must call b2World.Refilter to correct
 	* existing contacts/non-contacts.
+	* @see Box2D.Dynamics.b2World#Refilter()
 	*/
 	public function SetFilterData(filter:b2FilterData) : void
 	{
@@ -113,13 +114,13 @@ public class b2Shape
 	/**
 	* Perform a ray cast against this shape.
 	* @param xf the shape world transform.
-	* @param lambda returns the hit fraction. You can use this to compute the contact point
+	* @param lambda returns the hit fraction. You can use this to compute the contact point:
 	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
 	* @param normal returns the normal at the contact point. If there is no intersection, the normal
 	* is not set.
 	* @param segment defines the begin and end point of the ray cast.
 	* @param maxLambda a number typically in the range [0,1].
-	* @return e_hitCollide if there was an intersection, e_startsInsideCollide if the point is inside and e_missCollide otherwise
+	* @return b2Shape.e_hitCollide if there was an intersection, b2Shape.e_startsInsideCollide if the point is inside and b2Shape.e_missCollide otherwise.
 	*/
 	public virtual function  TestSegment(xf:b2XForm,
 								lambda:Array, // float pointer
@@ -364,9 +365,9 @@ public class b2Shape
 	//};
 	
 	/// Possible return values for TestSegment
-		/** Return value for TestSegment indicating a hit */
+		/** Return value for TestSegment indicating a hit. */
 		static public const e_hitCollide:int = 1;
-		/** Return value for TestSegment indicating a miss */
+		/** Return value for TestSegment indicating a miss. */
 		static public const e_missCollide:int = 0;
 		/** Return value for TestSegment indicating that the segment starting point, p1, is already inside the shape. */
 		static public const e_startsInsideCollide:int = -1;

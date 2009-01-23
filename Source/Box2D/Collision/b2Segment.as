@@ -111,19 +111,20 @@ public class b2Segment
 		return false;
 	}
 	
-	/// Extends or clips the segment so that it's ends lie on the boundary of the AABB
+	/**
+	* Extends or clips the segment so that it's ends lie on the boundary of the AABB
+	*/
 	public function Extend(aabb:b2AABB) : void{
 		ExtendForward(aabb);
 		ExtendBackward(aabb);
 	}
 	
-	/// @see Extend
+	/**
+	* @see Extend
+	*/
 	public function ExtendForward(aabb:b2AABB) : void{
 		var dX:Number = p2.x-p1.x;
 		var dY:Number = p2.y-p1.y;
-		
-		//Flash only: filter
-		var greaterthan0 = function(t){return t>0;}
 		
 		var lambda:Number = Math.min(	dX>0?(aabb.upperBound.x-p1.x)/dX: dX<0?(aabb.lowerBound.x-p1.x)/dX:Number.POSITIVE_INFINITY,
 										dY>0?(aabb.upperBound.y-p1.y)/dY: dY<0?(aabb.lowerBound.y-p1.y)/dY:Number.POSITIVE_INFINITY);
@@ -133,13 +134,12 @@ public class b2Segment
 		
 	}
 	
-	/// @see Extend
+	/**
+	* @see Extend
+	*/
 	public function ExtendBackward(aabb:b2AABB) : void{
 		var dX:Number = -p2.x+p1.x;
 		var dY:Number = -p2.y+p1.y;
-		
-		//Flash only: filter
-		var greaterthan0 = function(t){return t>0;}
 		
 		var lambda:Number = Math.min(	dX>0?(aabb.upperBound.x-p2.x)/dX: dX<0?(aabb.lowerBound.x-p2.x)/dX:Number.POSITIVE_INFINITY,
 										dY>0?(aabb.upperBound.y-p2.y)/dY: dY<0?(aabb.lowerBound.y-p2.y)/dY:Number.POSITIVE_INFINITY);

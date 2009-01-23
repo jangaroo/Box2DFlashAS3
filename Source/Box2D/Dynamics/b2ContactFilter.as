@@ -55,10 +55,15 @@ public class b2ContactFilter
 	}
 	
 	/**
-	* Return true if the given shape should be considered for ray intersection
+	* Return true if the given shape should be considered for ray intersection.
+	* By default, userData is cast as a b2Shape and collision is resolved according to ShouldCollide
+	* @see ShouldCollide()
+	* @see b2World#Raycast
+	* @param userData	arbitrary data passed from Raycast or RaycastOne
+	* @param shape		the shape that we are testing for filtering
+	* @return a Boolean, with a value of false indicating that this shape should be ignored.
 	*/
 	public virtual function RayCollide(userData:*, shape:b2Shape) : Boolean{
-		//By default, cast userData as a shape, and then collide if the shapes would collide
 		if(!userData)
 			return true;
 		return ShouldCollide(userData as b2Shape,shape);

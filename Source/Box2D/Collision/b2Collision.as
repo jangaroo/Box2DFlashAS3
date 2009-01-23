@@ -456,7 +456,7 @@ public class b2Collision{
 		manifold.normal = flip ? frontNormal.Negative() : frontNormal.Copy();
 		
 		var pointCount:int = 0;
-		for (var i = 0; i < b2Settings.b2_maxManifoldPoints;++i)
+		for (var i:int = 0; i < b2Settings.b2_maxManifoldPoints;++i)
 		{
 			cv = clipPoints2[i];
 			var separation:Number = frontNormal.x * cv.v.x + frontNormal.y * cv.v.y - frontOffset;
