@@ -145,6 +145,13 @@ public class b2Joint
 			}
 			break;
 		
+		case e_lineJoint:
+			{
+				//void* mem = allocator->Allocate(sizeof(b2LineJoint));
+				joint = new b2LineJoint(def as b2LineJointDef);
+			}
+			break;
+			
 		default:
 			//b2Settings.b2Assert(false);
 			break;
@@ -179,6 +186,10 @@ public class b2Joint
 		
 		case e_gearJoint:
 			allocator->Free(joint, sizeof(b2GearJoint));
+			break;
+		
+		case e_lineJoint:
+			allocator->Free(joint, sizeof(b2LineJoint));
 			break;
 		
 		default:
@@ -244,6 +255,7 @@ public class b2Joint
 	static b2internal const e_pulleyJoint:int = 4;
 	static b2internal const e_mouseJoint:int = 5;
 	static b2internal const e_gearJoint:int = 6;
+	static b2internal const e_lineJoint:int = 7;
 
 	// enum b2LimitState
 	static b2internal const e_inactiveLimit:int = 0;

@@ -95,44 +95,27 @@ import flash.display.MovieClip;
 				m_currTest = null
 			}
 			
-            var testCount:int = 8;
+			var tests:Array = [
+				TestRagdoll,			// Ragdoll
+				TestCompound,			// Compound Shapes
+				TestCrankGearsPulley,	// Crank/Gears/Pulley
+				TestBridge,				// Bridge
+				TestStack,				// Stack
+				TestCCD,				// CCD
+				TestTheoJansen,			// Theo Jansen
+				TestRaycast				// Raycast
+			];
+			
+            var testCount:int = tests.length;
 			m_currId = (m_currId + testCount) % testCount;
+			
+			
 			
 			// if null, set new test
 			if (!m_currTest){
-				switch(m_currId){
-					// Ragdoll
-					case 0:
-						m_currTest = new TestRagdoll();
-						break;
-					// Compound Shapes
-					case 1:
-						m_currTest = new TestCompound();
-						break;
-					// Crank/Gears/Pulley
-					case 2:
-						m_currTest = new TestCrankGearsPulley();
-						break;
-					// Bridge
-					case 3:
-						m_currTest = new TestBridge();
-						break;
-					// Stack
-					case 4:
-						m_currTest = new TestStack();
-						break;
-					// CCD
-					case 5:
-						m_currTest = new TestCCD();
-						break;
-					// Theo Jansen
-					case 6:
-						m_currTest = new TestTheoJansen();
-						break;
-					// Raycast
-					case 7:
-						m_currTest = new TestRaycast();
-						break;
+				switch(m_currId) {
+					default:
+						m_currTest = new  tests[m_currId]();
 				}
 			}
 			

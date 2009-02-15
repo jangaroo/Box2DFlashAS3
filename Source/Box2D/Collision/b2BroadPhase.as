@@ -1005,8 +1005,8 @@ public class b2BroadPhase
 //private:
 	private function ComputeBounds(lowerValues:Array, upperValues:Array, aabb:b2AABB) : void
 	{
-		//b2Settings.b2Assert(aabb.upperBound.x > aabb.lowerBound.x);
-		//b2Settings.b2Assert(aabb.upperBound.y > aabb.lowerBound.y);
+		//b2Settings.b2Assert(aabb.upperBound.x >= aabb.lowerBound.x);
+		//b2Settings.b2Assert(aabb.upperBound.y >= aabb.lowerBound.y);
 		
 		//var minVertex:b2Vec2 = b2Math.b2ClampV(aabb.minVertex, m_worldAABB.minVertex, m_worldAABB.maxVertex);
 		var minVertexX:Number = aabb.lowerBound.x;

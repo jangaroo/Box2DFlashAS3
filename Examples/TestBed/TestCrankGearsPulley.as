@@ -232,6 +232,33 @@ package TestBed{
 				body1.SetMassFromShapes();
 			}
 			
+			//
+			// LINE JOINT
+			//
+			{
+				sd = new b2PolygonDef();
+				sd.SetAsBox(7.5/m_physScale, 30.0/m_physScale);
+				sd.density = 1.0;
+				
+				bd = new b2BodyDef();
+				bd.position.Set(500 / m_physScale, 500/2 / m_physScale);
+				body = m_world.CreateBody(bd);
+				body.CreateShape(sd);
+				body.SetMassFromShapes();
+				
+				var ljd:b2LineJointDef = new b2LineJointDef();
+				ljd.Initialize(ground, body, body.GetPosition(), new b2Vec2(0.4, 0.6));
+				
+				ljd.lowerTranslation = -1;
+				ljd.upperTranslation = 1;
+				ljd.enableLimit = true;
+				
+				ljd.maxMotorForce = 1;
+				ljd.motorSpeed = 0;
+				ljd.enableMotor = true;
+				
+				m_world.CreateJoint(ljd);
+			}
 		}
 		
 		

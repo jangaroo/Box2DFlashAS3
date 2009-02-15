@@ -22,7 +22,8 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Collision.Shapes.*;
 import Box2D.Collision.*;
-import Box2D.Common.b2internal;
+
+import Box2D.Common.b2internal;
 use namespace b2internal;
 
 /**
@@ -373,7 +374,7 @@ static public function DistanceGeneric(x1:b2Vec2, x2:b2Vec2,
 			maxSqr = b2Math.b2Max(maxSqr, (tVec.x*tVec.x + tVec.y*tVec.y));
 		}
 		
-		if (pointCount == 3 || vSqr <= 100.0 * Number.MIN_VALUE * maxSqr)
+		if (vSqr <= 100.0 * Number.MIN_VALUE * maxSqr)
 		{
 			g_GJK_Iterations = iter;
 			//v = *x2 - *x1;

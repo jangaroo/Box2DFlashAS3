@@ -389,6 +389,8 @@ public class b2World
 	*/
 	public function Refilter(shape:b2Shape) : void
 	{
+		//b2Settings.b2Assert(m_lock == false);
+		
 		shape.RefilterProxy(m_broadPhase, shape.m_body.m_xf);
 	}
 	

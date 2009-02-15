@@ -114,25 +114,34 @@ public class b2PolygonShape extends b2Shape
 			tVec = m_normals[i];
 			var numerator:Number = (tVec.x*tX + tVec.y*tY);
 			//float32 denominator = b2Dot(m_normals[i], d);
-			var denominator:Number = (tVec.x*dX + tVec.y*dY);
+			var denominator:Number = (tVec.x * dX + tVec.y * dY);
 			
-			// Note: we want this predicate without division:
-			// lower < numerator / denominator, where denominator < 0
-			// Since denominator < 0, we have to flip the inequality:
-			// lower < numerator / denominator <==> denominator * lower > numerator.
-			
-			if (denominator < 0.0 && numerator < lower * denominator)
+			if (denominator == 0.0)
 			{
-				// Increase lower.
-				// The segment enters this half-space.
-				lower = numerator / denominator;
-				index = i;
+				if (numerator < 0)
+				{
+					return e_missCollide;
+				}
 			}
-			else if (denominator > 0.0 && numerator < upper * denominator)
+			else
 			{
-				// Decrease upper.
-				// The segment exits this half-space.
-				upper = numerator / denominator;
+				// Note: we want this predicate without division:
+				// lower < numerator / denominator, where denominator < 0
+				// Since denominator < 0, we have to flip the inequality:
+				// lower < numerator / denominator <==> denominator * lower > numerator.
+				if (denominator < 0.0 && numerator < lower * denominator)
+				{
+					// Increase lower.
+					// The segment enters this half-space.
+					lower = numerator / denominator;
+					index = i;
+				}
+				else if (denominator > 0.0 && numerator < upper * denominator)
+				{
+					// Decrease upper.
+					// The segment exits this half-space.
+					upper = numerator / denominator;
+				}
 			}
 			
 			if (upper < lower)
