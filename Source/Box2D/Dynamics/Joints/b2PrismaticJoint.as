@@ -433,7 +433,7 @@ public class b2PrismaticJoint extends b2Joint
 			
 			//b2Vec2 P = m_impulse.x * m_perp + (m_motorImpulse + m_impulse.z) * m_axis;
 			var PX:Number = m_impulse.x * m_perp.x + (m_motorImpulse + m_impulse.z) * m_axis.x;
-			var PY:Number = m_impulse.y * m_perp.y + (m_motorImpulse + m_impulse.z) * m_axis.y;
+			var PY:Number = m_impulse.x * m_perp.y + (m_motorImpulse + m_impulse.z) * m_axis.y;
 			var L1:Number = m_impulse.x * m_s1 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a1;
 			var L2:Number = m_impulse.x * m_s2 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a2; 
 
