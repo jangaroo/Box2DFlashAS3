@@ -167,6 +167,14 @@ public class b2Shape
 	{
 		return m_friction;
 	}
+	
+	/**
+	 * Set the coefficient of friction.
+	 */
+	public function SetFriction(friction:Number) : void
+	{
+		m_friction = friction;
+	}
 
 	/**
 	* Get the coefficient of restitution.
@@ -174,6 +182,14 @@ public class b2Shape
 	public function GetRestitution() : Number
 	{
 		return m_restitution;
+	}
+	
+	/**
+	 * Set the coefficient of restitution.
+	 */
+	public function SetRestitution(restitution:Number) : void
+	{
+		m_restitution = restitution;
 	}
 	
 	//--------------- Internals Below -------------------

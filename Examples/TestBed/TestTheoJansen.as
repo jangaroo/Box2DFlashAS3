@@ -128,7 +128,7 @@ package TestBed{
 		
 		
 		
-		private function CreateLeg(s:Number, wheelAnchor:b2Vec2){
+		private function CreateLeg(s:Number, wheelAnchor:b2Vec2):void{
 			
 			var p1:b2Vec2 = new b2Vec2(162 * s/tScale, 183/tScale);
 			var p2:b2Vec2 = new b2Vec2(216 * s/tScale, 36 /tScale);

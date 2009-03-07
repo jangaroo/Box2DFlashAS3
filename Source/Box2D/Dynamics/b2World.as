@@ -798,7 +798,7 @@ public class b2World
 		var s2:b2Shape;
 		var b1:b2Body;
 		var b2:b2Body;
-		var cn:b2ContactEdge;
+		var cEdge:b2ContactEdge;
 		var j:b2Joint;
 		
 		// Reserve an island and a queue for TOI island solution.
@@ -829,12 +829,10 @@ public class b2World
 			c.m_flags &= ~(b2Contact.e_toiFlag | b2Contact.e_islandFlag);
 		}
 		
-//#ifdef B2_TOI_JOINTS
-//		for (j = m_jointList; j; j = j.m_next)
-//		{
-//			j.m_islandFlag = false;
-//		}
-//#endif
+		for (j = m_jointList; j; j = j.m_next)
+		{
+			j.m_islandFlag = false;
+		}
 		
 		// Find TOI events and solve them.
 		for (;;)
@@ -891,8 +889,10 @@ public class b2World
 					toi = b2TimeOfImpact.TimeOfImpact(c.m_shape1, b1.m_sweep, c.m_shape2, b2.m_sweep);
 					//b2Settings.b2Assert(0.0 <= toi && toi <= 1.0);
 					
+					// If the TOI is in range ...
 					if (toi > 0.0 && toi < 1.0)
 					{
+						// Interpolate on the actual range.
 						//toi = Math.min((1.0 - toi) * t0 + toi, 1.0);
 						toi = (1.0 - toi) * t0 + toi;
 						if (toi > 1) toi = 1;
@@ -970,7 +970,7 @@ public class b2World
 				}
 				
 				// Search all contacts connected to this body.
-				for (cn = b.m_contactList; cn; cn = cn.next)
+				for (cEdge = b.m_contactList; cEdge; cEdge = cEdge.next)
 				{
 					// Does the TOI island still have space for contacts?
 					if (island.m_contactCount == island.m_contactCapacity)
@@ -979,22 +979,22 @@ public class b2World
 					}
 					
 					// Has this contact already been added to an island? Skip slow or non-solid contacts.
-					if (cn.contact.m_flags & (b2Contact.e_islandFlag | b2Contact.e_slowFlag | b2Contact.e_nonSolidFlag))
+					if (cEdge.contact.m_flags & (b2Contact.e_islandFlag | b2Contact.e_slowFlag | b2Contact.e_nonSolidFlag))
 					{
 						continue;
 					}
 					
 					// Is this contact touching? For performance we are not updating this contact.
-					if (cn.contact.m_manifoldCount == 0)
+					if (cEdge.contact.m_manifoldCount == 0)
 					{
 						continue;
 					}
 					
-					island.AddContact(cn.contact);
-					cn.contact.m_flags |= b2Contact.e_islandFlag;
+					island.AddContact(cEdge.contact);
+					cEdge.contact.m_flags |= b2Contact.e_islandFlag;
 					
 					// Update other body.
-					var other:b2Body = cn.other;
+					var other:b2Body = cEdge.other;
 					
 					// Was the other body already added to this island?
 					if (other.m_flags & b2Body.e_islandFlag)
@@ -1010,44 +1010,44 @@ public class b2World
 					}
 					
 					//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
-					 queue[queueStart + queueSize++] = other;
+					queue[queueStart + queueSize] = other;
+					++queueSize;
 					other.m_flags |= b2Body.e_islandFlag;
 				}
 			}
 			
-//#ifdef B2_TOI_JOINTS
-//			for (var jn:b2JointEdge = b.m_jointList; jn; jn = jn.next) 
-//			{
-//				if (island.m_jointCount == island.m_jointCapacity) 
-//					continue;
-//				
-//				if (jn.joint.m_islandFlag == true)
-//					continue;
-//				
-//				island.AddJoint(jn.joint);
-//				jn.joint.m_islandFlag = true;
-//				other = jn.other;
-//				
-//				if (other.m_flags & b2Body.e_islandFlag)
-//					continue;
-//					
-//				if (!other.IsStatic())
-//				{
-//					other.Advance(minTOI);
-//					other.WakeUp();
-//				}
-//				
-//				//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
-//				queue[queueStart + queueSize++] = other;
-//				other.m_flags |= b2Body.e_islandFlag;
-//			}
-//#endif
+			for (var jEdge:b2JointEdge = b.m_jointList; jEdge; jEdge = jEdge.next) 
+			{
+				if (island.m_jointCount == island.m_jointCapacity) 
+					continue;
+				
+				if (jEdge.joint.m_islandFlag == true)
+					continue;
+				
+				island.AddJoint(jEdge.joint);
+				jEdge.joint.m_islandFlag = true;
+				other = jEdge.other;
+				
+				if (other.m_flags & b2Body.e_islandFlag)
+					continue;
+					
+				if (!other.IsStatic())
+				{
+					other.Advance(minTOI);
+					other.WakeUp();
+				}
+				
+				//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
+				queue[queueStart + queueSize] = other;
+				++queueSize;
+				other.m_flags |= b2Body.e_islandFlag;
+			}
 			
 			var subStep:b2TimeStep = new b2TimeStep();
 			subStep.warmStarting = false;
 			subStep.dt = (1.0 - minTOI) * step.dt;
-			//b2Settings.b2Assert(subStep.dt > Number.MIN_VALUE);
 			subStep.inv_dt = 1.0 / subStep.dt;
+			subStep.dtRatio = 0.0;
 			subStep.velocityIterations = step.velocityIterations;
 			subStep.positionIterations = step.positionIterations;
 			
@@ -1084,9 +1084,9 @@ public class b2World
 				
 				// Invalidate all contact TOIs associated with this body. Some of these
 				// may not be in the island because they were not touching.
-				for (cn = b.m_contactList; cn; cn = cn.next)
+				for (cEdge = b.m_contactList; cEdge; cEdge = cEdge.next)
 				{
-					cn.contact.m_flags &= ~b2Contact.e_toiFlag;
+					cEdge.contact.m_flags &= ~b2Contact.e_toiFlag;
 				}
 			}
 			

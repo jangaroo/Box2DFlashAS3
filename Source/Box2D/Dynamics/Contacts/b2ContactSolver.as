@@ -19,6 +19,7 @@
 package Box2D.Dynamics.Contacts{
 
 	
+import Box2D.Collision.Shapes.b2Shape;
 import Box2D.Dynamics.*;
 import Box2D.Collision.*;
 import Box2D.Common.Math.*;
@@ -66,12 +67,14 @@ public class b2ContactSolver
 		for (i = 0; i < contactCount; ++i)
 		{
 			contact = contacts[i];
-			var b1:b2Body = contact.m_shape1.m_body;
-			var b2:b2Body = contact.m_shape2.m_body;
+			var shape1:b2Shape = contact.m_shape1;
+			var shape2:b2Shape = contact.m_shape2;
+			var b1:b2Body = shape1.m_body;
+			var b2:b2Body = shape2.m_body;
 			var manifoldCount:int = contact.m_manifoldCount;
 			var manifolds:Array = contact.GetManifolds();
-			var friction:Number = contact.m_friction;
-			var restitution:Number = contact.m_restitution;
+			var friction:Number = b2Settings.b2MixFriction(shape1.GetFriction(), shape2.GetFriction());
+			var restitution:Number = b2Settings.b2MixRestitution(shape1.GetRestitution(), shape2.GetRestitution());
 			
 			//var v1:b2Vec2 = b1.m_linearVelocity.Copy();
 			var v1X:Number = b1.m_linearVelocity.x;

@@ -191,6 +191,7 @@ public class b2RevoluteJoint extends b2Joint
 		m_motorSpeed = def.motorSpeed;
 		m_enableLimit = def.enableLimit;
 		m_enableMotor = def.enableMotor;
+		m_limitState = e_inactiveLimit;
 	}
 
 	// internal vars
@@ -204,6 +205,14 @@ public class b2RevoluteJoint extends b2Joint
 		
 		var tMat:b2Mat22;
 		var tX:Number;
+		
+		if (m_enableMotor || m_enableLimit)
+		{
+			// You cannot create prismatic joint between bodies that
+			// both have fixed rotation.
+			//b2Settings.b2Assert(b1.m_invI > 0.0 || b2.m_invI > 0.0);
+		}
+		
 		
 		// Compute the effective mass matrix.
 		
@@ -284,6 +293,10 @@ public class b2RevoluteJoint extends b2Joint
 				m_impulse.z = 0.0;
 			}
 		}
+		else
+		{
+			m_limitState = e_inactiveLimit;
+		}
 		
 		// Warm starting.
 		if (step.warmStarting)
@@ -339,6 +352,7 @@ public class b2RevoluteJoint extends b2Joint
 		var i1:Number = b1.m_invI;
 		var i2:Number = b2.m_invI;
 		
+		// Solve motor constraint.
 		if (m_enableMotor && m_limitState != e_equalLimits)
 		{
 			var Cdot:Number = w2 - w1 - m_motorSpeed;
@@ -353,6 +367,7 @@ public class b2RevoluteJoint extends b2Joint
 			w2 += i2 * impulse;
 		}
 		
+		// Solve limit constraint.
 		if (m_enableLimit && m_limitState != e_inactiveLimit)
 		{
 			//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
@@ -631,10 +646,6 @@ public class b2RevoluteJoint extends b2Joint
 	private var m_lowerAngle:Number;
 	private var m_upperAngle:Number;
 	private var m_limitState:int;
-	
-//#ifdef B2_TOI_JOINTS
-//	private var m_lastWarmStartingPivotForce:b2Vec2 = new b2Vec2();
-//#endif
 };
 
 }

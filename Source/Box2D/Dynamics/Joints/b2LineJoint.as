@@ -200,6 +200,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function EnableLimit(flag:Boolean) : void
 	{
+		m_body1.WakeUp();
+		m_body2.WakeUp();
 		m_enableLimit = flag;
 	}
 	/**
@@ -222,6 +224,8 @@ public class b2LineJoint extends b2Joint
 	public function SetLimits(lower:Number, upper:Number) : void
 	{
 		//b2Settings.b2Assert(lower <= upper);
+		m_body1.WakeUp();
+		m_body2.WakeUp();
 		m_lowerTranslation = lower;
 		m_upperTranslation = upper;
 	}
@@ -237,6 +241,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function EnableMotor(flag:Boolean) : void
 	{
+		m_body1.WakeUp();
+		m_body2.WakeUp();
 		m_enableMotor = flag;
 	}
 	/**
@@ -244,6 +250,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function SetMotorSpeed(speed:Number) : void
 	{
+		m_body1.WakeUp();
+		m_body2.WakeUp();
 		m_motorSpeed = speed;
 	}
 	/**
@@ -259,6 +267,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function SetMaxMotorForce(force:Number) : void
 	{
+		m_body1.WakeUp();
+		m_body2.WakeUp();
 		m_maxMotorForce = force;
 	}
 	/**
@@ -298,6 +308,7 @@ public class b2LineJoint extends b2Joint
 		m_motorSpeed = def.motorSpeed;
 		m_enableLimit = def.enableLimit;
 		m_enableMotor = def.enableMotor;
+		m_limitState = e_inactiveLimit;
 		
 		m_axis.SetZero();
 		m_perp.SetZero();
@@ -403,6 +414,10 @@ public class b2LineJoint extends b2Joint
 				m_limitState = e_inactiveLimit;
 				m_impulse.y = 0.0;
 			}
+		}
+		else
+		{
+			m_limitState = e_inactiveLimit;
 		}
 		
 		if (m_enableMotor == false)

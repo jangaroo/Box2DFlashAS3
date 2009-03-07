@@ -128,6 +128,22 @@ public class b2Settings{
 	* to overshoot.
 	*/
 	static public const b2_contactBaumgarte:Number = 0.2;
+	
+	/**
+	 * Friction mixing law. Feel free to customize this.
+	 */
+	public static function b2MixFriction(friction1:Number, friction2:Number):Number
+	{
+		return Math.sqrt(friction1 * friction2);
+	}
+
+	/** 
+	 * Restitution mixing law. Feel free to customize this.
+	 */
+	public static function b2MixRestitution(restitution1:Number, restitution2:Number):Number
+	{
+		return restitution1 > restitution2 ? restitution1 : restitution2;
+	}
 
 
 

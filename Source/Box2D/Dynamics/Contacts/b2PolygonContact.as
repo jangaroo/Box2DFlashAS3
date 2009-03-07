@@ -78,8 +78,8 @@ public class b2PolygonContact extends b2Contact
 		cp = s_evalCP;
 		cp.shape1 = m_shape1;
 		cp.shape2 = m_shape2;
-		cp.friction = m_friction;
-		cp.restitution = m_restitution;
+		cp.friction = b2Settings.b2MixFriction(m_shape1.GetFriction(), m_shape2.GetFriction());
+		cp.restitution = b2Settings.b2MixRestitution(m_shape1.GetRestitution(), m_shape2.GetRestitution());
 		
 		// Match contact ids to facilitate warm starting.
 		if (m_manifold.pointCount > 0)

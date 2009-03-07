@@ -200,9 +200,6 @@ public class b2Contact
 		
 		m_manifoldCount = 0;
 		
-		m_friction = Math.sqrt(m_shape1.m_friction * m_shape2.m_friction);
-		m_restitution = b2Math.b2Max(m_shape1.m_restitution, m_shape2.m_restitution);
-		
 		m_prev = null;
 		m_next = null;
 		
@@ -265,10 +262,6 @@ public class b2Contact
 	b2internal var m_shape2:b2Shape;
 
 	b2internal var m_manifoldCount:int;
-
-	// Combined friction
-	b2internal var m_friction:Number;
-	b2internal var m_restitution:Number;
 	
 	b2internal var m_toi:Number;
 

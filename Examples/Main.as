@@ -32,6 +32,7 @@ import TestBed.*;
 import TestBed.TestBridge;
 
 import flash.display.MovieClip;
+	[SWF(width='640', height='360', backgroundColor='#414647')]
 	public class Main extends MovieClip{
 		public function Main(){
 			

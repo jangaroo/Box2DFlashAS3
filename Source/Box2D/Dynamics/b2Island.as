@@ -343,29 +343,23 @@ public class b2Island
 		
 		// No warm starting needed for TOI events.
 		
-//#ifdef B2_TOI_JOINTS
-//		// For joints, initialize with the last full step warm starting values
-//		subStep.warmStarting = true;
-//		
-//		for (i = 0; i < m_jointCount;++i)
-//		{
-//			m_joints[i].InitVelocityConstraints(subStep);
-//		}
-//		
-//		// ...but don't update the warm starting during TOI solve!
-//		subStep.warmStarting = false;
-//#endif
+		// For joints, initialize with the last full step warm starting values
+		subStep.warmStarting = true;
+		
+		for (i = 0; i < m_jointCount;++i)
+		{
+			m_joints[i].InitVelocityConstraints(subStep);
+		}
+		
 		
 		// Solve velocity constraints.
 		for (i = 0; i < subStep.velocityIterations; ++i)
 		{
 			contactSolver.SolveVelocityConstraints();
-//#ifdef B2_TOI_JOINTS
-//			for (j = 0; j < m_jointCount;++j)
-//			{
-//				m_joints[j].InitVelocityConstraints(subStep);
-//			}
-//#endif
+			for (j = 0; j < m_jointCount;++j)
+			{
+				m_joints[j].InitVelocityConstraints(subStep);
+			}
 		}
 		
 		// Don't store the TOI contact forces for warm starting
@@ -399,26 +393,18 @@ public class b2Island
 		for (i = 0; i < subStep.positionIterations; ++i)
 		{
 			var contactsOkay:Boolean = contactSolver.SolvePositionConstraints(k_toiBaumgarte);
-//#ifdef B2_TOI_JOINTS
-//			var jointsOkay:Boolean = true;
-//			for (j = 0; j < m_jointCount;++j)
-//			{
-//				var jointOkay:Boolean = m_joints[j].SolvePositionConstraints();
-//				jointsOkay = jointsOkay && jointOkay;
-//			}
-//			
-//			if (contactsOkay && jointsOkay)
-//			{
-//				break;
-//			}
-//#else
-			if (contactsOkay)
+			var jointsOkay:Boolean = true;
+			for (j = 0; j < m_jointCount;++j)
+			{
+				var jointOkay:Boolean = m_joints[j].SolvePositionConstraints(b2Settings.b2_contactBaumgarte);
+				jointsOkay = jointsOkay && jointOkay;
+			}
+			
+			if (contactsOkay && jointsOkay)
 			{
 				break;
 			}
-//#endif
 		}
-		
 		Report(contactSolver.m_constraints);
 	}
 

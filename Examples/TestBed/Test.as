@@ -134,7 +134,7 @@ package TestBed{
 		public var m_mouseJoint:b2MouseJoint;
 		public var m_velocityIterations:int = 10;
 		public var m_positionIterations:int = 10;
-		public var m_timeStep:Number = 1/30;
+		public var m_timeStep:Number = 1.0/30.0;
 		public var m_physScale:Number = 30;
 		// world mouse position
 		static public var mouseXWorldPhys:Number;

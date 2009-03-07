@@ -33,12 +33,9 @@ package TestBed{
 	
 	public class TestRaycast extends Test{
 		
-		var laser:b2Body;
+		private var laser:b2Body;
 		
 		public function TestRaycast(){
-			
-			
-			var s=1;
 			
 			// Set Text field
 			Main.m_aboutText.text = "Raycast";
@@ -85,13 +82,15 @@ package TestBed{
 			segment.p2.SetV(laser.GetWorldVector(new b2Vec2(100/m_physScale,0)))
 			segment.p2.Add(segment.p1);
 			
-			var shapes:Array=new Array();
-			var n=1;
+			//Example call for b2World.Raycast
+			//var shapes:Array=new Array();
+			//var n:Number=1;
 			//n = m_world.m_broadPhase.QuerySegment(segment,shapes,n,null);
 			//n = m_world.Raycast(segment,shapes,n,null);
-			var lambda=[1];
+			
+			var lambdaRef:Array=[1];
 			var normal:b2Vec2=new b2Vec2();
-			var shape:b2Shape = m_world.RaycastOne(segment,lambda,normal,true,null);
+			var shape:b2Shape = m_world.RaycastOne(segment,lambdaRef,normal,true,null);
 			Main.m_aboutText.text=""
 			if(shape)
 			{
@@ -100,11 +99,11 @@ package TestBed{
 			}
 			else
 			{
-				lambda=[1];
+				lambdaRef=[1];
 			}
 			
 			
-			lambda=lambda[0];
+			var lambda:Number = lambdaRef[0];
 			m_sprite.graphics.lineStyle(1,0xff0000,1);
 			m_sprite.graphics.moveTo(segment.p1.x * m_physScale, segment.p1.y * m_physScale);
 			m_sprite.graphics.lineTo( 	(segment.p2.x * lambda + (1-lambda) * segment.p1.x) * m_physScale,

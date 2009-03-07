@@ -151,20 +151,19 @@ public class b2ContactManager extends b2PairCallback
 		
 		var shape1:b2Shape = c.m_shape1;
 		var shape2:b2Shape = c.m_shape2;
+		var body1:b2Body = shape1.m_body;
+		var body2:b2Body = shape2.m_body;
+		var cp:b2ContactPoint = s_evalCP;
+		cp.shape1 = c.m_shape1;
+		cp.shape2 = c.m_shape2;
+		cp.friction = b2Settings.b2MixFriction(shape1.GetFriction(), shape2.GetFriction());
+		cp.restitution = b2Settings.b2MixRestitution(shape1.GetRestitution(), shape2.GetRestitution());
 		
 		// Inform the user that this contact is ending.
 		var manifoldCount:int = c.m_manifoldCount;
 		if (manifoldCount > 0 && m_world.m_contactListener)
 		{
-			var b1:b2Body = shape1.m_body;
-			var b2:b2Body = shape2.m_body;
-
 			var manifolds:Array  = c.GetManifolds();
-			var cp:b2ContactPoint = s_evalCP;
-			cp.shape1 = c.m_shape1;
-			cp.shape2 = c.m_shape2;
-			cp.friction = c.m_friction;
-			cp.restitution = c.m_restitution;
 			
 			for (var i:int = 0; i < manifoldCount; ++i)
 			{
@@ -174,9 +173,9 @@ public class b2ContactManager extends b2PairCallback
 				for (var j:int = 0; j < manifold.pointCount; ++j)
 				{
 					var mp:b2ManifoldPoint = manifold.points[j];
-					cp.position = b1.GetWorldPoint(mp.localPoint1);
-					var v1:b2Vec2 = b1.GetLinearVelocityFromLocalPoint(mp.localPoint1);
-					var v2:b2Vec2 = b2.GetLinearVelocityFromLocalPoint(mp.localPoint2);
+					cp.position = body1.GetWorldPoint(mp.localPoint1);
+					var v1:b2Vec2 = body1.GetLinearVelocityFromLocalPoint(mp.localPoint1);
+					var v2:b2Vec2 = body2.GetLinearVelocityFromLocalPoint(mp.localPoint2);
 					cp.velocity.Set(v2.x - v1.x, v2.y - v1.y);
 					cp.separation = mp.separation;
 					cp.id.key = mp.id._key;
@@ -200,9 +199,6 @@ public class b2ContactManager extends b2PairCallback
 		{
 			m_world.m_contactList = c.m_next;
 		}
-		
-		var body1:b2Body = shape1.m_body;
-		var body2:b2Body = shape2.m_body;
 		
 		// Remove from body 1
 		if (c.m_node1.prev)

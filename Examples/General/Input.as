@@ -74,7 +74,7 @@ package General{
 		//======================
 		// update
 		//======================
-		static public function update(){
+		static public function update():void{
 			
 			// array of used keys
 			/*var kArr:Array = new Array(
@@ -115,7 +115,7 @@ package General{
 		//======================
 		// mousePress listener
 		//======================
-		public function mousePress(e:MouseEvent){
+		public function mousePress(e:MouseEvent):void{
 			mousePressed = true;
 			mouseDown = true;
 			mouseDragX = 0;
@@ -127,7 +127,7 @@ package General{
 		//======================
 		// mousePress listener
 		//======================
-		public function mouseRelease(e:MouseEvent){
+		public function mouseRelease(e:MouseEvent):void{
 			mouseDown = false;
 			mouseReleased = true;
 		}
@@ -137,7 +137,7 @@ package General{
 		//======================
 		// mousePress listener
 		//======================
-		public function mouseLeave(e:Event){
+		public function mouseLeave(e:Event):void{
 			mouseReleased = mouseDown;
 			mouseDown = false;
 		}
@@ -147,7 +147,7 @@ package General{
 		//======================
 		// mouseMove listener
 		//======================
-		public function mouseMove(e:MouseEvent){
+		public function mouseMove(e:MouseEvent):void{
 			
 			// Fix mouse release not being registered from mouse going off stage
 			if (mouseDown != e.buttonDown){
@@ -213,7 +213,7 @@ package General{
 		//======================
 		// isKeyInBuffer
 		//======================
-		static public function isKeyInBuffer(k:int, i:int, t:int){
+		static public function isKeyInBuffer(k:int, i:int, t:int):Boolean{
 			return (keyBuffer[i][0] == k && keyBuffer[i][1] <= t);
 		}
 		
@@ -222,7 +222,7 @@ package General{
 		//======================
 		// keyPress function
 		//======================
-		public function keyPress(e:KeyboardEvent){
+		public function keyPress(e:KeyboardEvent):void{
 			
 			//strace ( e.keyCode + " : " + ascii[e.keyCode] );
 			
@@ -237,7 +237,7 @@ package General{
 		//======================
 		// keyRelease function
 		//======================
-		public function keyRelease(e:KeyboardEvent){
+		public function keyRelease(e:KeyboardEvent):void{
 			keyState[e.keyCode] = -1;
 			
 			// add to key buffer
@@ -260,7 +260,7 @@ package General{
 		//======================
 		// set up ascii text
 		//======================
-		private function fillAscii(){
+		private function fillAscii():void{
 			ascii[65] = "A";
 			ascii[66] = "B";
 			ascii[67] = "C";
@@ -362,7 +362,7 @@ package General{
 		
 		// last key pressed
 		static public var lastKey:int = 0;
-		static public var timeSinceLastKey = 0;
+		static public var timeSinceLastKey:Number = 0;
 		
 		// mouse states
 		static public var mouseDown:Boolean = false;
