@@ -1211,6 +1211,19 @@ public class b2World
 				}
 			}
 			break;
+		
+		case b2Shape.e_edgeShape:
+			{
+				var edge: b2EdgeShape = shape as b2EdgeShape;
+				
+				m_debugDraw.DrawSegment(b2Math.b2MulX(xf, edge.GetVertex1()), b2Math.b2MulX(xf, edge.GetVertex2()), color);
+				
+				if (core)
+				{
+					m_debugDraw.DrawSegment(b2Math.b2MulX(xf, edge.GetCoreVertex1()), b2Math.b2MulX(xf, edge.GetCoreVertex2()), coreColor);
+				}
+			}
+			break;
 		}
 	}
 	

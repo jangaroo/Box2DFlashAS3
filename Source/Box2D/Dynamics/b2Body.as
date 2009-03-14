@@ -36,6 +36,23 @@ use namespace b2internal;
 */
 public class b2Body
 {
+
+	private function connectEdges(s1: b2EdgeShape, s2: b2EdgeShape, angle1: Number): Number
+	{
+		var angle2: Number = Math.atan2(s2.GetDirectionVector().y, s2.GetDirectionVector().x);
+		var coreOffset: Number = Math.tan((angle2 - angle1) * 0.5);
+		var core: b2Vec2 = b2Math.MulFV(coreOffset, s2.GetDirectionVector());
+		core = b2Math.SubtractVV(core, s2.GetNormalVector());
+		core = b2Math.MulFV(b2Settings.b2_toiSlop, core);
+		core = b2Math.AddVV(core, s2.GetVertex1());
+		var cornerDir: b2Vec2 = b2Math.AddVV(s1.GetDirectionVector(), s2.GetDirectionVector());
+		cornerDir.Normalize();
+		var convex: Boolean = b2Math.b2Dot(s1.GetDirectionVector(), s2.GetNormalVector()) > 0.0;
+		s1.SetNextEdge(s2, core, cornerDir, convex);
+		s2.SetPrevEdge(s1, core, cornerDir, convex);
+		return angle2;
+	}
+	
 	/**
 	* Creates a shape and attach it to this body.
 	* @param shapeDef the shape definition.
@@ -46,6 +63,53 @@ public class b2Body
 		if (m_world.m_lock == true)
 		{
 			return null;
+		}
+		
+		
+		// TODO: Decide on a better place to initialize edgeShapes. (b2Shape::Create() can't
+		//       return more than one shape to add to parent body... maybe it should add
+		//       shapes directly to the body instead of returning them?)
+		if (def.type == b2Shape.e_edgeShape) {
+			var edgeDef: b2EdgeChainDef = def as b2EdgeChainDef;
+			var v1: b2Vec2;
+			var v2: b2Vec2;
+			var i: int;
+			
+			if (edgeDef.isALoop) {
+				v1 = edgeDef.vertices[edgeDef.vertexCount-1];
+				i = 0;
+			} else {
+				v1 = edgeDef.vertices[0];
+				i = 1;
+			}
+			
+			var s0: b2EdgeShape = null;
+			var s1: b2EdgeShape = null;
+			var s2: b2EdgeShape = null;
+			var angle: Number = 0.0;
+			for (; i < edgeDef.vertexCount; i++) {
+				v2 = edgeDef.vertices[i];
+				
+				//void* mem = m_world->m_blockAllocator.Allocate(sizeof(b2EdgeShape));
+				s2 = new b2EdgeShape(v1, v2, def);
+				s2.m_next = m_shapeList;
+				m_shapeList = s2;
+				++m_shapeCount;
+				s2.m_body = this;
+				s2.CreateProxy(m_world.m_broadPhase, m_xf);
+				s2.UpdateSweepRadius(m_sweep.localCenter);
+				
+				if (s1 == null) {
+					s0 = s2;
+					angle = Math.atan2(s2.GetDirectionVector().y, s2.GetDirectionVector().x);
+				} else {
+					angle = connectEdges(s1, s2, angle);
+				}
+				s1 = s2;
+				v1 = v2;
+			}
+			if (edgeDef.isALoop) connectEdges(s1, s0, angle);
+			return s0;
 		}
 		
 		var s:b2Shape = b2Shape.Create(def, m_world.m_blockAllocator);

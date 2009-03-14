@@ -32,7 +32,7 @@ import TestBed.*;
 import TestBed.TestBridge;
 
 import flash.display.MovieClip;
-	[SWF(width='640', height='360', backgroundColor='#414647')]
+	[SWF(width='640', height='360', backgroundColor='#414647', frameRate='30')]
 	public class Main extends MovieClip{
 		public function Main(){
 			
@@ -104,7 +104,8 @@ import flash.display.MovieClip;
 				TestStack,				// Stack
 				TestCCD,				// CCD
 				TestTheoJansen,			// Theo Jansen
-				TestRaycast				// Raycast
+				TestRaycast,			// Raycast
+				TestEdges				// Edges
 			];
 			
             var testCount:int = tests.length;

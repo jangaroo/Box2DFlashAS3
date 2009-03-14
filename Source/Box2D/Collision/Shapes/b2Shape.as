@@ -218,9 +218,9 @@ public class b2Shape
 	
 	static b2internal function Destroy(shape:b2Shape, allocator:*) : void
 	{
-		/*switch (s.m_type)
+		switch (shape.m_type)
 		{
-		case e_circleShape:
+		/*case e_circleShape:
 			//s->~b2Shape();
 			//allocator->Free(s, sizeof(b2CircleShape));
 			break;
@@ -228,11 +228,19 @@ public class b2Shape
 		case e_polygonShape:
 			//s->~b2Shape();
 			//allocator->Free(s, sizeof(b2PolygonShape));
-			break;
+			break;*/
 		
+		case e_edgeShape:
+			var edge: b2EdgeShape = shape as b2EdgeShape;
+			if (edge.m_nextEdge != null) edge.m_nextEdge.m_prevEdge = null;
+			if (edge.m_prevEdge != null) edge.m_prevEdge.m_nextEdge = null;
+			//s->~b2Shape();
+			//allocator->Free(s, sizeof(b2EdgeShape));
+			break;
+
 		default:
 			//b2Settings.b2Assert(false);
-		}*/
+		}
 	}
 
 	/**
@@ -377,7 +385,8 @@ public class b2Shape
 		static b2internal const e_unknownShape:int = 	-1;
 		static b2internal const e_circleShape:int = 	0;
 		static b2internal const e_polygonShape:int = 	1;
-		static b2internal const e_shapeTypeCount:int = 	2;
+		static b2internal const e_edgeShape:int =       2;
+		static b2internal const e_shapeTypeCount:int = 	3;
 	//};
 	
 	/// Possible return values for TestSegment

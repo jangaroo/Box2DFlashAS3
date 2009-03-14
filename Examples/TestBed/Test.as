@@ -174,6 +174,7 @@ package TestBed{
 					md.body1 = m_world.GetGroundBody();
 					md.body2 = body;
 					md.target.Set(mouseXWorldPhys, mouseYWorldPhys);
+					md.collideConnected = true;
 					md.maxForce = 300.0 * body.GetMass();
 					m_mouseJoint = m_world.CreateJoint(md) as b2MouseJoint;
 					body.WakeUp();

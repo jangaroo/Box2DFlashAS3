@@ -455,6 +455,103 @@ static public function DistanceCC(
 	return 0.0;
 }
 
+static public function DistanceEdgeCircle(
+	x1: b2Vec2, x2: b2Vec2,
+	edge: b2EdgeShape, xf1: b2XForm,
+	circle: b2CircleShape, xf2: b2XForm): Number
+{
+	var vWorld: b2Vec2;
+	var r: Number = circle.m_radius - b2Settings.b2_toiSlop;
+	
+	var tMat: b2Mat22;
+	var tVec: b2Vec2;
+	//b2Vec2 cWorld = b2Mul(xf2, circle->GetLocalPosition());
+	tMat = xf2.R;
+	tVec = circle.m_localPosition;
+	var cWorldX: Number = xf2.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+	var cWorldY: Number = xf2.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+	
+	//b2Vec2 cLocal = b2MulT(xf1, cWorld);
+	tMat = xf1.R;
+	var tX: Number = cWorldX - xf1.position.x;
+	var tY: Number = cWorldY - xf1.position.y;
+	var cLocalX: Number = (tX * tMat.col1.x + tY * tMat.col1.y );
+	var cLocalY: Number = (tX * tMat.col2.x + tY * tMat.col2.y );
+	
+	//float32 dLen = b2Dot(cLocal - edge->GetCoreVertex1(), edge->GetDirectionVector());
+	var dLen: Number = (cLocalX - edge.m_coreV1.x) * edge.m_direction.x + 
+	                   (cLocalY - edge.m_coreV1.y) * edge.m_direction.y;
+	
+	if (dLen <= 0.0) {
+		//x1 = b2Mul(xf1, edge->GetCoreVertex1());
+		tMat = xf1.R;
+		tVec = edge.m_coreV1;
+		x1.x = xf1.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+		x1.y = xf1.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+	} else if (dLen >= edge.m_length) {
+		//x1 = b2Mul(xf1, edge->GetCoreVertex2());
+		tMat = xf1.R;
+		tVec = edge.m_coreV2;
+		x1.x = xf1.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+		x1.y = xf1.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+	} else {
+		//x1 = b2Mul(xf1, edge->GetCoreVertex1() + dLen * edge->GetDirectionVector());
+		tMat = xf1.R;
+		tX = edge.m_coreV1.x + dLen * edge.m_direction.x;
+		tY = edge.m_coreV1.y + dLen * edge.m_direction.y;
+		x1.x = xf1.position.x + (tMat.col1.x * tX + tMat.col2.x * tY);
+		x1.y = xf1.position.y + (tMat.col1.y * tX + tMat.col2.y * tY);
+		
+		//dLen = b2Dot(cLocal - edge->GetCoreVertex1(), edge->GetNormalVector());
+		dLen = (cLocalX - edge.m_coreV1.x) * edge.m_normal.x + 
+		       (cLocalY - edge.m_coreV1.y) * edge.m_normal.y;
+		
+		if (dLen < 0.0) {
+			if (dLen < -r) {
+				//x2 = b2Mul(xf1, cLocal + r * edge->GetNormalVector());
+				tMat = xf1.R;
+				tX = cLocalX + r * edge.m_normal.x;
+				tY = cLocalY + r * edge.m_normal.y;
+				x2.x = xf1.position.x + (tMat.col1.x * tX + tMat.col2.x * tY);
+				x2.y = xf1.position.y + (tMat.col1.y * tX + tMat.col2.y * tY);
+				return -dLen - r;
+			} else {
+				x2.x = x1.x;
+				x2.y = x1.y;
+				return 0.0;
+			}
+		} else {
+			if (dLen > r) {
+				//x2 = b2Mul(xf1, cLocal - r * edge->GetNormalVector());
+				tMat = xf1.R;
+				tX = cLocalX - r * edge.m_normal.x;
+				tY = cLocalY - r * edge.m_normal.y;
+				x2.x = xf1.position.x + (tMat.col1.x * tX + tMat.col2.x * tY);
+				x2.y = xf1.position.y + (tMat.col1.y * tX + tMat.col2.y * tY);
+				return dLen - r;
+			} else {
+				x2.x = x1.x;
+				x2.y = x1.y;
+				return 0.0;
+			}
+		}
+	}
+	
+	tX = cWorldX - x1.x;
+	tY = cWorldY - x1.y;
+	dLen = tX * tX + tY * tY;
+	if (dLen > r * r) {
+		dLen = Math.sqrt(dLen);
+		x2.x = cWorldX - r * tX / dLen;
+		x2.y = cWorldY - r * tY / dLen;
+		return dLen - r;
+	} else {
+		x2.x = x1.x;
+		x2.y = x1.y;
+		return 0.0;
+	}
+}
+
 
 
 // GJK is more robust with polygon-vs-point than polygon-vs-circle.
@@ -537,9 +634,29 @@ static public function Distance(x1:b2Vec2, x2:b2Vec2,
 
 	if (type1 == b2Shape.e_polygonShape && type2 == b2Shape.e_polygonShape)
 	{
-		return DistanceGeneric(x1, x2, shape1 as b2PolygonShape, xf1, shape2 as b2PolygonShape, xf2);
+		return DistanceGeneric(x1, x2, shape1, xf1, shape2, xf2);
 	}
 	
+	if (type1 == b2Shape.e_edgeShape && type2 == b2Shape.e_circleShape)
+	{
+		return DistanceEdgeCircle(x1, x2, shape1 as b2EdgeShape, xf1, shape2 as b2CircleShape, xf2);
+	}
+	
+	if (type1 == b2Shape.e_circleShape && type2 == b2Shape.e_edgeShape)
+	{
+		return DistanceEdgeCircle(x2, x1, shape2 as b2EdgeShape, xf2, shape1 as b2CircleShape, xf1);
+	}
+
+	if (type1 == b2Shape.e_polygonShape && type2 == b2Shape.e_edgeShape)
+	{
+		return DistanceGeneric(x2, x1, shape2, xf2, shape1, xf1);
+	}
+
+	if (type1 == b2Shape.e_edgeShape && type2 == b2Shape.e_polygonShape)
+	{
+		return DistanceGeneric(x1, x2, shape1, xf1, shape2, xf2);
+	}
+
 	return 0.0;
 }
 

@@ -13,7 +13,7 @@ http://box2dflash.sourceforge.net
 Credits:
 Box2D - Erin Catto ( http://gphysics.com/ )
 Box2DFlashAS3 - Matthew Bush (Flash ActionScript 3.0 port of Erin Catto's work)
-Box2DFlashAS3 2.0.1 - John Nesky (2.0.0 -> 2.0.1 port and other changes)
+Box2DFlashAS3 2.0.1 - John "shaktool" Nesky ( http://johnnesky.com )
 //
 
 //
@@ -21,6 +21,8 @@ To compile the demo:
 //
 Flash: extract Box2DFlashAS3 and open PhysTest.fla in Flash CS3 (9) and hit Ctrl+Enter.
 Flex: Create a new ActionScript project and add all the files from the archive to the project. Set Main.as to the default application and hit Ctrl+F11.
+MXMLC: From the "Examples" directory, run:
+mxmlc -source-path=../Source/ Main.as;
 
 //
 Controls:
