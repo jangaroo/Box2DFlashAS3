@@ -24,13 +24,15 @@ package Box2D.Collision{
 
 
 import Box2D.Common.*;
-import Box2D.Common.b2internal;
+
+import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
 /**
-* @private
-*/
+ * A Pair represents a pair of overlapping b2Proxy in the broadphse.
+ * @private
+ */
 public class b2Pair
 {
 	
@@ -47,16 +49,13 @@ public class b2Pair
 	public function IsFinal():Boolean		{ return (status & e_pairFinal) == e_pairFinal; }
 
 	public var userData:* = null;
-	public var proxyId1:uint;
-	public var proxyId2:uint;
-	public var next:uint;
+	public var proxy1:b2Proxy;
+	public var proxy2:b2Proxy;
+	public var next:b2Pair;
 	public var status:uint;
 	
 	// STATIC
-	static public var b2_nullPair:uint = b2Settings.USHRT_MAX;
 	static public var b2_nullProxy:uint = b2Settings.USHRT_MAX;
-	static public var b2_tableCapacity:int = b2Settings.b2_maxPairs;	// must be a power of two
-	static public var b2_tableMask:int = b2_tableCapacity - 1;
 	
 	// enum
 	static public var e_pairBuffered:uint = 0x0001;

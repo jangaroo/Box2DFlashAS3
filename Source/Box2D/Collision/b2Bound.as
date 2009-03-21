@@ -27,20 +27,20 @@ public class b2Bound{
 	public function IsUpper():Boolean { return (value & 1) == 1; }
 	public function Swap(b:b2Bound) : void{
 		var tempValue:uint = value;
-		var tempProxyId:uint = proxyId;
+		var tempProxy:b2Proxy = proxy;
 		var tempStabbingCount:uint = stabbingCount;
 		
 		value = b.value;
-		proxyId = b.proxyId;
+		proxy = b.proxy;
 		stabbingCount = b.stabbingCount;
 		
 		b.value = tempValue;
-		b.proxyId = tempProxyId;
+		b.proxy = tempProxy;
 		b.stabbingCount = tempStabbingCount;
 	}
 
 	public var value:uint;
-	public var proxyId:uint;
+	public var proxy:b2Proxy;
 	public var stabbingCount:uint;
 }
 	

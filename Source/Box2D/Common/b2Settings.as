@@ -47,15 +47,12 @@ public class b2Settings{
     * The maximun allowed vertices in a polygon. As polygons must be convex, there is usually little point increasing this.
     */
 	static public const b2_maxPolygonVertices:int = 8;
-    /**
-    * The maximun number of proxies allowed in the broadphase.Proxies are a reference to a shape, so this effectively bounds shapes
+    /*
+    * The growable broadphase doesn't have upper limits,
+	* so there is no b2_maxProxies or b2_maxPairs settings.
     */
-	static public const b2_maxProxies:int = 512;				// this must be a power of two
-    /**
-    * The maximun number of pairs allowed in the broadphase. A pair is formed when any two shapes have overlapping AABBs.
-    */
-	static public const b2_maxPairs:int = 8 * b2_maxProxies;	// this must be a power of two
-
+	//static public const b2_maxProxies:int = 0;
+	//static public const b2_maxPairs:int = 8 * b2_maxProxies;
 
 
 	// Dynamics

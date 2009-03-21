@@ -257,7 +257,7 @@ public class b2Shape
 		
 		m_next = null;
 		
-		m_proxyId = b2Pair.b2_nullProxy;
+		m_proxy = null;
 		
 		m_filter = def.filter.Copy();
 		
@@ -283,21 +283,21 @@ public class b2Shape
 		
 		if (inRange)
 		{
-			m_proxyId = broadPhase.CreateProxy(aabb, this);
+			m_proxy = broadPhase.CreateProxy(aabb, this);
 		}
 		else
 		{
-			m_proxyId = b2Pair.b2_nullProxy;
+			m_proxy = null;
 		}
 		
 	}
 	
 	b2internal function DestroyProxy(broadPhase:b2BroadPhase) : void{
 		
-		if (m_proxyId != b2Pair.b2_nullProxy)
+		if (m_proxy)
 		{
-			broadPhase.DestroyProxy(m_proxyId);
-			m_proxyId = b2Pair.b2_nullProxy;
+			broadPhase.DestroyProxy(m_proxy);
+			m_proxy = null;
 		}
 		
 	}
@@ -307,7 +307,7 @@ public class b2Shape
 	//
 	b2internal function Synchronize(broadPhase:b2BroadPhase, transform1:b2XForm, transform2:b2XForm) : Boolean{
 		
-		if (m_proxyId == b2Pair.b2_nullProxy)
+		if (m_proxy == null)
 		{	
 			return false;
 		}
@@ -318,7 +318,7 @@ public class b2Shape
 		
 		if (broadPhase.InRange(aabb))
 		{
-			broadPhase.MoveProxy(m_proxyId, aabb);
+			broadPhase.MoveProxy(m_proxy, aabb);
 			return true;
 		}
 		else
@@ -331,12 +331,12 @@ public class b2Shape
 	static private var s_resetAABB:b2AABB = new b2AABB();
 	b2internal function RefilterProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
 		
-		if (m_proxyId == b2Pair.b2_nullProxy)
+		if (m_proxy == null)
 		{
 			return;
 		}
 		
-		broadPhase.DestroyProxy(m_proxyId);
+		broadPhase.DestroyProxy(m_proxy);
 		
 		var aabb:b2AABB = s_resetAABB;
 		ComputeAABB(aabb, transform);
@@ -345,11 +345,11 @@ public class b2Shape
 		
 		if (inRange)
 		{
-			m_proxyId = broadPhase.CreateProxy(aabb, this);
+			m_proxy = broadPhase.CreateProxy(aabb, this);
 		}
 		else
 		{
-			m_proxyId = b2Pair.b2_nullProxy;
+			m_proxy = null;
 		}
 		
 	}
@@ -367,7 +367,7 @@ public class b2Shape
 	b2internal var m_friction:Number;
 	b2internal var m_restitution:Number;
 
-	private var m_proxyId:uint;
+	private var m_proxy:b2Proxy;
 	private var m_filter:b2FilterData;
 
 	private var m_isSensor:Boolean;

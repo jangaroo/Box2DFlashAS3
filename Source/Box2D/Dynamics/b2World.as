@@ -1298,36 +1298,30 @@ public class b2World
 			//b2Color color(0.9f, 0.9f, 0.3f);
 			color.Set(0.9, 0.9, 0.3);
 			
-			for (i = 0; i < b2Pair.b2_tableCapacity; ++i)
+			for each(var pair:b2Pair in bp.m_pairManager.m_pairs)
 			{
-				var index:uint = bp.m_pairManager.m_hashTable[i];
-				while (index != b2Pair.b2_nullPair)
-				{
-					var pair:b2Pair = bp.m_pairManager.m_pairs[ index ];
-					var p1:b2Proxy = bp.m_proxyPool[ pair.proxyId1 ];
-					var p2:b2Proxy = bp.m_proxyPool[ pair.proxyId2 ];
-					
-					//b2AABB b1, b2;
-					b1.lowerBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p1.lowerBounds[0]].value;
-					b1.lowerBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p1.lowerBounds[1]].value;
-					b1.upperBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p1.upperBounds[0]].value;
-					b1.upperBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p1.upperBounds[1]].value;
-					b2.lowerBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p2.lowerBounds[0]].value;
-					b2.lowerBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p2.lowerBounds[1]].value;
-					b2.upperBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p2.upperBounds[0]].value;
-					b2.upperBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p2.upperBounds[1]].value;
-					
-					//b2Vec2 x1 = 0.5f * (b1.lowerBound + b1.upperBound);
-					x1.x = 0.5 * (b1.lowerBound.x + b1.upperBound.x);
-					x1.y = 0.5 * (b1.lowerBound.y + b1.upperBound.y);
-					//b2Vec2 x2 = 0.5f * (b2.lowerBound + b2.upperBound);
-					x2.x = 0.5 * (b2.lowerBound.x + b2.upperBound.x);
-					x2.y = 0.5 * (b2.lowerBound.y + b2.upperBound.y);
-					
+				var p1:b2Proxy = pair.proxy1;
+				var p2:b2Proxy = pair.proxy2;
+				if (!p1 || !p2)
+					continue;
+				//b2AABB b1, b2;
+				b1.lowerBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p1.lowerBounds[0]].value;
+				b1.lowerBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p1.lowerBounds[1]].value;
+				b1.upperBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p1.upperBounds[0]].value;
+				b1.upperBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p1.upperBounds[1]].value;
+				b2.lowerBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p2.lowerBounds[0]].value;
+				b2.lowerBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p2.lowerBounds[1]].value;
+				b2.upperBound.x = bp.m_worldAABB.lowerBound.x + invQ.x * bp.m_bounds[0][p2.upperBounds[0]].value;
+				b2.upperBound.y = bp.m_worldAABB.lowerBound.y + invQ.y * bp.m_bounds[1][p2.upperBounds[1]].value;
+				
+				//b2Vec2 x1 = 0.5f * (b1.lowerBound + b1.upperBound);
+				x1.x = 0.5 * (b1.lowerBound.x + b1.upperBound.x);
+				x1.y = 0.5 * (b1.lowerBound.y + b1.upperBound.y);
+				//b2Vec2 x2 = 0.5f * (b2.lowerBound + b2.upperBound);
+				x2.x = 0.5 * (b2.lowerBound.x + b2.upperBound.x);
+				x2.y = 0.5 * (b2.lowerBound.y + b2.upperBound.y);
+				
 					m_debugDraw.DrawSegment(x1, x2, color);
-					
-					index = pair.next;
-				}
 			}
 		}
 		
@@ -1341,7 +1335,7 @@ public class b2World
 			invQ.Set(1.0 / bp.m_quantizationFactor.x, 1.0 / bp.m_quantizationFactor.y);
 			//b2Color color(0.9f, 0.3f, 0.9f);
 			color.Set(0.9, 0.3, 0.9);
-			for (i = 0; i < b2Settings.b2_maxProxies; ++i)
+			for (i = 0; i < bp.m_proxyPool.length; ++i)
 			{
 				var p:b2Proxy = bp.m_proxyPool[ i];
 				if (p.IsValid() == false)
