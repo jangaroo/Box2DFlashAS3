@@ -232,23 +232,20 @@ static public function ProcessThree(x1:b2Vec2, x2:b2Vec2, p1s:Array, p2s:Array, 
 
 static public function InPoints(w:b2Vec2, points:Array, pointCount:int):Boolean
 {
-	const k_tolerance:Number = 100.0 * Number.MIN_VALUE;
-	for (var i:int = 0; i < pointCount; ++i)
-	{
+	const k_tolerance:Number = 100 * Number.MIN_VALUE;
+	for (var i:int = 0; i < pointCount; i++){
 		var points_i:b2Vec2 = points[i];
-		//b2Vec2 d = b2Abs(w - points[i]);
-		var dX:Number = Math.abs(w.x - points_i.x);
-		var dY:Number = Math.abs(w.y - points_i.y);
-		//b2Vec2 m = b2Max(b2Abs(w), b2Abs(points[i]));
-		var mX:Number = Math.max(Math.abs(w.x), Math.abs(points_i.x));
-		var mY:Number = Math.max(Math.abs(w.y), Math.abs(points_i.y));
-		
-		if (dX < k_tolerance * (mX + 1.0) &&
-			dY < k_tolerance * (mY + 1.0)){
+		var dX:Number = w.x - points_i.x < 0 ? -(w.x - points_i.x) : w.x - points_i.x;
+		var dY:Number = w.y - points_i.y < 0 ? -(w.y - points_i.y) : w.y - points_i.y;
+		var mX:Number = w.x < 0 ? -w.x : w.x >  points_i.x < 0 ? -points_i.x : points_i.x ? w.x < 0 ? -w.x : w.x : points_i.x < 0 ? -points_i.x : points_i.x;
+		var mY:Number = w.x < 0 ? -w.y : w.y >  points_i.y < 0 ? -points_i.y : points_i.y ? w.y < 0 ? -w.y : w.y : points_i.y < 0 ? -points_i.y : points_i.y;
+
+		if (dX < k_tolerance * (mX + 1) &&
+			dY < k_tolerance * (mY + 1))
+		{
 			return true;
 		}
 	}
-
 	return false;
 }
 
