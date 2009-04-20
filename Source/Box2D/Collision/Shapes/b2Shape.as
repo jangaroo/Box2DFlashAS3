@@ -32,7 +32,7 @@ use namespace b2internal;
 
 
 /**
-* A shape is used for collision detection. Shapes are created in b2World.
+* A shape is used for collision detection. Shapes are created in b2Body.
 * You can use shape for collision detection before they are attached to the world.
 * @warning you cannot reuse shapes.
 */
@@ -116,6 +116,9 @@ public class b2Shape
 	* @param xf the shape world transform.
 	* @param lambda returns the hit fraction. You can use this to compute the contact point:
 	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
+	* 
+	* lambda should be an array with one member. After calling TestSegment, you can retrieve the output value with
+	* lambda[0].
 	* @param normal returns the normal at the contact point. If there is no intersection, the normal
 	* is not set.
 	* @param segment defines the begin and end point of the ray cast.

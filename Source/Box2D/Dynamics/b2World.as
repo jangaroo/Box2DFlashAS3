@@ -575,6 +575,9 @@ public class b2World
 	* Use b2Segment.Extend to create (semi-)infinite rays	
 	* @param lambda returns the hit fraction. You can use this to compute the contact point
 	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
+	* 
+	* lambda should be an array with one member. After calling TestSegment, you can retrieve the output value with
+	* lambda[0].
 	* @param normal returns the normal at the contact point. If there is no intersection, the normal
 	* is not set.
 	* @param solidShapes determines if shapes that the ray starts in are counted as hits.

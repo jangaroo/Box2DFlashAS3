@@ -60,6 +60,7 @@ public class b2BodyDef
 	* You can use this to initialized the mass properties of the body.
 	* If you prefer, you can set the mass properties after the shapes
 	* have been added using b2Body::SetMassFromShapes.
+    * @see b2Body#SetMassFromShapes()
 	*/
 	public var massData:b2MassData = new b2MassData();
 
