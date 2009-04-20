@@ -162,7 +162,6 @@ public class b2BroadPhase
 			bounds.length--;
 			bounds.splice(lowerIndex, 0, bounds[bounds.length - 1]);
 			bounds.length--;
-			check();
 			
 			// The upper index has increased because of the lower bound insertion.
 			++upperIndex;
