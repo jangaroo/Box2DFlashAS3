@@ -158,9 +158,11 @@ public class b2BroadPhase
 			lowerIndex = lowerIndexOut[0];
 			upperIndex = upperIndexOut[0];
 			
-			bounds.splice(upperIndex, 0, bounds[boundCount + 1]);
-			bounds.splice(lowerIndex, 0, bounds[boundCount + 1]);
-			bounds.length -= 2;
+			bounds.splice(upperIndex, 0, bounds[bounds.length - 1]);
+			bounds.length--;
+			bounds.splice(lowerIndex, 0, bounds[bounds.length - 1]);
+			bounds.length--;
+			check();
 			
 			// The upper index has increased because of the lower bound insertion.
 			++upperIndex;
