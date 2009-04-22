@@ -215,7 +215,7 @@ public class b2ContactSolver
 					var k12:Number = invMass1 + invMass2 + invI1 * rn11 * rn21 + invI2 * rn12 * rn22;
 					
 					// Ensure a reasonable condition number.
-					const k_maxConditionNumber:Number = 100.0;
+					var k_maxConditionNumber:Number = 100.0;
 					if ( k11 * k11 < k_maxConditionNumber * (k11 * k22 - k12 * k12))
 					{
 						// K is safe to invert.
@@ -460,7 +460,7 @@ public class b2ContactSolver
 				bX -= tMat.col1.x * aX + tMat.col2.x * aY;
 				bY -= tMat.col1.y * aX + tMat.col2.y * aY;
 				
-				const k_errorTol:Number  = 0.001;
+				var k_errorTol:Number  = 0.001;
 				for (;; )
 				{
 					//

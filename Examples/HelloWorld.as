@@ -118,7 +118,7 @@
 		
 		public function Update(e:Event):void{
 			
-			m_world.Step(m_timeStep, m_iterations);
+			m_world.Step(m_timeStep, m_velocityIterations, m_positionIterations);
 			
 			// Go through body list and update sprite positions/rotations
 			for (var bb:b2Body = m_world.GetBodyList(); bb; bb = bb.GetNext()){
@@ -133,7 +133,8 @@
 		}
 		
 		public var m_world:b2World;
-		public var m_iterations:int = 10;
+		public var m_velocityIterations:int = 10;
+		public var m_positionIterations:int = 10;
 		public var m_timeStep:Number = 1.0/30.0;
 		
 	}
