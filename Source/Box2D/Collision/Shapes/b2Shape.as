@@ -50,8 +50,19 @@ public class b2Shape
 	* Is this shape a sensor (non-solid)?
 	* @return the true if the shape is a sensor.
 	*/
-	public function IsSensor() : Boolean{
+	public function IsSensor() : Boolean
+	{
 		return m_isSensor;
+	}
+
+	/**
+	* Set the if the object is a sensor. You must call b2World.Refilter to correct
+	* existing contacts/non-contacts.
+	* @see Box2D.Dynamics.b2World#Refilter()
+	*/
+	public function SetSensor(sensor:Boolean) : void
+	{
+		m_isSensor = sensor;
 	}
 
 	/**
