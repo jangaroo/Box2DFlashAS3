@@ -643,6 +643,38 @@ public class b2Body
 	}
 	
 	/**
+	* Get the linear damping of the body.
+	*/
+	public function GetLinearDamping():Number
+	{
+		return m_linearDamping;
+	}
+	
+	/**
+	* Set the linear damping of the body.
+	*/
+	public function SetLinearDamping(linearDamping:Number):void
+	{
+		m_linearDamping = linearDamping;
+	}
+	
+	/**
+	* Get the angular damping of the body
+	*/
+	public function GetAngularDamping():Number
+	{
+		return m_angularDamping;
+	}
+	
+	/**
+	* Set the angular damping of the body.
+	*/
+	public function SetAngularDamping(angularDamping:Number):void
+	{
+		m_angularDamping = angularDamping;
+	}
+	
+	/**
 	* Is this body treated like a bullet for continuous collision detection?
 	*/
 	public function IsBullet() : Boolean{
@@ -663,11 +695,66 @@ public class b2Body
 		}
 	}
 
+	
+	/**
+	* Is this body prevented from rotating?
+	*/
+	public function IsFixedRotation():Boolean
+	{
+		return (m_flags & e_fixedRotationFlag)==e_fixedRotationFlag;
+	}
+	/**
+	* Set if this body is prevented from rotating.
+	*/
+	public function SetFixedRotation(fixed:Boolean):void
+	{
+		if(fixed)
+		{
+			m_angularVelocity = 0.0;
+			m_invI = 0.0;
+			m_flags |= e_fixedRotationFlag;
+		}
+		else
+		{
+			if(m_I > 0.0)
+			{
+				//Recover m_invI from m_I
+				m_invI = 1.0/m_I
+				m_flags &= e_fixedRotationFlag;
+			}
+			//TODO: Else what?
+		}
+	}
+	
+	
+	
 	/**
 	* Is this body static (immovable)?
 	*/
 	public function IsStatic() : Boolean{
 		return m_type == e_staticType;
+	}
+	
+	/**
+	* Make this body static (immovable).
+	* Use SetMass and SetMassFromShapes to make bodies dynamic
+	*/
+	public function SetStatic():void
+	{
+		if(m_type == e_staticType)
+			return
+			
+		m_mass = 0.0;
+		m_invMass = 0.0;
+		m_I = 0.0;
+		m_invI = 0.0;
+		m_type = e_staticType;
+		
+		for (var s:b2Shape = m_shapeList; s; s = s.m_next)
+		{
+			s.RefilterProxy(m_world.m_broadPhase, m_xf);
+		}
+		
 	}
 
 	/**
@@ -690,7 +777,15 @@ public class b2Body
 	public function IsSleeping() : Boolean{
 		return (m_flags & e_sleepFlag) == e_sleepFlag;
 	}
-
+	
+	/**
+	* Is this body allowed to sleep?
+	*/
+	public function IsAllowSleeping():Boolean
+	{
+		return(m_flags & e_allowSleepFlag) == e_allowSleepFlag;
+	}
+	
 	/**
 	* You can disable sleeping on this body.
 	*/
