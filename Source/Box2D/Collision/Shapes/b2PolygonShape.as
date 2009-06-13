@@ -349,6 +349,121 @@ public class b2PolygonShape extends b2Shape
 	}
 
 	/**
+	* @inheritDoc
+	*/
+	public override function ComputeSubmergedArea(
+			normal:b2Vec2,
+			offset:Number,
+			xf:b2XForm,
+			c:b2Vec2):Number
+	{
+		// Transform plane into shape co-ordinates
+		var normalL:b2Vec2 = b2Math.b2MulTMV(xf.R, normal);
+		var offsetL:Number = offset - b2Math.b2Dot(normal, xf.position);
+		
+		var depths:Array/*Number*/ = new Array();
+		var diveCount:int = 0;
+		var intoIndex:int = -1;
+		var outoIndex:int = -1;
+		
+		var lastSubmerged:Boolean = false;
+		var i:int;
+		for (i = 0; i < m_vertexCount;++i)
+		{
+			depths[i] = b2Math.b2Dot(normalL, m_vertices[i]) - offsetL;
+			var isSubmerged:Boolean = depths[i] < -Number.MIN_VALUE;
+			if (i > 0)
+			{
+				if (isSubmerged)
+				{
+					if (!lastSubmerged)
+					{
+						intoIndex = i - 1;
+						diveCount++;
+					}
+				}
+				else
+				{
+					if (lastSubmerged)
+					{
+						outoIndex = i - 1;
+						diveCount++;
+					}
+				}
+			}
+			lastSubmerged = isSubmerged;
+		}
+		switch(diveCount)
+		{
+			case 0:
+			if (lastSubmerged )
+			{
+				// Completely submerged
+				var md:b2MassData = new b2MassData();
+				ComputeMass(md);
+				c.SetV(b2Math.b2MulX(xf, md.center));
+				return md.mass / m_density;
+			}
+			else
+			{
+				//Completely dry
+				return 0;
+			}
+			break;
+			case 1:
+			if (intoIndex == -1)
+			{
+				intoIndex = m_vertexCount - 1;
+			}
+			else
+			{
+				outoIndex = m_vertexCount - 1;
+			}
+			break;
+		}
+		var intoIndex2:int = (intoIndex + 1) % m_vertexCount;
+		var outoIndex2:int = (outoIndex + 1) % m_vertexCount;
+		var intoLamdda:Number = (0 - depths[intoIndex]) / (depths[intoIndex2] - depths[intoIndex]);
+		var outoLamdda:Number = (0 - depths[outoIndex]) / (depths[outoIndex2] - depths[outoIndex]);
+		
+		var intoVec:b2Vec2 = new b2Vec2(m_vertices[intoIndex].x * (1 - intoLamdda) + m_vertices[intoIndex2].x * intoLamdda,
+										m_vertices[intoIndex].y * (1 - intoLamdda) + m_vertices[intoIndex2].y * intoLamdda);
+		var outoVec:b2Vec2 = new b2Vec2(m_vertices[outoIndex].x * (1 - outoLamdda) + m_vertices[outoIndex2].x * outoLamdda,
+										m_vertices[outoIndex].y * (1 - outoLamdda) + m_vertices[outoIndex2].y * outoLamdda);
+										
+		// Initialize accumulator
+		var area:Number = 0;
+		var center:b2Vec2 = new b2Vec2();
+		var p2:b2Vec2 = m_vertices[intoIndex2];
+		var p3:b2Vec2;
+		
+		// An awkward loop from intoIndex2+1 to outIndex2
+		i = intoIndex2;
+		while (i != outoIndex2)
+		{
+			i = (i + 1) % m_vertexCount;
+			if(i == outoIndex2)
+				p3 = outoVec
+			else
+				p3 = m_vertices[i];
+			
+			var triangleArea:Number = 0.5 * ( (p2.x - intoVec.x) * (p3.y - intoVec.y) - (p2.y - intoVec.y) * (p3.x - intoVec.x) );
+			area += triangleArea;
+			// Area weighted centroid
+			center.x += triangleArea * (intoVec.x + p2.x + p3.x) / 3;
+			center.y += triangleArea * (intoVec.y + p2.y + p3.y) / 3;
+			
+			p2 = p3;
+		}
+		
+		//Normalize and transform centroid
+		center.Multiply(1 / area);
+		c.SetV(b2Math.b2MulX(xf, center));
+		
+		return area;
+	}
+	
+	/**
 	* Get the oriented bounding box relative to the parent body.
 	*/
 	public function GetOBB() : b2OBB{

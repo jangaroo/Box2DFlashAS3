@@ -163,6 +163,42 @@ public class b2CircleShape extends b2Shape
 		//massData.I = massData.mass * (0.5 * m_radius * m_radius + b2Dot(m_localPosition, m_localPosition));
 		massData.I = massData.mass * (0.5 * m_radius * m_radius + (m_localPosition.x*m_localPosition.x + m_localPosition.y*m_localPosition.y));
 	}
+	
+	/**
+	* @inheritDoc
+	*/
+	public override function ComputeSubmergedArea(
+			normal:b2Vec2,
+			offset:Number,
+			xf:b2XForm,
+			c:b2Vec2):Number
+	{
+		var p:b2Vec2 = b2Math.b2MulX(xf, m_localPosition);
+		var l:Number = -(b2Math.b2Dot(normal, p) - offset);
+		
+		if (l < -m_radius + Number.MIN_VALUE)
+		{
+			//Completely dry
+			return 0;
+		}
+		if (l > m_radius)
+		{
+			//Completely wet
+			c.SetV(p);
+			return Math.PI * m_radius * m_radius;
+		}
+		
+		//Magic
+		var r2:Number = m_radius * m_radius;
+		var l2:Number = l * l;
+		var area:Number = r2 *( Math.asin(l / m_radius) + Math.PI / 2) + l * Math.sqrt( r2 - l2 );
+		var com:Number = -2 / 3 * Math.pow(r2 - l2, 1.5) / area;
+		
+		c.x = p.x + normal.x * com;
+		c.y = p.y + normal.y * com;
+		
+		return area;
+	}
 
 	/**
 	* Get the local position of this circle in its parent body.

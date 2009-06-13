@@ -24,6 +24,8 @@ import Box2D.Collision.*;
 import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 import Box2D.Dynamics.Contacts.*;
+import Box2D.Dynamics.Controllers.b2Controller;
+import Box2D.Dynamics.Controllers.b2ControllerEdge;
 import Box2D.Dynamics.Joints.*;
 
 import Box2D.Common.b2internal;
@@ -54,10 +56,12 @@ public class b2World
 		m_bodyList = null;
 		m_contactList = null;
 		m_jointList = null;
+		m_controllerList = null;
 		
 		m_bodyCount = 0;
 		m_contactCount = 0;
 		m_jointCount = 0;
+		m_controllerCount = 0;
 		
 		m_warmStarting = true;
 		m_continuousPhysics = true;
@@ -202,6 +206,15 @@ public class b2World
 			}
 			
 			DestroyJoint(jn0.joint);
+		}
+		
+		// Detach controllers attached to this body
+		var ce:b2ControllerEdge = b.m_controllerList;
+		while (ce)
+		{
+			var ce0:b2ControllerEdge = ce;
+			ce = ce.nextController;
+			ce0.controller.RemoveBody(b);
 		}
 		
 		// Delete the attached shapes. This destroys broad-phase
@@ -383,7 +396,64 @@ public class b2World
 		}
 		
 	}
+	
+	/// Add a controller to the world list
+	public function AddController(c:b2Controller) : b2Controller
+	{
+		c.m_next = m_controllerList;
+		c.m_prev = null;
+		m_controllerList = c;
+		
+		c.m_world = this;
+		
+		m_controllerCount++;
+		
+		return c;
+	}
+	
+	public function RemoveController(c:b2Controller) : void
+	{
+		//TODO: Remove bodies from controller
+		if (c.m_prev)
+			c.m_prev.m_next = c.m_next;
+		if (c.m_next)
+			c.m_next.m_prev = c.m_prev;
+		if (m_controllerList == c)
+			m_controllerList = c.m_next;
+			
+		m_controllerCount--;
+	}
 
+	public function CreateController(controller:b2Controller):b2Controller
+	{
+		if (controller.m_world != this)
+			throw new Error("Controller can only be a member of one world");
+		
+		controller.m_next = m_controllerList;
+		controller.m_prev = null;
+		if (m_controllerList)
+			m_controllerList.m_prev = controller;
+		m_controllerList = controller;
+		++m_controllerCount;
+		
+		controller.m_world = this;
+		
+		return controller;
+	}
+	
+	public function DestroyController(controller:b2Controller):void
+	{
+		//b2Settings.b2Assert(m_controllerCount > 0);
+		controller.Clear();
+		if (controller.m_next)
+			controller.m_next.m_prev = controller.m_prev;
+		if (controller.m_prev)
+			controller.m_prev.m_next = controller.m_next;
+		if (controller == m_controllerList)
+			m_controllerList = controller.m_next;
+		--m_controllerCount;
+	}
+	
 	/**
 	* Re-filter a shape. This re-runs contact filtering on a shape.
 	*/
@@ -632,6 +702,12 @@ public class b2World
 	b2internal function Solve(step:b2TimeStep) : void{
 		
 		var b:b2Body;
+		
+		// Step all controllers
+		for(var controller:b2Controller= m_controllerList;controller;controller=controller.m_next)
+		{
+			controller.Step(step);
+		}
 		
 		// Size the island for the worst case.
 		var island:b2Island = new b2Island(m_bodyCount, m_contactCount, m_jointCount, m_stackAllocator, m_contactListener);
@@ -1293,6 +1369,14 @@ public class b2World
 			}
 		}
 		
+		if (flags & b2DebugDraw.e_controllerBit)
+		{
+			for (var c:b2Controller = m_controllerList; c; c = c.m_next)
+			{
+				c.Draw(m_debugDraw);
+			}
+		}
+		
 		if (flags & b2DebugDraw.e_pairBit)
 		{
 			bp = m_broadPhase;
@@ -1471,6 +1555,8 @@ public class b2World
 	private var m_bodyCount:int;
 	b2internal var m_contactCount:int;
 	private var m_jointCount:int;
+	private var m_controllerList:b2Controller;
+	private var m_controllerCount:int;
 
 	private var m_gravity:b2Vec2;
 	private var m_allowSleep:Boolean;

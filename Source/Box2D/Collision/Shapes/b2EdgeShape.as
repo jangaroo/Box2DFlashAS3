@@ -164,6 +164,62 @@ public class b2EdgeShape extends b2Shape
 		massData.center.SetV(m_v1);
 		massData.I = 0;
 	}
+	
+	/**
+	* @inheritDoc
+	*/
+	public override function ComputeSubmergedArea(
+			normal:b2Vec2,
+			offset:Number,
+			xf:b2XForm,
+			c:b2Vec2):Number
+	{
+		// Note that v0 is independant of any details of the specific edge
+		// We are relying on v0 being consistent between multiple edges of the same body
+		//b2Vec2 v0 = offset * normal;
+		var v0:b2Vec2 = new b2Vec2(normal.x * offset, normal.y * offset);
+		
+		var v1:b2Vec2 = b2Math.b2MulX(xf, m_v1);
+		var v2:b2Vec2 = b2Math.b2MulX(xf, m_v2);
+		
+		var d1:Number = b2Math.b2Dot(normal, v1) - offset;
+		var d2:Number = b2Math.b2Dot(normal, v2) - offset;
+		if (d1 > 0)
+		{
+			if (d2 > 0)
+			{
+				return 0;
+			}
+			else
+			{
+				//v1 = -d2 / (d1 - d2) * v1 + d1 / (d1 - d2) * v2;
+				v1.x = -d2 / (d1 - d2) * v1.x + d1 / (d1 - d2) * v2.x;
+				v1.y = -d2 / (d1 - d2) * v1.y + d1 / (d1 - d2) * v2.y;
+			}
+		}
+		else
+		{
+			if (d2 > 0)
+			{
+				//v2 = -d2 / (d1 - d2) * v1 + d1 / (d1 - d2) * v2;
+				v2.x = -d2 / (d1 - d2) * v1.x + d1 / (d1 - d2) * v2.x;
+				v2.y = -d2 / (d1 - d2) * v1.y + d1 / (d1 - d2) * v2.y;
+			}
+			else
+			{
+				// Nothing
+			}
+		}
+		// v0,v1,v2 represents a fully submerged triangle
+		// Area weighted centroid
+		c.x = (v0.x + v1.x + v2.x) / 3;
+		c.y = (v0.y + v1.y + v2.y) / 3;
+		
+		//b2Vec2 e1 = v1 - v0;
+		//b2Vec2 e2 = v2 - v0;
+		//return 0.5f * b2Cross(e1, e2);
+		return 0.5 * ( (v1.x - v0.x) * (v2.y - v0.y) - (v1.y - v0.y) * (v2.x - v0.x) );
+	}
 
 	/**
 	* Get the distance from vertex1 to vertex2.

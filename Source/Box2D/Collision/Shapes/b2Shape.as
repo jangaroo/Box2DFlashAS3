@@ -164,7 +164,21 @@ public class b2Shape
 	* The inertia tensor is computed about the local origin, not the centroid.
 	* @param massData returns the mass data for this shape.
 	*/
-	public virtual function  ComputeMass(massData:b2MassData) : void {};
+	public virtual function  ComputeMass(massData:b2MassData) : void { };
+	
+	/**
+	 * Compute the volume and centroid of this shape intersected with a half plane
+	 * @param normal the surface normal
+	 * @param offset the surface offset along normal
+	 * @param xf the shape transform
+	 * @param c returns the centroid
+	 * @return the total volume less than offset along normal
+	 */
+	public virtual function ComputeSubmergedArea(
+				normal:b2Vec2,
+				offset:Number,
+				xf:b2XForm,
+				c:b2Vec2):Number { return 0; };
 
 	/**
 	* Get the maximum radius about the parent body's center of mass.

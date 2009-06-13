@@ -20,6 +20,7 @@ package Box2D.Dynamics{
 
 
 import Box2D.Dynamics.*;
+import Box2D.Dynamics.Controllers.b2ControllerEdge;
 import Box2D.Dynamics.Joints.*;
 import Box2D.Dynamics.Contacts.*;
 import Box2D.Collision.Shapes.*;
@@ -836,6 +837,13 @@ public class b2Body
 	public function GetJointList() : b2JointEdge{
 		return m_jointList;
 	}
+	
+	/**
+	 * Get the list of all controllers attached to this body.
+	 */
+	public function GetControllerList() : b2ControllerEdge {
+		return m_controllerList;
+	}
 
 	/**
 	* Get the next body in the world's body list.
@@ -920,7 +928,9 @@ public class b2Body
 		m_sweep.c0.SetV(m_sweep.c);
 		
 		m_jointList = null;
+		m_controllerList = null;
 		m_contactList = null;
+		m_controllerCount = 0;
 		m_prev = null;
 		m_next = null;
 		
@@ -1068,6 +1078,9 @@ public class b2Body
 
 	b2internal var m_shapeList:b2Shape;
 	b2internal var m_shapeCount:int;
+	
+	b2internal var m_controllerList:b2ControllerEdge;
+	b2internal var m_controllerCount:int;
 
 	b2internal var m_jointList:b2JointEdge;
 	b2internal var m_contactList:b2ContactEdge;

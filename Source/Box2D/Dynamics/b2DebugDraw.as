@@ -61,6 +61,8 @@ public class b2DebugDraw
 	static public var e_pairBit:uint			= 0x0020;
 	/** Draw center of mass frame */
 	static public var e_centerOfMassBit:uint	= 0x0040;
+	/** Draw controllers */
+	static public var e_controllerBit:uint		= 0x0080;
 	//};
 
 	/**
