@@ -79,7 +79,7 @@ package TestBed{
 			b.CreateShape(cd);
 			b.SetMassFromShapes();
 			
-			parseSVG(m_svg, m_world);
+			b2SVG.parseSVG(m_svg, m_world, 1, 15);
 		}
 		
 		
@@ -100,46 +100,6 @@ package TestBed{
 			m_sprite.graphics.moveTo(segment.p1.x * m_physScale, segment.p1.y * m_physScale);
 			m_sprite.graphics.lineTo( 	(segment.p2.x * lambda + (1-lambda) * segment.p1.x) * m_physScale,
 										(segment.p2.y * lambda + (1-lambda) * segment.p1.y) * m_physScale);
-		}
-		
-		// The SVG specs are lenient, but Inkscape will consistently output
-		// a path that gets printed like this for a looping triangle:
-		// d="M 425.71,115.21 L 340,178.07 L 320,120.93 L 425.71,115.21 z "
-		// This parser does not yet support any other syntax 
-		// (e.g. curves, or no spaces around letters).
-		public function parseSVG(svg: XML, world: b2World): void {
-			var ns: Namespace = svg.namespace("");
-			var bodyDef: b2BodyDef = new b2BodyDef();
-			var chainDef: b2EdgeChainDef = new b2EdgeChainDef();
-			chainDef.friction = 0.5;
-			chainDef.restitution = 0.0;
-			for each (var path: XML in svg..ns::path) {
-				var d: String = path.@d;
-				// split string at spaces or commas:
-				var regExp: RegExp = / |,/;
-				var args: Array = d.split(regExp);
-				if (args[args.length-1] == "") {
-					args.pop(); // removes last element;
-				}
-				var i: int = 1; // skip first element, which is always "M".
-				chainDef.isALoop = false;
-				chainDef.vertices.length = 0;
-				while (true) {
-					if (i == args.length - 2) {
-						chainDef.vertices.push(new b2Vec2(args[i], args[i+1]));
-						break;
-					} else if (args[i+2] == "z" || args[i+2] == "Z" ) {
-						chainDef.isALoop = true;
-						break;
-					} else if (args[i+2] != "L") {
-						throw new Error("Unsupported: The SVG Path contains an arc command or move-to command or a relative coordinate.");
-					}
-					chainDef.vertices.push(new b2Vec2(args[i], args[i+1]));
-					i += 3;
-				}
-				chainDef.vertexCount = chainDef.vertices.length;
-				world.GetGroundBody().CreateShape(chainDef);
-			}
 		}
 		
 		
