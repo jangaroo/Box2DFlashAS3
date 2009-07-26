@@ -206,12 +206,9 @@ public class b2Body
 			m_invMass = 1.0 / m_mass;
 		}
 		
-		if ((m_flags & b2Body.e_fixedRotationFlag) == 0)
-		{
-			m_I = massData.I;
-		}
+		m_I = massData.I;
 		
-		if (m_I > 0.0)
+		if (m_I > 0.0 && (m_flags & b2Body.e_fixedRotationFlag) == 0)
 		{
 			m_invI = 1.0 / m_I;
 		}

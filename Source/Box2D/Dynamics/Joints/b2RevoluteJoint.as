@@ -507,7 +507,7 @@ public class b2RevoluteJoint extends b2Joint
 			if (m_limitState == e_equalLimits)
 			{
 				// Prevent large angular corrections
-				C= b2Math.b2Clamp(angle, -b2Settings.b2_maxAngularCorrection, b2Settings.b2_maxAngularCorrection);
+				C= b2Math.b2Clamp(angle - m_lowerAngle, -b2Settings.b2_maxAngularCorrection, b2Settings.b2_maxAngularCorrection);
 				limitImpulse = -m_motorMass * C;
 				angularError = b2Math.b2Abs(C);
 			}

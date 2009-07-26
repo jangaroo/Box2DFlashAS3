@@ -40,6 +40,42 @@ public class b2AABB
 		valid = valid && lowerBound.IsValid() && upperBound.IsValid();
 		return valid;
 	}
+	
+	/** Get the center of the AABB. */
+	public function GetCenter():b2Vec2
+	{
+		return new b2Vec2( (lowerBound.x + upperBound.x) / 2,
+		                   (lowerBound.y + upperBound.y) / 2);
+	}
+	
+	/** Get the extents of the AABB (half-widths). */
+	public function GetExtents():b2Vec2
+	{
+		return new b2Vec2( (upperBound.x - lowerBound.x) / 2,
+		                   (upperBound.y - lowerBound.y) / 2);
+	}
+	
+	public function Contains(aabb:b2AABB):Boolean
+	{
+		var result:Boolean = true;
+		result &&= lowerBound.x <= aabb.lowerBound.x;
+		result &&= lowerBound.y <= aabb.lowerBound.y;
+		result &&= aabb.upperBound.x <= upperBound.x;
+		result &&= aabb.upperBound.y <= upperBound.y;
+		return result;
+	}
+	
+	
+	/** Combine two AABBs into one. */
+	public static function Combine(aabb1:b2AABB, aabb2:b2AABB):b2AABB
+	{
+		var aabb:b2AABB = new b2AABB();
+		aabb.lowerBound.x = Math.min(aabb1.lowerBound.x, aabb2.lowerBound.x);
+		aabb.lowerBound.y = Math.min(aabb1.lowerBound.y, aabb2.lowerBound.y);
+		aabb.upperBound.x = Math.max(aabb1.upperBound.x, aabb2.upperBound.x);
+		aabb.upperBound.y = Math.max(aabb1.upperBound.y, aabb2.upperBound.y);
+		return aabb;
+	}
 
 	/** The lower vertex */
 	public var lowerBound:b2Vec2 = new b2Vec2();
