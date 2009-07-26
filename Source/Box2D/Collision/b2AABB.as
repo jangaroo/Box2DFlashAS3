@@ -19,6 +19,7 @@
 package Box2D.Collision{
 	
 import Box2D.Collision.*;
+import Box2D.Common.b2Settings;
 import Box2D.Common.Math.*;
 
 import Box2D.Common.b2internal;
@@ -63,6 +64,110 @@ public class b2AABB
 		result &&= aabb.upperBound.x <= upperBound.x;
 		result &&= aabb.upperBound.y <= upperBound.y;
 		return result;
+	}
+	
+	// From Real-time Collision Detection, p179.
+	public function RayCast(output:b2RayCastOutput, input:b2RayCastInput):void
+	{
+		var tmin:Number = Number.MIN_VALUE;
+		var tmax:Number = Number.MAX_VALUE;
+		
+		output.hit = false;
+		var pX:Number = input.p1.x;
+		var pY:Number = input.p1.y;
+		var dX:Number = input.p2.x - input.p1.x;
+		var dY:Number = input.p2.y - input.p1.y;
+		var absDX:Number = Math.abs(dX);
+		var absDY:Number = Math.abs(dY);
+		
+		var normal:b2Vec2 = output.normal;
+		
+		var inv_d:Number;
+		var t1:Number;
+		var t2:Number;
+		var t3:Number;
+		var s:Number;
+		
+		//x
+		{
+			if (absDX < Number.MIN_VALUE)
+			{
+				// Parallel.
+				if (pX < lowerBound.x || upperBound.x < pX)
+					return;
+			}
+			else
+			{
+				inv_d = 1.0 / dX;
+				t1 = (lowerBound.x - pX) * inv_d;
+				t2 = (upperBound.x - pX) * inv_d;
+				
+				// Sign of the normal vector
+				s = -1.0;
+				
+				if (t1 > t2)
+				{
+					t3 = t1;
+					t1 = t2;
+					t2 = t3;
+					s = 1.0;
+				}
+				
+				// Push the min up
+				if (t1 > tmin)
+				{
+					normal.x = s;
+					normal.y = 0;
+					tmin = t1;
+				}
+				
+				// Pull the max down
+				tmax = Math.min(tmax, t2);
+				
+				if (tmin > tmax)
+					return;
+			}
+		}
+		//y
+		{
+			if (absDY < Number.MIN_VALUE)
+			{
+				// Parallel.
+				if (pY < lowerBound.y || upperBound.y < pY)
+					return;
+			}
+			else
+			{
+				inv_d = 1.0 / dY;
+				t1 = (lowerBound.y - pY) * inv_d;
+				t2 = (upperBound.y - pY) * inv_d;
+				
+				// Sign of the normal vector
+				s = -1.0;
+				
+				if (t1 > t2)
+				{
+					t3 = t1;
+					t1 = t2;
+					t2 = t3;
+					s = 1.0;
+				}
+				
+				// Push the min up
+				if (t1 > tmin)
+				{
+					normal.y = s;
+					normal.x = 0;
+					tmin = t1;
+				}
+				
+				// Pull the max down
+				tmax = Math.min(tmax, t2);
+				
+				if (tmin > tmax)
+					return;
+			}
+		}
 	}
 	
 	

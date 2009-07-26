@@ -53,6 +53,12 @@ public class b2Settings{
     */
 	//static public const b2_maxProxies:int = 0;
 	//static public const b2_maxPairs:int = 8 * b2_maxProxies;
+	
+	/**
+	 * Factor used to fatten AABBs in b2DynamicTree. This allows client
+	 * Objects to move a small amount wihtout needing to adjust th
+	 */
+	static public const b2_fatAABBFactor:Number = 1.5;
 
 
 	// Dynamics
@@ -109,15 +115,15 @@ public class b2Settings{
 	* The maximum linear velocity of a body. This limit is very large and is used
 	* to prevent numerical problems. You shouldn't need to adjust this.
 	*/
-	static public const b2_maxLinearVelocity:Number = 200.0;
-	static public const b2_maxLinearVelocitySquared:Number = b2_maxLinearVelocity * b2_maxLinearVelocity;
-
+	static public const b2_maxTranslation:Number = 2.0;
+	static public const b2_maxTranslationSquared:Number = b2_maxTranslation * b2_maxTranslation;
+	
 	/**
 	* The maximum angular velocity of a body. This limit is very large and is used
 	* to prevent numerical problems. You shouldn't need to adjust this.
 	*/
-	static public const b2_maxAngularVelocity:Number = 250.0;
-	static public const b2_maxAngularVelocitySquared:Number = b2_maxAngularVelocity * b2_maxAngularVelocity;
+	static public const b2_maxRotation:Number = 0.5 * b2_pi;
+	static public const b2_maxRotationSquared:Number = b2_maxRotation * b2_maxRotation;
 	
 	/**
 	* This scale factor controls how fast overlap is resolved. Ideally this would be 1 so
@@ -157,7 +163,7 @@ public class b2Settings{
 	/**
 	* A body cannot sleep if its angular velocity is above this tolerance.
 	*/
-	static public const b2_angularSleepTolerance:Number = 2.0 / 180.0;	// 2 degrees/s
+	static public const b2_angularSleepTolerance:Number = 2.0 / 180.0 * b2Settings.b2_pi;	// 2 degrees/s
 	
 	// assert
     /**

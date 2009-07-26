@@ -48,6 +48,8 @@ public class b2BodyDef
 		userData = null;
 		position.Set(0.0, 0.0);
 		angle = 0.0;
+		linearVelocity.Set(0, 0);
+		angularVelocity = 0.0;
 		linearDamping = 0.0;
 		angularDamping = 0.0;
 		allowSleep = true;
@@ -79,6 +81,16 @@ public class b2BodyDef
 	* The world angle of the body in radians.
 	*/
 	public var angle:Number;
+	
+	/**
+	 * The linear velocity of the body in world co-ordinates.
+	 */
+	public var linearVelocity:b2Vec2 = new b2Vec2();
+	
+	/**
+	 * The angular velocity of the body.
+	 */
+	public var angularVelocity:Number;
 
 	/**
 	* Linear damping is use to reduce the linear velocity. The damping parameter

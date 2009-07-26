@@ -365,7 +365,7 @@ public class b2Body
 	* @return false if the movement put a shape outside the world. In this case the
 	* body is automatically frozen.
 	*/
-	public function SetXForm(position:b2Vec2, angle:Number) : Boolean{
+	public function SetPositionAndAngle(position:b2Vec2, angle:Number) : Boolean{
 		
 		var s:b2Shape;
 		
@@ -430,6 +430,20 @@ public class b2Body
 		return true;
 		
 	}
+	
+	/**
+	 * Set the position of the body's origin and rotation (radians).
+	 * This breaks any contacts and wakes the other bodies.
+	 * Note this is less efficient than the other overload - you should use that
+	 * if the angle is available.
+	 * @param xf the transform of position and angle to set the bdoy to.
+	 * @return false if the movement put a shape outside the world. In this case the
+	 * body is automatically frozen.
+	 */
+	public function SetXForm(xf:b2XForm):Boolean
+	{
+		return SetPositionAndAngle(xf.position, xf.GetAngle());
+	}
 
 	/**
 	* Get the body transform for the body's origin.
@@ -446,6 +460,15 @@ public class b2Body
 	public function GetPosition() : b2Vec2{
 		return m_xf.position;
 	}
+	
+	/**
+	 * Setthe world body origin position.
+	 * @param position the new position of the body
+	 */
+	public function SetPosition(position:b2Vec2):void
+	{
+		SetPositionAndAngle(position, GetAngle());
+	}
 
 	/**
 	* Get the angle in radians.
@@ -454,6 +477,16 @@ public class b2Body
 	public function GetAngle() : Number{
 		return m_sweep.a;
 	}
+	
+	/**
+	 * Set the world body angle
+	 * @param angle the new angle of the body.
+	 */
+	public function SetAngle(angle:Number) : void
+	{
+		SetPositionAndAngle(GetPosition(), angle);
+	}
+	
 
 	/**
 	* Get the world position of the center of mass.
@@ -568,7 +601,19 @@ public class b2Body
 	public function GetInertia() : Number{
 		return m_I;
 	}
-
+	
+	/** 
+	 * Get the mass data of the body.
+	 */
+	public function GetMassData():b2MassData
+	{
+		var massData:b2MassData = new b2MassData();
+		massData.mass = m_mass;
+		massData.I = m_I;
+		massData.center = GetWorldCenter();
+		return massData;
+	}
+	  
 	/**
 	* Get the world coordinates of a point given the local coordinates.
 	* @param localPoint a point on the body measured relative the the body's origin.

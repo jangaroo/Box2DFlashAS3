@@ -371,14 +371,15 @@ static public function DistanceGeneric(x1:b2Vec2, x2:b2Vec2,
 			maxSqr = b2Math.b2Max(maxSqr, (tVec.x*tVec.x + tVec.y*tVec.y));
 		}
 		
+		//v = *x2 - *x1;
+		vX = x2.x - x1.x;
+		vY = x2.y - x1.y;
+		//vSqr = b2Dot(v, v);
+		vSqr = (vX*vX + vY*vY);
+		
 		if (vSqr <= 100.0 * Number.MIN_VALUE * maxSqr)
 		{
 			g_GJK_Iterations = iter;
-			//v = *x2 - *x1;
-			vX = x2.x - x1.x;
-			vY = x2.y - x1.y;
-			//vSqr = b2Dot(v, v);
-			vSqr = (vX*vX + vY*vY);
 			return Math.sqrt(vSqr);
 		}
 	}

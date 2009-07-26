@@ -67,6 +67,15 @@ public class b2XForm
 		R.SetM(x.R);
 
 	}
+	
+	/** 
+	 * Calculate the angle that the rotation matrix represents.
+	 */
+	public function GetAngle():Number
+	{
+		return Math.atan2(R.col1.y, R.col1.x);
+	}
+	 
 
 	public var position:b2Vec2 = new b2Vec2;
 	public var R:b2Mat22 = new b2Mat22();

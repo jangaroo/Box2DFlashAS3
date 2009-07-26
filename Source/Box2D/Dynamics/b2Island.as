@@ -192,27 +192,6 @@ public class b2Island
 			// v2 = (1.0f - c * dt) * v1
 			b.m_linearVelocity.Multiply( b2Math.b2Clamp(1.0 - step.dt * b.m_linearDamping, 0.0, 1.0) );
 			b.m_angularVelocity *= b2Math.b2Clamp(1.0 - step.dt * b.m_angularDamping, 0.0, 1.0);
-			
-			// Check for large velocities.
-			//if (b2Dot(b->m_linearVelocity, b->m_linearVelocity) > b2_maxLinearVelocitySquared)
-			if ((b.m_linearVelocity.LengthSquared()) > b2Settings.b2_maxLinearVelocitySquared)
-			{
-				b.m_linearVelocity.Normalize();
-				b.m_linearVelocity.x *= b2Settings.b2_maxLinearVelocity;
-				b.m_linearVelocity.y *= b2Settings.b2_maxLinearVelocity;
-			}
-			
-			if (b.m_angularVelocity * b.m_angularVelocity > b2Settings.b2_maxAngularVelocitySquared)
-			{
-				if (b.m_angularVelocity < 0.0)
-				{
-					b.m_angularVelocity = -b2Settings.b2_maxAngularVelocity;
-				}
-				else
-				{
-					b.m_angularVelocity = b2Settings.b2_maxAngularVelocity;
-				}
-			}
 		}
 		
 		var contactSolver:b2ContactSolver = new b2ContactSolver(step, m_contacts, m_contactCount, m_allocator);
@@ -248,6 +227,28 @@ public class b2Island
 			
 			if (b.IsStatic())
 				continue;
+				
+			// Check for large velocities.
+			var translation:b2Vec2 = b2Math.MulFV(step.dt, b.m_linearVelocity);
+			//if (b2Dot(translation, translation) > b2_maxTranslationSquared)
+			if ((translation.LengthSquared()) > b2Settings.b2_maxTranslationSquared)
+			{
+				b.m_linearVelocity.Normalize();
+				b.m_linearVelocity.x *= b2Settings.b2_maxTranslation * step.inv_dt;
+				b.m_linearVelocity.y *= b2Settings.b2_maxTranslation * step.inv_dt;
+			}
+			var rotation:Number = step.dt * b.m_angularVelocity;
+			if (rotation* rotation > b2Settings.b2_maxRotationSquared)
+			{
+				if (b.m_angularVelocity < 0.0)
+				{
+					b.m_angularVelocity = -b2Settings.b2_maxRotation * step.inv_dt;
+				}
+				else
+				{
+					b.m_angularVelocity = b2Settings.b2_maxRotation * step.inv_dt;
+				}
+			}
 			
 			// Store positions for continuous collision.
 			b.m_sweep.c0.SetV(b.m_sweep.c);
@@ -372,6 +373,29 @@ public class b2Island
 			
 			if (b.IsStatic())
 				continue;
+				
+			// Check for large velocities.
+			var translation:b2Vec2 = b2Math.MulFV(subStep.dt, b.m_linearVelocity);
+			//if (b2Dot(translation, translation) > b2_maxTranslationSquared)
+			if ((translation.LengthSquared()) > b2Settings.b2_maxTranslationSquared)
+			{
+				b.m_linearVelocity.Normalize();
+				b.m_linearVelocity.x *= b2Settings.b2_maxTranslation * subStep.inv_dt;
+				b.m_linearVelocity.y *= b2Settings.b2_maxTranslation * subStep.inv_dt;
+			}
+			
+			var rotation:Number = subStep.dt * b.m_angularVelocity;
+			if (rotation* rotation > b2Settings.b2_maxRotationSquared)
+			{
+				if (b.m_angularVelocity < 0.0)
+				{
+					b.m_angularVelocity = -b2Settings.b2_maxRotation * subStep.inv_dt;
+				}
+				else
+				{
+					b.m_angularVelocity = b2Settings.b2_maxRotation * subStep.inv_dt;
+				}
+			}
 			
 			// Store positions for continuous collision.
 			b.m_sweep.c0.SetV(b.m_sweep.c);
