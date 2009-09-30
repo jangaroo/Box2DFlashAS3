@@ -54,12 +54,15 @@ public class b2Settings{
 	//static public const b2_maxProxies:int = 0;
 	//static public const b2_maxPairs:int = 8 * b2_maxProxies;
 	
-	/**
-	 * Factor used to fatten AABBs in b2DynamicTree. This allows client
-	 * Objects to move a small amount wihtout needing to adjust th
-	 */
-	static public const b2_fatAABBFactor:Number = 1.5;
+	/// This is used to fatten AABBs in the dynamic tree. This allows proxies
+	/// to move by a small amount without triggering a tree adjustment.
+	/// This is in meters.
+	static public const b2_aabbExtension:Number = 1.1;
 
+	/// The radius of the polygon/edge shape skin. This should not be modified. Making
+	/// this smaller means polygons will have and insufficient for continuous collision.
+	/// Making it larger may create artifacts for vertex collision.
+	static public const b2_polygonRadius:Number = 2.0 * b2_linearSlop;
 
 	// Dynamics
 	
@@ -173,8 +176,9 @@ public class b2Settings{
 	static public function b2Assert(a:Boolean) : void
 	{
 		if (!a){
-			var nullVec:b2Vec2;
-			nullVec.x++;
+			//var nullVec:b2Vec2;
+			//nullVec.x++;
+			throw "Assertion Failed";
 		}
 	}
 }

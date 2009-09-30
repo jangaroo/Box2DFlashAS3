@@ -51,13 +51,13 @@ public class b2PulleyJointDef extends b2JointDef
 		collideConnected = true;
 	}
 	
-	public function Initialize(b1:b2Body, b2:b2Body,
+	public function Initialize(bA:b2Body, bB:b2Body,
 				ga1:b2Vec2, ga2:b2Vec2,
 				anchor1:b2Vec2, anchor2:b2Vec2,
 				r:Number) : void
 	{
-		body1 = b1;
-		body2 = b2;
+		body1 = bA;
+		body2 = bB;
 		groundAnchor1.SetV( ga1 );
 		groundAnchor2.SetV( ga2 );
 		localAnchor1 = body1.GetLocalPoint(anchor1);

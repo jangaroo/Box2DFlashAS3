@@ -127,39 +127,7 @@ public class b2EdgeShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function ComputeSweptAABB(	aabb:b2AABB,
-							transform1:b2XForm,
-							transform2:b2XForm) : void
-	{
-		var tMat:b2Mat22;
-		tMat = transform1.R;
-		//b2Vec2 v1 = b2Mul(transform1, m_v1);
-		var v1X:Number = transform1.position.x + (tMat.col1.x * m_v1.x + tMat.col2.x * m_v1.y);
-		var v1Y:Number = transform1.position.y + (tMat.col1.y * m_v1.x + tMat.col2.y * m_v1.y);
-		//b2Vec2 v2 = b2Mul(transform1, m_v2);
-		var v2X:Number = transform1.position.x + (tMat.col1.x * m_v2.x + tMat.col2.x * m_v2.y);
-		var v2Y:Number = transform1.position.y + (tMat.col1.y * m_v2.x + tMat.col2.y * m_v2.y);
-		
-		tMat = transform2.R;
-		//b2Vec2 v3 = b2Mul(transform2, m_v1);
-		var v3X:Number = transform2.position.x + (tMat.col1.x * m_v1.x + tMat.col2.x * m_v1.y);
-		var v3Y:Number = transform2.position.y + (tMat.col1.y * m_v1.x + tMat.col2.y * m_v1.y);
-		//b2Vec2 v4 = b2Mul(transform2, m_v2);
-		var v4X:Number = transform2.position.x + (tMat.col1.x * m_v2.x + tMat.col2.x * m_v2.y);
-		var v4Y:Number = transform2.position.y + (tMat.col1.y * m_v2.x + tMat.col2.y * m_v2.y);
-		
-		//aabb.lowerBound = b2Min(b2Min(b2Min(v1, v2), v3), v4);
-		aabb.lowerBound.x = ((v1X < v2X ? v1X : v2X) < v3X ? (v1X < v2X ? v1X : v2X) : v3X) < v4X ? ((v1X < v2X ? v1X : v2X) < v3X ? (v1X < v2X ? v1X : v2X) : v3X) : v4X;
-		aabb.lowerBound.y = ((v1Y < v2Y ? v1Y : v2Y) < v3Y ? (v1Y < v2Y ? v1Y : v2Y) : v3Y) < v4Y ? ((v1Y < v2Y ? v1Y : v2Y) < v3Y ? (v1Y < v2Y ? v1Y : v2Y) : v3Y) : v4Y;
-		//aabb.upperBound = b2Max(b2Max(b2Max(v1, v2), v3), v4);
-		aabb.upperBound.x = ((v1X > v2X ? v1X : v2X) > v3X ? (v1X > v2X ? v1X : v2X) : v3X) > v4X ? ((v1X > v2X ? v1X : v2X) > v3X ? (v1X > v2X ? v1X : v2X) : v3X) : v4X;
-		aabb.upperBound.y = ((v1Y > v2Y ? v1Y : v2Y) > v3Y ? (v1Y > v2Y ? v1Y : v2Y) : v3Y) > v4Y ? ((v1Y > v2Y ? v1Y : v2Y) > v3Y ? (v1Y > v2Y ? v1Y : v2Y) : v3Y) : v4Y;
-	}
-
-	/**
-	* @inheritDoc
-	*/
-	public override function ComputeMass(massData:b2MassData) : void{
+	public override function ComputeMass(massData:b2MassData, density:Number) : void{
 		massData.mass = 0;
 		massData.center.SetV(m_v1);
 		massData.I = 0;
@@ -377,11 +345,8 @@ public class b2EdgeShape extends b2Shape
 	/**
 	* @private
 	*/
-	public function b2EdgeShape(v1: b2Vec2, v2: b2Vec2, def: b2ShapeDef){
-		super(def);
-		
-		//b2Settings.b2Assert(def.type == e_edgeShape);
-		
+	public function b2EdgeShape(v1: b2Vec2, v2: b2Vec2){
+		super();
 		m_type = e_edgeShape;
 		
 		m_prevEdge = null;
@@ -401,22 +366,6 @@ public class b2EdgeShape extends b2Shape
 		
 		m_cornerDir1 = m_normal;
 		m_cornerDir2.Set(-m_normal.x, -m_normal.y);
-	}
-
-	/**
-	* @private
-	*/
-	b2internal override function UpdateSweepRadius(center:b2Vec2) : void{
-		// Update the sweep radius (maximum radius) as measured from
-		// a local center point.
-		//b2Vec2 d = m_coreV1 - center;
-		var dX:Number = m_coreV1.x - center.x;
-		var dY:Number = m_coreV1.y - center.y;
-		var d1:Number = dX*dX + dY*dY;
-		dX = m_coreV2.x - center.x;
-		dY = m_coreV2.y - center.y;
-		var d2:Number = dX*dX + dY*dY;
-		m_sweepRadius = Math.sqrt(d1 > d2 ? d1 : d2);
 	}
 
 	/**

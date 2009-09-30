@@ -194,6 +194,8 @@ public class b2Island
 			b.m_angularVelocity *= b2Math.b2Clamp(1.0 - step.dt * b.m_angularDamping, 0.0, 1.0);
 		}
 		
+		Main.m_currTest.m_world.DrawDebugData();
+		
 		var contactSolver:b2ContactSolver = new b2ContactSolver(step, m_contacts, m_contactCount, m_allocator);
 		
 		// Initialize velocity constraints.
@@ -265,6 +267,8 @@ public class b2Island
 			
 			// Note: shapes are synchronized later.
 		}
+		
+		Main.m_currTest.m_world.DrawDebugData();
 		
 		// Iterate over constraints.
 		for (i = 0; i < step.positionIterations; ++i)
@@ -446,31 +450,14 @@ public class b2Island
 		{
 			var c:b2Contact = m_contacts[i];
 			var cc:b2ContactConstraint = constraints[ i ];
-			var cr:b2ContactResult = s_reportCR;
-			cr.shape1 = c.m_shape1;
-			cr.shape2 = c.m_shape2;
-			var b1:b2Body = cr.shape1.m_body;
-			var manifoldCount:int = c.m_manifoldCount;
-			var manifolds:Array = c.GetManifolds();
-			for (var j:int = 0; j < manifoldCount; ++j)
+			
+			var impulse:b2ContactImpulse = new b2ContactImpulse();
+			for (var j:int = 0; j < cc.pointCount; ++j)
 			{
-				var manifold:b2Manifold = manifolds[ j ];
-				cr.normal.SetV( manifold.normal );
-				for (var k:int = 0; k < manifold.pointCount; ++k)
-				{
-					var point:b2ManifoldPoint = manifold.points[ k ];
-					var ccp:b2ContactConstraintPoint = cc.points[ k ];
-					cr.position = b1.GetWorldPoint(point.localPoint1);
-					
-					// TOI constraint results are not stored, so get
-					// the result from the constraint.
-					cr.normalImpulse = ccp.normalImpulse;
-					cr.tangentImpulse = ccp.tangentImpulse;
-					cr.id.key = point.id.key;
-					
-					m_listener.Result(cr);
-				}
+				impulse.normalImpulses[j] = cc.points[j].normalImpulse;
+				impulse.tangentImpulses[j] = cc.points[j].tangentImpulse;
 			}
+			m_listener.PostSolve(c, impulse);
 		}
 	}
 	

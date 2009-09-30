@@ -51,7 +51,7 @@ public class b2MouseJoint extends b2Joint
 	}
 	/** @inheritDoc */
 	public override function GetAnchor2():b2Vec2{
-		return m_body2.GetWorldPoint(m_localAnchor);
+		return m_bodyB.GetWorldPoint(m_localAnchor);
 	}
 	/** @inheritDoc */
 	public override function GetReactionForce(inv_dt:Number):b2Vec2
@@ -67,8 +67,8 @@ public class b2MouseJoint extends b2Joint
 	* Use this to update the target point.
 	*/
 	public function SetTarget(target:b2Vec2) : void{
-		if (m_body2.IsSleeping()){
-			m_body2.WakeUp();
+		if (m_bodyB.IsSleeping()){
+			m_bodyB.WakeUp();
 		}
 		m_target = target;
 	}
@@ -80,10 +80,10 @@ public class b2MouseJoint extends b2Joint
 		super(def);
 		
 		m_target.SetV(def.target);
-		//m_localAnchor = b2MulT(m_body2.m_xf, m_target);
-		var tX:Number = m_target.x - m_body2.m_xf.position.x;
-		var tY:Number = m_target.y - m_body2.m_xf.position.y;
-		var tMat:b2Mat22 = m_body2.m_xf.R;
+		//m_localAnchor = b2MulT(m_bodyB.m_xf, m_target);
+		var tX:Number = m_target.x - m_bodyB.m_xf.position.x;
+		var tY:Number = m_target.y - m_bodyB.m_xf.position.y;
+		var tMat:b2Mat22 = m_bodyB.m_xf.R;
 		m_localAnchor.x = (tX * tMat.col1.x + tY * tMat.col1.y);
 		m_localAnchor.y = (tX * tMat.col2.x + tY * tMat.col2.y);
 		
@@ -102,7 +102,7 @@ public class b2MouseJoint extends b2Joint
 	private var K1:b2Mat22 = new b2Mat22();
 	private var K2:b2Mat22 = new b2Mat22();
 	b2internal override function InitVelocityConstraints(step:b2TimeStep): void{
-		var b:b2Body = m_body2;
+		var b:b2Body = m_bodyB;
 		
 		var mass:Number = b.GetMass();
 		
@@ -174,7 +174,7 @@ public class b2MouseJoint extends b2Joint
 	}
 	
 	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
-		var b:b2Body = m_body2;
+		var b:b2Body = m_bodyB;
 		
 		var tMat:b2Mat22;
 		var tX:Number;

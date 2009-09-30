@@ -34,55 +34,76 @@ use namespace b2internal;
 /**
 * @private
 */
-public class b2ContactManager extends b2PairCallback
+public class b2ContactManager 
 {
 	public function b2ContactManager() {
 		m_world = null;
-		m_destroyImmediate = false;
+		m_contactCount = 0;
+		m_contactFilter = b2ContactFilter.b2_defaultFilter;
+		m_contactListener = b2ContactListener.b2_defaultListener;
+		m_broadPhase = new b2DynamicTreeBroadPhase();
+		//var aabb:b2AABB  = new b2AABB();
+		//aabb.lowerBound.x = -100000;
+		//aabb.lowerBound.y = -100000;
+		//aabb.upperBound.x = 100000;
+		//aabb.upperBound.y = 100000;
+		//m_broadPhase = new b2BroadPhase(aabb);
 	};
 
 	// This is a callback from the broadphase when two AABB proxies begin
 	// to overlap. We create a b2Contact to manage the narrow phase.
-	public override function PairAdded(proxyUserData1:*, proxyUserData2:*):*{
-		var shape1:b2Shape = proxyUserData1 as b2Shape;
-		var shape2:b2Shape = proxyUserData2 as b2Shape;
+	public function AddPair(proxyUserDataA:*, proxyUserDataB:*):void {
+		var fixtureA:b2Fixture = proxyUserDataA as b2Fixture;
+		var fixtureB:b2Fixture = proxyUserDataB as b2Fixture;
 		
-		var body1:b2Body = shape1.m_body;
-		var body2:b2Body = shape2.m_body;
+		var bodyA:b2Body = fixtureA.GetBody();
+		var bodyB:b2Body = fixtureB.GetBody();
 		
-		if (body1.IsStatic() && body2.IsStatic())
+		// Are the fixtures on the same body?
+		if (bodyA == bodyB)
+			return;
+			
+		// Are both bodies static?
+		if (bodyA.IsStatic() && bodyB.IsStatic())
 		{
-			return m_nullContact;
+			return;
+		}
+		// Does a contact already exist?
+		var edge:b2ContactEdge = bodyB.GetContactList();
+		while (edge)
+		{
+			if (edge.other == bodyA)
+			{
+				var fA:b2Fixture = edge.contact.GetFixtureA();
+				var fB:b2Fixture = edge.contact.GetFixtureB();
+				if (fA == fixtureA && fB == fixtureB)
+					return;
+				if (fA == fixtureB && fB == fixtureA)
+					return;
+			}
+			edge = edge.next;
 		}
 		
-		if (shape1.m_body == shape2.m_body)
+		//Does a joint override collision?
+		if (bodyB.IsConnected(bodyA))
 		{
-			return m_nullContact;
+			return;
 		}
 		
-		if (body2.IsConnected(body1))
+		// Check user filtering
+		if (m_contactFilter.ShouldCollide(fixtureA, fixtureB) == false)
 		{
-			return m_nullContact;
-		}
-		
-		if (m_world.m_contactFilter != null && m_world.m_contactFilter.ShouldCollide(shape1, shape2) == false)
-		{
-			return m_nullContact;
+			return;
 		}
 		
 		// Call the factory.
-		var c:b2Contact = b2Contact.Create(shape1, shape2, m_world.m_blockAllocator);
-		
-		if (c == null)
-		{
-			return m_nullContact;
-		}
+		var c:b2Contact = b2Contact.Create(fixtureA, fixtureB, m_allocator);
 		
 		// Contact creation may swap shapes.
-		shape1 = c.m_shape1;
-		shape2 = c.m_shape2;
-		body1 = shape1.m_body;
-		body2 = shape2.m_body;
+		fixtureA = c.GetFixtureA();
+		fixtureB = c.GetFixtureB();
+		bodyA = fixtureA.m_body;
+		bodyB = fixtureB.m_body;
 		
 		// Insert into the world.
 		c.m_prev = null;
@@ -96,92 +117,52 @@ public class b2ContactManager extends b2PairCallback
 		
 		// Connect to island graph.
 		
-		// Connect to body 1
-		c.m_node1.contact = c;
-		c.m_node1.other = body2;
+		// Connect to body A
+		c.m_nodeA.contact = c;
+		c.m_nodeA.other = bodyB;
 		
-		c.m_node1.prev = null;
-		c.m_node1.next = body1.m_contactList;
-		if (body1.m_contactList != null)
+		c.m_nodeA.prev = null;
+		c.m_nodeA.next = bodyA.m_contactList;
+		if (bodyA.m_contactList != null)
 		{
-			body1.m_contactList.prev = c.m_node1;
+			bodyA.m_contactList.prev = c.m_nodeA;
 		}
-		body1.m_contactList = c.m_node1;
+		bodyA.m_contactList = c.m_nodeA;
 		
 		// Connect to body 2
-		c.m_node2.contact = c;
-		c.m_node2.other = body1;
+		c.m_nodeB.contact = c;
+		c.m_nodeB.other = bodyA;
 		
-		c.m_node2.prev = null;
-		c.m_node2.next = body2.m_contactList;
-		if (body2.m_contactList != null)
+		c.m_nodeB.prev = null;
+		c.m_nodeB.next = bodyB.m_contactList;
+		if (bodyB.m_contactList != null)
 		{
-			body2.m_contactList.prev = c.m_node2;
+			bodyB.m_contactList.prev = c.m_nodeB;
 		}
-		body2.m_contactList = c.m_node2;
+		bodyB.m_contactList = c.m_nodeB;
 		
 		++m_world.m_contactCount;
-		return c;
+		return;
 		
 	}
 
-	// This is a callback from the broadphase when two AABB proxies cease
-	// to overlap. We retire the b2Contact.
-	public override function PairRemoved(proxyUserData1:*, proxyUserData2:*, pairUserData:*): void{
-		
-		if (pairUserData == null)
-		{
-			return;
-		}
-		
-		var c:b2Contact = pairUserData as b2Contact;
-		if (c == m_nullContact)
-		{
-			return;
-		}
-		
-		// An attached body is being destroyed, we must destroy this contact
-		// immediately to avoid orphaned shape pointers.
-		Destroy(c);
+	public function FindNewContacts():void
+	{
+		m_broadPhase.UpdatePairs(AddPair);
 	}
 	
 	static private const s_evalCP:b2ContactPoint = new b2ContactPoint();
 	public function Destroy(c:b2Contact) : void
 	{
 		
-		var shape1:b2Shape = c.m_shape1;
-		var shape2:b2Shape = c.m_shape2;
-		var body1:b2Body = shape1.m_body;
-		var body2:b2Body = shape2.m_body;
-		var cp:b2ContactPoint = s_evalCP;
-		cp.shape1 = c.m_shape1;
-		cp.shape2 = c.m_shape2;
-		cp.friction = b2Settings.b2MixFriction(shape1.GetFriction(), shape2.GetFriction());
-		cp.restitution = b2Settings.b2MixRestitution(shape1.GetRestitution(), shape2.GetRestitution());
+		var fixtureA:b2Fixture = c.GetFixtureA();
+		var fixtureB:b2Fixture = c.GetFixtureB();
+		var bodyA:b2Body = fixtureA.GetBody();
+		var bodyB:b2Body = fixtureB.GetBody();
 		
-		// Inform the user that this contact is ending.
-		var manifoldCount:int = c.m_manifoldCount;
-		if (manifoldCount > 0 && m_world.m_contactListener)
+		if (c.m_manifold.m_pointCount > 0)
 		{
-			var manifolds:Array  = c.GetManifolds();
-			
-			for (var i:int = 0; i < manifoldCount; ++i)
-			{
-				var manifold:b2Manifold = manifolds[ i ];
-				cp.normal.SetV(manifold.normal);
-				
-				for (var j:int = 0; j < manifold.pointCount; ++j)
-				{
-					var mp:b2ManifoldPoint = manifold.points[j];
-					cp.position = body1.GetWorldPoint(mp.localPoint1);
-					var v1:b2Vec2 = body1.GetLinearVelocityFromLocalPoint(mp.localPoint1);
-					var v2:b2Vec2 = body2.GetLinearVelocityFromLocalPoint(mp.localPoint2);
-					cp.velocity.Set(v2.x - v1.x, v2.y - v1.y);
-					cp.separation = mp.separation;
-					cp.id.key = mp.id._key;
-					m_world.m_contactListener.Remove(cp);
-				}
-			}
+			m_contactListener.EndContact(c);
 		}
 		
 		// Remove from the world.
@@ -200,41 +181,41 @@ public class b2ContactManager extends b2PairCallback
 			m_world.m_contactList = c.m_next;
 		}
 		
-		// Remove from body 1
-		if (c.m_node1.prev)
+		// Remove from body A
+		if (c.m_nodeA.prev)
 		{
-			c.m_node1.prev.next = c.m_node1.next;
+			c.m_nodeA.prev.next = c.m_nodeA.next;
 		}
 		
-		if (c.m_node1.next)
+		if (c.m_nodeA.next)
 		{
-			c.m_node1.next.prev = c.m_node1.prev;
+			c.m_nodeA.next.prev = c.m_nodeA.prev;
 		}
 		
-		if (c.m_node1 == body1.m_contactList)
+		if (c.m_nodeA == bodyA.m_contactList)
 		{
-			body1.m_contactList = c.m_node1.next;
+			bodyA.m_contactList = c.m_nodeA.next;
 		}
 		
 		// Remove from body 2
-		if (c.m_node2.prev)
+		if (c.m_nodeB.prev)
 		{
-			c.m_node2.prev.next = c.m_node2.next;
+			c.m_nodeB.prev.next = c.m_nodeB.next;
 		}
 		
-		if (c.m_node2.next)
+		if (c.m_nodeB.next)
 		{
-			c.m_node2.next.prev = c.m_node2.prev;
+			c.m_nodeB.next.prev = c.m_nodeB.prev;
 		}
 		
-		if (c.m_node2 == body2.m_contactList)
+		if (c.m_nodeB == bodyB.m_contactList)
 		{
-			body2.m_contactList = c.m_node2.next;
+			bodyB.m_contactList = c.m_nodeB.next;
 		}
 		
 		// Call the factory.
-		b2Contact.Destroy(c, m_world.m_blockAllocator);
-		--m_world.m_contactCount;
+		b2Contact.Destroy(c, m_allocator);
+		--m_contactCount;
 	}
 	
 
@@ -244,26 +225,78 @@ public class b2ContactManager extends b2PairCallback
 	public function Collide() : void
 	{
 		// Update awake contacts.
-		for (var c:b2Contact = m_world.m_contactList; c; c = c.m_next)
+		var c:b2Contact = m_world.m_contactList;
+		while (c)
 		{
-			var body1:b2Body = c.m_shape1.m_body;
-			var body2:b2Body = c.m_shape2.m_body;
-			if (body1.IsSleeping() && body2.IsSleeping())
+			var fixtureA:b2Fixture = c.GetFixtureA();
+			var fixtureB:b2Fixture = c.GetFixtureB();
+			var bodyA:b2Body = fixtureA.GetBody();
+			var bodyB:b2Body = fixtureB.GetBody();
+			if (bodyA.IsSleeping() && bodyB.IsSleeping())
 			{
+				c = c.GetNext();
 				continue;
 			}
 			
-			c.Update(m_world.m_contactListener);
+			// Is this contact flagged for filtering?
+			if (c.m_flags & b2Contact.e_filterFlag)
+			{
+				// Are both bodies static
+				if (bodyA.IsStatic() && bodyB.IsStatic())
+				{
+					var cNuke:b2Contact = c;
+					c = cNuke.GetNext();
+					Destroy(cNuke);
+					continue;
+				}
+				
+				// Does a joint override collision?
+				if (bodyB.IsConnected(bodyA))
+				{
+					cNuke = c;
+					c = cNuke.GetNext();
+					Destroy(cNuke);
+					continue;
+				}
+				
+				// Check user filtering.
+				if (m_contactFilter.ShouldCollide(fixtureA, fixtureB) == false)
+				{
+					cNuke = c;
+					c = cNuke.GetNext();
+					Destroy(cNuke);
+					continue;
+				}
+				
+				// Clear the filtering flag
+				c.m_flags &= ~b2Contact.e_filterFlag;
+			}
+			
+			var proxyA:* = fixtureA.m_proxy;
+			var proxyB:* = fixtureB.m_proxy;
+			// Here we cull out contacts that cease to overlap.
+			if ( m_broadPhase.TestOverlap(proxyA, proxyB) == false)
+			{
+				cNuke = c;
+				c = cNuke.GetNext();
+				Destroy(cNuke);
+				continue;
+			}
+			
+			c.Update(m_contactListener);
+			c = c.GetNext();
 		}
 	}
 
-	b2internal var m_world:b2World;
-
-	// This lets us provide broadphase proxy pair user data for
-	// contacts that shouldn't exist.
-	private var m_nullContact:b2NullContact = new b2NullContact();
-	private var m_destroyImmediate:Boolean;
 	
+	b2internal var m_world:b2World;
+	b2internal var m_broadPhase:IBroadPhase;
+	
+	public var m_contactList:b2Contact;
+	public var m_contactCount:int;
+	public var m_contactFilter:b2ContactFilter;
+	public var m_contactListener:b2ContactListener;
+	public var m_allocator:*;
 };
 
 }

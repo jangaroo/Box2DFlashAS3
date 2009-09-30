@@ -31,11 +31,11 @@ use namespace b2internal;
 * This structure is used to build edge shapes.
 * @see b2EdgeShape
 */
-public class b2EdgeChainDef extends b2ShapeDef
+public class b2EdgeChainDef// extends b2ShapeDef
 {
 	public function b2EdgeChainDef()
 	{
-		type = b2Shape.e_edgeShape;
+		//type = b2Shape.e_edgeShape;
 		vertexCount = 0;
 		isALoop = true;
 		vertices = [];

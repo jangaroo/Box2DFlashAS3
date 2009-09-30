@@ -116,11 +116,11 @@ package TestBed{
 			CreateLeg(-1.0, wheelAnchor);
 			CreateLeg(1.0, wheelAnchor);
 			
-			m_wheel.SetXForm(m_wheel.GetPosition(), 120.0 * Math.PI / 180.0);
+			m_wheel.SetPositionAndAngle(m_wheel.GetPosition(), 120.0 * Math.PI / 180.0);
 			CreateLeg(-1.0, wheelAnchor);
 			CreateLeg(1.0, wheelAnchor);
 			
-			m_wheel.SetXForm(m_wheel.GetPosition(), -120.0 * Math.PI / 180.0);
+			m_wheel.SetPositionAndAngle(m_wheel.GetPosition(), -120.0 * Math.PI / 180.0);
 			CreateLeg(-1.0, wheelAnchor);
 			CreateLeg(1.0, wheelAnchor);
 			

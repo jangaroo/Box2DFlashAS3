@@ -37,12 +37,34 @@ package Box2D.Collision
 		 */
 		public function b2DynamicTree() 
 		{
-			m_root = new b2DynamicTreeNode();
+			m_root = null;
 			
 			// TODO: Maybe allocate some free nodes?
 			m_freeList = null;
 			m_path = 0;
 		}
+		/*
+		public function Dump(node:b2DynamicTreeNode=null, depth:int=0):void
+		{
+			if (!node)
+			{
+				node = m_root;
+			}
+			if (!node) return;
+			for (var i:int = 0; i < depth; i++) s += " ";
+			if (node.userData)
+			{
+				var ud:* = (node.userData as b2Fixture).GetBody().GetUserData();
+				trace(s + ud);
+			}else {
+				trace(s + "-");
+			}
+			if (node.child1)
+				Dump(node.child1, depth + 1);
+			if (node.child2)
+				Dump(node.child2, depth + 1);
+		}
+		*/
 		
 		/**
 		 * Create a proxy. Provide a tight fitting AABB and a userData.
@@ -53,15 +75,16 @@ package Box2D.Collision
 			
 			// Fatten the aabb.
 			var center:b2Vec2 = aabb.GetCenter();
-			var extentsX:Number = b2_fatAABBFactor.x * (aabb.upperBound.x - aabb.lowerBound.x) / 2;
-			var extentsY:Number = b2_fatAABBFactor.y * (aabb.upperBound.y - aabb.lowerBound.y) / 2;
+			var extentsX:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.x - aabb.lowerBound.x) / 2;
+			var extentsY:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.y - aabb.lowerBound.y) / 2;
 			node.aabb.lowerBound.x = center.x - extentsX;
 			node.aabb.lowerBound.y = center.y - extentsY;
 			node.aabb.upperBound.x = center.x + extentsX;
 			node.aabb.upperBound.y = center.y + extentsY;
 			
-			InsertLeaf(node);
+			node.userData = userData;
 			
+			InsertLeaf(node);
 			return node;
 		}
 		
@@ -80,23 +103,23 @@ package Box2D.Collision
 		 * then the proxy is removed from the tree and re-inserted. Otherwise
 		 * the function returns immediately.
 		 */
-		public function MoveProxy(proxy:b2DynamicTreeNode):void
+		public function MoveProxy(proxy:b2DynamicTreeNode, aabb:b2AABB):Boolean
 		{
-			//b2Settings.b2Assert(proxy.IsLeaf());
+			b2Settings.b2Assert(proxy.IsLeaf());
 			RemoveLeaf(proxy);
 			
 			// Fatten the aabb.
 			var center:b2Vec2 = aabb.GetCenter();
-			var extentsX:Number = b2_fatAABBFactor.x * (aabb.upperBound.x - aabb.lowerBound.x) / 2;
-			var extentsY:Number = b2_fatAABBFactor.y * (aabb.upperBound.y - aabb.lowerBound.y) / 2;
-			node.aabb.lowerBound.x = center.x - extentsX;
-			node.aabb.lowerBound.y = center.y - extentsY;
-			node.aabb.upperBound.x = center.x + extentsX;
-			node.aabb.upperBound.y = center.y + extentsY;
+			var extentsX:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.x - aabb.lowerBound.x) / 2;
+			var extentsY:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.y - aabb.lowerBound.y) / 2;
+			proxy.aabb.lowerBound.x = center.x - extentsX;
+			proxy.aabb.lowerBound.y = center.y - extentsY;
+			proxy.aabb.upperBound.x = center.x + extentsX;
+			proxy.aabb.upperBound.y = center.y + extentsY;
 			
-			InsertLeaf(node);
 			
-			return node;
+			InsertLeaf(proxy);
+			return true;
 		}
 		
 		/**
@@ -122,13 +145,15 @@ package Box2D.Collision
 				InsertLeaf(node);
 			}
 		}
-		/**
-		 * Get proxy user data.
-		 * @return the proxy user data or NULL if the id is invalid.
-		 */
-		public function GetProxy(proxy:b2DynamicTreeNode):*
+		
+		public function GetFatAABB(proxy:b2DynamicTreeNode):b2AABB
 		{
-			if (!proxy) return null;
+			return proxy.aabb;
+		}
+
+		/// Get user data from a proxy. Returns null if the proxy is invalid.
+		public function GetUserData(proxy:b2DynamicTreeNode):*
+		{
 			return proxy.userData;
 		}
 		
@@ -136,7 +161,8 @@ package Box2D.Collision
 		 * Query an AABB for overlapping proxies. The callback
 		 * is called for each proxy that overlaps the supplied AABB.
 		 * The callback should match function signature
-		 * <code>fuction callback(aabb:b2AABB, userData:*):void</code>
+		 * <code>fuction callback(proxy:b2DynamicTreeNode):Boolean</code>
+		 * and should return false to trigger premature termination.
 		 */
 		public function Query(callback:Function, aabb:b2AABB):void
 		{
@@ -152,16 +178,18 @@ package Box2D.Collision
 			{
 				var node:b2DynamicTreeNode = stack[--count];
 				
-				if (b2TestOverlap(node.aabb, aabb))
+				if (node.aabb.TestOverlap(aabb))
 				{
 					if (node.IsLeaf())
 					{
-						callback(aabb, node.userData);
+						var proceed:Boolean = callback(node);
+						if (!proceed)
+							return;
 					}
 					else
 					{
 						stack[count++] = node.child1;
-						stack[cound++] = node.child2;
+						stack[count++] = node.child2;
 					}
 				}
 			}
@@ -217,7 +245,7 @@ package Box2D.Collision
 			{
 				var node:b2DynamicTreeNode = stack[--count];
 				
-				if (b2TestOverlap(node.aabb, segmentAABB) == false)
+				if (node.aabb.TestOverlap(segmentAABB) == false)
 				{
 					continue;
 				}
@@ -354,7 +382,6 @@ package Box2D.Collision
 				node2.child2 = leaf;
 				sibling.parent = node2;
 				leaf.parent = node2;
-				
 				do
 				{
 					if (node1.aabb.Contains(node2.aabb))
@@ -406,7 +433,7 @@ package Box2D.Collision
 				}
 				else
 				{
-					node2.child2 = sibling;
+					node1.child2 = sibling;
 				}
 				sibling.parent = node1;
 				FreeNode(node2);

@@ -16,23 +16,19 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision{
-	
-	
-/**
-* @private
-*/
-public class b2PairCallback
+package Box2D.Collision 
 {
-	//virtual ~b2PairCallback() {}
-
-	// This returns the new pair user data.
-	public virtual function PairAdded(proxyUserData1:*, proxyUserData2:*):*{return null};
-
-	// This should free the pair's user data. In extreme circumstances, it is possible
-	// this will be called with null pairUserData because the pair never existed.
-	public virtual function PairRemoved(proxyUserData1:*, proxyUserData2:*, pairUserData:*) : void{};
-};
+import Box2D.Common.Math.b2Sweep;
 	
+	/// Inpute parameters for b2TimeOfImpact
+	public class b2TOIInput 
+	{
+		public var proxyA:b2DistanceProxy;
+		public var proxyB:b2DistanceProxy;
+		public var sweepA:b2Sweep;
+		public var sweepB:b2Sweep;
+		public var tolerance:Number;
+		
+	}
 	
 }

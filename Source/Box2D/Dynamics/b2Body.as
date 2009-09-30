@@ -19,6 +19,7 @@
 package Box2D.Dynamics{
 
 
+import Box2D.Collision.IBroadPhase;
 import Box2D.Dynamics.*;
 import Box2D.Dynamics.Controllers.b2ControllerEdge;
 import Box2D.Dynamics.Joints.*;
@@ -55,21 +56,21 @@ public class b2Body
 	}
 	
 	/**
-	* Creates a shape and attach it to this body.
-	* @param shapeDef the shape definition.
-	* @warning This function is locked during callbacks.
-	*/
-	public function CreateShape(def:b2ShapeDef) : b2Shape{
-		//b2Settings.b2Assert(m_world.m_lock == false);
-		if (m_world.m_lock == true)
+	 * Creates a fixture and attach it to this body.
+	 * @param fixtureDef the fixture definition.
+	 * @warning This function is locked during callbacks.
+	 */
+	public function CreateFixture(def:b2FixtureDef) : b2Fixture{
+		//b2Settings.b2Assert(m_world.IsLocked() == false);
+		if (m_world.IsLocked() == true)
 		{
 			return null;
 		}
 		
-		
 		// TODO: Decide on a better place to initialize edgeShapes. (b2Shape::Create() can't
 		//       return more than one shape to add to parent body... maybe it should add
 		//       shapes directly to the body instead of returning them?)
+		/*
 		if (def.type == b2Shape.e_edgeShape) {
 			var edgeDef: b2EdgeChainDef = def as b2EdgeChainDef;
 			var v1: b2Vec2;
@@ -111,73 +112,101 @@ public class b2Body
 			}
 			if (edgeDef.isALoop) connectEdges(s1, s0, angle);
 			return s0;
-		}
+		}*/
 		
-		var s:b2Shape = b2Shape.Create(def, m_world.m_blockAllocator);
+		var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
 		
-		s.m_next = m_shapeList;
-		m_shapeList = s;
-		++m_shapeCount;
+		var fixture:b2Fixture = new b2Fixture();
+		fixture.Create(broadPhase, this, m_xf, def);
 		
-		s.m_body = this;
+		fixture.m_next = m_fixtureList;
+		m_fixtureList = fixture;
+		++m_fixtureCount;
 		
-		// Add the shape to the world's broad-phase.
-		s.CreateProxy(m_world.m_broadPhase, m_xf);
+		fixture.m_body = this;
 		
-		// Compute the sweep radius for CCD.
-		s.UpdateSweepRadius(m_sweep.localCenter);
+		// Let the world know we have a new fixture
+		m_world.m_flags |= b2World.e_newFixture;
 		
-		return s;
+		return fixture;
 	}
 
-	/**
-	* Destroy a shape. This removes the shape from the broad-phase and
-	* therefore destroys any contacts associated with this shape. All shapes
-	* attached to a body are implicitly destroyed when the body is destroyed.
-	* @param shape the shape to be removed.
-	* @warning This function is locked during callbacks.
-	*/
-	public function DestroyShape(s:b2Shape) : void{
-		//b2Settings.b2Assert(m_world.m_lock == false);
-		if (m_world.m_lock == true)
+	/// Creates a fixture from a shape and attach it to this body.
+	/// This is a convenience function. Use b2FixtureDef if you need to set parameters
+	/// like friction, restitution, user data, or filtering.
+	/// @param shape the shape to be cloned.
+	/// @param density the shape density (set to zero for static bodies).
+	/// @warning This function is locked during callbacks.
+	public function CreateFixture2(shape:b2Shape, density:Number=0.0):b2Fixture
+	{
+		var def:b2FixtureDef = new b2FixtureDef();
+		def.shape = shape;
+		def.density = density;
+		
+		return CreateFixture(def);
+	}
+	
+	/// Destroy a fixture. This removes the fixture from the broad-phase and
+	/// therefore destroys any contacts associated with this fixture. All fixtures
+	/// attached to a body are implicitly destroyed when the body is destroyed.
+	/// @param fixture the fixture to be removed.
+	/// @warning This function is locked during callbacks.
+	public function DestroyFixture(fixture:b2Fixture) : void{
+		//b2Settings.b2Assert(m_world.IsLocked() == false);
+		if (m_world.IsLocked() == true)
 		{
 			return;
 		}
 		
-		//b2Settings.b2Assert(s.m_body == this);
-		s.DestroyProxy(m_world.m_broadPhase);
-		
-		//b2Settings.b2Assert(m_shapeCount > 0);
-		//b2Shape** node = &m_shapeList;
-		var node:b2Shape = m_shapeList;
-		var ppS:b2Shape = null; // Fix pointer-pointer stuff
+		//b2Settings.b2Assert(m_fixtureCount > 0);
+		//b2Fixture** node = &m_fixtureList;
+		var node:b2Fixture = m_fixtureList;
+		var ppF:b2Fixture = null; // Fix pointer-pointer stuff
 		var found:Boolean = false;
 		while (node != null)
 		{
-			if (node == s)
+			if (node == fixture)
 			{
-				if (ppS)
-					ppS.m_next = s.m_next;
+				if (ppF)
+					ppF.m_next = fixture.m_next;
 				else
-					m_shapeList = s.m_next;
-				//node = s.m_next;
+					m_fixtureList = fixture.m_next;
+				//node = fixture.m_next;
 				found = true;
 				break;
 			}
 			
-			ppS = node;
+			ppF = node;
 			node = node.m_next;
 		}
 		
 		// You tried to remove a shape that is not attached to this body.
 		//b2Settings.b2Assert(found);
 		
-		s.m_body = null;
-		s.m_next = null;
+		// Destroy any contacts associated with the fixture.
+		var edge:b2ContactEdge = m_contactList;
+		while (edge)
+		{
+			var c:b2Contact = edge.contact;
+			edge = edge.next;
+			
+			var fixtureA:b2Fixture = c.GetFixtureA();
+			var fixtureB:b2Fixture = c.GetFixtureB();
+			if (fixture == fixtureA || fixture == fixtureB)
+			{
+				// This destros the contact and removes it from
+				// this body's contact list
+				m_world.m_contactManager.Destroy(c);
+			}
+		}
 		
-		--m_shapeCount;
+		var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
 		
-		b2Shape.Destroy(s, m_world.m_blockAllocator);
+		fixture.Destroy( broadPhase );
+		fixture.m_body = null;
+		fixture.m_next = null;
+		
+		--m_fixtureCount;
 	}
 
 	/**
@@ -186,11 +215,11 @@ public class b2Body
 	* The inertia tensor is assumed to be relative to the center of mass.
 	* @param massData the mass properties.
 	*/
-	public function SetMass(massData:b2MassData) : void{
-		var s:b2Shape;
+	public function SetMassData(massData:b2MassData) : void{
+		var fixture:b2Fixture;
 		
-		//b2Settings.b2Assert(m_world.m_lock == false);
-		if (m_world.m_lock == true)
+		//b2Settings.b2Assert(m_world.IsLocked() == false);
+		if (m_world.IsLocked() == true)
 		{
 			return;
 		}
@@ -229,12 +258,6 @@ public class b2Body
 		//m_sweep.c0 = m_sweep.c
 		m_sweep.c0.SetV(m_sweep.c);
 		
-		// Update the sweep radii of all child shapes.
-		for (s = m_shapeList; s; s = s.m_next)
-		{
-			s.UpdateSweepRadius(m_sweep.localCenter);
-		}
-
 		var oldType:int = m_type;
 		if (m_invMass == 0.0 && m_invI == 0.0)
 		{
@@ -248,9 +271,9 @@ public class b2Body
 		// If the body type changed, we need to refilter the broad-phase proxies.
 		if (oldType != m_type)
 		{
-			for (s = m_shapeList; s; s = s.m_next)
+			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
 			{
-				s.RefilterProxy(m_world.m_broadPhase, m_xf);
+				ce.contact.FlagForFiltering();
 			}
 		}
 	}
@@ -264,10 +287,10 @@ public class b2Body
 	*/
 	public function SetMassFromShapes() : void{
 		
-		var s:b2Shape;
+		var f:b2Fixture;
 		
-		//b2Settings.b2Assert(m_world.m_lock == false);
-		if (m_world.m_lock == true)
+		//b2Settings.b2Assert(m_world.IsLocked() == false);
+		if (m_world.IsLocked() == true)
 		{
 			return;
 		}
@@ -282,9 +305,9 @@ public class b2Body
 		var centerX:Number = 0.0;
 		var centerY:Number = 0.0;
 		var massData:b2MassData = s_massData;
-		for (s = m_shapeList; s; s = s.m_next)
+		for (f = m_fixtureList; f; f = f.m_next)
 		{
-			s.ComputeMass(massData);
+			f.ComputeMass(massData);
 			m_mass += massData.mass;
 			//center += massData.mass * massData.center;
 			centerX += massData.mass * massData.center.x;
@@ -330,12 +353,6 @@ public class b2Body
 		//m_sweep.c0 = m_sweep.c
 		m_sweep.c0.SetV(m_sweep.c);
 		
-		// Update the sweep radii of all child shapes.
-		for (s = m_shapeList; s; s = s.m_next)
-		{
-			s.UpdateSweepRadius(m_sweep.localCenter);
-		}
-		
 		var oldType:int = m_type;
 		if (m_invMass == 0.0 && m_invI == 0.0)
 		{
@@ -349,9 +366,9 @@ public class b2Body
 		// If the body type changed, we need to refilter the broad-phase proxies.
 		if (oldType != m_type)
 		{
-			for (s = m_shapeList; s; s = s.m_next)
+			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
 			{
-				s.RefilterProxy(m_world.m_broadPhase, m_xf);
+				ce.contact.FlagForFiltering();
 			}
 		}
 	}
@@ -362,22 +379,15 @@ public class b2Body
 	* @param position the new world position of the body's origin (not necessarily
 	* the center of mass).
 	* @param angle the new world rotation angle of the body in radians.
-	* @return false if the movement put a shape outside the world. In this case the
-	* body is automatically frozen.
 	*/
-	public function SetPositionAndAngle(position:b2Vec2, angle:Number) : Boolean{
+	public function SetPositionAndAngle(position:b2Vec2, angle:Number) : void{
 		
-		var s:b2Shape;
+		var f:b2Fixture;
 		
-		//b2Settings.b2Assert(m_world.m_lock == false);
-		if (m_world.m_lock == true)
+		//b2Settings.b2Assert(m_world.IsLocked() == false);
+		if (m_world.IsLocked() == true)
 		{
-			return true;
-		}
-		
-		if (IsFrozen())
-		{
-			return false;
+			return;
 		}
 		
 		m_xf.R.Set(angle);
@@ -399,36 +409,12 @@ public class b2Body
 		
 		m_sweep.a0 = m_sweep.a = angle;
 		
-		var freeze:Boolean = false;
-		for (s = m_shapeList; s; s = s.m_next)
+		var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
+		for (f = m_fixtureList; f; f = f.m_next)
 		{
-			var inRange:Boolean = s.Synchronize(m_world.m_broadPhase, m_xf, m_xf);
-			
-			if (inRange == false)
-			{
-				freeze = true;
-				break;
-			}
+			f.Synchronize(broadPhase, m_xf, m_xf);
 		}
-		
-		if (freeze == true)
-		{
-			m_flags |= e_frozenFlag;
-			m_linearVelocity.SetZero();
-			m_angularVelocity = 0.0;
-			for (s = m_shapeList; s; s = s.m_next)
-			{
-				s.DestroyProxy(m_world.m_broadPhase);
-			}
-			
-			// Failure
-			return false;
-		}
-		
-		// Success
-		m_world.m_broadPhase.Commit();
-		return true;
-		
+		m_world.m_contactManager.FindNewContacts();
 	}
 	
 	/**
@@ -437,12 +423,10 @@ public class b2Body
 	 * Note this is less efficient than the other overload - you should use that
 	 * if the angle is available.
 	 * @param xf the transform of position and angle to set the bdoy to.
-	 * @return false if the movement put a shape outside the world. In this case the
-	 * body is automatically frozen.
 	 */
-	public function SetXForm(xf:b2XForm):Boolean
+	public function SetXForm(xf:b2XForm):void
 	{
-		return SetPositionAndAngle(xf.position, xf.GetAngle());
+		SetPositionAndAngle(xf.position, xf.GetAngle());
 	}
 
 	/**
@@ -793,11 +777,10 @@ public class b2Body
 		m_invI = 0.0;
 		m_type = e_staticType;
 		
-		for (var s:b2Shape = m_shapeList; s; s = s.m_next)
+		for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
 		{
-			s.RefilterProxy(m_world.m_broadPhase, m_xf);
+			ce.contact.FlagForFiltering();
 		}
-		
 	}
 
 	/**
@@ -867,10 +850,10 @@ public class b2Body
 	}
 
 	/**
-	* Get the list of all shapes attached to this body.
+	* Get the list of all fixtures attached to this body.
 	*/
-	public function GetShapeList() : b2Shape{
-		return m_shapeList;
+	public function GetFixtureList() : b2Fixture{
+		return m_fixtureList;
 	}
 
 	/**
@@ -885,6 +868,10 @@ public class b2Body
 	 */
 	public function GetControllerList() : b2ControllerEdge {
 		return m_controllerList;
+	}
+	
+	public function GetContactList():b2ContactEdge {
+		return m_contactList;
 	}
 
 	/**
@@ -925,7 +912,7 @@ public class b2Body
 	 * @private
 	 */
 	public function b2Body(bd:b2BodyDef, world:b2World){
-		//b2Settings.b2Assert(world.m_lock == false);
+		//b2Settings.b2Assert(world.IsLocked() == false);
 		
 		m_flags = 0;
 		
@@ -1019,8 +1006,8 @@ public class b2Body
 	
 		m_userData = bd.userData;
 		
-		m_shapeList = null;
-		m_shapeCount = 0;
+		m_fixtureList = null;
+		m_fixtureCount = 0;
 	}
 	
 	// Destructor
@@ -1029,7 +1016,7 @@ public class b2Body
 	//
 	static private var s_xf1:b2XForm = new b2XForm();
 	//
-	b2internal function SynchronizeShapes() : Boolean{
+	b2internal function SynchronizeFixtures() : void{
 		
 		var xf1:b2XForm = s_xf1;
 		xf1.R.Set(m_sweep.a0);
@@ -1039,35 +1026,12 @@ public class b2Body
 		xf1.position.x = m_sweep.c0.x - (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
 		xf1.position.y = m_sweep.c0.y - (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
 		
-		var s:b2Shape;
-		
-		var inRange:Boolean = true;
-		for (s = m_shapeList; s; s = s.m_next)
+		var f:b2Fixture;
+		var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
+		for (f = m_fixtureList; f; f = f.m_next)
 		{
-			inRange = s.Synchronize(m_world.m_broadPhase, xf1, m_xf);
-			if (inRange == false)
-			{
-				break;
-			}
+			f.Synchronize(broadPhase, xf1, m_xf);
 		}
-		
-		if (inRange == false)
-		{
-			m_flags |= e_frozenFlag;
-			m_linearVelocity.SetZero();
-			m_angularVelocity = 0.0;
-			for (s = m_shapeList; s; s = s.m_next)
-			{
-				s.DestroyProxy(m_world.m_broadPhase);
-			}
-			
-			// Failure
-			return false;
-		}
-		
-		// Success
-		return true;
-		
 	}
 
 	b2internal function SynchronizeTransform() : void{
@@ -1118,8 +1082,8 @@ public class b2Body
 	b2internal var m_prev:b2Body;
 	b2internal var m_next:b2Body;
 
-	b2internal var m_shapeList:b2Shape;
-	b2internal var m_shapeCount:int;
+	b2internal var m_fixtureList:b2Fixture;
+	b2internal var m_fixtureCount:int;
 	
 	b2internal var m_controllerList:b2ControllerEdge;
 	b2internal var m_controllerCount:int;

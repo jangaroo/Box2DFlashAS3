@@ -38,81 +38,31 @@ use namespace b2internal;
 */
 public class b2Shape
 {
+	
+	/// Clone the shape
+	virtual public function Copy():b2Shape
+	{
+		//var s:b2Shape = new b2Shape();
+		//s.Set(this);
+		//return s;
+		return null; // Abstract type
+	}
+	
+	/// Assign the properties of anther shape to this
+	virtual public function Set(other:b2Shape):void
+	{
+		//Don't copy m_type?
+		//m_type = other.m_type;
+		m_radius = other.m_radius;
+	}
+	
 	/**
 	* Get the type of this shape. You can use this to down cast to the concrete shape.
 	* @return the shape type.
 	*/
-	public function GetType() : int{
+	public function GetType() : int
+	{
 		return m_type;
-	}
-
-	/**
-	* Is this shape a sensor (non-solid)?
-	* @return the true if the shape is a sensor.
-	*/
-	public function IsSensor() : Boolean
-	{
-		return m_isSensor;
-	}
-
-	/**
-	* Set the if the object is a sensor. You must call b2World.Refilter to correct
-	* existing contacts/non-contacts.
-	* @see Box2D.Dynamics.b2World#Refilter()
-	*/
-	public function SetSensor(sensor:Boolean) : void
-	{
-		m_isSensor = sensor;
-	}
-
-	/**
-	* Set the contact filtering data. You must call b2World.Refilter to correct
-	* existing contacts/non-contacts.
-	* @see Box2D.Dynamics.b2World#Refilter()
-	*/
-	public function SetFilterData(filter:b2FilterData) : void
-	{
-		m_filter = filter.Copy();
-	}
-
-	/**
-	* Get the contact filtering data.
-	*/
-	public function GetFilterData() : b2FilterData
-	{
-		return m_filter.Copy();
-	}
-
-	/**
-	* Get the parent body of this shape. This is NULL if the shape is not attached.
-	* @return the parent body.
-	*/
-	public function GetBody() : b2Body{
-		return m_body;
-	}
-
-	/**
-	* Get the next shape in the parent body's shape list.
-	* @return the next shape.
-	*/
-	public function GetNext() : b2Shape{
-		return m_next;
-	}
-
-	/**
-	* Get the user data that was assigned in the shape definition. Use this to
-	* store your application specific data.
-	*/
-	public function GetUserData() : *{
-		return m_userData;
-	}
-
-	/**
-	* Set the user data. Use this to store your application specific data.
-	*/
-	public function SetUserData(data:*) : void
-	{
-		m_userData = data;
 	}
 
 	/**
@@ -150,21 +100,11 @@ public class b2Shape
 	public virtual function  ComputeAABB(aabb:b2AABB, xf:b2XForm) : void {};
 
 	/**
-	* Given two transforms, compute the associated swept axis aligned bounding box for this shape.
-	* @param aabb returns the axis aligned box.
-	* @param xf1 the starting shape world transform.
-	* @param xf2 the ending shape world transform.
-	*/
-	public virtual function  ComputeSweptAABB(	aabb:b2AABB,
-									xf1:b2XForm,
-									xf2:b2XForm) : void {};
-
-	/**
 	* Compute the mass properties of this shape using its dimensions and density.
 	* The inertia tensor is computed about the local origin, not the centroid.
 	* @param massData returns the mass data for this shape.
 	*/
-	public virtual function  ComputeMass(massData:b2MassData) : void { };
+	public virtual function ComputeMass(massData:b2MassData, density:Number) : void { };
 	
 	/**
 	 * Compute the volume and centroid of this shape intersected with a half plane
@@ -179,231 +119,21 @@ public class b2Shape
 				offset:Number,
 				xf:b2XForm,
 				c:b2Vec2):Number { return 0; };
-
-	/**
-	* Get the maximum radius about the parent body's center of mass.
-	*/
-	public function GetSweepRadius() : Number
-	{
-		return m_sweepRadius;
-	}
-
-	/**
-	* Get the coefficient of friction.
-	*/
-	public function GetFriction() : Number
-	{
-		return m_friction;
-	}
-	
-	/**
-	 * Set the coefficient of friction.
-	 */
-	public function SetFriction(friction:Number) : void
-	{
-		m_friction = friction;
-	}
-
-	/**
-	* Get the coefficient of restitution.
-	*/
-	public function GetRestitution() : Number
-	{
-		return m_restitution;
-	}
-	
-	/**
-	 * Set the coefficient of restitution.
-	 */
-	public function SetRestitution(restitution:Number) : void
-	{
-		m_restitution = restitution;
-	}
 	
 	//--------------- Internals Below -------------------
-
-	static b2internal function Create(def:b2ShapeDef, allocator:*) : b2Shape
-	{
-		switch (def.type)
-		{
-		case e_circleShape:
-			{
-				//void* mem = allocator->Allocate(sizeof(b2CircleShape));
-				return new b2CircleShape(def);
-			}
-		
-		case e_polygonShape:
-			{
-				//void* mem = allocator->Allocate(sizeof(b2PolygonShape));
-				return new b2PolygonShape(def);
-			}
-		
-		default:
-			//b2Settings.b2Assert(false);
-			return null;
-		}
-	}
-	
-	static b2internal function Destroy(shape:b2Shape, allocator:*) : void
-	{
-		switch (shape.m_type)
-		{
-		/*case e_circleShape:
-			//s->~b2Shape();
-			//allocator->Free(s, sizeof(b2CircleShape));
-			break;
-		
-		case e_polygonShape:
-			//s->~b2Shape();
-			//allocator->Free(s, sizeof(b2PolygonShape));
-			break;*/
-		
-		case e_edgeShape:
-			var edge: b2EdgeShape = shape as b2EdgeShape;
-			if (edge.m_nextEdge != null) edge.m_nextEdge.m_prevEdge = null;
-			if (edge.m_prevEdge != null) edge.m_prevEdge.m_nextEdge = null;
-			//s->~b2Shape();
-			//allocator->Free(s, sizeof(b2EdgeShape));
-			break;
-
-		default:
-			//b2Settings.b2Assert(false);
-		}
-	}
-
 	/**
 	 * @private
 	 */
-	public function b2Shape(def:b2ShapeDef){
-		
-		m_userData = def.userData;
-		m_friction = def.friction;
-		m_restitution = def.restitution;
-		m_density = def.density;
-		m_body = null;
-		m_sweepRadius = 0.0;
-		
-		m_next = null;
-		
-		m_proxy = null;
-		
-		m_filter = def.filter.Copy();
-		
-		m_isSensor = def.isSensor;
-		
+	public function b2Shape()
+	{
+		m_type = e_unknownShape;
+		m_radius = b2Settings.b2_linearSlop;
 	}
 	
 	//virtual ~b2Shape();
-
-	//
-	static private var s_proxyAABB:b2AABB = new b2AABB();
-	b2internal function CreateProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
-		
-		//b2Settings.b2Assert(m_proxyId == b2_nullProxy);
-		
-		var aabb:b2AABB = s_proxyAABB;
-		ComputeAABB(aabb, transform);
-		
-		var inRange:Boolean = broadPhase.InRange(aabb);
-		
-		// You are creating a shape outside the world box.
-		//b2Settings.b2Assert(inRange);
-		
-		if (inRange)
-		{
-			m_proxy = broadPhase.CreateProxy(aabb, this);
-		}
-		else
-		{
-			m_proxy = null;
-		}
-		
-	}
 	
-	b2internal function DestroyProxy(broadPhase:b2BroadPhase) : void{
-		
-		if (m_proxy)
-		{
-			broadPhase.DestroyProxy(m_proxy);
-			m_proxy = null;
-		}
-		
-	}
-	
-	//
-	static private var s_syncAABB:b2AABB = new b2AABB();
-	//
-	b2internal function Synchronize(broadPhase:b2BroadPhase, transform1:b2XForm, transform2:b2XForm) : Boolean{
-		
-		if (m_proxy == null)
-		{	
-			return false;
-		}
-		
-		// Compute an AABB that covers the swept shape (may miss some rotation effect).
-		var aabb:b2AABB = s_syncAABB;
-		ComputeSweptAABB(aabb, transform1, transform2);
-		
-		if (broadPhase.InRange(aabb))
-		{
-			broadPhase.MoveProxy(m_proxy, aabb);
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-		
-	}
-	
-	static private var s_resetAABB:b2AABB = new b2AABB();
-	b2internal function RefilterProxy(broadPhase:b2BroadPhase, transform:b2XForm) : void{
-		
-		if (m_proxy == null)
-		{
-			return;
-		}
-		
-		broadPhase.DestroyProxy(m_proxy);
-		
-		var aabb:b2AABB = s_resetAABB;
-		ComputeAABB(aabb, transform);
-		
-		var inRange:Boolean = broadPhase.InRange(aabb);
-		
-		if (inRange)
-		{
-			m_proxy = broadPhase.CreateProxy(aabb, this);
-		}
-		else
-		{
-			m_proxy = null;
-		}
-		
-	}
-
-	b2internal virtual function UpdateSweepRadius(center:b2Vec2) : void{};
-
 	b2internal var m_type:int;
-	b2internal var m_next:b2Shape;
-	b2internal var m_body:b2Body;
-
-	// Sweep radius relative to the parent body's center of mass.
-	b2internal var m_sweepRadius:Number;
-
-	b2internal var m_density:Number;
-	b2internal var m_friction:Number;
-	b2internal var m_restitution:Number;
-
-	private var m_proxy:b2Proxy;
-	private var m_filter:b2FilterData;
-
-	private var m_isSensor:Boolean;
-
-	private var m_userData:*;
-
-	
-	
+	b2internal var m_radius:Number;
 	
 	/**
 	* The various collision shape types supported by Box2D.
@@ -424,8 +154,6 @@ public class b2Shape
 		static public const e_missCollide:int = 0;
 		/** Return value for TestSegment indicating that the segment starting point, p1, is already inside the shape. */
 		static public const e_startsInsideCollide:int = -1;
-	
-	
 };
 
 	

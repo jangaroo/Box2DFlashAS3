@@ -65,33 +65,36 @@ package TestBed{
 			dbgDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 			m_world.SetDebugDraw(dbgDraw);
 			
+			m_world.SetWarmStarting(false);
+			m_world.SetContinuousPhysics(false);
+			
 			
 			// Create border of boxes
-			var wallSd:b2PolygonDef = new b2PolygonDef();
+			var wall:b2PolygonShape= new b2PolygonShape();
 			var wallBd:b2BodyDef = new b2BodyDef();
 			var wallB:b2Body;
 			
 			// Left
-			wallBd.position.Set(-95 / m_physScale, 360/m_physScale/2);
-			wallSd.SetAsBox(100/m_physScale, 400/m_physScale/2);
+			wallBd.position.Set( -95 / m_physScale, 360 / m_physScale / 2);
+			wall.SetAsBox(100/m_physScale, 400/m_physScale/2);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateShape(wallSd);
+			wallB.CreateFixture2(wall);
 			wallB.SetMassFromShapes();
 			// Right
-			wallBd.position.Set((640+95) / m_physScale, 360/m_physScale/2);
+			wallBd.position.Set((640 + 95) / m_physScale, 360 / m_physScale / 2);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateShape(wallSd);
+			wallB.CreateFixture2(wall);
 			wallB.SetMassFromShapes();
 			// Top
-			wallBd.position.Set(640/m_physScale/2, -95/m_physScale);
-			wallSd.SetAsBox(680/m_physScale/2, 100/m_physScale);
+			wallBd.position.Set(640 / m_physScale / 2, -95 / m_physScale);
+			wall.SetAsBox(680/m_physScale/2, 100/m_physScale);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateShape(wallSd);
+			wallB.CreateFixture2(wall);
 			wallB.SetMassFromShapes();
 			// Bottom
-			wallBd.position.Set(640/m_physScale/2, (360+95)/m_physScale);
+			wallBd.position.Set(640 / m_physScale / 2, (360 + 95) / m_physScale);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateShape(wallSd);
+			wallB.CreateFixture2(wall);
 			wallB.SetMassFromShapes();
 		}
 		
@@ -109,6 +112,7 @@ package TestBed{
 			Main.m_fpsCounter.updatePhys(physStart);
 			
 			// Render
+			m_world.DrawDebugData();
 			// joints
 			/*for (var jj:b2Joint = m_world.m_jointList; jj; jj = jj.m_next){
 				//DrawJoint(jj);
@@ -225,31 +229,27 @@ package TestBed{
 		// GetBodyAtMouse
 		//======================
 		private var mousePVec:b2Vec2 = new b2Vec2();
-		public function GetBodyAtMouse(includeStatic:Boolean=false):b2Body{
+		public function GetBodyAtMouse(includeStatic:Boolean = false):b2Body {
 			// Make a small box.
 			mousePVec.Set(mouseXWorldPhys, mouseYWorldPhys);
 			var aabb:b2AABB = new b2AABB();
 			aabb.lowerBound.Set(mouseXWorldPhys - 0.001, mouseYWorldPhys - 0.001);
 			aabb.upperBound.Set(mouseXWorldPhys + 0.001, mouseYWorldPhys + 0.001);
-			
-			// Query the world for overlapping shapes.
-			var k_maxCount:int = 10;
-			var shapes:Array = new Array();
-			var count:int = m_world.Query(aabb, shapes, k_maxCount);
 			var body:b2Body = null;
-			for (var i:int = 0; i < count; ++i)
+			// Query the world for overlapping shapes.
+			function GetBodyCallback(fixture:b2Fixture):void
 			{
-				if (shapes[i].GetBody().IsStatic() == false || includeStatic)
+				var shape:b2Shape = fixture.GetShape();
+				if (fixture.GetBody().IsStatic() == false || includeStatic)
 				{
-					var tShape:b2Shape = shapes[i] as b2Shape;
-					var inside:Boolean = tShape.TestPoint(tShape.GetBody().GetXForm(), mousePVec);
+					var inside:Boolean = shape.TestPoint(fixture.GetBody().GetXForm(), mousePVec);
 					if (inside)
 					{
-						body = tShape.GetBody();
-						break;
+						body = fixture.GetBody();
 					}
 				}
 			}
+			m_world.Query(GetBodyCallback, aabb);
 			return body;
 		}
 		

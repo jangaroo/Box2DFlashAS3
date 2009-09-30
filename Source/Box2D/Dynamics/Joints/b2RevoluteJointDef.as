@@ -62,9 +62,9 @@ public class b2RevoluteJointDef extends b2JointDef
 	* Initialize the bodies, anchors, and reference angle using the world
 	* anchor.
 	*/
-	public function Initialize(b1:b2Body, b2:b2Body, anchor:b2Vec2) : void{
-		body1 = b1;
-		body2 = b2;
+	public function Initialize(bA:b2Body, bB:b2Body, anchor:b2Vec2) : void{
+		body1 = bA;
+		body2 = bB;
 		localAnchor1 = body1.GetLocalPoint(anchor);
 		localAnchor2 = body2.GetLocalPoint(anchor);
 		referenceAngle = body2.GetAngle() - body1.GetAngle();

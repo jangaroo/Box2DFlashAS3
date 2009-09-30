@@ -34,21 +34,12 @@ public class b2Sweep
 	* Get the interpolated transform at a specific time.
 	* @param alpha is a factor in [0,1], where 0 indicates t0.
 	*/
-	public function GetXForm2(xf:b2XForm, alpha:Number):void
+	public function GetTransform(xf:b2XForm, alpha:Number):void
 	{
-		// center = p + R * localCenter
-		if (1.0 - t0 > Number.MIN_VALUE)
-		{
-			xf.position.x = (1.0 - alpha) * c0.x + alpha * c.x;
-			xf.position.y = (1.0 - alpha) * c0.y + alpha * c.y;
-			var angle:Number = (1.0 - alpha) * a0 + alpha * a;
-			xf.R.Set(angle);
-		}
-		else
-		{
-			xf.position.SetV(c);
-			xf.R.Set(a);
-		}
+		xf.position.x = (1.0 - alpha) * c0.x + alpha * c.x;
+		xf.position.y = (1.0 - alpha) * c0.y + alpha * c.y;
+		var angle:Number = (1.0 - alpha) * a0 + alpha * a;
+		xf.R.Set(angle);
 		
 		// Shift to origin
 		//xf->position -= b2Mul(xf->R, localCenter);
@@ -57,35 +48,6 @@ public class b2Sweep
 		xf.position.y -= (tMat.col1.y * localCenter.x + tMat.col2.y * localCenter.y);
 	}
 	
-	/**
-	* Get the interpolated transform at a specific time.
-	* @param t the normalized time in [0,1].
-	*/
-	public function GetXForm(xf:b2XForm, t:Number) : void{
-		
-		// center = p + R * localCenter
-		if (1.0 - t0 > Number.MIN_VALUE)
-		{
-			var alpha:Number = (t - t0) / (1.0 - t0);
-			xf.position.x = (1.0 - alpha) * c0.x + alpha * c.x;
-			xf.position.y = (1.0 - alpha) * c0.y + alpha * c.y;
-			var angle:Number = (1.0 - alpha) * a0 + alpha * a;
-			xf.R.Set(angle);
-		}
-		else
-		{
-			xf.position.SetV(c);
-			xf.R.Set(a);
-		}
-		
-		// Shift to origin
-		//xf->position -= b2Mul(xf->R, localCenter);
-		var tMat:b2Mat22 = xf.R;
-		xf.position.x -= (tMat.col1.x * localCenter.x + tMat.col2.x * localCenter.y);
-		xf.position.y -= (tMat.col1.y * localCenter.x + tMat.col2.y * localCenter.y);
-		
-	}
-
 	/**
 	* Advance the sweep forward, yielding a new initial state.
 	* @param t the new initial time.

@@ -97,11 +97,11 @@ public class b2LineJoint extends b2Joint
 {
 	/** @inheritDoc */
 	public override function GetAnchor1():b2Vec2{
-		return m_body1.GetWorldPoint(m_localAnchor1);
+		return m_bodyA.GetWorldPoint(m_localAnchor1);
 	}
 	/** @inheritDoc */
 	public override function GetAnchor2():b2Vec2{
-		return m_body2.GetWorldPoint(m_localAnchor2);
+		return m_bodyB.GetWorldPoint(m_localAnchor2);
 	}
 	/** @inheritDoc */
 	public override function GetReactionForce(inv_dt:Number) : b2Vec2
@@ -121,18 +121,18 @@ public class b2LineJoint extends b2Joint
 	* Get the current joint translation, usually in meters.
 	*/
 	public function GetJointTranslation():Number{
-		var b1:b2Body = m_body1;
-		var b2:b2Body = m_body2;
+		var bA:b2Body = m_bodyA;
+		var bB:b2Body = m_bodyB;
 		
 		var tMat:b2Mat22;
 		
-		var p1:b2Vec2 = b1.GetWorldPoint(m_localAnchor1);
-		var p2:b2Vec2 = b2.GetWorldPoint(m_localAnchor2);
+		var p1:b2Vec2 = bA.GetWorldPoint(m_localAnchor1);
+		var p2:b2Vec2 = bB.GetWorldPoint(m_localAnchor2);
 		//var d:b2Vec2 = b2Math.SubtractVV(p2, p1);
 		var dX:Number = p2.x - p1.x;
 		var dY:Number = p2.y - p1.y;
-		//b2Vec2 axis = b1->GetWorldVector(m_localXAxis1);
-		var axis:b2Vec2 = b1.GetWorldVector(m_localXAxis1);
+		//b2Vec2 axis = bA->GetWorldVector(m_localXAxis1);
+		var axis:b2Vec2 = bA.GetWorldVector(m_localXAxis1);
 		
 		//float32 translation = b2Dot(d, axis);
 		var translation:Number = axis.x*dX + axis.y*dY;
@@ -143,42 +143,42 @@ public class b2LineJoint extends b2Joint
 	* Get the current joint translation speed, usually in meters per second.
 	*/
 	public function GetJointSpeed():Number{
-		var b1:b2Body = m_body1;
-		var b2:b2Body = m_body2;
+		var bA:b2Body = m_bodyA;
+		var bB:b2Body = m_bodyB;
 		
 		var tMat:b2Mat22;
 		
-		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
-		tMat = b1.m_xf.R;
-		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
-		var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+		//b2Vec2 r1 = b2Mul(bA->m_xf.R, m_localAnchor1 - bA->GetLocalCenter());
+		tMat = bA.m_xf.R;
+		var r1X:Number = m_localAnchor1.x - bA.m_sweep.localCenter.x;
+		var r1Y:Number = m_localAnchor1.y - bA.m_sweep.localCenter.y;
 		var tX:Number =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
 		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
 		r1X = tX;
-		//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
-		tMat = b2.m_xf.R;
-		var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
-		var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+		//b2Vec2 r2 = b2Mul(bB->m_xf.R, m_localAnchor2 - bB->GetLocalCenter());
+		tMat = bB.m_xf.R;
+		var r2X:Number = m_localAnchor2.x - bB.m_sweep.localCenter.x;
+		var r2Y:Number = m_localAnchor2.y - bB.m_sweep.localCenter.y;
 		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
 		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
 		r2X = tX;
 		
-		//b2Vec2 p1 = b1->m_sweep.c + r1;
-		var p1X:Number = b1.m_sweep.c.x + r1X;
-		var p1Y:Number = b1.m_sweep.c.y + r1Y;
-		//b2Vec2 p2 = b2->m_sweep.c + r2;
-		var p2X:Number = b2.m_sweep.c.x + r2X;
-		var p2Y:Number = b2.m_sweep.c.y + r2Y;
+		//b2Vec2 p1 = bA->m_sweep.c + r1;
+		var p1X:Number = bA.m_sweep.c.x + r1X;
+		var p1Y:Number = bA.m_sweep.c.y + r1Y;
+		//b2Vec2 p2 = bB->m_sweep.c + r2;
+		var p2X:Number = bB.m_sweep.c.x + r2X;
+		var p2Y:Number = bB.m_sweep.c.y + r2Y;
 		//var d:b2Vec2 = b2Math.SubtractVV(p2, p1);
 		var dX:Number = p2X - p1X;
 		var dY:Number = p2Y - p1Y;
-		//b2Vec2 axis = b1->GetWorldVector(m_localXAxis1);
-		var axis:b2Vec2 = b1.GetWorldVector(m_localXAxis1);
+		//b2Vec2 axis = bA->GetWorldVector(m_localXAxis1);
+		var axis:b2Vec2 = bA.GetWorldVector(m_localXAxis1);
 		
-		var v1:b2Vec2 = b1.m_linearVelocity;
-		var v2:b2Vec2 = b2.m_linearVelocity;
-		var w1:Number = b1.m_angularVelocity;
-		var w2:Number = b2.m_angularVelocity;
+		var v1:b2Vec2 = bA.m_linearVelocity;
+		var v2:b2Vec2 = bB.m_linearVelocity;
+		var w1:Number = bA.m_angularVelocity;
+		var w2:Number = bB.m_angularVelocity;
 		
 		//var speed:Number = b2Math.b2Dot(d, b2Math.b2CrossFV(w1, ax1)) + b2Math.b2Dot(ax1, b2Math.SubtractVV( b2Math.SubtractVV( b2Math.AddVV( v2 , b2Math.b2CrossFV(w2, r2)) , v1) , b2Math.b2CrossFV(w1, r1)));
 		//var b2D:Number = (dX*(-w1 * ax1Y) + dY*(w1 * ax1X));
@@ -200,8 +200,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function EnableLimit(flag:Boolean) : void
 	{
-		m_body1.WakeUp();
-		m_body2.WakeUp();
+		m_bodyA.WakeUp();
+		m_bodyB.WakeUp();
 		m_enableLimit = flag;
 	}
 	/**
@@ -224,8 +224,8 @@ public class b2LineJoint extends b2Joint
 	public function SetLimits(lower:Number, upper:Number) : void
 	{
 		//b2Settings.b2Assert(lower <= upper);
-		m_body1.WakeUp();
-		m_body2.WakeUp();
+		m_bodyA.WakeUp();
+		m_bodyB.WakeUp();
 		m_lowerTranslation = lower;
 		m_upperTranslation = upper;
 	}
@@ -241,8 +241,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function EnableMotor(flag:Boolean) : void
 	{
-		m_body1.WakeUp();
-		m_body2.WakeUp();
+		m_bodyA.WakeUp();
+		m_bodyB.WakeUp();
 		m_enableMotor = flag;
 	}
 	/**
@@ -250,8 +250,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function SetMotorSpeed(speed:Number) : void
 	{
-		m_body1.WakeUp();
-		m_body2.WakeUp();
+		m_bodyA.WakeUp();
+		m_bodyB.WakeUp();
 		m_motorSpeed = speed;
 	}
 	/**
@@ -267,8 +267,8 @@ public class b2LineJoint extends b2Joint
 	*/
 	public function SetMaxMotorForce(force:Number) : void
 	{
-		m_body1.WakeUp();
-		m_body2.WakeUp();
+		m_bodyA.WakeUp();
+		m_bodyB.WakeUp();
 		m_maxMotorForce = force;
 	}
 	/**
@@ -315,42 +315,42 @@ public class b2LineJoint extends b2Joint
 	}
 
 	b2internal override function InitVelocityConstraints(step:b2TimeStep) : void{
-		var b1:b2Body = m_body1;
-		var b2:b2Body = m_body2;
+		var bA:b2Body = m_bodyA;
+		var bB:b2Body = m_bodyB;
 		
 		var tMat:b2Mat22;
 		var tX:Number;
 		
-		m_localCenter1.SetV(b1.GetLocalCenter());
-		m_localCenter2.SetV(b2.GetLocalCenter());
+		m_localCenter1.SetV(bA.GetLocalCenter());
+		m_localCenter2.SetV(bB.GetLocalCenter());
 		
-		var xf1:b2XForm = b1.GetXForm();
-		var xf2:b2XForm = b2.GetXForm();
+		var xf1:b2XForm = bA.GetXForm();
+		var xf2:b2XForm = bB.GetXForm();
 		
 		// Compute the effective masses.
-		//b2Vec2 r1 = b2Mul(b1->m_xf.R, m_localAnchor1 - b1->GetLocalCenter());
-		tMat = b1.m_xf.R;
-		var r1X:Number = m_localAnchor1.x - b1.m_sweep.localCenter.x;
-		var r1Y:Number = m_localAnchor1.y - b1.m_sweep.localCenter.y;
+		//b2Vec2 r1 = b2Mul(bA->m_xf.R, m_localAnchor1 - bA->GetLocalCenter());
+		tMat = bA.m_xf.R;
+		var r1X:Number = m_localAnchor1.x - bA.m_sweep.localCenter.x;
+		var r1Y:Number = m_localAnchor1.y - bA.m_sweep.localCenter.y;
 		tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
 		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
 		r1X = tX;
-		//b2Vec2 r2 = b2Mul(b2->m_xf.R, m_localAnchor2 - b2->GetLocalCenter());
-		tMat = b2.m_xf.R;
-		var r2X:Number = m_localAnchor2.x - b2.m_sweep.localCenter.x;
-		var r2Y:Number = m_localAnchor2.y - b2.m_sweep.localCenter.y;
+		//b2Vec2 r2 = b2Mul(bB->m_xf.R, m_localAnchor2 - bB->GetLocalCenter());
+		tMat = bB.m_xf.R;
+		var r2X:Number = m_localAnchor2.x - bB.m_sweep.localCenter.x;
+		var r2Y:Number = m_localAnchor2.y - bB.m_sweep.localCenter.y;
 		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
 		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
 		r2X = tX;
 		
-		//b2Vec2 d = b2->m_sweep.c + r2 - b1->m_sweep.c - r1;
-		var dX:Number = b2.m_sweep.c.x + r2X - b1.m_sweep.c.x - r1X;
-		var dY:Number = b2.m_sweep.c.y + r2Y - b1.m_sweep.c.y - r1Y;
+		//b2Vec2 d = bB->m_sweep.c + r2 - bA->m_sweep.c - r1;
+		var dX:Number = bB.m_sweep.c.x + r2X - bA.m_sweep.c.x - r1X;
+		var dY:Number = bB.m_sweep.c.y + r2Y - bA.m_sweep.c.y - r1Y;
 		
-		m_invMass1 = b1.m_invMass;
-		m_invMass2 = b2.m_invMass;
-		m_invI1 = b1.m_invI;
-		m_invI2 = b2.m_invI;
+		m_invMass1 = bA.m_invMass;
+		m_invMass2 = bB.m_invMass;
+		m_invI1 = bA.m_invI;
+		m_invI2 = bB.m_invI;
 		
 		// Compute motor Jacobian and effective mass.
 		{
@@ -438,17 +438,17 @@ public class b2LineJoint extends b2Joint
 			var L1:Number = m_impulse.x * m_s1     + (m_motorImpulse + m_impulse.y) * m_a1;
 			var L2:Number = m_impulse.x * m_s2     + (m_motorImpulse + m_impulse.y) * m_a2; 
 
-			//b1->m_linearVelocity -= m_invMass1 * P;
-			b1.m_linearVelocity.x -= m_invMass1 * PX;
-			b1.m_linearVelocity.y -= m_invMass1 * PY;
-			//b1->m_angularVelocity -= m_invI1 * L1;
-			b1.m_angularVelocity -= m_invI1 * L1;
+			//bA->m_linearVelocity -= m_invMass1 * P;
+			bA.m_linearVelocity.x -= m_invMass1 * PX;
+			bA.m_linearVelocity.y -= m_invMass1 * PY;
+			//bA->m_angularVelocity -= m_invI1 * L1;
+			bA.m_angularVelocity -= m_invI1 * L1;
 			
-			//b2->m_linearVelocity += m_invMass2 * P;
-			b2.m_linearVelocity.x += m_invMass2 * PX;
-			b2.m_linearVelocity.y += m_invMass2 * PY;
-			//b2->m_angularVelocity += m_invI2 * L2;
-			b2.m_angularVelocity += m_invI2 * L2;
+			//bB->m_linearVelocity += m_invMass2 * P;
+			bB.m_linearVelocity.x += m_invMass2 * PX;
+			bB.m_linearVelocity.y += m_invMass2 * PY;
+			//bB->m_angularVelocity += m_invI2 * L2;
+			bB.m_angularVelocity += m_invI2 * L2;
 		}
 		else
 		{
@@ -458,13 +458,13 @@ public class b2LineJoint extends b2Joint
 	}
 	
 	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void{
-		var b1:b2Body = m_body1;
-		var b2:b2Body = m_body2;
+		var bA:b2Body = m_bodyA;
+		var bB:b2Body = m_bodyB;
 		
-		var v1:b2Vec2 = b1.m_linearVelocity;
-		var w1:Number = b1.m_angularVelocity;
-		var v2:b2Vec2 = b2.m_linearVelocity;
-		var w2:Number = b2.m_angularVelocity;
+		var v1:b2Vec2 = bA.m_linearVelocity;
+		var w1:Number = bA.m_angularVelocity;
+		var v2:b2Vec2 = bB.m_linearVelocity;
+		var w2:Number = bB.m_angularVelocity;
 		
 		var PX:Number;
 		var PY:Number;
@@ -560,10 +560,10 @@ public class b2LineJoint extends b2Joint
 			w2 += m_invI2 * L2;
 		}
 		
-		b1.m_linearVelocity.SetV(v1);
-		b1.m_angularVelocity = w1;
-		b2.m_linearVelocity.SetV(v2);
-		b2.m_angularVelocity = w2;
+		bA.m_linearVelocity.SetV(v1);
+		bA.m_angularVelocity = w1;
+		bB.m_linearVelocity.SetV(v2);
+		bB.m_angularVelocity = w2;
 	}
 	
 	b2internal override function SolvePositionConstraints(baumgarte:Number ):Boolean
@@ -574,14 +574,14 @@ public class b2LineJoint extends b2Joint
 		var limitC:Number;
 		var oldLimitImpulse:Number;
 		
-		var b1:b2Body = m_body1;
-		var b2:b2Body = m_body2;
+		var bA:b2Body = m_bodyA;
+		var bB:b2Body = m_bodyB;
 		
-		var c1:b2Vec2 = b1.m_sweep.c;
-		var a1:Number = b1.m_sweep.a;
+		var c1:b2Vec2 = bA.m_sweep.c;
+		var a1:Number = bA.m_sweep.a;
 		
-		var c2:b2Vec2 = b2.m_sweep.c;
-		var a2:Number = b2.m_sweep.a;
+		var c2:b2Vec2 = bB.m_sweep.c;
+		var a2:Number = bB.m_sweep.a;
 		
 		var tMat:b2Mat22;
 		var tX:Number;
@@ -706,12 +706,12 @@ public class b2LineJoint extends b2Joint
 		a2 += m_invI2 * L2;
 		
 		// TODO_ERIN remove need for this
-		//b1.m_sweep.c = c1;	//Already done by reference
-		b1.m_sweep.a = a1;
-		//b2.m_sweep.c = c2;	//Already done by reference
-		b2.m_sweep.a = a2;
-		b1.SynchronizeTransform();
-		b2.SynchronizeTransform(); 
+		//bA.m_sweep.c = c1;	//Already done by reference
+		bA.m_sweep.a = a1;
+		//bB.m_sweep.c = c2;	//Already done by reference
+		bB.m_sweep.a = a2;
+		bA.SynchronizeTransform();
+		bB.SynchronizeTransform(); 
 		
 		return linearError <= b2Settings.b2_linearSlop && angularError <= b2Settings.b2_angularSlop;
 		

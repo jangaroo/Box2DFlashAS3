@@ -170,16 +170,37 @@ public class b2AABB
 		}
 	}
 	
+	public function TestOverlap(other:b2AABB):Boolean
+	{
+		var d1X:Number = other.lowerBound.x - upperBound.x;
+		var d1Y:Number = other.lowerBound.y - upperBound.y;
+		var d2X:Number = lowerBound.x - other.upperBound.x;
+		var d2Y:Number = lowerBound.y - other.upperBound.y;
+
+		if (d1X > 0.0 || d1Y > 0.0)
+			return false;
+
+		if (d2X > 0.0 || d2Y > 0.0)
+			return false;
+
+		return true;
+	}
 	
 	/** Combine two AABBs into one. */
 	public static function Combine(aabb1:b2AABB, aabb2:b2AABB):b2AABB
 	{
 		var aabb:b2AABB = new b2AABB();
-		aabb.lowerBound.x = Math.min(aabb1.lowerBound.x, aabb2.lowerBound.x);
-		aabb.lowerBound.y = Math.min(aabb1.lowerBound.y, aabb2.lowerBound.y);
-		aabb.upperBound.x = Math.max(aabb1.upperBound.x, aabb2.upperBound.x);
-		aabb.upperBound.y = Math.max(aabb1.upperBound.y, aabb2.upperBound.y);
+		aabb.Combine(aabb1, aabb2);
 		return aabb;
+	}
+	
+	/** Combine two AABBs into one. */
+	public function Combine(aabb1:b2AABB, aabb2:b2AABB):void
+	{
+		lowerBound.x = Math.min(aabb1.lowerBound.x, aabb2.lowerBound.x);
+		lowerBound.y = Math.min(aabb1.lowerBound.y, aabb2.lowerBound.y);
+		upperBound.x = Math.max(aabb1.upperBound.x, aabb2.upperBound.x);
+		upperBound.y = Math.max(aabb1.upperBound.y, aabb2.upperBound.y);
 	}
 
 	/** The lower vertex */

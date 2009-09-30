@@ -37,14 +37,31 @@ use namespace b2internal;
 */
 public class b2CircleShape extends b2Shape
 {
+	override public function Copy():b2Shape 
+	{
+		var s:b2Shape = new b2CircleShape();
+		s.Set(this);
+		return s;
+	}
+	
+	override public function Set(other:b2Shape):void 
+	{
+		super.Set(other);
+		if (other is b2CircleShape)
+		{
+			var other2:b2CircleShape = other as b2CircleShape;
+			m_p.SetV(other2.m_p);
+		}
+	}
+	
 	/**
 	* @inheritDoc
 	*/
 	public override function TestPoint(transform:b2XForm, p:b2Vec2) : Boolean{
-		//b2Vec2 center = transform.position + b2Mul(transform.R, m_localPosition);
+		//b2Vec2 center = transform.position + b2Mul(transform.R, m_p);
 		var tMat:b2Mat22 = transform.R;
-		var dX:Number = transform.position.x + (tMat.col1.x * m_localPosition.x + tMat.col2.x * m_localPosition.y);
-		var dY:Number = transform.position.y + (tMat.col1.y * m_localPosition.x + tMat.col2.y * m_localPosition.y);
+		var dX:Number = transform.position.x + (tMat.col1.x * m_p.x + tMat.col2.x * m_p.y);
+		var dY:Number = transform.position.y + (tMat.col1.y * m_p.x + tMat.col2.y * m_p.y);
 		//b2Vec2 d = p - center;
 		dX = p.x - dX;
 		dY = p.y - dY;
@@ -61,10 +78,10 @@ public class b2CircleShape extends b2Shape
 						segment:b2Segment,
 						maxLambda:Number) :int
 	{
-		//b2Vec2 position = transform.position + b2Mul(transform.R, m_localPosition);
+		//b2Vec2 position = transform.position + b2Mul(transform.R, m_p);
 		var tMat:b2Mat22 = transform.R;
-		var positionX:Number = transform.position.x + (tMat.col1.x * m_localPosition.x + tMat.col2.x * m_localPosition.y);
-		var positionY:Number = transform.position.y + (tMat.col1.y * m_localPosition.x + tMat.col2.y * m_localPosition.y);
+		var positionX:Number = transform.position.x + (tMat.col1.x * m_p.x + tMat.col2.x * m_p.y);
+		var positionY:Number = transform.position.y + (tMat.col1.y * m_p.x + tMat.col2.y * m_p.y);
 		
 		//b2Vec2 s = segment.p1 - position;
 		var sX:Number = segment.p1.x - positionX;
@@ -118,10 +135,10 @@ public class b2CircleShape extends b2Shape
 	* @inheritDoc
 	*/
 	public override function ComputeAABB(aabb:b2AABB, transform:b2XForm) : void{
-		//b2Vec2 p = transform.position + b2Mul(transform.R, m_localPosition);
+		//b2Vec2 p = transform.position + b2Mul(transform.R, m_p);
 		var tMat:b2Mat22 = transform.R;
-		var pX:Number = transform.position.x + (tMat.col1.x * m_localPosition.x + tMat.col2.x * m_localPosition.y);
-		var pY:Number = transform.position.y + (tMat.col1.y * m_localPosition.x + tMat.col2.y * m_localPosition.y);
+		var pX:Number = transform.position.x + (tMat.col1.x * m_p.x + tMat.col2.x * m_p.y);
+		var pY:Number = transform.position.y + (tMat.col1.y * m_p.x + tMat.col2.y * m_p.y);
 		aabb.lowerBound.Set(pX - m_radius, pY - m_radius);
 		aabb.upperBound.Set(pX + m_radius, pY + m_radius);
 	}
@@ -129,39 +146,13 @@ public class b2CircleShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function ComputeSweptAABB(	aabb:b2AABB,
-							transform1:b2XForm,
-							transform2:b2XForm) : void
-	{
-		var tMat:b2Mat22;
-		//b2Vec2 p1 = transform1.position + b2Mul(transform1.R, m_localPosition);
-		tMat = transform1.R;
-		var p1X:Number = transform1.position.x + (tMat.col1.x * m_localPosition.x + tMat.col2.x * m_localPosition.y);
-		var p1Y:Number = transform1.position.y + (tMat.col1.y * m_localPosition.x + tMat.col2.y * m_localPosition.y);
-		//b2Vec2 p2 = transform2.position + b2Mul(transform2.R, m_localPosition);
-		tMat = transform2.R;
-		var p2X:Number = transform2.position.x + (tMat.col1.x * m_localPosition.x + tMat.col2.x * m_localPosition.y);
-		var p2Y:Number = transform2.position.y + (tMat.col1.y * m_localPosition.x + tMat.col2.y * m_localPosition.y);
-		
-		//b2Vec2 lower = b2Min(p1, p2);
-		//b2Vec2 upper = b2Max(p1, p2);
-		
-		//aabb->lowerBound.Set(lower.x - m_radius, lower.y - m_radius);
-		aabb.lowerBound.Set((p1X < p2X ? p1X : p2X) - m_radius, (p1Y < p2Y ? p1Y : p2Y) - m_radius);
-		//aabb->upperBound.Set(upper.x + m_radius, upper.y + m_radius);
-		aabb.upperBound.Set((p1X > p2X ? p1X : p2X) + m_radius, (p1Y > p2Y ? p1Y : p2Y) + m_radius);
-	}
-
-	/**
-	* @inheritDoc
-	*/
-	public override function ComputeMass(massData:b2MassData) : void{
-		massData.mass = m_density * b2Settings.b2_pi * m_radius * m_radius;
-		massData.center.SetV(m_localPosition);
+	public override function ComputeMass(massData:b2MassData, density:Number) : void{
+		massData.mass = density * b2Settings.b2_pi * m_radius * m_radius;
+		massData.center.SetV(m_p);
 		
 		// inertia about the local origin
-		//massData.I = massData.mass * (0.5 * m_radius * m_radius + b2Dot(m_localPosition, m_localPosition));
-		massData.I = massData.mass * (0.5 * m_radius * m_radius + (m_localPosition.x*m_localPosition.x + m_localPosition.y*m_localPosition.y));
+		//massData.I = massData.mass * (0.5 * m_radius * m_radius + b2Dot(m_p, m_p));
+		massData.I = massData.mass * (0.5 * m_radius * m_radius + (m_p.x*m_p.x + m_p.y*m_p.y));
 	}
 	
 	/**
@@ -173,7 +164,7 @@ public class b2CircleShape extends b2Shape
 			xf:b2XForm,
 			c:b2Vec2):Number
 	{
-		var p:b2Vec2 = b2Math.b2MulX(xf, m_localPosition);
+		var p:b2Vec2 = b2Math.b2MulX(xf, m_p);
 		var l:Number = -(b2Math.b2Dot(normal, p) - offset);
 		
 		if (l < -m_radius + Number.MIN_VALUE)
@@ -204,7 +195,7 @@ public class b2CircleShape extends b2Shape
 	* Get the local position of this circle in its parent body.
 	*/
 	public function GetLocalPosition() : b2Vec2{
-		return m_localPosition;
+		return m_p;
 	}
 
 	/**
@@ -214,37 +205,13 @@ public class b2CircleShape extends b2Shape
 		return m_radius;
 	}
 
-	//--------------- Internals Below -------------------
-
-	/**
-	* @private
-	*/
-	public function b2CircleShape(def:b2ShapeDef){
-		super(def);
-		
-		//b2Settings.b2Assert(def.type == e_circleShape);
-		var circleDef:b2CircleDef = def as b2CircleDef;
-		
+	public function b2CircleShape(){
+		super();
 		m_type = e_circleShape;
-		m_localPosition.SetV(circleDef.localPosition);
-		m_radius = circleDef.radius;
-		
-	}
-
-	b2internal override function UpdateSweepRadius(center:b2Vec2) : void{
-		// Update the sweep radius (maximum radius) as measured from
-		// a local center point.
-		//b2Vec2 d = m_localPosition - center;
-		var dX:Number = m_localPosition.x - center.x;
-		var dY:Number = m_localPosition.y - center.y;
-		dX = Math.sqrt(dX*dX + dY*dY); // length
-		//m_sweepRadius = d.Length() + m_radius - b2_toiSlop;
-		m_sweepRadius = dX + m_radius - b2Settings.b2_toiSlop;
 	}
 
 	// Local position in parent body
-	b2internal var m_localPosition:b2Vec2 = new b2Vec2();
-	b2internal var m_radius:Number;
+	b2internal var m_p:b2Vec2 = new b2Vec2();
 	
 };
 

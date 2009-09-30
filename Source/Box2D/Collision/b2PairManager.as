@@ -46,9 +46,8 @@ public class b2PairManager
 	}
 	//~b2PairManager();
 	
-	public function Initialize(broadPhase:b2BroadPhase, callback:b2PairCallback) : void{
+	public function Initialize(broadPhase:b2BroadPhase) : void{
 		m_broadPhase = broadPhase;
-		m_callback = callback;
 	}
 	
 	/*
@@ -127,7 +126,7 @@ public class b2PairManager
 		}
 	}
 	
-	public function Commit() : void{
+	public function Commit(callback:Function) : void{
 		var i:int;
 		
 		var removeCount:int = 0;
@@ -151,14 +150,14 @@ public class b2PairManager
 				// It is possible a pair was added then removed before a commit. Therefore,
 				// we should be careful not to tell the user the pair was removed when the
 				// the user didn't receive a matching add.
-				if (pair.IsFinal() == true)
-				{
-					m_callback.PairRemoved(proxy1.userData, proxy2.userData, pair.userData);
-				}
+				//if (pair.IsFinal() == true)
+				//{
+				//	m_callback.PairRemoved(proxy1.userData, proxy2.userData, pair.userData);
+				//}
 				
 				// Store the ids so we can actually remove the pair below.
-				m_pairBuffer[removeCount] = pair;
-				++removeCount;
+				//m_pairBuffer[removeCount] = pair;
+				//++removeCount;
 			}
 			else
 			{
@@ -166,17 +165,18 @@ public class b2PairManager
 				
 				if (pair.IsFinal() == false)
 				{
-					pair.userData = m_callback.PairAdded(proxy1.userData, proxy2.userData);
-					pair.SetFinal();
+					//pair.userData = m_callback.PairAdded(proxy1.userData, proxy2.userData);
+					//pair.SetFinal();
+					callback(proxy1.userData, proxy2.userData);
 				}
 			}
 		}
 		
-		for (i = 0; i < removeCount; ++i)
-		{
-			pair = m_pairBuffer[i]
-			RemovePair(pair.proxy1, pair.proxy2);
-		}
+		//for (i = 0; i < removeCount; ++i)
+		//{
+		//	pair = m_pairBuffer[i]
+		//	RemovePair(pair.proxy1, pair.proxy2);
+		//}
 		
 		m_pairBufferCount = 0;
 		
@@ -264,7 +264,6 @@ public class b2PairManager
 
 //public:
 	private var m_broadPhase:b2BroadPhase;
-	private var m_callback:b2PairCallback;
 	b2internal var m_pairs:Array;
 	private var m_freePair:b2Pair;
 	b2internal var m_pairCount:int;

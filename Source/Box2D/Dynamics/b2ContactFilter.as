@@ -38,12 +38,12 @@ public class b2ContactFilter
 {
 
 	/**
-	* Return true if contact calculations should be performed between these two shapes.
+	* Return true if contact calculations should be performed between these two fixtures.
 	* @warning for performance reasons this is only called when the AABBs begin to overlap.
 	*/
-	public virtual function ShouldCollide(shape1:b2Shape, shape2:b2Shape) : Boolean{
-		var filter1:b2FilterData = shape1.GetFilterData();
-		var filter2:b2FilterData = shape2.GetFilterData();
+	public virtual function ShouldCollide(fixtureA:b2Fixture, fixtureB:b2Fixture) : Boolean{
+		var filter1:b2FilterData = fixtureA.GetFilterData();
+		var filter2:b2FilterData = fixtureB.GetFilterData();
 		
 		if (filter1.groupIndex == filter2.groupIndex && filter1.groupIndex != 0)
 		{
@@ -55,18 +55,18 @@ public class b2ContactFilter
 	}
 	
 	/**
-	* Return true if the given shape should be considered for ray intersection.
-	* By default, userData is cast as a b2Shape and collision is resolved according to ShouldCollide
+	* Return true if the given fixture should be considered for ray intersection.
+	* By default, userData is cast as a b2Fixture and collision is resolved according to ShouldCollide
 	* @see ShouldCollide()
 	* @see b2World#Raycast
 	* @param userData	arbitrary data passed from Raycast or RaycastOne
-	* @param shape		the shape that we are testing for filtering
-	* @return a Boolean, with a value of false indicating that this shape should be ignored.
+	* @param fixture		the fixture that we are testing for filtering
+	* @return a Boolean, with a value of false indicating that this fixture should be ignored.
 	*/
-	public virtual function RayCollide(userData:*, shape:b2Shape) : Boolean{
+	public virtual function RayCollide(userData:*, fixture:b2Fixture) : Boolean{
 		if(!userData)
 			return true;
-		return ShouldCollide(userData as b2Shape,shape);
+		return ShouldCollide(userData as b2Fixture,fixture);
 	}
 	
 	static b2internal var b2_defaultFilter:b2ContactFilter = new b2ContactFilter();

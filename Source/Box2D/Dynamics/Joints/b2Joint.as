@@ -64,7 +64,7 @@ public class b2Joint
 	*/
 	public function GetBody1():b2Body
 	{
-		return m_body1;
+		return m_bodyA;
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class b2Joint
 	*/
 	public function GetBody2():b2Body
 	{
-		return m_body2;
+		return m_bodyB;
 	}
 
 	/**
@@ -203,8 +203,8 @@ public class b2Joint
 		m_type = def.type;
 		m_prev = null;
 		m_next = null;
-		m_body1 = def.body1;
-		m_body2 = def.body2;
+		m_bodyA = def.body1;
+		m_bodyB = def.body2;
 		m_collideConnected = def.collideConnected;
 		m_islandFlag = false;
 		m_userData = def.userData;
@@ -227,10 +227,10 @@ public class b2Joint
 	b2internal var m_type:int;
 	b2internal var m_prev:b2Joint;
 	b2internal var m_next:b2Joint;
-	b2internal var m_node1:b2JointEdge = new b2JointEdge();
-	b2internal var m_node2:b2JointEdge = new b2JointEdge();
-	b2internal var m_body1:b2Body;
-	b2internal var m_body2:b2Body;
+	b2internal var m_edgeA:b2JointEdge = new b2JointEdge();
+	b2internal var m_edgeB:b2JointEdge = new b2JointEdge();
+	b2internal var m_bodyA:b2Body;
+	b2internal var m_bodyB:b2Body;
 
 	b2internal var m_islandFlag:Boolean;
 	b2internal var m_collideConnected:Boolean;

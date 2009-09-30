@@ -20,40 +20,42 @@ package Box2D.Collision{
 	
 import Box2D.Collision.*;
 import Box2D.Common.Math.*;
-import Box2D.Common.b2internal;
+
+import Box2D.Common.b2internal;
 use namespace b2internal;
 
-/**
-* A manifold point is a contact point belonging to a contact
-* manifold. It holds details related to the geometry and dynamics
-* of the contact points.
-* The point is stored in local coordinates because CCD
-* requires sub-stepping in which the separation is stale.
-*/
+/// A manifold point is a contact point belonging to a contact
+/// manifold. It holds details related to the geometry and dynamics
+/// of the contact points.
+/// The local point usage depends on the manifold type:
+/// -e_circles: the local center of circleB
+/// -e_faceA: the local center of cirlceB or the clip point of polygonB
+/// -e_faceB: the clip point of polygonA
+/// This structure is stored across time steps, so we keep it small.
+/// Note: the impulses are used for internal caching and may not
+/// provide reliable contact forces, especially for high speed collisions.
 public class b2ManifoldPoint
 {
+	public function b2ManifoldPoint()
+	{
+		Reset();
+	}
 	public function Reset() : void{
-		localPoint1.SetZero();
-		localPoint2.SetZero();
-		separation = 0.0;
-		normalImpulse = 0.0;
-		tangentImpulse = 0.0;
-		id.key = 0;
+		m_localPoint.SetZero();
+		m_normalImpulse = 0.0;
+		m_tangentImpulse = 0.0;
+		m_id.key = 0;
 	}
 	public function Set(m:b2ManifoldPoint) : void{
-		localPoint1.SetV(m.localPoint1);
-		localPoint2.SetV(m.localPoint2);
-		separation = m.separation;
-		normalImpulse = m.normalImpulse;
-		tangentImpulse = m.tangentImpulse;
-		id.key = m.id.key;
+		m_localPoint.SetV(m.m_localPoint);
+		m_normalImpulse = m.m_normalImpulse;
+		m_tangentImpulse = m.m_tangentImpulse;
+		m_id.Set(m.m_id);
 	}
-	public var localPoint1:b2Vec2 = new b2Vec2();
-	public var localPoint2:b2Vec2 = new b2Vec2();
-	public var separation:Number;
-	public var normalImpulse:Number;
-	public var tangentImpulse:Number;
-	public var id:b2ContactID = new b2ContactID();
+	public var m_localPoint:b2Vec2 = new b2Vec2();
+	public var m_normalImpulse:Number;
+	public var m_tangentImpulse:Number;
+	public var m_id:b2ContactID = new b2ContactID();
 };
 
 

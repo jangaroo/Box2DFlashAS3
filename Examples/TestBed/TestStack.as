@@ -29,7 +29,8 @@ package TestBed{
 	import Box2D.Common.*;
 	import Box2D.Common.Math.*;
 	
-	
+	//TODO_BORIS: Remove
+	use namespace b2internal;
 	
 	public class TestStack extends Test{
 		
@@ -39,61 +40,64 @@ package TestBed{
 			Main.m_aboutText.text = "Stacked Boxes";
 			
 			// Add bodies
-			var sd:b2PolygonDef = new b2PolygonDef();
+			var fd:b2FixtureDef = new b2FixtureDef();
+			var sd:b2PolygonShape = new b2PolygonShape();
 			var bd:b2BodyDef = new b2BodyDef();
 			//bd.isBullet = true;
 			var b:b2Body;
-			sd.density = 1.0;
-			sd.friction = 0.5;
-			sd.restitution = 0.1;
-			
+			fd.density = 1.0;
+			fd.friction = 0.5;
+			fd.restitution = 0.1;
+			fd.shape = sd;
 			var i:int;
 			// Create 3 stacks
 			for (i = 0; i < 10; i++){
 				sd.SetAsBox((10) / m_physScale, (10) / m_physScale);
-				bd.position.Set((640/2+100+Math.random()*0.02 - 0.01) / m_physScale, (360-5-i*25) / m_physScale);
+				//bd.position.Set((640/2+100+Math.random()*0.02 - 0.01) / m_physScale, (360-5-i*25) / m_physScale);
+				bd.position.Set((640/2+100) / m_physScale, (360-5-i*25) / m_physScale);
 				b = m_world.CreateBody(bd);
-				b.CreateShape(sd);
+				b.CreateFixture(fd);
 				b.SetMassFromShapes();
 			}
 			for (i = 0; i < 10; i++){
 				sd.SetAsBox((10) / m_physScale, (10) / m_physScale);
 				bd.position.Set((640/2-0+Math.random()*0.02 - 0.01) / m_physScale, (360-5-i*25) / m_physScale);
 				b = m_world.CreateBody(bd);
-				b.CreateShape(sd);
+				b.CreateFixture(fd);
 				b.SetMassFromShapes();
 			}
 			for (i = 0; i < 10; i++){
 				sd.SetAsBox((10) / m_physScale, (10) / m_physScale);
 				bd.position.Set((640/2+200+Math.random()*0.02 - 0.01) / m_physScale, (360-5-i*25) / m_physScale);
 				b = m_world.CreateBody(bd);
-				b.CreateShape(sd);
+				b.CreateFixture(fd);
 				b.SetMassFromShapes();
 			}
 			
-			
 			// Create ramp
-			sd.vertexCount = 3;
-			sd.density = 0;
-			sd.vertices[0] = new b2Vec2(0,0);
-			sd.vertices[1] = new b2Vec2(0,-100/m_physScale);
-			sd.vertices[2] = new b2Vec2(200/m_physScale,0);
+			var vxs:Array = [new b2Vec2(0, 0),
+				new b2Vec2(0, -100 / m_physScale),
+				new b2Vec2(200 / m_physScale, 0)];
+			sd.SetAsArray(vxs, vxs.length);
+			fd.density = 0;
+			bd.userData = "ramp";
 			bd.position.Set(0, 360 / m_physScale);
 			b = m_world.CreateBody(bd);
-			b.CreateShape(sd);
+			b.CreateFixture(fd);
 			b.SetMassFromShapes();
 			
 			// Create ball
-			var cd:b2CircleDef = new b2CircleDef();
-			cd.radius = 40/m_physScale;
-			cd.density = 2;
-			cd.restitution = 0.2;
-			cd.friction = 0.5;
+			var cd:b2CircleShape = new b2CircleShape();
+			cd.m_radius = 40/m_physScale;
+			fd.density = 2;
+			fd.restitution = 0.2;
+			fd.friction = 0.5;
+			fd.shape = cd;
+			bd.userData = "ball";
 			bd.position.Set(50/m_physScale, 100 / m_physScale);
 			b = m_world.CreateBody(bd);
-			b.CreateShape(cd);
+			b.CreateFixture(fd);
 			b.SetMassFromShapes();
-			
 			
 		}
 		

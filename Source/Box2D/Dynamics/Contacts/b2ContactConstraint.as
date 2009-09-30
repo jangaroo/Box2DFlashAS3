@@ -42,15 +42,19 @@ public class b2ContactConstraint
 		
 	}
 	public var points:Array;
+	public var localPlaneNormal:b2Vec2 = new b2Vec2();
+	public var localPoint:b2Vec2 = new b2Vec2();
 	public var normal:b2Vec2 = new b2Vec2();
 	public var normalMass:b2Mat22 = new b2Mat22();
 	public var K:b2Mat22 = new b2Mat22();
-	public var manifold:b2Manifold;
-	public var body1:b2Body;
-	public var body2:b2Body;
+	public var bodyA:b2Body;
+	public var bodyB:b2Body;
+	public var type:int;//b2Manifold::Type
+	public var radius:Number;
 	public var friction:Number;
 	public var restitution:Number;
 	public var pointCount:int;
+	public var manifold:b2Manifold;
 };
 
 

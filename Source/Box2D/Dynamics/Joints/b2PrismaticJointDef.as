@@ -52,10 +52,10 @@ public class b2PrismaticJointDef extends b2JointDef
 		motorSpeed = 0.0;
 	}
 	
-	public function Initialize(b1:b2Body, b2:b2Body, anchor:b2Vec2, axis:b2Vec2) : void
+	public function Initialize(bA:b2Body, bB:b2Body, anchor:b2Vec2, axis:b2Vec2) : void
 	{
-		body1 = b1;
-		body2 = b2;
+		body1 = bA;
+		body2 = bB;
 		localAnchor1 = body1.GetLocalPoint(anchor);
 		localAnchor2 = body2.GetLocalPoint(anchor);
 		localAxis1 = body1.GetLocalVector(axis);

@@ -16,40 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics{
-
-
-import Box2D.Collision.*;
-import Box2D.Collision.Shapes.*;
-import Box2D.Dynamics.Contacts.*;
-import Box2D.Dynamics.Joints.*;
-import Box2D.Common.Math.*;
-import Box2D.Common.*;
-
-import Box2D.Common.b2internal;
-use namespace b2internal;
-
-
-/**
-* Joints and shapes are destroyed when their associated
-* body is destroyed. Implement this listener so that you
-* may nullify references to these joints and shapes.
-*/
-public class b2DestructionListener
+package Box2D.Dynamics 
 {
-
-	/**
-	* Called when any joint is about to be destroyed due
-	* to the destruction of one of its attached bodies.
-	*/
-	public virtual function SayGoodbyeJoint(joint:b2Joint) : void{};
-
-	/**
-	* Called when any fixture is about to be destroyed due
-	* to the destruction of its parent body.
-	*/
-	public virtual function SayGoodbyeFixture(fixture:b2Fixture) : void{};
+	import Box2D.Common.b2Settings;
 	
-};
-
+	/// Contact impulses for reporting. Impulses are used instead of forces because
+	/// sub-step forces may approach infinity for rigid body collisions. These
+	/// match up one-to-one with the contact points in b2Manifold.
+	public class b2ContactImpulse 
+	{
+		public var normalImpulses:Array/*Number*/ = new Array(b2Settings.b2_maxManifoldPoints);
+		public var tangentImpulses:Array/*Number*/ = new Array(b2Settings.b2_maxManifoldPoints);
+		
+	}
+	
 }

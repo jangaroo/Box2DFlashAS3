@@ -96,16 +96,18 @@ import flash.display.MovieClip;
 			}
 			
 			var tests:Array = [
-				TestRagdoll,			// Ragdoll
+			//	TestRagdoll,			// Ragdoll
 				TestCompound,			// Compound Shapes
-				TestCrankGearsPulley,	// Crank/Gears/Pulley
-				TestBridge,				// Bridge
+			//	TestCrankGearsPulley,	// Crank/Gears/Pulley
+			//	TestBridge,				// Bridge
 				TestStack,				// Stack
-				TestCCD,				// CCD
-				TestTheoJansen,			// Theo Jansen
-				TestEdges,				// Edges & Raycast
-				TestBuoyancy			// Buoyancy
+			//	TestCCD,				// CCD
+			//	TestTheoJansen,			// Theo Jansen
+			//	TestEdges,				// Edges & Raycast
+			//	TestBuoyancy,			// Buoyancy
+			null
 			];
+			tests.length -= 1;
 			
             var testCount:int = tests.length;
 			m_currId = (m_currId + testCount) % testCount;
@@ -138,7 +140,7 @@ import flash.display.MovieClip;
 		//======================
 		static public var m_fpsCounter:FpsCounter = new FpsCounter();
 		public var m_currId:int = 0;
-		public var m_currTest:Test;
+		static public var m_currTest:Test;
 		static public var m_sprite:Sprite;
 		static public var m_aboutText:TextField;
 		// input
