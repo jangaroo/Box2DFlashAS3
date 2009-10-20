@@ -57,9 +57,9 @@ public class b2EdgeAndCircleContact extends b2Contact
 	
 	private function b2CollideEdgeAndCircle(manifold: b2Manifold,
 	                                        edge: b2EdgeShape, 
-	                                        xf1: b2XForm,
+	                                        xf1: b2Transform,
 	                                        circle: b2CircleShape, 
-	                                        xf2: b2XForm): void
+	                                        xf2: b2Transform): void
 	{
 		//TODO_BORIS
 		/*

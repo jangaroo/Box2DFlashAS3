@@ -40,8 +40,8 @@ public class b2WorldManifold
 	/// point count, impulses, etc. The radii must come from the shapes
 	/// that generated the manifold.
 	public function Initialize(manifold:b2Manifold,
-					xfA:b2XForm, radiusA:Number,
-					xfB:b2XForm, radiusB:Number):void
+					xfA:b2Transform, radiusA:Number,
+					xfB:b2Transform, radiusB:Number):void
 	{
 		if (manifold.m_pointCount == 0)
 		{

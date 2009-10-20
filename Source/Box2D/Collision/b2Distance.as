@@ -45,8 +45,8 @@ public static function Distance(output:b2DistanceOutput, cache:b2SimplexCache, i
 	var proxyA:b2DistanceProxy = input.proxyA;
 	var proxyB:b2DistanceProxy = input.proxyB;
 	
-	var transformA:b2XForm = input.transformA;
-	var transformB:b2XForm = input.transformB;
+	var transformA:b2Transform = input.transformA;
+	var transformB:b2Transform = input.transformB;
 	
 	// Initialize the simplex
 	var simplex:b2Simplex = new b2Simplex();
@@ -236,8 +236,8 @@ internal class b2Simplex
 {
 
 public function ReadCache(cache:b2SimplexCache, 
-			proxyA:b2DistanceProxy, transformA:b2XForm,
-			proxyB:b2DistanceProxy, transformB:b2XForm):void
+			proxyA:b2DistanceProxy, transformA:b2Transform,
+			proxyB:b2DistanceProxy, transformB:b2Transform):void
 {
 	b2Settings.b2Assert(0 <= cache.count && cache.count <= 3);
 	

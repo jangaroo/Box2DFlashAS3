@@ -88,7 +88,7 @@ public class b2Math{
 		return u;
 	}
 	
-	static public function b2MulX(T:b2XForm, v:b2Vec2) : b2Vec2
+	static public function b2MulX(T:b2Transform, v:b2Vec2) : b2Vec2
 	{
 		var a:b2Vec2 = b2MulMV(T.R, v);
 		a.x += T.position.x;
@@ -97,7 +97,7 @@ public class b2Math{
 		return a;
 	}
 
-	static public function b2MulXT(T:b2XForm, v:b2Vec2):b2Vec2
+	static public function b2MulXT(T:b2Transform, v:b2Vec2):b2Vec2
 	{
 		var a:b2Vec2 = SubtractVV(v, T.position);
 		//return b2MulT(T.R, v - T.position);
@@ -263,7 +263,7 @@ public class b2Math{
 	
 	static public const b2Vec2_zero:b2Vec2 = new b2Vec2(0.0, 0.0);
 	static public const b2Mat22_identity:b2Mat22 = new b2Mat22(0, new b2Vec2(1.0, 0.0), new b2Vec2(0.0, 1.0));
-	static public const b2XForm_identity:b2XForm = new b2XForm(b2Vec2_zero, b2Mat22_identity);
+	static public const b2XForm_identity:b2Transform = new b2Transform(b2Vec2_zero, b2Mat22_identity);
 	
 
 }

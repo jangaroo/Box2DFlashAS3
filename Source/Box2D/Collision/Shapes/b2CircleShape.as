@@ -57,7 +57,7 @@ public class b2CircleShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function TestPoint(transform:b2XForm, p:b2Vec2) : Boolean{
+	public override function TestPoint(transform:b2Transform, p:b2Vec2) : Boolean{
 		//b2Vec2 center = transform.position + b2Mul(transform.R, m_p);
 		var tMat:b2Mat22 = transform.R;
 		var dX:Number = transform.position.x + (tMat.col1.x * m_p.x + tMat.col2.x * m_p.y);
@@ -72,7 +72,7 @@ public class b2CircleShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function TestSegment(	transform:b2XForm,
+	public override function TestSegment(	transform:b2Transform,
 						lambda:Array, // float pointer
 						normal:b2Vec2, // pointer
 						segment:b2Segment,
@@ -134,7 +134,7 @@ public class b2CircleShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function ComputeAABB(aabb:b2AABB, transform:b2XForm) : void{
+	public override function ComputeAABB(aabb:b2AABB, transform:b2Transform) : void{
 		//b2Vec2 p = transform.position + b2Mul(transform.R, m_p);
 		var tMat:b2Mat22 = transform.R;
 		var pX:Number = transform.position.x + (tMat.col1.x * m_p.x + tMat.col2.x * m_p.y);
@@ -161,7 +161,7 @@ public class b2CircleShape extends b2Shape
 	public override function ComputeSubmergedArea(
 			normal:b2Vec2,
 			offset:Number,
-			xf:b2XForm,
+			xf:b2Transform,
 			c:b2Vec2):Number
 	{
 		var p:b2Vec2 = b2Math.b2MulX(xf, m_p);

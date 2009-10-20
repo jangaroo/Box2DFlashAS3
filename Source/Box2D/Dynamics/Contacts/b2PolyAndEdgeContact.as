@@ -58,9 +58,9 @@ public class b2PolyAndEdgeContact extends b2Contact{
 	
 	private function b2CollidePolyAndEdge(manifold: b2Manifold,
 	                                                polygon: b2PolygonShape, 
-	                                                xf1: b2XForm,
+	                                                xf1: b2Transform,
 	                                                edge: b2EdgeShape, 
-	                                                xf2: b2XForm): void
+	                                                xf2: b2Transform): void
 	{
 		//TODO_BORIS
 		/*

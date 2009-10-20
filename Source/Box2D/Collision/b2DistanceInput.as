@@ -17,7 +17,7 @@
 */
 package Box2D.Collision 
 {
-import Box2D.Common.Math.b2XForm;
+import Box2D.Common.Math.b2Transform;
 	
 	/// Input for b2Distance.
 	/// You have to option to use the shape radii
@@ -26,8 +26,8 @@ import Box2D.Common.Math.b2XForm;
 	{
 		public var proxyA:b2DistanceProxy;
 		public var proxyB:b2DistanceProxy;
-		public var transformA:b2XForm;
-		public var transformB:b2XForm;
+		public var transformA:b2Transform;
+		public var transformB:b2Transform;
 		public var useRadii:Boolean;
 	}
 	

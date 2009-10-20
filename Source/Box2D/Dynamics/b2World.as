@@ -607,7 +607,7 @@ public class b2World
 		m_flags &= ~e_locked;
 	}
 	
-	static private var s_xf:b2XForm = new b2XForm();
+	static private var s_xf:b2Transform = new b2Transform();
 	/// Call this to draw shapes and other debug draw data.
 	public function DrawDebugData() : void{
 		
@@ -630,7 +630,7 @@ public class b2World
 		var x1:b2Vec2 = new b2Vec2;
 		var x2:b2Vec2 = new b2Vec2;
 		var color:b2Color = new b2Color(0,0,0);
-		var xf:b2XForm;
+		var xf:b2Transform;
 		var b1:b2AABB = new b2AABB();
 		var b2:b2AABB = new b2AABB();
 		var vs:Array = [new b2Vec2(), new b2Vec2(), new b2Vec2(), new b2Vec2()];
@@ -795,7 +795,7 @@ public class b2World
 			trace(count);
 		//Redundantly do TestSegment a second time, as the previous one's results are inaccessible
 		var shape:b2Shape = shapes[0];
-		var xf:b2XForm = shape.GetBody().GetXForm();
+		var xf:b2Transform = shape.GetBody().GetXForm();
 		shape.TestSegment(xf,lambda,normal,segment,1);
 		//We already know it returned true
 		return shape;
@@ -1319,8 +1319,8 @@ public class b2World
 		
 		var b1:b2Body = joint.m_bodyA;
 		var b2:b2Body = joint.m_bodyB;
-		var xf1:b2XForm = b1.m_xf;
-		var xf2:b2XForm = b2.m_xf;
+		var xf1:b2Transform = b1.m_xf;
+		var xf2:b2Transform = b2.m_xf;
 		var x1:b2Vec2 = xf1.position;
 		var x2:b2Vec2 = xf2.position;
 		var p1:b2Vec2 = joint.GetAnchor1();
@@ -1359,7 +1359,7 @@ public class b2World
 		}
 	}
 	
-	b2internal function DrawShape(shape:b2Shape, xf:b2XForm, color:b2Color) : void{
+	b2internal function DrawShape(shape:b2Shape, xf:b2Transform, color:b2Color) : void{
 		
 		switch (shape.m_type)
 		{
@@ -1415,7 +1415,7 @@ public class b2World
 			return -1;
 		
 		var body:b2Body = shape.GetBody();
-		var xf:b2XForm = body.GetXForm();
+		var xf:b2Transform = body.GetXForm();
 		var lambda:Array = [0];
 		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)==b2Shape.e_missCollide)
 			return -1;
@@ -1427,7 +1427,7 @@ public class b2World
 			return -1;
 		
 		var body:b2Body = shape.GetBody();
-		var xf:b2XForm = body.GetXForm();
+		var xf:b2Transform = body.GetXForm();
 		var lambda:Array = [0];
 		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)!=b2Shape.e_hitCollide)
 			return -1;

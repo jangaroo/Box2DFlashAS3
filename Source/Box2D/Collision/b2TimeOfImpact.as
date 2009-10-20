@@ -67,8 +67,8 @@ public class b2TimeOfImpact
 		var distanceInput:b2DistanceInput = new b2DistanceInput();
 		distanceInput.useRadii = false;
 		
-		var xfA:b2XForm = new b2XForm();
-		var xfB:b2XForm = new b2XForm();
+		var xfA:b2Transform = new b2Transform();
+		var xfB:b2Transform = new b2Transform();
 		var fcn:b2SeperationFunction = new b2SeperationFunction();
 		for (;; )
 		{
@@ -259,8 +259,8 @@ internal class b2SeperationFunction
 	public static const e_faceB:int = 0x04;
 	
 	public function Initialize(cache:b2SimplexCache,
-								proxyA:b2DistanceProxy, transformA:b2XForm,
-								proxyB:b2DistanceProxy, transformB:b2XForm):void
+								proxyA:b2DistanceProxy, transformA:b2Transform,
+								proxyB:b2DistanceProxy, transformB:b2Transform):void
 	{
 		m_proxyA = proxyA;
 		m_proxyB = proxyB;
@@ -419,7 +419,7 @@ internal class b2SeperationFunction
 		}
 	}
 	
-	public function Evaluate(transformA:b2XForm, transformB:b2XForm):Number
+	public function Evaluate(transformA:b2Transform, transformB:b2Transform):Number
 	{
 		var axisA:b2Vec2;
 		var axisB:b2Vec2;

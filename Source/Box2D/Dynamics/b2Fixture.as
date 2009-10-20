@@ -220,7 +220,7 @@ public class b2Fixture
 	}
 	// We need separation create/destroy functions from the constructor/destructor because
 	// the destructor cannot access the allocator or broad-phase (no destructor arguments allowed by C++).
-	b2internal function Create(broadPhase:IBroadPhase, body:b2Body, xf:b2XForm, def:b2FixtureDef):void
+	b2internal function Create(broadPhase:IBroadPhase, body:b2Body, xf:b2Transform, def:b2FixtureDef):void
 	{
 		m_userData = def.userData;
 		m_friction = def.friction;
@@ -252,7 +252,7 @@ public class b2Fixture
 		m_shape = null;
 	}
 	
-	b2internal function Synchronize(broadPhase:IBroadPhase, xf1:b2XForm, xf2:b2XForm):void
+	b2internal function Synchronize(broadPhase:IBroadPhase, xf1:b2Transform, xf2:b2Transform):void
 	{
 		if (!m_proxy)
 			return;

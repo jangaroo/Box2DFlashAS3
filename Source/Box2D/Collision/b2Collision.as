@@ -87,8 +87,8 @@ public class b2Collision{
 	
 	
 	// Find the separation between poly1 and poly2 for a give edge normal on poly1.
-	static public function EdgeSeparation(	poly1:b2PolygonShape, xf1:b2XForm, edge1:int, 
-											poly2:b2PolygonShape, xf2:b2XForm):Number
+	static public function EdgeSeparation(	poly1:b2PolygonShape, xf1:b2Transform, edge1:int, 
+											poly2:b2PolygonShape, xf2:b2Transform):Number
 	{
 		var count1:int = poly1.m_vertexCount;
 		var vertices1:Array = poly1.m_vertices;
@@ -153,8 +153,8 @@ public class b2Collision{
 	// Find the max separation between poly1 and poly2 using edge normals
 	// from poly1.
 	static public function FindMaxSeparation(edgeIndex:Array /*int ptr*/, 
-											poly1:b2PolygonShape, xf1:b2XForm, 
-											poly2:b2PolygonShape, xf2:b2XForm):Number
+											poly1:b2PolygonShape, xf1:b2Transform, 
+											poly2:b2PolygonShape, xf2:b2Transform):Number
 	{
 		var count1:int = poly1.m_vertexCount;
 		var normals1:Array = poly1.m_normals;
@@ -256,8 +256,8 @@ public class b2Collision{
 	
 	
 	static public function FindIncidentEdge(c:Array, 
-											poly1:b2PolygonShape, xf1:b2XForm, edge1:int, 
-											poly2:b2PolygonShape, xf2:b2XForm) : void
+											poly1:b2PolygonShape, xf1:b2Transform, edge1:int, 
+											poly2:b2PolygonShape, xf2:b2Transform) : void
 	{
 		var count1:int = poly1.m_vertexCount;
 		var normals1:Array = poly1.m_normals;
@@ -336,8 +336,8 @@ public class b2Collision{
 	static private var b2CollidePolyTempVec:b2Vec2 = new b2Vec2();
 	// The normal points from 1 to 2
 	static public function b2CollidePolygons(manifold:b2Manifold, 
-											polyA:b2PolygonShape, xfA:b2XForm,
-											polyB:b2PolygonShape, xfB:b2XForm) : void
+											polyA:b2PolygonShape, xfA:b2Transform,
+											polyB:b2PolygonShape, xfB:b2Transform) : void
 	{
 		var cv: ClipVertex;
 		
@@ -360,8 +360,8 @@ public class b2Collision{
 
 		var poly1:b2PolygonShape;	// reference poly
 		var poly2:b2PolygonShape;	// incident poly
-		var xf1:b2XForm = new b2XForm();
-		var xf2:b2XForm = new b2XForm();
+		var xf1:b2Transform = new b2Transform();
+		var xf2:b2Transform = new b2Transform();
 		var edge1:int;		// reference edge
 		var flip:uint;
 		const k_relativeTol:Number = 0.98;
@@ -466,8 +466,8 @@ public class b2Collision{
 	
 	static public function b2CollideCircles(
 		manifold:b2Manifold, 
-		circle1:b2CircleShape, xf1:b2XForm, 
-		circle2:b2CircleShape, xf2:b2XForm) : void
+		circle1:b2CircleShape, xf1:b2Transform, 
+		circle2:b2CircleShape, xf2:b2Transform) : void
 	{
 		manifold.m_pointCount = 0;
 		
@@ -504,8 +504,8 @@ public class b2Collision{
 	
 	static public function b2CollidePolygonAndCircle(
 		manifold:b2Manifold, 
-		polygon:b2PolygonShape, xf1:b2XForm,
-		circle:b2CircleShape, xf2:b2XForm) : void
+		polygon:b2PolygonShape, xf1:b2Transform,
+		circle:b2CircleShape, xf2:b2Transform) : void
 	{
 		manifold.m_pointCount = 0;
 		var tPoint:b2ManifoldPoint;

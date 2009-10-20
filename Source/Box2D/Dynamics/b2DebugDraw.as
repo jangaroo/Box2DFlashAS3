@@ -244,7 +244,7 @@ public class b2DebugDraw
 	* Draw a transform. Choose your own length scale.
 	* @param xf a transform.
 	*/
-	public virtual function DrawXForm(xf:b2XForm) : void{
+	public virtual function DrawXForm(xf:b2Transform) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, 0xff0000, m_alpha);
 		m_sprite.graphics.moveTo(xf.position.x * m_drawScale, xf.position.y * m_drawScale);

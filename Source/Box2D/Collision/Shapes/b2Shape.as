@@ -70,7 +70,7 @@ public class b2Shape
 	* @param xf the shape world transform.
 	* @param p a point in world coordinates.
 	*/
-	public virtual function TestPoint(xf:b2XForm, p:b2Vec2) : Boolean {return false};
+	public virtual function TestPoint(xf:b2Transform, p:b2Vec2) : Boolean {return false};
 
 	/**
 	* Perform a ray cast against this shape.
@@ -86,7 +86,7 @@ public class b2Shape
 	* @param maxLambda a number typically in the range [0,1].
 	* @return b2Shape.e_hitCollide if there was an intersection, b2Shape.e_startsInsideCollide if the point is inside and b2Shape.e_missCollide otherwise.
 	*/
-	public virtual function  TestSegment(xf:b2XForm,
+	public virtual function  TestSegment(xf:b2Transform,
 								lambda:Array, // float pointer
 								normal:b2Vec2, // pointer
 								segment:b2Segment,
@@ -97,7 +97,7 @@ public class b2Shape
 	* @param aabb returns the axis aligned box.
 	* @param xf the world transform of the shape.
 	*/
-	public virtual function  ComputeAABB(aabb:b2AABB, xf:b2XForm) : void {};
+	public virtual function  ComputeAABB(aabb:b2AABB, xf:b2Transform) : void {};
 
 	/**
 	* Compute the mass properties of this shape using its dimensions and density.
@@ -117,7 +117,7 @@ public class b2Shape
 	public virtual function ComputeSubmergedArea(
 				normal:b2Vec2,
 				offset:Number,
-				xf:b2XForm,
+				xf:b2Transform,
 				c:b2Vec2):Number { return 0; };
 	
 	//--------------- Internals Below -------------------

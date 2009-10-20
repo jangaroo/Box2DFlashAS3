@@ -424,7 +424,7 @@ public class b2Body
 	 * if the angle is available.
 	 * @param xf the transform of position and angle to set the bdoy to.
 	 */
-	public function SetXForm(xf:b2XForm):void
+	public function SetXForm(xf:b2Transform):void
 	{
 		SetPositionAndAngle(xf.position, xf.GetAngle());
 	}
@@ -433,7 +433,7 @@ public class b2Body
 	* Get the body transform for the body's origin.
 	* @return the world transform of the body's origin.
 	*/
-	public function GetXForm() : b2XForm{
+	public function GetXForm() : b2Transform{
 		return m_xf;
 	}
 
@@ -1014,11 +1014,11 @@ public class b2Body
 	//~b2Body();
 
 	//
-	static private var s_xf1:b2XForm = new b2XForm();
+	static private var s_xf1:b2Transform = new b2Transform();
 	//
 	b2internal function SynchronizeFixtures() : void{
 		
-		var xf1:b2XForm = s_xf1;
+		var xf1:b2Transform = s_xf1;
 		xf1.R.Set(m_sweep.a0);
 		//xf1.position = m_sweep.c0 - b2Mul(xf1.R, m_sweep.localCenter);
 		var tMat:b2Mat22 = xf1.R;
@@ -1068,7 +1068,7 @@ public class b2Body
 	
 	b2internal var m_islandIndex:int;
 
-	b2internal var m_xf:b2XForm = new b2XForm();		// the body origin transform
+	b2internal var m_xf:b2Transform = new b2Transform();		// the body origin transform
 
 	b2internal var m_sweep:b2Sweep = new b2Sweep();	// the swept motion for CCD
 

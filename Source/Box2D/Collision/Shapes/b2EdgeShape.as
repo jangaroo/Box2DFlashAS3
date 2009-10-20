@@ -40,14 +40,14 @@ public class b2EdgeShape extends b2Shape
 	/**
 	* Returns false. Edges cannot contain points. 
 	*/
-	public override function TestPoint(transform:b2XForm, p:b2Vec2) : Boolean{
+	public override function TestPoint(transform:b2Transform, p:b2Vec2) : Boolean{
 		return false;
 	}
 
 	/**
 	* @inheritDoc
 	*/
-	public override function TestSegment(	transform:b2XForm,
+	public override function TestSegment(	transform:b2Transform,
 						lambda:Array, // float pointer
 						normal:b2Vec2, // pointer
 						segment:b2Segment,
@@ -100,7 +100,7 @@ public class b2EdgeShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function ComputeAABB(aabb:b2AABB, transform:b2XForm) : void{
+	public override function ComputeAABB(aabb:b2AABB, transform:b2Transform) : void{
 		var tMat:b2Mat22 = transform.R;
 		//b2Vec2 v1 = b2Mul(transform, m_v1);
 		var v1X:Number = transform.position.x + (tMat.col1.x * m_v1.x + tMat.col2.x * m_v1.y);
@@ -139,7 +139,7 @@ public class b2EdgeShape extends b2Shape
 	public override function ComputeSubmergedArea(
 			normal:b2Vec2,
 			offset:Number,
-			xf:b2XForm,
+			xf:b2Transform,
 			c:b2Vec2):Number
 	{
 		// Note that v0 is independant of any details of the specific edge
@@ -291,7 +291,7 @@ public class b2EdgeShape extends b2Shape
 	/**
 	* Get the first vertex and apply the supplied transform.
 	*/
-	public function GetFirstVertex(xf: b2XForm): b2Vec2
+	public function GetFirstVertex(xf: b2Transform): b2Vec2
 	{
 		//return b2Mul(xf, m_coreV1);
 		var tMat:b2Mat22 = xf.R;
@@ -320,7 +320,7 @@ public class b2EdgeShape extends b2Shape
 	* Get the support point in the given world direction.
 	* Use the supplied transform.
 	*/
-	public function Support(xf:b2XForm, dX:Number, dY:Number) : b2Vec2{
+	public function Support(xf:b2Transform, dX:Number, dY:Number) : b2Vec2{
 		var tMat:b2Mat22 = xf.R;
 		//b2Vec2 v1 = b2Mul(xf, m_coreV1);
 		var v1X:Number = xf.position.x + (tMat.col1.x * m_coreV1.x + tMat.col2.x * m_coreV1.y);

@@ -34,7 +34,7 @@ public class b2Sweep
 	* Get the interpolated transform at a specific time.
 	* @param alpha is a factor in [0,1], where 0 indicates t0.
 	*/
-	public function GetTransform(xf:b2XForm, alpha:Number):void
+	public function GetTransform(xf:b2Transform, alpha:Number):void
 	{
 		xf.position.x = (1.0 - alpha) * c0.x + alpha * c.x;
 		xf.position.y = (1.0 - alpha) * c0.y + alpha * c.y;

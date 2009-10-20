@@ -169,7 +169,7 @@ public class b2PolygonShape extends b2Shape
 		m_normals[3].Set(-1.0, 0.0);
 		m_centroid = center;
 
-		var xf:b2XForm = new b2XForm();
+		var xf:b2Transform = new b2Transform();
 		xf.position = center;
 		xf.R.Set(angle);
 
@@ -213,7 +213,7 @@ public class b2PolygonShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function TestPoint(xf:b2XForm, p:b2Vec2) : Boolean{
+	public override function TestPoint(xf:b2Transform, p:b2Vec2) : Boolean{
 		var tVec:b2Vec2;
 		
 		//b2Vec2 pLocal = b2MulT(xf.R, p - xf.position);
@@ -243,7 +243,7 @@ public class b2PolygonShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function TestSegment( xf:b2XForm,
+	public override function TestSegment( xf:b2Transform,
 		lambda:Array, // float ptr
 		normal:b2Vec2, // ptr
 		segment:b2Segment,
@@ -345,7 +345,7 @@ public class b2PolygonShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function ComputeAABB(aabb:b2AABB, xf:b2XForm) : void
+	public override function ComputeAABB(aabb:b2AABB, xf:b2Transform) : void
 	{
 		var lower:b2Vec2 = b2Math.b2MulX(xf, m_vertices[0]);
 		var upper:b2Vec2 = lower;
@@ -392,7 +392,17 @@ public class b2PolygonShape extends b2Shape
 		//
 		// The rest of the derivation is handled by computer algebra.
 		
-		//b2Settings.b2Assert(m_vertexCount >= 3);
+		//b2Settings.b2Assert(m_vertexCount >= 2);
+		
+		// A line segment has zero mass.
+		if (m_vertexCount == 2)
+		{
+			massData.center.x = 0.5 * (m_vertices[0].x + m_vertices[1].x);
+			massData.center.y = 0.5 * (m_vertices[0].y + m_vertices[1].y);
+			massData.mass = 0.0;
+			massData.I = 0.0;
+			return;
+		}
 		
 		//b2Vec2 center; center.Set(0.0f, 0.0f);
 		var centerX:Number = 0.0;
@@ -484,7 +494,7 @@ public class b2PolygonShape extends b2Shape
 	public override function ComputeSubmergedArea(
 			normal:b2Vec2,
 			offset:Number,
-			xf:b2XForm,
+			xf:b2Transform,
 			c:b2Vec2):Number
 	{
 		// Transform plane into shape co-ordinates

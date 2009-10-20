@@ -217,7 +217,7 @@ public class b2Joint
 	// This returns true if the position errors are within tolerance.
 	b2internal virtual function SolvePositionConstraints(baumgarte:Number):Boolean { return false };
 	
-	b2internal function ComputeXForm(xf:b2XForm, center:b2Vec2, localCenter:b2Vec2, angle:Number):void
+	b2internal function ComputeXForm(xf:b2Transform, center:b2Vec2, localCenter:b2Vec2, angle:Number):void
 	{
 		xf.R.Set(angle);
 		//xf->position = center - b2Mul(xf->R, localCenter);
