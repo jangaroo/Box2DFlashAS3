@@ -1,5 +1,5 @@
-﻿/*
-* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
+/*
+* Copyright (c) 2009 Adam Newgas http://www.boristhebrave.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -16,33 +16,20 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision.Shapes{
+package Benchmarks{
+	import Box2D.Dynamics.b2World;
 
-
-
-import Box2D.Common.Math.*;
-import Box2D.Collision.Shapes.*;
-
-import Box2D.Common.b2internal;
-use namespace b2internal;
-
-
-/**
-* This structure is used to build circle shapes.
-* @see b2CircleShape
-*/
-public class b2CircleDef extends b2ShapeDef
-{
-	public function b2CircleDef()
+	public interface IBenchmark
 	{
-		type = b2Shape.e_circleShape;
-		radius = 1.0;
+		/// Return a string name for the benchmark
+		function Name():String;
+		/// Return any further details, as XML with root element
+		/// benchmarkParameters
+		/// This should include a version tag with the revision details.
+		function Details():XML;
+		/// Initialize the world
+		function Init(world:b2World):void;
+		/// This is run every tick
+		function Update():void;
 	}
-
-	/** The circle center in local coordinages */
-	public var localPosition:b2Vec2 = new b2Vec2(0.0, 0.0);
-	/** The circle radius */
-	public var radius:Number;
-};
-
 }

@@ -115,6 +115,13 @@ public class b2PolygonShape extends b2Shape
 		m_centroid = ComputeCentroid(m_vertices, m_vertexCount);
 	}
 	
+	public static function AsArray(vertices:Array, vertexCount:Number):b2PolygonShape
+	{
+		var polygonShape:b2PolygonShape = new b2PolygonShape();
+		polygonShape.SetAsArray(vertices, vertexCount);
+		return polygonShape;
+	}
+	
 	/**
 	* Build vertices to represent an axis-aligned box.
 	* @param hx the half-width.
@@ -132,6 +139,13 @@ public class b2PolygonShape extends b2Shape
 		m_normals[2].Set(0.0, 1.0);
 		m_normals[3].Set(-1.0, 0.0);
 		m_centroid.SetZero();
+	}
+	
+	public static function AsBox(hx:Number, hy:Number):b2PolygonShape
+	{
+		var polygonShape:b2PolygonShape = new b2PolygonShape();
+		polygonShape.SetAsBox(hx, hy);
+		return polygonShape;
 	}
 	
 	/**
@@ -166,6 +180,14 @@ public class b2PolygonShape extends b2Shape
 			m_normals[i] = b2Math.b2MulMV(xf.R, m_normals[i]);
 		}
 	}
+	
+	public static function AsOrientedBox(hx:Number, hy:Number, center:b2Vec2 = null, angle:Number = 0.0):b2PolygonShape
+	{
+		var polygonShape:b2PolygonShape = new b2PolygonShape();
+		polygonShape.SetAsOrientedBox(hx, hy, center, angle);
+		return polygonShape;
+	}
+	
 	/// Set this as a single edge.
 	public function SetAsEdge(v1:b2Vec2, v2:b2Vec2):void
 	{
@@ -178,6 +200,15 @@ public class b2PolygonShape extends b2Shape
 		m_normals[0].Normalize();
 		m_normals[1] = m_normals[0].Negative();
 	}
+	
+	/// Set this as a single edge.
+	static public function AsEdge(v1:b2Vec2, v2:b2Vec2):b2PolygonShape
+	{
+		var polygonShape:b2PolygonShape = new b2PolygonShape();
+		polygonShape.SetAsEdge(v1, v2);
+		return polygonShape;
+	}
+	
 	
 	/**
 	* @inheritDoc

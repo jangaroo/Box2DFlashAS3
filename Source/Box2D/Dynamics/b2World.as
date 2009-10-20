@@ -41,11 +41,10 @@ public class b2World
 	
 	// Construct a world object.
 	/**
-	* @param worldAABB a bounding box that completely encompasses all your shapes.
 	* @param gravity the world gravity vector.
 	* @param doSleep improve performance by not simulating inactive bodies.
 	*/
-	public function b2World(worldAABB:b2AABB, gravity:b2Vec2, doSleep:Boolean){
+	public function b2World(gravity:b2Vec2, doSleep:Boolean){
 		
 		m_destructionListener = null;
 		m_debugDraw = null;
@@ -108,6 +107,24 @@ public class b2World
 	*/
 	public function SetDebugDraw(debugDraw:b2DebugDraw) : void{
 		m_debugDraw = debugDraw;
+	}
+	
+	/**
+	 * Use the given object as a broadphase.
+	 * The old broadphase will not be cleanly emptied.
+	 * @warning It is not recommended you call this except immediately after constructing the world.
+	 * @warning This function is locked during callbacks.
+	 */
+	public function SetBroadPhase(broadPhase:IBroadPhase) : void {
+		var oldBroadPhase:IBroadPhase = m_contactManager.m_broadPhase;
+		m_contactManager.m_broadPhase = broadPhase;
+		for (var b:b2Body = m_bodyList; b; b = b.m_next)
+		{
+			for (var f:b2Fixture = b.m_fixtureList; f; f = f.m_next)
+			{
+				f.m_proxy = broadPhase.CreateProxy(oldBroadPhase.GetAABB(f.m_proxy), f);
+			}
+		}
 	}
 	
 	/**
@@ -1078,7 +1095,7 @@ public class b2World
 					// Compute the time of impact.
 					toi = c.ComputeTOI(bA.m_sweep, bB.m_sweep);
 					//toi = b2TimeOfImpact.TimeOfImpact(c.m_shape1, b1.m_sweep, c.m_shape2, b2.m_sweep);
-					//b2Settings.b2Assert(0.0 <= toi && toi <= 1.0);
+					b2Settings.b2Assert(0.0 <= toi && toi <= 1.0);
 					
 					// If the TOI is in range ...
 					if (toi > 0.0 && toi < 1.0)
@@ -1123,7 +1140,7 @@ public class b2World
 			if ((minContact.m_flags & b2Contact.e_touchFlag) == 0)
 			{
 				// This shouldn't happen. Numerical error?
-				//b2Assert(false);
+				b2Settings.b2Assert(false);
 				continue;
 			}
 			

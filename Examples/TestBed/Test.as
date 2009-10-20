@@ -53,7 +53,7 @@ package TestBed{
 			var doSleep:Boolean = true;
 			
 			// Construct a world object
-			m_world = new b2World(worldAABB, gravity, doSleep);
+			m_world = new b2World(gravity, doSleep);
 			// set debug draw
 			var dbgDraw:b2DebugDraw = new b2DebugDraw();
 			//var dbgSprite:Sprite = new Sprite();
@@ -65,7 +65,6 @@ package TestBed{
 			dbgDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 			m_world.SetDebugDraw(dbgDraw);
 			
-			m_world.SetWarmStarting(false);
 			m_world.SetContinuousPhysics(false);
 			
 			

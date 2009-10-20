@@ -1,5 +1,5 @@
-﻿/*
-* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
+/*
+* Copyright (c) 2009 Adam Newgas http://www.boristhebrave.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -16,19 +16,35 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision 
-{
-import Box2D.Common.Math.b2Sweep;
-	
-	/// Inpute parameters for b2TimeOfImpact
-	public class b2TOIInput 
+package Benchmarks{
+import Box2D.Common.*;
+import Box2D.Dynamics.*;
+import Box2D.Collision.*;
+import Box2D.Collision.Shapes.*;
+import Box2D.Dynamics.Joints.*;
+import Box2D.Dynamics.Contacts.*;
+import Box2D.Common.Math.*;
+
+	public class NullBenchmark implements IBenchmark
 	{
-		public var proxyA:b2DistanceProxy = new b2DistanceProxy();
-		public var proxyB:b2DistanceProxy = new b2DistanceProxy();
-		public var sweepA:b2Sweep = new b2Sweep();
-		public var sweepB:b2Sweep = new b2Sweep();
-		public var tolerance:Number;
+		public function Name():String
+		{
+			return "Null";
+		}
 		
+		public function Details():XML
+		{
+			return 	<benchmarkParameters>
+					<version>$Rev$</version>
+				</benchmarkParameters>;	
+		}
+		
+		public function Init(world:b2World):void
+		{
+		}
+		
+		public function Update():void
+		{
+		}
 	}
-	
 }

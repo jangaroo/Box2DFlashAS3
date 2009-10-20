@@ -73,7 +73,6 @@ package TestBed{
 				b.CreateFixture(fd);
 				b.SetMassFromShapes();
 			}
-			
 			// Create ramp
 			var vxs:Array = [new b2Vec2(0, 0),
 				new b2Vec2(0, -100 / m_physScale),

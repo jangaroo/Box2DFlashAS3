@@ -194,8 +194,6 @@ public class b2Island
 			b.m_angularVelocity *= b2Math.b2Clamp(1.0 - step.dt * b.m_angularDamping, 0.0, 1.0);
 		}
 		
-		Main.m_currTest.m_world.DrawDebugData();
-		
 		var contactSolver:b2ContactSolver = new b2ContactSolver(step, m_contacts, m_contactCount, m_allocator);
 		
 		// Initialize velocity constraints.
@@ -267,8 +265,6 @@ public class b2Island
 			
 			// Note: shapes are synchronized later.
 		}
-		
-		Main.m_currTest.m_world.DrawDebugData();
 		
 		// Iterate over constraints.
 		for (i = 0; i < step.positionIterations; ++i)
