@@ -89,7 +89,7 @@ package TestBed{
 			}
 			
 			{
-				var xf1:b2XForm = new b2XForm();
+				var xf1:b2Transform = new b2Transform();
 				xf1.R.Set(0.3524 * Math.PI);
 				xf1.position = b2Math.b2MulMV(xf1.R, new b2Vec2(1.0, 0.0));
 				
@@ -100,7 +100,7 @@ package TestBed{
 				sd1.m_vertices[2] = b2Math.b2MulX(xf1, new b2Vec2(0.0, 15.0 / m_physScale));
 				sd1.SetAsArray(sd1.m_vertices, sd1.m_vertexCount);
 				
-				var xf2:b2XForm = new b2XForm();
+				var xf2:b2Transform = new b2Transform();
 				xf2.R.Set(-0.3524 * Math.PI);
 				xf2.position = b2Math.b2MulMV(xf2.R, new b2Vec2(-30.0/m_physScale, 0.0));
 				

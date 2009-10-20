@@ -324,8 +324,8 @@ public class b2LineJoint extends b2Joint
 		m_localCenter1.SetV(bA.GetLocalCenter());
 		m_localCenter2.SetV(bB.GetLocalCenter());
 		
-		var xf1:b2Transform = bA.GetXForm();
-		var xf2:b2Transform = bB.GetXForm();
+		var xf1:b2Transform = bA.GetTransform();
+		var xf2:b2Transform = bB.GetTransform();
 		
 		// Compute the effective masses.
 		//b2Vec2 r1 = b2Mul(bA->m_xf.R, m_localAnchor1 - bA->GetLocalCenter());

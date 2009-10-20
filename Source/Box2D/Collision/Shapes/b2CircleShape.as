@@ -205,9 +205,10 @@ public class b2CircleShape extends b2Shape
 		return m_radius;
 	}
 
-	public function b2CircleShape(){
+	public function b2CircleShape(radius:Number = 0){
 		super();
 		m_type = e_circleShape;
+		m_radius = radius;
 	}
 
 	// Local position in parent body

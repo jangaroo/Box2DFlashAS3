@@ -795,7 +795,7 @@ public class b2World
 			trace(count);
 		//Redundantly do TestSegment a second time, as the previous one's results are inaccessible
 		var shape:b2Shape = shapes[0];
-		var xf:b2Transform = shape.GetBody().GetXForm();
+		var xf:b2Transform = shape.GetBody().GetTransform();
 		shape.TestSegment(xf,lambda,normal,segment,1);
 		//We already know it returned true
 		return shape;
@@ -1415,7 +1415,7 @@ public class b2World
 			return -1;
 		
 		var body:b2Body = shape.GetBody();
-		var xf:b2Transform = body.GetXForm();
+		var xf:b2Transform = body.GetTransform();
 		var lambda:Array = [0];
 		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)==b2Shape.e_missCollide)
 			return -1;
@@ -1427,7 +1427,7 @@ public class b2World
 			return -1;
 		
 		var body:b2Body = shape.GetBody();
-		var xf:b2Transform = body.GetXForm();
+		var xf:b2Transform = body.GetTransform();
 		var lambda:Array = [0];
 		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)!=b2Shape.e_hitCollide)
 			return -1;

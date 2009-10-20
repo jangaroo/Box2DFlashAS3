@@ -424,7 +424,7 @@ public class b2Body
 	 * if the angle is available.
 	 * @param xf the transform of position and angle to set the bdoy to.
 	 */
-	public function SetXForm(xf:b2Transform):void
+	public function SetTransform(xf:b2Transform):void
 	{
 		SetPositionAndAngle(xf.position, xf.GetAngle());
 	}
@@ -433,7 +433,7 @@ public class b2Body
 	* Get the body transform for the body's origin.
 	* @return the world transform of the body's origin.
 	*/
-	public function GetXForm() : b2Transform{
+	public function GetTransform() : b2Transform{
 		return m_xf;
 	}
 

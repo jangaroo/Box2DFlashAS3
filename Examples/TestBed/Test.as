@@ -241,7 +241,7 @@ package TestBed{
 				var shape:b2Shape = fixture.GetShape();
 				if (fixture.GetBody().IsStatic() == false || includeStatic)
 				{
-					var inside:Boolean = shape.TestPoint(fixture.GetBody().GetXForm(), mousePVec);
+					var inside:Boolean = shape.TestPoint(fixture.GetBody().GetTransform(), mousePVec);
 					if (inside)
 					{
 						body = fixture.GetBody();

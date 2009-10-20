@@ -143,7 +143,7 @@ public class b2Fixture
 	/// @param p a point in world coordinates.
 	public function TestPoint(p:b2Vec2):Boolean
 	{
-		return m_shape.TestPoint(m_body.GetXForm(), p);
+		return m_shape.TestPoint(m_body.GetTransform(), p);
 	}
 	
 	/// Perform a ray cast against this shape.
@@ -156,7 +156,7 @@ public class b2Fixture
 	/// @param maxLambda a number typically in the range [0,1].
 	public function TestSegment(lambda:Array, normal:b2Vec2, segment:b2Segment, maxLambda:Number):int
 	{
-		return m_shape.TestSegment(m_body.GetXForm(), lambda, normal, segment, maxLambda);
+		return m_shape.TestSegment(m_body.GetTransform(), lambda, normal, segment, maxLambda);
 	}
 	
 	/// Compute the mass properties of this shape using its dimensions and density.

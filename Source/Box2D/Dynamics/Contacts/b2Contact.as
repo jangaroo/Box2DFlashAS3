@@ -54,7 +54,7 @@ public class b2Contact
 		var shapeA:b2Shape = m_fixtureA.GetShape();
 		var shapeB:b2Shape = m_fixtureB.GetShape();
 		
-		worldManifold.Initialize(m_manifold, bodyA.GetXForm(), shapeA.m_radius, bodyB.GetXForm(), shapeB.m_radius);
+		worldManifold.Initialize(m_manifold, bodyA.GetTransform(), shapeA.m_radius, bodyB.GetTransform(), shapeB.m_radius);
 	}
 	
 	/**

@@ -105,6 +105,7 @@ import flash.display.MovieClip;
 			//	TestTheoJansen,			// Theo Jansen
 			//	TestEdges,				// Edges & Raycast
 			//	TestBuoyancy,			// Buoyancy
+				TestOneSidedPlatform,	// One Sided Platform
 			null
 			];
 			tests.length -= 1;
