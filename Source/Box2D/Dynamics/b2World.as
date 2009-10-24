@@ -1209,13 +1209,20 @@ public class b2World
 			minContact.m_flags &= ~b2Contact.e_toiFlag;
 			
 			// Is the contact solid?
-			if (minContact.IsSolid() == false || minContact.IsTouching() == false)
+			if (minContact.IsSolid() == false)
 			{
 				// Restore the sweeps
 				bA.m_sweep = backupA;
 				bB.m_sweep = backupB;
 				bA.SynchronizeTransform();
 				bB.SynchronizeTransform();
+				continue;
+			}
+			
+			// Did numerical issues prevent;,ontact pointjrom being generated
+			if (minContact.IsTouching() == false)
+			{
+				// Give up on this TOI
 				continue;
 			}
 			
