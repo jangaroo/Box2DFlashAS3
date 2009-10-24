@@ -19,8 +19,8 @@
 		/// Get user data from a proxy. Returns null if the proxy is invalid.
 		function GetUserData(proxy:*):*;
 		
-		/// Get the AABB for a proxy.
-		function GetAABB(proxy:*):b2AABB;
+		/// Get the fat AABB for a proxy.
+		function GetFatAABB(proxy:*):b2AABB;
 		
 		/// Get the number of proxies.
 		function GetProxyCount():int;

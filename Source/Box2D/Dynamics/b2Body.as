@@ -791,13 +791,6 @@ public class b2Body
 	}
 
 	/**
-	* Is this body frozen?
-	*/
-	public function IsFrozen() : Boolean{
-		return (m_flags & e_frozenFlag) == e_frozenFlag;
-	}
-
-	/**
 	* Is this body sleeping (not simulating).
 	*/
 	public function IsSleeping() : Boolean{
@@ -1105,12 +1098,11 @@ public class b2Body
 	// m_flags
 	//enum
 	//{
-		static b2internal var e_frozenFlag:uint			= 0x0002;
-		static b2internal var e_islandFlag:uint			= 0x0004;
-		static b2internal var e_sleepFlag:uint			= 0x0008;
-		static b2internal var e_allowSleepFlag:uint		= 0x0010;
-		static b2internal var e_bulletFlag:uint			= 0x0020;
-		static b2internal var e_fixedRotationFlag:uint	= 0x0040;
+		static b2internal var e_islandFlag:uint			= 0x0001;
+		static b2internal var e_sleepFlag:uint			= 0x0002;
+		static b2internal var e_allowSleepFlag:uint		= 0x0004;
+		static b2internal var e_bulletFlag:uint			= 0x0005;
+		static b2internal var e_fixedRotationFlag:uint	= 0x0010;
 	//};
 
 	// m_type

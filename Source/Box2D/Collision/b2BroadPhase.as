@@ -623,7 +623,7 @@ public class b2BroadPhase implements IBroadPhase
 	}
 	
 	/// Get the AABB for a proxy.
-	public function GetAABB(proxy_:*):b2AABB
+	public function GetFatAABB(proxy_:*):b2AABB
 	{
 		var aabb:b2AABB = new b2AABB();
 		var proxy:b2Proxy = proxy_ as b2Proxy;

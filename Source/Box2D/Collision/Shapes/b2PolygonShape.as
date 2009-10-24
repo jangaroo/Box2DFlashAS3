@@ -62,8 +62,11 @@ public class b2PolygonShape extends b2Shape
 	
 	/// Copy vertices. This assumes the vertices define a convex polygon.
 	/// It is assumed that the exterior is the the right of each edge.
-	public function SetAsArray(vertices:Array, vertexCount:Number):void
+	public function SetAsArray(vertices:Array, vertexCount:Number = 0):void
 	{
+		if (vertexCount == 0)
+			vertexCount = vertices.length;
+			
 		b2Settings.b2Assert(2 <= vertexCount && vertexCount <= b2Settings.b2_maxPolygonVertices);
 		m_vertexCount = vertexCount;
 		

@@ -122,7 +122,7 @@ public class b2World
 		{
 			for (var f:b2Fixture = b.m_fixtureList; f; f = f.m_next)
 			{
-				f.m_proxy = broadPhase.CreateProxy(oldBroadPhase.GetAABB(f.m_proxy), f);
+				f.m_proxy = broadPhase.CreateProxy(oldBroadPhase.GetFatAABB(f.m_proxy), f);
 			}
 		}
 	}
@@ -693,7 +693,7 @@ public class b2World
 			{
 				for (f = b.GetFixtureList(); f; f = f.GetNext())
 				{
-					var aabb:b2AABB = bp.GetAABB(f.m_proxy);
+					var aabb:b2AABB = bp.GetFatAABB(f.m_proxy);
 					vs[0].Set(aabb.lowerBound.x, aabb.lowerBound.y);
 					vs[1].Set(aabb.upperBound.x, aabb.lowerBound.y);
 					vs[2].Set(aabb.upperBound.x, aabb.upperBound.y);
@@ -870,7 +870,7 @@ public class b2World
 		var stack:Array = new Array(stackSize);
 		for (var seed:b2Body = m_bodyList; seed; seed = seed.m_next)
 		{
-			if (seed.m_flags & (b2Body.e_islandFlag | b2Body.e_sleepFlag | b2Body.e_frozenFlag))
+			if (seed.m_flags & (b2Body.e_islandFlag | b2Body.e_sleepFlag))
 			{
 				continue;
 			}
@@ -908,13 +908,13 @@ public class b2World
 				for (var ce:b2ContactEdge = b.m_contactList; ce; ce = ce.next)
 				{
 					// Has this contact already been added to an island?
-					if (ce.contact.m_flags & (b2Contact.e_islandFlag | b2Contact.e_nonSolidFlag))
+					if (ce.contact.m_flags & b2Contact.e_islandFlag)
 					{
 						continue;
 					}
 					
 					// Is this contact touching?
-					if ((ce.contact.m_flags & b2Contact.e_touchFlag) == 0)
+					if (ce.contact.IsSolid() == false || ce.contact.IsTouching() == false)
 					{
 						continue;
 					}
@@ -975,10 +975,10 @@ public class b2World
 		
 		//m_stackAllocator.Free(stack);
 		
-		// Synchronize shapes, check for out of range bodies.
+		// Synchronize fixutres, check for out of range bodies.
 		for (b = m_bodyList; b; b = b.m_next)
 		{
-			if (b.m_flags & (b2Body.e_sleepFlag | b2Body.e_frozenFlag))
+			if (b.m_flags & b2Body.e_sleepFlag)
 			{
 				continue;
 			}
@@ -1050,7 +1050,8 @@ public class b2World
 			
 			for (c = m_contactList; c; c = c.m_next)
 			{
-				if (c.m_flags & (b2Contact.e_slowFlag | b2Contact.e_nonSolidFlag))
+				// Can this contact generate a solid TOI contact?
+ 				if (c.IsSolid() == false || c.IsContinuous() == false)
 				{
 					continue;
 				}
@@ -1094,7 +1095,6 @@ public class b2World
 					
 					// Compute the time of impact.
 					toi = c.ComputeTOI(bA.m_sweep, bB.m_sweep);
-					//toi = b2TimeOfImpact.TimeOfImpact(c.m_shape1, b1.m_sweep, c.m_shape2, b2.m_sweep);
 					b2Settings.b2Assert(0.0 <= toi && toi <= 1.0);
 					
 					// If the TOI is in range ...
@@ -1130,6 +1130,8 @@ public class b2World
 			fB = minContact.m_fixtureB;
 			bA = fA.m_body;
 			bB = fB.m_body;
+			var backupA:b2Sweep = bA.m_sweep.Copy();
+			var backupB:b2Sweep = bB.m_sweep.Copy();
 			bA.Advance(minTOI);
 			bB.Advance(minTOI);
 			
@@ -1137,10 +1139,14 @@ public class b2World
 			minContact.Update(m_contactManager.m_contactListener);
 			minContact.m_flags &= ~b2Contact.e_toiFlag;
 			
-			if ((minContact.m_flags & b2Contact.e_touchFlag) == 0)
+			// Is the contact solid?
+			if (minContact.IsSolid() == false || minContact.IsTouching() == false)
 			{
-				// This shouldn't happen. Numerical error?
-				b2Settings.b2Assert(false);
+				// Restore the sweeps
+				bA.m_sweep = backupA;
+				bB.m_sweep = backupB;
+				bA.SynchronizeTransform();
+				bB.SynchronizeTransform();
 				continue;
 			}
 			
@@ -1186,14 +1192,14 @@ public class b2World
 						continue;
 					}
 					
-					// Has this contact already been added to an island? Skip slow or non-solid contacts.
-					if (cEdge.contact.m_flags & (b2Contact.e_islandFlag | b2Contact.e_slowFlag | b2Contact.e_nonSolidFlag))
+					// Has this contact already been added to an island?
+					if (cEdge.contact.m_flags & b2Contact.e_islandFlag)
 					{
 						continue;
 					}
 					
-					// Is this contact touching? For performance we are not updating this contact.
-					if ((cEdge.contact.m_flags & b2Contact.e_touchFlag) == 0)
+					// Is this contact solid and touching? For performance we are not updating this contact.
+					if (cEdge.contact.IsSolid() == false || cEdge.contact.IsTouching() == false)
 					{
 						continue;
 					}
@@ -1269,7 +1275,7 @@ public class b2World
 				b = island.m_bodies[i];
 				b.m_flags &= ~b2Body.e_islandFlag;
 				
-				if (b.m_flags & (b2Body.e_sleepFlag | b2Body.e_frozenFlag))
+				if (b.m_flags & b2Body.e_sleepFlag)
 				{
 					continue;
 				}

@@ -49,49 +49,51 @@ package TestBed{
 			m_motorOn = true;
 			var pivot:b2Vec2 = new b2Vec2(0.0, -24.0/tScale);
 			
-			var pd:b2PolygonDef;
-			var cd:b2CircleDef;
+			var pd:b2PolygonShape;
+			var cd:b2CircleShape;
+			var fd:b2FixtureDef;
 			var bd:b2BodyDef;
 			var body:b2Body;
 			
 			for (var i:int = 0; i < 40; ++i)
 			{
-				cd = new b2CircleDef();
-				cd.density = 1.0;
-				cd.radius = 7.5/tScale;
+				cd = new b2CircleShape(7.5/tScale);
 				
 				bd = new b2BodyDef();
 				// Position in world space
 				bd.position.Set((Math.random() * 620 + 10)/m_physScale, 350/m_physScale);
 				
 				body = m_world.CreateBody(bd);
-				body.CreateShape(cd);
+				body.CreateFixture2(cd, 1.0);
 				body.SetMassFromShapes();
 			}
 			
 			{
-				pd = new b2PolygonDef();
-				pd.density = 1.0;
-				pd.SetAsBox(75/tScale, 30/tScale);
-				pd.filter.groupIndex = -1;
+				pd = new b2PolygonShape();
+				pd.SetAsBox(75 / tScale, 30 / tScale);
+				fd = new b2FixtureDef();
+				fd.shape = pd;
+				fd.density = 1.0;
+				fd.filter.groupIndex = -1;
 				bd = new b2BodyDef();
 				//bd.position = pivot + m_offset;
 				bd.position = b2Math.AddVV(pivot, m_offset);
 				m_chassis = m_world.CreateBody(bd);
-				m_chassis.CreateShape(pd);
+				m_chassis.CreateFixture(fd);
 				m_chassis.SetMassFromShapes();
 			}
 			
 			{
-				cd = new b2CircleDef();
-				cd.density = 1.0;
-				cd.radius = 48/tScale;
-				cd.filter.groupIndex = -1;
+				cd = new b2CircleShape(48 / tScale);
+				fd = new b2FixtureDef();
+				fd.shape = cd;
+				fd.density = 1.0;
+				fd.filter.groupIndex = -1;
 				bd = new b2BodyDef();
 				//bd.position = pivot + m_offset;
 				bd.position = b2Math.AddVV(pivot, m_offset);
 				m_wheel = m_world.CreateBody(bd);
-				m_wheel.CreateShape(cd);
+				m_wheel.CreateFixture(fd);
 				m_wheel.SetMassFromShapes();
 			}
 			
@@ -138,34 +140,34 @@ package TestBed{
 			var p6:b2Vec2 = new b2Vec2( 75 * s/tScale, -111 /tScale);
 			
 			//b2PolygonDef sd1, sd2;
-			var sd1:b2PolygonDef = new b2PolygonDef();
-			var sd2:b2PolygonDef = new b2PolygonDef();
-			sd1.vertexCount = 3;
-			sd2.vertexCount = 3;
-			sd1.filter.groupIndex = -1;
-			sd2.filter.groupIndex = -1;
-			sd1.density = 1.0;
-			sd2.density = 1.0;
+			var sd1:b2PolygonShape = new b2PolygonShape();
+			var sd2:b2PolygonShape = new b2PolygonShape();
+			var fd1:b2FixtureDef = new b2FixtureDef();
+			var fd2:b2FixtureDef = new b2FixtureDef();
+			fd1.shape = sd1;
+			fd2.shape = sd2;
+			fd1.filter.groupIndex = -1;
+			fd2.filter.groupIndex = -1;
+			fd1.density = 1.0;
+			fd2.density = 1.0;
 			
 			if (s > 0.0)
 			{
-				sd1.vertices[2] = p1;
-				sd1.vertices[1] = p2;
-				sd1.vertices[0] = p3;
-				
-				sd2.vertices[2] = new b2Vec2();
-				sd2.vertices[1] = b2Math.SubtractVV(p5, p4);
-				sd2.vertices[0] = b2Math.SubtractVV(p6, p4);
+				sd1.SetAsArray([p3, p2, p1]);
+				sd2.SetAsArray([
+					b2Math.SubtractVV(p6, p4),
+					b2Math.SubtractVV(p5, p4),
+					new b2Vec2()
+					]);
 			}
 			else
 			{
-				sd1.vertices[2] = p1;
-				sd1.vertices[1] = p3;
-				sd1.vertices[0] = p2;
-				
-				sd2.vertices[2] = new b2Vec2();
-				sd2.vertices[1] = b2Math.SubtractVV(p6, p4);
-				sd2.vertices[0] = b2Math.SubtractVV(p5, p4);
+				sd1.SetAsArray([p2, p3, p1]);
+				sd2.SetAsArray([
+					b2Math.SubtractVV(p5, p4),
+					b2Math.SubtractVV(p6, p4),
+					new b2Vec2()
+					]);
 			}
 			
 			//b2BodyDef bd1, bd2;
@@ -180,8 +182,8 @@ package TestBed{
 			var body1:b2Body = m_world.CreateBody(bd1);
 			var body2:b2Body = m_world.CreateBody(bd2);
 			
-			body1.CreateShape(sd1);
-			body2.CreateShape(sd2);
+			body1.CreateFixture(fd1);
+			body2.CreateFixture(fd2);
 			
 			body1.SetMassFromShapes();
 			body2.SetMassFromShapes();

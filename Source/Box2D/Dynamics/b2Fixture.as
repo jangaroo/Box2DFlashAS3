@@ -77,7 +77,7 @@ public class b2Fixture
 			var fixtureA:b2Fixture = contact.GetFixtureA();
 			var fixtureB:b2Fixture = contact.GetFixtureB();
 			if (fixtureA == this || fixtureB == this)
-				contact.SetSolid(!m_isSensor);//TODO: This is wrong, but wait for Erin to correct
+				contact.SetAsSensor(m_isSensor);
 			edge = edge.next;
 		}
 		
@@ -208,6 +208,7 @@ public class b2Fixture
 	 */
 	public function b2Fixture()
 	{
+		m_aabb = new b2AABB();
 		m_userData = null;
 		m_body = null;
 		m_next = null;
@@ -236,10 +237,9 @@ public class b2Fixture
 		m_shape = def.shape.Copy();
 		
 		// Create proxy in the broad-phase
-		var aabb:b2AABB = new b2AABB;
-		m_shape.ComputeAABB(aabb, xf);
+		m_shape.ComputeAABB(m_aabb, xf);
 		
-		m_proxy = broadPhase.CreateProxy(aabb, this);
+		m_proxy = broadPhase.CreateProxy(m_aabb, this);
 	}
 	
 	b2internal function Destroy(broadPhase:IBroadPhase):void
@@ -263,10 +263,11 @@ public class b2Fixture
 		m_shape.ComputeAABB(aabb1, xf1);
 		m_shape.ComputeAABB(aabb2, xf2);
 		
-		var aabb:b2AABB = b2AABB.Combine(aabb1, aabb2);
-		broadPhase.MoveProxy(m_proxy, aabb);
+		m_aabb.Combine(aabb1, aabb2);
+		broadPhase.MoveProxy(m_proxy, m_aabb);
 	}
 	
+	b2internal var m_aabb:b2AABB;
 	b2internal var m_next:b2Fixture;
 	b2internal var m_body:b2Body;
 	b2internal var m_shape:b2Shape;

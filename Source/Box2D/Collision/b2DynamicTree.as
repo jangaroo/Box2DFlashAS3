@@ -106,6 +106,12 @@ package Box2D.Collision
 		public function MoveProxy(proxy:b2DynamicTreeNode, aabb:b2AABB):Boolean
 		{
 			b2Settings.b2Assert(proxy.IsLeaf());
+			
+			if (proxy.aabb.Contains(aabb))
+			{
+				return false;
+			}
+			
 			RemoveLeaf(proxy);
 			
 			// Fatten the aabb.

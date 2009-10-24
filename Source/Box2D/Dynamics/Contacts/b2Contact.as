@@ -42,11 +42,14 @@ use namespace b2internal;
 */
 public class b2Contact
 {
+	/// Get the contact manifold. Do not set the point count to zero. Instead
+	/// call disable
 	public function GetManifold():b2Manifold
 	{
 		return m_manifold;
 	}
 	
+	/// Get the world manifold
 	public function GetWorldManifold(worldManifold:b2WorldManifold):void
 	{
 		var bodyA:b2Body = m_fixtureA.GetBody();
@@ -58,48 +61,46 @@ public class b2Contact
 	}
 	
 	/**
-	* Is this contact solid?
-	* @return true if this contact should generate a response.
-	*/
+	 * Is this contact solid? Returns fals if the shapes are separate,
+	 * sensors, or the contact has been disabled.
+	 * @return true if this contact should generate a response.
+	 */
 	public function IsSolid():Boolean
 	{
-		return (m_flags & e_nonSolidFlag) == 0;
+		return (m_flags & (e_sensorFlag | e_disabledFlag)) == 0;
 	}
 	
-    /// Change the solidity of this contact. Used for sensors.
-	public function SetSolid(solid:Boolean):void
+	/// Is this contact touching.
+	public function IsTouching():Boolean
 	{
-		if (solid)
+		return (m_flags & e_touchingFlag) != 0; 
+	}
+	
+	/// Does this contact generate TOI events for continuous simulation
+	public function IsContinuous():Boolean
+	{
+		return (m_flags & e_continuousFlag) != 0; 
+	}
+	
+	/// Change this to be a sensor or-non-sensor contact.
+	public function SetAsSensor(sensor:Boolean):void
+	{
+		if (sensor)
 		{
-			m_flags &= ~e_nonSolidFlag;
+			m_flags |= e_sensorFlag;
 		}
 		else
 		{
-			m_flags |= e_nonSolidFlag;
+			m_flags &= ~e_sensorFlag;
 		}
 	}
 	
-	/// Is this contact invalid?
-	/// Contacts created or modified during a step are invalid,
-	/// and won't participate until the next step.
-	public function IsInvalid():Boolean
+	/// Disable this contact. This can be used inside the pre-solve
+	/// contact listener. The contact is only disabled for the current
+	/// time step (or sub-step in continuous collision).
+	public function Disable():void
 	{
-		//TODO_BORIS: Is this method not defined anywhere?
-		return false;
-	}
-
-	/// Has this contact been removed from the world
-	/// And is about to be destroyed.
-	public function IsDestroyed():Boolean
-	{
-		//TODO_BORIS: Is this method not defined anywhere?
-		return false;
-	}
-
-	/// Are fixtures touching?
-	public function AreTouching():Boolean
-	{
-		return (m_flags & e_touchFlag) == e_touchFlag;
+		m_flags |= e_disabledFlag;
 	}
 	
 	/**
@@ -137,17 +138,19 @@ public class b2Contact
 	// enum
 	// This contact should not participate in Solve
 	// The contact equivalent of sensors
-	static b2internal var e_nonSolidFlag:uint	= 0x0001;
-	// Do not use TOI solve.
-	static b2internal var e_slowFlag:uint		= 0x0002;
+	static b2internal var e_sensorFlag:uint		= 0x0001;
+	// Generate TOI events.
+	static b2internal var e_continuousFlag:uint	= 0x0002;
 	// Used when crawling contact graph when forming islands.
 	static b2internal var e_islandFlag:uint		= 0x0004;
 	// Used in SolveTOI to indicate the cached toi value is still valid.
 	static b2internal var e_toiFlag:uint		= 0x0008;
-	// TODO: Doc
-	static b2internal var e_touchFlag:uint		= 0x0010;
+	// Set when shapes are touching
+	static b2internal var e_touchingFlag:uint	= 0x0010;
+	// Disabled (by user)
+	static b2internal var e_disabledFlag:uint	= 0x0020;
 	// This contact needs filtering because a fixture filter was changed.
-	static b2internal var e_filterFlag:uint		= 0x0020;
+	static b2internal var e_filterFlag:uint		= 0x0040;
 
 	static b2internal function AddType(createFcn:Function, destroyFcn:Function, type1:int, type2:int) : void
 	{
@@ -252,7 +255,17 @@ public class b2Contact
 		
 		if (fixtureA.IsSensor() || fixtureB.IsSensor())
 		{
-			m_flags |= e_nonSolidFlag;
+			m_flags |= e_sensorFlag;
+		}
+		
+		var bodyA:b2Body = fixtureA.GetBody();
+		var bodyB:b2Body = fixtureB.GetBody();
+		
+		if (bodyA.IsStatic() || bodyA.IsBullet() || bodyB.IsStatic() || bodyB.IsBullet())
+		{
+			m_flags |= e_continuousFlag;
+		}else{
+			m_flags &= ~e_continuousFlag;
 		}
 		
 		m_fixtureA = fixtureA;
@@ -280,7 +293,17 @@ public class b2Contact
 		// Perhaps an alternating scheme?
 		var oldManifold:b2Manifold = m_manifold.Copy();
 		
-		Evaluate();
+		// Re-enable this contact
+		m_flags &= ~e_disabledFlag;
+		
+		if (m_fixtureA.m_aabb.TestOverlap(m_fixtureB.m_aabb))
+		{
+			Evaluate();
+		}
+		else
+		{
+			m_manifold.m_pointCount = 0;
+		}
 		
 		var bodyA:b2Body = m_fixtureA.m_body;
 		var bodyB:b2Body = m_fixtureB.m_body;
@@ -297,11 +320,11 @@ public class b2Contact
 		// Slow contacts don't generate TOI events.
 		if (bodyA.IsStatic() || bodyA.IsBullet() || bodyB.IsStatic() || bodyB.IsBullet())
 		{
-			m_flags &= ~e_slowFlag;
+			m_flags |= e_continuousFlag;
 		}
 		else
 		{
-			m_flags |= e_slowFlag;
+			m_flags &= ~e_continuousFlag;
 		}
 		
 		// Match old contact ids to new contact ids and copy the
@@ -325,28 +348,29 @@ public class b2Contact
 				}
 			}
 		}
+		
+		if (newCount > 0)
+		{
+			m_flags |= e_touchingFlag;
+		}
+		else
+		{
+			m_flags &= ~e_touchingFlag;
+		}
 
 		if (oldCount == 0 && newCount > 0)
 		{
-			m_flags |= e_touchFlag;
 			listener.BeginContact(this);
 		}
 
 		if (oldCount > 0 && newCount == 0)
 		{
-			m_flags &= ~e_touchFlag;
 			listener.EndContact(this);
 		}
 
-		if ((m_flags & e_nonSolidFlag) == 0)
+		if ((m_flags & e_sensorFlag) == 0)
 		{
 			listener.PreSolve(this, oldManifold);
-
-			// The user may have disabled contact.
-			if (m_manifold.m_pointCount == 0)
-			{
-				m_flags &= ~e_touchFlag;
-			}
 		}
 	}
 

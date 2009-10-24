@@ -51,8 +51,8 @@ package TestBed{
 				var polygon:b2PolygonShape = b2PolygonShape.AsBox(3.0, 0.5);
 				m_platform = body.CreateFixture2(polygon);
 				
-				m_bottom = bd.position.y - 0.5;
-				m_top = bd.position.y + 0.5;
+				m_bottom = bd.position.y + 0.5;
+				m_top = bd.position.y - 0.5;
 				
 			}
 			
@@ -81,12 +81,12 @@ package TestBed{
 		static private var e_above:int = 1;
 		static private var e_below:int = 2;
 		
-		internal var m_radius:Number;
-		internal var m_top:Number;
-		internal var m_bottom:Number;
-		internal var m_state:int;
-		internal var m_platform:b2Fixture;
-		internal var m_character:b2Fixture;
+		public var m_radius:Number;
+		public var m_top:Number;
+		public var m_bottom:Number;
+		public var m_state:int;
+		public var m_platform:b2Fixture;
+		public var m_character:b2Fixture;
 		
 	}
 }
@@ -108,6 +108,15 @@ class ContactListener extends b2ContactListener
 	}
 	override public function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void 
 	{
-		// TODO
+		var fixtureA:b2Fixture = contact.GetFixtureA();
+		var fixtureB:b2Fixture = contact.GetFixtureB();
+		if (fixtureA != self.m_platform && fixtureA != self.m_character)
+			return;
+		if (fixtureB != self.m_platform && fixtureB != self.m_character)
+			return;
+			
+		var position:b2Vec2 = self.m_character.GetBody().GetPosition();
+		if (position.y > self.m_top)
+			contact.Disable();
 	}
 }

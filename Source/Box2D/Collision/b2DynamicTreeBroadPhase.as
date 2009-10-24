@@ -50,7 +50,7 @@ public class b2DynamicTreeBroadPhase implements IBroadPhase
 	}
 	
 	/// Get the AABB for a proxy.
-	public function GetAABB(proxy:*):b2AABB
+	public function GetFatAABB(proxy:*):b2AABB
 	{
 		return m_tree.GetFatAABB(proxy);
 	}

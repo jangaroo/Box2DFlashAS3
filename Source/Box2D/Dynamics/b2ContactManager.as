@@ -268,8 +268,11 @@ public class b2ContactManager
 			
 			var proxyA:* = fixtureA.m_proxy;
 			var proxyB:* = fixtureB.m_proxy;
-			// Here we cull out contacts that cease to overlap.
-			if ( m_broadPhase.TestOverlap(proxyA, proxyB) == false)
+			
+			var overlap:Boolean = m_broadPhase.TestOverlap(proxyA, proxyB);
+			
+			// Here we destroy contacts that cease to overlap in the broadphase
+			if ( overlap == false)
 			{
 				cNuke = c;
 				c = cNuke.GetNext();
