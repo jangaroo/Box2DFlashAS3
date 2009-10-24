@@ -247,7 +247,7 @@ public class b2Fixture
 		m_shape = null;
 	}
 	
-	b2internal function Synchronize(broadPhase:IBroadPhase, xf1:b2Transform, xf2:b2Transform):void
+	b2internal function Synchronize(broadPhase:IBroadPhase, transform1:b2Transform, transform2:b2Transform):void
 	{
 		if (!m_proxy)
 			return;
@@ -255,11 +255,12 @@ public class b2Fixture
 		// Compute an AABB that ocvers the swept shape (may miss some rotation effect)
 		var aabb1:b2AABB = new b2AABB();
 		var aabb2:b2AABB = new b2AABB();
-		m_shape.ComputeAABB(aabb1, xf1);
-		m_shape.ComputeAABB(aabb2, xf2);
+		m_shape.ComputeAABB(aabb1, transform1);
+		m_shape.ComputeAABB(aabb2, transform2);
 		
 		m_aabb.Combine(aabb1, aabb2);
-		broadPhase.MoveProxy(m_proxy, m_aabb);
+		var displacement:b2Vec2 = b2Math.SubtractVV(transform2.position, transform1.position);
+		broadPhase.MoveProxy(m_proxy, m_aabb, displacement);
 	}
 	
 	b2internal var m_aabb:b2AABB;

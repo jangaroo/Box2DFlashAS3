@@ -12,7 +12,7 @@
 		
 		/// Call MoveProxy as many times as you like, then when you are done
 		/// call UpdatePairs to finalized the proxy pairs (for your time step).
-		function MoveProxy(proxy:*, aabb:b2AABB):void;
+		function MoveProxy(proxy:*, aabb:b2AABB, displacement:b2Vec2):void;
 		
 		function TestOverlap(proxyA:*, proxyB:*):Boolean;
 		

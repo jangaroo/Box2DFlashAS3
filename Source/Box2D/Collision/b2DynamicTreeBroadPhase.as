@@ -27,9 +27,9 @@ public class b2DynamicTreeBroadPhase implements IBroadPhase
 	
 	/// Call MoveProxy as many times as you like, then when you are done
 	/// call UpdatePairs to finalized the proxy pairs (for your time step).
-	public function MoveProxy(proxy:*, aabb:b2AABB):void
+	public function MoveProxy(proxy:*, aabb:b2AABB, displacement:b2Vec2):void
 	{
-		var buffer:Boolean = m_tree.MoveProxy(proxy, aabb);
+		var buffer:Boolean = m_tree.MoveProxy(proxy, aabb, displacement);
 		if (buffer)
 		{
 			BufferMove(proxy);

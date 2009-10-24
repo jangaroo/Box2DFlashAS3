@@ -42,6 +42,8 @@ package Box2D.Collision
 			// TODO: Maybe allocate some free nodes?
 			m_freeList = null;
 			m_path = 0;
+			
+			m_insertionCount = 0;
 		}
 		/*
 		public function Dump(node:b2DynamicTreeNode=null, depth:int=0):void
@@ -74,13 +76,12 @@ package Box2D.Collision
 			var node:b2DynamicTreeNode = AllocateNode();
 			
 			// Fatten the aabb.
-			var center:b2Vec2 = aabb.GetCenter();
-			var extentsX:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.x - aabb.lowerBound.x) / 2;
-			var extentsY:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.y - aabb.lowerBound.y) / 2;
-			node.aabb.lowerBound.x = center.x - extentsX;
-			node.aabb.lowerBound.y = center.y - extentsY;
-			node.aabb.upperBound.x = center.x + extentsX;
-			node.aabb.upperBound.y = center.y + extentsY;
+			var extendX:Number = b2Settings.b2_aabbExtension;
+			var extendY:Number = b2Settings.b2_aabbExtension;
+			node.aabb.lowerBound.x = aabb.lowerBound.x - extendX;
+			node.aabb.lowerBound.y = aabb.lowerBound.y - extendY;
+			node.aabb.upperBound.x = aabb.upperBound.x + extendX;
+			node.aabb.upperBound.y = aabb.upperBound.y + extendY;
 			
 			node.userData = userData;
 			
@@ -99,11 +100,11 @@ package Box2D.Collision
 		}
 		
 		/**
-		 * Move a proxy. If the proxy has moved outside of its fattened AABB,
+		 * Move a proxy with a swept AABB. If the proxy has moved outside of its fattened AABB,
 		 * then the proxy is removed from the tree and re-inserted. Otherwise
 		 * the function returns immediately.
 		 */
-		public function MoveProxy(proxy:b2DynamicTreeNode, aabb:b2AABB):Boolean
+		public function MoveProxy(proxy:b2DynamicTreeNode, aabb:b2AABB, displacement:b2Vec2):Boolean
 		{
 			b2Settings.b2Assert(proxy.IsLeaf());
 			
@@ -114,15 +115,13 @@ package Box2D.Collision
 			
 			RemoveLeaf(proxy);
 			
-			// Fatten the aabb.
-			var center:b2Vec2 = aabb.GetCenter();
-			var extentsX:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.x - aabb.lowerBound.x) / 2;
-			var extentsY:Number = b2Settings.b2_aabbExtension * (aabb.upperBound.y - aabb.lowerBound.y) / 2;
-			proxy.aabb.lowerBound.x = center.x - extentsX;
-			proxy.aabb.lowerBound.y = center.y - extentsY;
-			proxy.aabb.upperBound.x = center.x + extentsX;
-			proxy.aabb.upperBound.y = center.y + extentsY;
-			
+			// Extend AABB
+			var extendX:Number = b2Settings.b2_aabbExtension + b2Settings.b2_aabbMultiplier * (displacement.x > 0?displacement.x: -displacement.x);
+			var extendY:Number = b2Settings.b2_aabbExtension + b2Settings.b2_aabbMultiplier * (displacement.y > 0?displacement.y: -displacement.y);
+			proxy.aabb.lowerBound.x = aabb.lowerBound.x - extendX;
+			proxy.aabb.lowerBound.y = aabb.lowerBound.y - extendY;
+			proxy.aabb.upperBound.x = aabb.upperBound.x + extendX;
+			proxy.aabb.upperBound.y = aabb.upperBound.y + extendY;
 			
 			InsertLeaf(proxy);
 			return true;
@@ -323,6 +322,8 @@ package Box2D.Collision
 		
 		private function InsertLeaf(leaf:b2DynamicTreeNode):void
 		{
+			++m_insertionCount;
+			
 			if (m_root == null)
 			{
 				m_root = leaf;
@@ -461,6 +462,8 @@ package Box2D.Collision
 		
 		/** This is used for incrementally traverse the tree for rebalancing */
 		private var m_path:uint;
+		
+		private var m_insertionCount:int;
 	}
 	
 }
