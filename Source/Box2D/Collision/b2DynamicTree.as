@@ -210,7 +210,7 @@ package Box2D.Collision
 		 * @param input the ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).
 		 * @param callback a callback class that is called for each proxy that is hit by the ray.
 		 * It should be of signature:
-		 * <code>function callback(input:b2RayCastInput, userData:*):void</code>
+		 * <code>function callback(input:b2RayCastInput, proxy:*):void</code>
 		 */
 		public function RayCast(callback:Function, input:b2RayCastInput):void
 		{
@@ -273,27 +273,19 @@ package Box2D.Collision
 					subInput.p2 = input.p2;
 					subInput.maxFraction = input.maxFraction;
 					
-					var output:b2RayCastOutput = new b2RayCastOutput();
-					callback(output, subInput, node.userData);
+					maxFraction = callback(subInput, node);
 					
-					if (output.hit)
+					if (maxFraction == 0.0)
+						return;
+						
+					//Update the segment bounding box
 					{
-						// Early exit
-						if (output.fraction == 0.0)
-							return;
-							
-						maxFraction = output.fraction;
-						
-						//Update the segment bounding box
-						{
-							tX = p1.x + maxFraction * (p2.x - p1.x);
-							tY = p1.y + maxFraction * (p2.y - p1.y);
-							segmentAABB.lowerBound.x = Math.min(p1.x, tX);
-							segmentAABB.lowerBound.y = Math.min(p1.y, tY);
-							segmentAABB.upperBound.x = Math.max(p1.x, tX);
-							segmentAABB.upperBound.y = Math.max(p1.y, tY);
-						}
-						
+						tX = p1.x + maxFraction * (p2.x - p1.x);
+						tY = p1.y + maxFraction * (p2.y - p1.y);
+						segmentAABB.lowerBound.x = Math.min(p1.x, tX);
+						segmentAABB.lowerBound.y = Math.min(p1.y, tY);
+						segmentAABB.upperBound.x = Math.max(p1.x, tX);
+						segmentAABB.upperBound.y = Math.max(p1.y, tY);
 					}
 				}
 				else

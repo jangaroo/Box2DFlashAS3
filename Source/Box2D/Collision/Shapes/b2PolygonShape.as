@@ -244,32 +244,28 @@ public class b2PolygonShape extends b2Shape
 	}
 
 	/**
-	* @inheritDoc
-	*/
-	public override function TestSegment( xf:b2Transform,
-		lambda:Array, // float ptr
-		normal:b2Vec2, // ptr
-		segment:b2Segment,
-		maxLambda:Number) : int
+	 * @inheritDoc
+	 */
+	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
 	{
 		var lower:Number = 0.0;
-		var upper:Number = maxLambda;
+		var upper:Number = input.maxFraction;
 		
 		var tX:Number;
 		var tY:Number;
 		var tMat:b2Mat22;
 		var tVec:b2Vec2;
 		
-		//b2Vec2 p1 = b2MulT(xf.R, segment.p1 - xf.position);
-		tX = segment.p1.x - xf.position.x;
-		tY = segment.p1.y - xf.position.y;
-		tMat = xf.R;
+		//b2Vec2 p1 = b2MulT(transform.R, segment.p1 - transform.position);
+		tX = input.p1.x - transform.position.x;
+		tY = input.p1.y - transform.position.y;
+		tMat = transform.R;
 		var p1X:Number = (tX * tMat.col1.x + tY * tMat.col1.y);
 		var p1Y:Number = (tX * tMat.col2.x + tY * tMat.col2.y);
-		//b2Vec2 p2 = b2MulT(xf.R, segment.p2 - xf.position);
-		tX = segment.p2.x - xf.position.x;
-		tY = segment.p2.y - xf.position.y;
-		tMat = xf.R;
+		//b2Vec2 p2 = b2MulT(transform.R, segment.p2 - transform.position);
+		tX = input.p2.x - transform.position.x;
+		tY = input.p2.y - transform.position.y;
+		tMat = transform.R;
 		var p2X:Number = (tX * tMat.col1.x + tY * tMat.col1.y);
 		var p2Y:Number = (tX * tMat.col2.x + tY * tMat.col2.y);
 		//b2Vec2 d = p2 - p1;
@@ -296,7 +292,8 @@ public class b2PolygonShape extends b2Shape
 			{
 				if (numerator < 0)
 				{
-					return e_missCollide;
+					output.hit = e_missCollide;
+					return;
 				}
 			}
 			else
@@ -322,26 +319,28 @@ public class b2PolygonShape extends b2Shape
 			
 			if (upper < lower)
 			{
-				return e_missCollide;
+				output.hit = e_missCollide;
+				return;
 			}
 		}
 		
-		//b2Settings.b2Assert(0.0 <= lower && lower <= maxLambda);
+		//b2Settings.b2Assert(0.0 <= lower && lower <= input.maxLambda);
 		
 		if (index >= 0)
 		{
-			//*lambda = lower;
-			lambda[0] = lower;
-			//*normal = b2Mul(xf.R, m_normals[index]);
-			tMat = xf.R;
+			output.fraction = lower;
+			//output.normal = b2Mul(transform.R, m_normals[index]);
+			tMat = transform.R;
 			tVec = m_normals[index];
-			normal.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
-			normal.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
-			return e_hitCollide;
+			output.normal.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+			output.normal.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+			output.hit = e_hitCollide;
+			return;
 		}
 		
-		lambda[0] = 0;
-		return e_startsInsideCollide;
+		output.fraction = 0;
+		output.hit = e_startsInsideCollide;
+		return;
 	}
 
 

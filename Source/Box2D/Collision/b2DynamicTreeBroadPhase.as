@@ -122,17 +122,20 @@ public class b2DynamicTreeBroadPhase implements IBroadPhase
 		}
 	}
 	
-	/// Query an AABB for overlapping proxies. The callback class
-	/// is called with the userData foreach proxy that overlaps 
-	/// the supplied AABB, and return a Boolean indicating if 
-	/// the broaphase should proceed to the next match.
+	/**
+	 * @inheritDoc
+	 */
 	public function Query(callback:Function, aabb:b2AABB):void
 	{
-		function QueryWrapper(proxy:b2DynamicTreeNode):Boolean
-		{
-			return callback(m_tree.GetUserData(proxy));
-		}
-		m_tree.Query(QueryWrapper, aabb);
+		m_tree.Query(callback, aabb);
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function RayCast(callback:Function, input:b2RayCastInput):void
+	{
+		m_tree.RayCast(callback, input);
 	}
 	
 	

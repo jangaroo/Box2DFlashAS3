@@ -19,6 +19,7 @@
 package Box2D.Collision{
 	
 import Box2D.Collision.*;
+import Box2D.Collision.Shapes.b2Shape;
 import Box2D.Common.b2Settings;
 import Box2D.Common.Math.*;
 
@@ -72,7 +73,7 @@ public class b2AABB
 		var tmin:Number = Number.MIN_VALUE;
 		var tmax:Number = Number.MAX_VALUE;
 		
-		output.hit = false;
+		output.hit = b2Shape.e_missCollide;
 		var pX:Number = input.p1.x;
 		var pY:Number = input.p1.y;
 		var dX:Number = input.p2.x - input.p1.x;

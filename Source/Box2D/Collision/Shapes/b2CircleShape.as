@@ -72,34 +72,31 @@ public class b2CircleShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function TestSegment(	transform:b2Transform,
-						lambda:Array, // float pointer
-						normal:b2Vec2, // pointer
-						segment:b2Segment,
-						maxLambda:Number) :int
+	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
 	{
 		//b2Vec2 position = transform.position + b2Mul(transform.R, m_p);
 		var tMat:b2Mat22 = transform.R;
 		var positionX:Number = transform.position.x + (tMat.col1.x * m_p.x + tMat.col2.x * m_p.y);
 		var positionY:Number = transform.position.y + (tMat.col1.y * m_p.x + tMat.col2.y * m_p.y);
 		
-		//b2Vec2 s = segment.p1 - position;
-		var sX:Number = segment.p1.x - positionX;
-		var sY:Number = segment.p1.y - positionY;
+		//b2Vec2 s = input.p1 - position;
+		var sX:Number = input.p1.x - positionX;
+		var sY:Number = input.p1.y - positionY;
 		//float32 b = b2Dot(s, s) - m_radius * m_radius;
 		var b:Number = (sX*sX + sY*sY) - m_radius * m_radius;
 		
 		// Does the segment start inside the circle?
 		if (b < 0.0)
 		{
-			lambda[0]=0;
-			return e_startsInsideCollide;
+			output.fraction = 0;
+			output.hit = e_startsInsideCollide;
+			return;
 		}
 		
 		// Solve quadratic equation.
-		//b2Vec2 r = segment.p2 - segment.p1;
-		var rX:Number = segment.p2.x - segment.p1.x;
-		var rY:Number = segment.p2.y - segment.p1.y;
+		//b2Vec2 r = input.p2 - input.p1;
+		var rX:Number = input.p2.x - input.p1.x;
+		var rY:Number = input.p2.y - input.p1.y;
 		//float32 c =  b2Dot(s, r);
 		var c:Number =  (sX*rX + sY*rY);
 		//float32 rr = b2Dot(r, r);
@@ -109,26 +106,28 @@ public class b2CircleShape extends b2Shape
 		// Check for negative discriminant and short segment.
 		if (sigma < 0.0 || rr < Number.MIN_VALUE)
 		{
-			return e_missCollide;
+			output.hit = e_missCollide;
+			return;
 		}
 		
 		// Find the point of intersection of the line with the circle.
 		var a:Number = -(c + Math.sqrt(sigma));
 		
 		// Is the intersection point on the segment?
-		if (0.0 <= a && a <= maxLambda * rr)
+		if (0.0 <= a && a <= input.maxFraction * rr)
 		{
 			a /= rr;
-			//*lambda = a;
-			lambda[0] = a;
-			//*normal = s + a * r;
-			normal.x = sX + a * rX;
-			normal.y = sY + a * rY;
-			normal.Normalize();
-			return e_hitCollide;
+			output.fraction = a;
+			//output.normal = s + a * r;
+			output.normal.x = sX + a * rX;
+			output.normal.y = sY + a * rY;
+			output.normal.Normalize();
+			output.hit = e_hitCollide;
+			return;
 		}
 		
-		return e_missCollide;
+		output.hit = e_missCollide;
+		return;
 	}
 
 	/**

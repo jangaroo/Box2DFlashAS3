@@ -147,16 +147,11 @@ public class b2Fixture
 	}
 	
 	/// Perform a ray cast against this shape.
-	/// @param xf the shape world transform.
-	/// @param lambda returns the hit fraction. You can use this to compute the contact point
-	/// p = (1 - lambda) * segment.p1 + lambda * segment.p2.
-	/// @param normal returns the normal at the contact point. If there is no intersection, the normal
-	/// is not set.
-	/// @param segment defines the begin and end point of the ray cast.
-	/// @param maxLambda a number typically in the range [0,1].
-	public function TestSegment(lambda:Array, normal:b2Vec2, segment:b2Segment, maxLambda:Number):int
+	/// @param output the ray-cast results.
+	/// @param input the ray-cast input parameters.
+	public function RayCast(output:b2RayCastOutput, input:b2RayCastInput):void
 	{
-		return m_shape.TestSegment(m_body.GetTransform(), lambda, normal, segment, maxLambda);
+		return m_shape.RayCast(output, input, m_body.GetTransform());
 	}
 	
 	/// Compute the mass properties of this shape using its dimensions and density.

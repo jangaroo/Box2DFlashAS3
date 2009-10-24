@@ -718,11 +718,80 @@ public class b2World
 
 	/// Query the world for all fixtures that potentially overlap the
 	/// provided AABB.
-	/// @param callback a user implemented callback class.
+	/// @param callback a user implemented callback class. It should match signature
+	/// <code>function Callback(fixture:b2Fixture):void</code>
 	/// @param aabb the query box.
-	public function Query(callback:Function, aabb:b2AABB):void
+	public function QueryAABB(callback:Function, aabb:b2AABB):void
 	{
-		m_contactManager.m_broadPhase.Query(callback, aabb);
+		var broadPhase:IBroadPhase = m_contactManager.m_broadPhase;
+		function WorldQueryWrapper(proxy:*):void
+		{
+			callback(broadPhase.GetUserData(proxy));
+		}
+		broadPhase.Query(WorldQueryWrapper, aabb);
+	}
+	
+	/// Ray-cast the world for all fixtures in the path of the ray. Your callback
+	/// Controls whether you get the closest point, any point, or n-points
+	/// The ray-cast ignores shapes that contain the starting point
+	/// @param callback A callback function which must be of signature:
+	/// <code>function Callback(fixture:b2Fixture,    // The fixture hit by the ray
+	///							point:b2Vec2,         // The point of initial intersection
+	///							normal:b2Vec2,        // The normal vector at the point of intersection
+	///							fraction:Number       // The fractional length along the ray of the intersection
+	///							):Number
+	///							</code>
+	/// Callback should return the new length of the ray as a fraction of the original length.
+	/// By returning 0, you immediately terminate.
+	/// By returning 1, you continue wiht the original ray.
+	/// By returning the current fraction, you proceed to find the closest point.
+	/// @param point1 the ray starting point
+	/// @param point2 the ray ending point
+	public function RayCast(callback:Function, point1:b2Vec2, point2:b2Vec2):void
+	{
+		var broadPhase:IBroadPhase = m_contactManager.m_broadPhase;
+		var output:b2RayCastOutput = new b2RayCastOutput;
+		function RayCastWrapper(input:b2RayCastInput, proxy:*):Number
+		{
+			var userData:* = broadPhase.GetUserData(proxy);
+			var fixture:b2Fixture = userData as b2Fixture;
+			fixture.RayCast(output, input);
+			if (output.hit == b2Shape.e_hitCollide)
+			{
+				var fraction:Number = output.fraction;
+				var point:b2Vec2 = new b2Vec2(
+					(1.0 - fraction) * point1.x + fraction * point2.x,
+					(1.0 - fraction) * point1.y + fraction * point2.y);
+				return callback(fixture, point1, output.normal, fraction);
+			}
+			return input.maxFraction;
+		}
+		var input:b2RayCastInput = new b2RayCastInput(point1, point2);
+		broadPhase.RayCast(RayCastWrapper, input);
+	}
+	
+	public function RayCastOne(point1:b2Vec2, point2:b2Vec2):b2Fixture
+	{
+		var result:b2Fixture;
+		function RayCastOneWrapper(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
+		{
+			result = fixture;
+			return fraction;
+		}
+		RayCast(RayCastOneWrapper, point1, point2);
+		return result;
+	}
+	
+	public function RayCastAll(point1:b2Vec2, point2:b2Vec2):Array/*b2Fixture*/
+	{
+		var result:Array/*b2Fixture*/ = [];
+		function RayCastAllWrapper(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
+		{
+			result.push(fixture);
+			return 1;
+		}
+		RayCast(RayCastAllWrapper, point1, point2);
+		return result;
 	}
 		
 	/**

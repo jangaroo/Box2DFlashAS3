@@ -246,7 +246,7 @@ package TestBed{
 					}
 				}
 			}
-			m_world.Query(GetBodyCallback, aabb);
+			m_world.QueryAABB(GetBodyCallback, aabb);
 			return body;
 		}
 		

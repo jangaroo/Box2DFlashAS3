@@ -29,8 +29,20 @@
 		function UpdatePairs(callback:Function):void;
 		
 		/// Query an AABB for overlapping proxies. The callback class
-		/// is called for each proxy that overlaps the supplied AABB.
+		/// is called with each proxy that overlaps 
+		/// the supplied AABB, and return a Boolean indicating if 
+		/// the broaphase should proceed to the next match.
+		/// @param callback This function should be a function matching signature
+		/// <code>function Callback(proxy:*):void</code>
 		function Query(callback:Function, aabb:b2AABB):void;
+		
+		/// Ray-cast  agains the proxies in the tree. This relies on the callback
+		/// to perform exact ray-cast in the case where the proxy contains a shape
+		/// The callback also performs any collision filtering
+		/// @param callback This function should be a function matching signature
+		/// <code>function Callback(subInput:b2RayCastInput, proxy:*):Number</code>
+		/// Where the returned number is the new value for maxFraction
+		function RayCast(callback:Function, input:b2RayCastInput):void;
 		
 		/// For debugging, throws in invariants have been broken
 		function Validate():void;

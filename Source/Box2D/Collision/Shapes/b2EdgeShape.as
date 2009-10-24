@@ -47,15 +47,11 @@ public class b2EdgeShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function TestSegment(	transform:b2Transform,
-						lambda:Array, // float pointer
-						normal:b2Vec2, // pointer
-						segment:b2Segment,
-						maxLambda:Number) :int
+	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
 	{
 		var tMat:b2Mat22;
-		var rX: Number = segment.p2.x - segment.p1.x;
-		var rY: Number = segment.p2.y - segment.p1.y;
+		var rX: Number = input.p2.x - input.p1.x;
+		var rY: Number = input.p2.y - input.p1.y;
 		
 		//b2Vec2 v1 = b2Mul(transform, m_v1);
 		tMat = transform.R;
@@ -73,11 +69,11 @@ public class b2EdgeShape extends b2Shape
 		if (denom > k_slop)
 		{
 			// Does the segment intersect the infinite line associated with this segment?
-			var bX: Number = segment.p1.x - v1X;
-			var bY: Number = segment.p1.y - v1Y;
+			var bX: Number = input.p1.x - v1X;
+			var bY: Number = input.p1.y - v1Y;
 			var a: Number = (bX * nX + bY * nY);
 	
-			if (0.0 <= a && a <= maxLambda * denom)
+			if (0.0 <= a && a <= input.maxFraction * denom)
 			{
 				var mu2: Number = -rX * bY + rY * bX;
 	
@@ -85,16 +81,18 @@ public class b2EdgeShape extends b2Shape
 				if (-k_slop * denom <= mu2 && mu2 <= denom * (1.0 + k_slop))
 				{
 					a /= denom;
-					lambda[0] = a;
+					output.fraction = a;
 					var nLen: Number = Math.sqrt(nX * nX + nY * nY);
-					normal.x = nX / nLen;
-					normal.y = nY / nLen;
-					return e_hitCollide;
+					output.normal.x = nX / nLen;
+					output.normal.y = nY / nLen;
+					output.hit = e_hitCollide;
+					return;
 				}
 			}
 		}
 	
-		return e_missCollide;
+		output.hit = e_missCollide;
+		return;
 	}
 
 	/**

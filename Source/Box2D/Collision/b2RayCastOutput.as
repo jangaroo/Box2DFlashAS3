@@ -22,9 +22,15 @@ package Box2D.Collision
 	
 	public class b2RayCastOutput 
 	{
-		public var normal:b2Vec2;
+		/// The normal at the point of collision
+		public var normal:b2Vec2 = new b2Vec2();
+		/// The fraction between p1 and p2 that the collision occurs at
 		public var fraction:Number;
-		public var hit:Boolean;
+		/// One of the values
+		/// b2Shape.e_hitCollide
+		/// b2Shape.e_missCollide
+		/// b2Shape e_startsInsideCollide
+		public var hit:int;
 	}
 	
 }

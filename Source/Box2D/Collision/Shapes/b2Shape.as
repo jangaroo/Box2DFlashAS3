@@ -72,25 +72,14 @@ public class b2Shape
 	*/
 	public virtual function TestPoint(xf:b2Transform, p:b2Vec2) : Boolean {return false};
 
-	/**
-	* Perform a ray cast against this shape.
-	* @param xf the shape world transform.
-	* @param lambda returns the hit fraction. You can use this to compute the contact point:
-	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
-	* 
-	* lambda should be an array with one member. After calling TestSegment, you can retrieve the output value with
-	* lambda[0].
-	* @param normal returns the normal at the contact point. If there is no intersection, the normal
-	* is not set.
-	* @param segment defines the begin and end point of the ray cast.
-	* @param maxLambda a number typically in the range [0,1].
-	* @return b2Shape.e_hitCollide if there was an intersection, b2Shape.e_startsInsideCollide if the point is inside and b2Shape.e_missCollide otherwise.
-	*/
-	public virtual function  TestSegment(xf:b2Transform,
-								lambda:Array, // float pointer
-								normal:b2Vec2, // pointer
-								segment:b2Segment,
-								maxLambda:Number) : int {return e_missCollide};
+	/// Cast a ray against this shape.
+	/// @param output the ray-cast results.
+	/// @param input the ray-cast input parameters.
+	/// @param transform the transform to be applied to the shape.
+	public virtual function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
+	{
+		output.hit = e_missCollide;
+	}
 
 	/**
 	* Given a transform, compute the associated axis aligned bounding box for this shape.
