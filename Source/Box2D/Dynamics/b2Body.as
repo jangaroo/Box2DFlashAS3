@@ -594,7 +594,7 @@ public class b2Body
 		var massData:b2MassData = new b2MassData();
 		massData.mass = m_mass;
 		massData.I = m_I;
-		massData.center = GetWorldCenter();
+		massData.center.SetV(m_sweep.localCenter);
 		return massData;
 	}
 	  

@@ -69,7 +69,7 @@ public class b2TimeOfImpact
 		
 		var xfA:b2Transform = new b2Transform();
 		var xfB:b2Transform = new b2Transform();
-		var fcn:b2SeperationFunction = new b2SeperationFunction();
+		var fcn:b2SeparationFunction = new b2SeparationFunction();
 		for (;; )
 		{
 			sweepA.GetTransform(xfA, alpha);
@@ -251,7 +251,7 @@ import Box2D.Common.Math.*;
 /**
 * @private
 */
-internal class b2SeperationFunction
+internal class b2SeparationFunction
 {
 	//enum Type
 	public static const e_points:int = 0x01;
