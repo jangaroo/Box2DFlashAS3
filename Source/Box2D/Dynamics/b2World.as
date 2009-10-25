@@ -1265,7 +1265,7 @@ public class b2World
 					// Does the TOI island still have space for contacts?
 					if (island.m_contactCount == island.m_contactCapacity)
 					{
-						continue;
+						break;
 					}
 					
 					// Has this contact already been added to an island?
