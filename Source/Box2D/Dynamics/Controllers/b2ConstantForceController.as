@@ -24,10 +24,14 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 
 
-/// Applies a force every frame
+/**
+ * Applies a force every frame
+ */
 public class b2ConstantForceController extends b2Controller
 {	
-	/// The force to apply
+	/**
+	 * The force to apply
+	 */
 	public var F:b2Vec2 = new b2Vec2(0,0);
 	
 	public override function Step(step:b2TimeStep):void{

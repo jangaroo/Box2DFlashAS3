@@ -25,12 +25,16 @@ import Box2D.Common.b2internal;
 
 use namespace b2internal;
 
-	/// A distance proxy is used by the GJK algorithm.
- 	/// It encapsulates any shape.
+	/**
+	 * A distance proxy is used by the GJK algorithm.
+ 	 * It encapsulates any shape.
+ 	 */
 	public class b2DistanceProxy 
 	{
- 		/// Initialize the proxy using the given shape. The shape
- 		/// must remain in scope while the proxy is in use.
+ 		/**
+ 		 * Initialize the proxy using the given shape. The shape
+ 		 * must remain in scope while the proxy is in use.
+ 		 */
  		public function Set(shape:b2Shape):void
 		{
 			switch(shape.GetType())
@@ -56,7 +60,9 @@ use namespace b2internal;
 			}
 		}
 		
- 		/// Get the supporting vertex index in the given direction.
+ 		/**
+ 		 * Get the supporting vertex index in the given direction.
+ 		 */
  		public function GetSupport(d:b2Vec2):Number
 		{
 			var bestIndex:int = 0;
@@ -73,7 +79,9 @@ use namespace b2internal;
 			return bestIndex;
 		}
 		
- 		/// Get the supporting vertex in the given direction.
+ 		/**
+ 		 * Get the supporting vertex in the given direction.
+ 		 */
  		public function GetSupportVertex(d:b2Vec2):b2Vec2
 		{
 			var bestIndex:int = 0;
@@ -89,13 +97,17 @@ use namespace b2internal;
 			}
 			return m_vertices[bestIndex];
 		}
- 		/// Get the vertex count.
+ 		/**
+ 		 * Get the vertex count.
+ 		 */
  		public function GetVertexCount():int
 		{
 			return m_count;
 		}
 		
- 		/// Get a vertex by index. Used by b2Distance.
+ 		/**
+ 		 * Get a vertex by index. Used by b2Distance.
+ 		 */
  		public function GetVertex(index:int):b2Vec2
 		{
 			b2Settings.b2Assert(0 <= index && index < m_count);

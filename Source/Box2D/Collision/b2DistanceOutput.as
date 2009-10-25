@@ -19,13 +19,12 @@ package Box2D.Collision
 {
 import Box2D.Common.Math.b2Vec2;
 	
-	/// Output for b2Distance.
+	/**
+	 * Output for b2Distance.
+	 */
 	public class b2DistanceOutput 
 	{
-		public var  pointA:b2Vec2 = new b2Vec2();		///< closest point on shapeA
-		public var pointB:b2Vec2 = new b2Vec2();		///< closest point on shapeB
-		public var distance:Number;
-		public var iterations:int;	///< number of GJK iterations used
-	}
+	/** Closest point on shapea */	public var  pointA:b2Vec2 = new b2Vec2();	/** Closest point on shapeb */	public var pointB:b2Vec2 = new b2Vec2();		public var distance:Number;
+	/** Number of gjk iterations used */	public var iterations:int;	}
 	
 }

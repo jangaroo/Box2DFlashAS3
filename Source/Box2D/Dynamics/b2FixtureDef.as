@@ -30,11 +30,15 @@ import Box2D.Common.b2internal;
 use namespace b2internal;
 
 
-/// A fixture definition is used to create a fixture. This class defines an
-/// abstract fixture definition. You can reuse fixture definitions safely.
+/**
+ * A fixture definition is used to create a fixture. This class defines an
+ * abstract fixture definition. You can reuse fixture definitions safely.
+ */
 public class b2FixtureDef
 {
-	/// The constructor sets the default fixture definition values.
+	/**
+	 * The constructor sets the default fixture definition values.
+	 */
 	public function b2FixtureDef()
 	{
 		shape = null;
@@ -48,27 +52,41 @@ public class b2FixtureDef
 		isSensor = false;
 	}
 	
-	/// The shape, this must be set. The shape will be cloned, so you
-	/// can create the shape on the stack.
+	/**
+	 * The shape, this must be set. The shape will be cloned, so you
+	 * can create the shape on the stack.
+	 */
 	public var shape:b2Shape;
 
-	/// Use this to store application specific fixture data.
+	/**
+	 * Use this to store application specific fixture data.
+	 */
 	public var userData:*;
 
-	/// The friction coefficient, usually in the range [0,1].
+	/**
+	 * The friction coefficient, usually in the range [0,1].
+	 */
 	public var friction:Number;
 
-	/// The restitution (elasticity) usually in the range [0,1].
+	/**
+	 * The restitution (elasticity) usually in the range [0,1].
+	 */
 	public var restitution:Number;
 
-	/// The density, usually in kg/m^2.
+	/**
+	 * The density, usually in kg/m^2.
+	 */
 	public var density:Number;
 
-	/// A sensor shape collects contact information but never generates a collision
-	/// response.
+	/**
+	 * A sensor shape collects contact information but never generates a collision
+	 * response.
+	 */
 	public var isSensor:Boolean;
 
-	/// Contact filtering data.
+	/**
+	 * Contact filtering data.
+	 */
 	public var filter:b2FilterData = new b2FilterData();
 };
 

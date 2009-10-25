@@ -24,11 +24,15 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 
 
-/// Applies top down linear damping to the controlled bodies
-/// The damping is calculated by multiplying velocity by a matrix in local co-ordinates.
+/**
+ * Applies top down linear damping to the controlled bodies
+ * The damping is calculated by multiplying velocity by a matrix in local co-ordinates.
+ */
 public class b2TensorDampingController extends b2Controller
 {	
-	/// Tensor to use in damping model
+	/**
+	 * Tensor to use in damping model
+	 */
 	public var T:b2Mat22 = new b2Mat22();
 	/*Some examples (matrixes in format (row1; row2) )
 	(-a 0;0 -a)		Standard isotropic damping with strength a
@@ -37,11 +41,15 @@ public class b2TensorDampingController extends b2Controller
 	*/
 	//By the way, tensor in this case just means matrix, don't let the terminology get you down.
 	
-	/// Set this to a positive number to clamp the maximum amount of damping done.
+	/**
+	 * Set this to a positive number to clamp the maximum amount of damping done.
+	 */
 	public var maxTimestep:Number = 0;
 	// Typically one wants maxTimestep to be 1/(max eigenvalue of T), so that damping will never cause something to reverse direction
 	
-	/// Helper function to set T in a common case
+	/**
+	 * Helper function to set T in a common case
+	 */
 	public function SetAxisAligned(xDamping:Number, yDamping:Number):void{
 		T.col1.x = -xDamping;
 		T.col1.y = 0;

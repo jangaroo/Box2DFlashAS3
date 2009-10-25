@@ -30,11 +30,17 @@ package Box2D.Collision
 				this.p2.SetV(p2);
 			this.maxFraction = maxFraction;
 		}
-		/// The start point of the ray
+		/**
+		 * The start point of the ray
+		 */
 		public var p1:b2Vec2 = new b2Vec2();
-		/// The end point of the ray
+		/**
+		 * The end point of the ray
+		 */
 		public var p2:b2Vec2 = new b2Vec2();
-		/// Truncate the ray to reach up to this fraction from p1 to p2
+		/**
+		 * Truncate the ray to reach up to this fraction from p1 to p2
+		 */
 		public var maxFraction:Number;
 	}
 	

@@ -20,7 +20,9 @@ package Box2D.Collision
 {
 import Box2D.Common.Math.b2Sweep;
 	
-	/// Inpute parameters for b2TimeOfImpact
+	/**
+	 * Inpute parameters for b2TimeOfImpact
+	 */
 	public class b2TOIInput 
 	{
 		public var proxyA:b2DistanceProxy = new b2DistanceProxy();

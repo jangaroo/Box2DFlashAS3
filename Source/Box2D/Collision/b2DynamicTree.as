@@ -156,7 +156,9 @@ package Box2D.Collision
 			return proxy.aabb;
 		}
 
-		/// Get user data from a proxy. Returns null if the proxy is invalid.
+		/**
+		 * Get user data from a proxy. Returns null if the proxy is invalid.
+		 */
 		public function GetUserData(proxy:b2DynamicTreeNode):*
 		{
 			return proxy.userData;

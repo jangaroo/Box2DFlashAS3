@@ -42,14 +42,18 @@ use namespace b2internal;
 */
 public class b2Contact
 {
-	/// Get the contact manifold. Do not set the point count to zero. Instead
-	/// call disable
+	/**
+	 * Get the contact manifold. Do not set the point count to zero. Instead
+	 * call disable
+	 */
 	public function GetManifold():b2Manifold
 	{
 		return m_manifold;
 	}
 	
-	/// Get the world manifold
+	/**
+	 * Get the world manifold
+	 */
 	public function GetWorldManifold(worldManifold:b2WorldManifold):void
 	{
 		var bodyA:b2Body = m_fixtureA.GetBody();
@@ -70,19 +74,25 @@ public class b2Contact
 		return (m_flags & (e_sensorFlag | e_disabledFlag)) == 0;
 	}
 	
-	/// Is this contact touching.
+	/**
+	 * Is this contact touching.
+	 */
 	public function IsTouching():Boolean
 	{
 		return (m_flags & e_touchingFlag) != 0; 
 	}
 	
-	/// Does this contact generate TOI events for continuous simulation
+	/**
+	 * Does this contact generate TOI events for continuous simulation
+	 */
 	public function IsContinuous():Boolean
 	{
 		return (m_flags & e_continuousFlag) != 0; 
 	}
 	
-	/// Change this to be a sensor or-non-sensor contact.
+	/**
+	 * Change this to be a sensor or-non-sensor contact.
+	 */
 	public function SetAsSensor(sensor:Boolean):void
 	{
 		if (sensor)
@@ -95,9 +105,11 @@ public class b2Contact
 		}
 	}
 	
-	/// Disable this contact. This can be used inside the pre-solve
-	/// contact listener. The contact is only disabled for the current
-	/// time step (or sub-step in continuous collision).
+	/**
+	 * Disable this contact. This can be used inside the pre-solve
+	 * contact listener. The contact is only disabled for the current
+	 * time step (or sub-step in continuous collision).
+	 */
 	public function Disable():void
 	{
 		m_flags |= e_disabledFlag;
@@ -126,7 +138,9 @@ public class b2Contact
 		return m_fixtureB;
 	}
 	
-	/// Flag this contact for filtering. Filtering will occur the next time step.
+	/**
+	 * Flag this contact for filtering. Filtering will occur the next time step.
+	 */
 	public function FlagForFiltering():void
 	{
 		m_flags |= e_filterFlag;

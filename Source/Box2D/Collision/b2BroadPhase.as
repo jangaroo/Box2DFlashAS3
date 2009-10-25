@@ -609,13 +609,17 @@ public class b2BroadPhase implements IBroadPhase
 		return true;
 	}
 	
-	/// Get user data from a proxy. Returns null if the proxy is invalid.
+	/**
+	 * Get user data from a proxy. Returns null if the proxy is invalid.
+	 */
 	public function GetUserData(proxy:*):*
 	{
 		return (proxy as b2Proxy).userData;
 	}
 	
-	/// Get the AABB for a proxy.
+	/**
+	 * Get the AABB for a proxy.
+	 */
 	public function GetFatAABB(proxy_:*):b2AABB
 	{
 		var aabb:b2AABB = new b2AABB();
@@ -627,15 +631,19 @@ public class b2BroadPhase implements IBroadPhase
 		return aabb;
 	}
 	
-	/// Get the number of proxies.
+	/**
+	 * Get the number of proxies.
+	 */
 	public function GetProxyCount():int
 	{
 		return m_proxyCount;
 	}
 		
 	
-	/// Query an AABB for overlapping proxies. The callback class
-	/// is called for each proxy that overlaps the supplied AABB.
+	/**
+	 * Query an AABB for overlapping proxies. The callback class
+	 * is called for each proxy that overlaps the supplied AABB.
+	 */
 	public function Query(callback:Function, aabb:b2AABB):void
 	{
 		var lowerValues:Array = new Array();

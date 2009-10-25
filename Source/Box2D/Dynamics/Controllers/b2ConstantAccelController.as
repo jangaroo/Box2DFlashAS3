@@ -24,10 +24,14 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 
 
-/// Applies an acceleration every frame, like gravity
+/**
+ * Applies an acceleration every frame, like gravity
+ */
 public class b2ConstantAccelController extends b2Controller
 {	
-	/// The acceleration to apply
+	/**
+	 * The acceleration to apply
+	 */
 	public var A:b2Vec2 = new b2Vec2(0,0);
 	
 	public override function Step(step:b2TimeStep):void{

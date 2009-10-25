@@ -24,12 +24,18 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 
 
-/// Applies simplified gravity between every pair of bodies 
+/**
+ * Applies simplified gravity between every pair of bodies 
+ */
 public class b2GravityController extends b2Controller
 {	
-	/// Specifies the strength of the gravitiation force
+	/**
+	 * Specifies the strength of the gravitiation force
+	 */
 	public var G:Number = 1;
-	/// If true, gravity is proportional to r^-2, otherwise r^-1
+	/**
+	 * If true, gravity is proportional to r^-2, otherwise r^-1
+	 */
 	public var invSqr:Boolean = true;
 	
 	public override function Step(step:b2TimeStep):void{

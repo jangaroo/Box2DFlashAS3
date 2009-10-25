@@ -39,7 +39,9 @@ use namespace b2internal;
 public class b2Shape
 {
 	
-	/// Clone the shape
+	/**
+	 * Clone the shape
+	 */
 	virtual public function Copy():b2Shape
 	{
 		//var s:b2Shape = new b2Shape();
@@ -48,7 +50,9 @@ public class b2Shape
 		return null; // Abstract type
 	}
 	
-	/// Assign the properties of anther shape to this
+	/**
+	 * Assign the properties of anther shape to this
+	 */
 	virtual public function Set(other:b2Shape):void
 	{
 		//Don't copy m_type?
@@ -72,10 +76,12 @@ public class b2Shape
 	*/
 	public virtual function TestPoint(xf:b2Transform, p:b2Vec2) : Boolean {return false};
 
-	/// Cast a ray against this shape.
-	/// @param output the ray-cast results.
-	/// @param input the ray-cast input parameters.
-	/// @param transform the transform to be applied to the shape.
+	/**
+	 * Cast a ray against this shape.
+	 * @param output the ray-cast results.
+	 * @param input the ray-cast input parameters.
+	 * @param transform the transform to be applied to the shape.
+	 */
 	public virtual function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
 	{
 		output.hit = e_missCollide;
@@ -136,7 +142,9 @@ public class b2Shape
 		static b2internal const e_shapeTypeCount:int = 	3;
 	//};
 	
-	/// Possible return values for TestSegment
+	/**
+	 * Possible return values for TestSegment
+	 */
 		/** Return value for TestSegment indicating a hit. */
 		static public const e_hitCollide:int = 1;
 		/** Return value for TestSegment indicating a miss. */

@@ -435,7 +435,9 @@ public class b2World
 		
 	}
 	
-	/// Add a controller to the world list
+	/**
+	 * Add a controller to the world list
+	 */
 	public function AddController(c:b2Controller) : b2Controller
 	{
 		c.m_next = m_controllerList;
@@ -608,7 +610,9 @@ public class b2World
 	}
 	
 	static private var s_xf:b2Transform = new b2Transform();
-	/// Call this to draw shapes and other debug draw data.
+	/**
+	 * Call this to draw shapes and other debug draw data.
+	 */
 	public function DrawDebugData() : void{
 		
 		if (m_debugDraw == null)
@@ -716,12 +720,14 @@ public class b2World
 		}
 	}
 
-	/// Query the world for all fixtures that potentially overlap the
-	/// provided AABB.
-	/// @param callback a user implemented callback class. It should match signature
-	/// <code>function Callback(fixture:b2Fixture):Boolean</code>
-	/// Return true to continue to the next fixture.
-	/// @param aabb the query box.
+	/**
+	 * Query the world for all fixtures that potentially overlap the
+	 * provided AABB.
+	 * @param callback a user implemented callback class. It should match signature
+	 * <code>function Callback(fixture:b2Fixture):Boolean</code>
+	 * Return true to continue to the next fixture.
+	 * @param aabb the query box.
+	 */
 	public function QueryAABB(callback:Function, aabb:b2AABB):void
 	{
 		var broadPhase:IBroadPhase = m_contactManager.m_broadPhase;
@@ -732,22 +738,24 @@ public class b2World
 		broadPhase.Query(WorldQueryWrapper, aabb);
 	}
 	
-	/// Ray-cast the world for all fixtures in the path of the ray. Your callback
-	/// Controls whether you get the closest point, any point, or n-points
-	/// The ray-cast ignores shapes that contain the starting point
-	/// @param callback A callback function which must be of signature:
-	/// <code>function Callback(fixture:b2Fixture,    // The fixture hit by the ray
-	///							point:b2Vec2,         // The point of initial intersection
-	///							normal:b2Vec2,        // The normal vector at the point of intersection
-	///							fraction:Number       // The fractional length along the ray of the intersection
-	///							):Number
-	///							</code>
-	/// Callback should return the new length of the ray as a fraction of the original length.
-	/// By returning 0, you immediately terminate.
-	/// By returning 1, you continue wiht the original ray.
-	/// By returning the current fraction, you proceed to find the closest point.
-	/// @param point1 the ray starting point
-	/// @param point2 the ray ending point
+	/**
+	 * Ray-cast the world for all fixtures in the path of the ray. Your callback
+	 * Controls whether you get the closest point, any point, or n-points
+	 * The ray-cast ignores shapes that contain the starting point
+	 * @param callback A callback function which must be of signature:
+	 * <code>function Callback(fixture:b2Fixture,    // The fixture hit by the ray
+	 * point:b2Vec2,         // The point of initial intersection
+	 * normal:b2Vec2,        // The normal vector at the point of intersection
+	 * fraction:Number       // The fractional length along the ray of the intersection
+	 * ):Number
+	 * </code>
+	 * Callback should return the new length of the ray as a fraction of the original length.
+	 * By returning 0, you immediately terminate.
+	 * By returning 1, you continue wiht the original ray.
+	 * By returning the current fraction, you proceed to find the closest point.
+	 * @param point1 the ray starting point
+	 * @param point2 the ray ending point
+	 */
 	public function RayCast(callback:Function, point1:b2Vec2, point2:b2Vec2):void
 	{
 		var broadPhase:IBroadPhase = m_contactManager.m_broadPhase;
@@ -889,16 +897,20 @@ public class b2World
 		return m_jointList;
 	}
 
-	/// Get the world contact list. With the returned contact, use b2Contact::GetNext to get
-	/// the next contact in the world list. A NULL contact indicates the end of the list.
-	/// @return the head of the world contact list.
-	/// @warning contacts are 
+	/**
+	 * Get the world contact list. With the returned contact, use b2Contact::GetNext to get
+	 * the next contact in the world list. A NULL contact indicates the end of the list.
+	 * @return the head of the world contact list.
+	 * @warning contacts are 
+	 */
 	public function GetContactList():b2Contact
 	{
 		return m_contactList;
 	}
 	
-	/// Is the world locked (in the middle of a time step).
+	/**
+	 * Is the world locked (in the middle of a time step).
+	 */
 	public function IsLocked():Boolean
 	{
 		return (m_flags & e_locked) > 0;

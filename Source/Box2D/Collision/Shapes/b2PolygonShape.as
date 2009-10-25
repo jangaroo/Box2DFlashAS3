@@ -60,8 +60,10 @@ public class b2PolygonShape extends b2Shape
 		}
 	}
 	
-	/// Copy vertices. This assumes the vertices define a convex polygon.
-	/// It is assumed that the exterior is the the right of each edge.
+	/**
+	 * Copy vertices. This assumes the vertices define a convex polygon.
+	 * It is assumed that the exterior is the the right of each edge.
+	 */
 	public function SetAsArray(vertices:Array, vertexCount:Number = 0):void
 	{
 		if (vertexCount == 0)
@@ -191,7 +193,9 @@ public class b2PolygonShape extends b2Shape
 		return polygonShape;
 	}
 	
-	/// Set this as a single edge.
+	/**
+	 * Set this as a single edge.
+	 */
 	public function SetAsEdge(v1:b2Vec2, v2:b2Vec2):void
 	{
 		m_vertexCount = 2;
@@ -204,7 +208,9 @@ public class b2PolygonShape extends b2Shape
 		m_normals[1] = m_normals[0].Negative();
 	}
 	
-	/// Set this as a single edge.
+	/**
+	 * Set this as a single edge.
+	 */
 	static public function AsEdge(v1:b2Vec2, v2:b2Vec2):b2PolygonShape
 	{
 		var polygonShape:b2PolygonShape = new b2PolygonShape();
@@ -627,7 +633,9 @@ public class b2PolygonShape extends b2Shape
 		return m_normals;
 	}
 	
-	/// Get the supporting vertex index in the given direction.
+	/**
+	 * Get the supporting vertex index in the given direction.
+	 */
 	public function GetSupport(d:b2Vec2):int
 	{
 		var bestIndex:int = 0;

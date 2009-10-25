@@ -54,19 +54,25 @@ public class b2Settings{
 	//static public const b2_maxProxies:int = 0;
 	//static public const b2_maxPairs:int = 8 * b2_maxProxies;
 	
-	/// This is used to fatten AABBs in the dynamic tree. This allows proxies
-	/// to move by a small amount without triggering a tree adjustment.
-	/// This is in meters.
+	/**
+	 * This is used to fatten AABBs in the dynamic tree. This allows proxies
+	 * to move by a small amount without triggering a tree adjustment.
+	 * This is in meters.
+	 */
 	static public const b2_aabbExtension:Number = 0.1;
 	
- 	/// This is used to fatten AABBs in the dynamic tree. This is used to predict
- 	/// the future position based on the current displacement.
-	/// This is a dimensionless multiplier.
+ 	/**
+ 	 * This is used to fatten AABBs in the dynamic tree. This is used to predict
+ 	 * the future position based on the current displacement.
+	 * This is a dimensionless multiplier.
+	 */
 	static public const b2_aabbMultiplier:Number = 2.0;
 
-	/// The radius of the polygon/edge shape skin. This should not be modified. Making
-	/// this smaller means polygons will have and insufficient for continuous collision.
-	/// Making it larger may create artifacts for vertex collision.
+	/**
+	 * The radius of the polygon/edge shape skin. This should not be modified. Making
+	 * this smaller means polygons will have and insufficient for continuous collision.
+	 * Making it larger may create artifacts for vertex collision.
+	 */
 	static public const b2_polygonRadius:Number = 2.0 * b2_linearSlop;
 	
 	// Dynamics

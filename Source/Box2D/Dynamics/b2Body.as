@@ -141,13 +141,15 @@ public class b2Body
 		return fixture;
 	}
 
-	/// Creates a fixture from a shape and attach it to this body.
-	/// This is a convenience function. Use b2FixtureDef if you need to set parameters
-	/// like friction, restitution, user data, or filtering.
-	/// This function automatically updates the mass of the body.
-	/// @param shape the shape to be cloned.
-	/// @param density the shape density (set to zero for static bodies).
-	/// @warning This function is locked during callbacks.
+	/**
+	 * Creates a fixture from a shape and attach it to this body.
+	 * This is a convenience function. Use b2FixtureDef if you need to set parameters
+	 * like friction, restitution, user data, or filtering.
+	 * This function automatically updates the mass of the body.
+	 * @param shape the shape to be cloned.
+	 * @param density the shape density (set to zero for static bodies).
+	 * @warning This function is locked during callbacks.
+	 */
 	public function CreateFixture2(shape:b2Shape, density:Number=0.0):b2Fixture
 	{
 		var def:b2FixtureDef = new b2FixtureDef();
@@ -157,11 +159,13 @@ public class b2Body
 		return CreateFixture(def);
 	}
 	
-	/// Destroy a fixture. This removes the fixture from the broad-phase and
-	/// therefore destroys any contacts associated with this fixture. All fixtures
-	/// attached to a body are implicitly destroyed when the body is destroyed.
-	/// @param fixture the fixture to be removed.
-	/// @warning This function is locked during callbacks.
+	/**
+	 * Destroy a fixture. This removes the fixture from the broad-phase and
+	 * therefore destroys any contacts associated with this fixture. All fixtures
+	 * attached to a body are implicitly destroyed when the body is destroyed.
+	 * @param fixture the fixture to be removed.
+	 * @warning This function is locked during callbacks.
+	 */
 	public function DestroyFixture(fixture:b2Fixture) : void{
 		//b2Settings.b2Assert(m_world.IsLocked() == false);
 		if (m_world.IsLocked() == true)
@@ -604,9 +608,11 @@ public class b2Body
 		}
 	}
 	
-	/// This resets the mass properties to the sum of the mass properties of the fixtures.
-	/// This normally does not need to be called unless you called SetMassData to override
-	/// the mass and later you want to reset the mass.
+	/**
+	 * This resets the mass properties to the sum of the mass properties of the fixtures.
+	 * This normally does not need to be called unless you called SetMassData to override
+	 * the mass and later you want to reset the mass.
+	 */
 	public function ResetMass():void
 	{
 		// Compute mass data from shapes. Each shape has it's own density

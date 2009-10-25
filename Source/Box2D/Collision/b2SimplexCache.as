@@ -19,14 +19,13 @@
 package Box2D.Collision 
 {
 	
-	/// Used to warm start b2Distance.
-	/// Set count to zero on first call.
+	/**
+	 * Used to warm start b2Distance.
+	 * Set count to zero on first call.
+	 */
 	public class b2SimplexCache 
 	{
-		public var metric:Number;	///< length or area
-		public var count:uint;
-		public var indexA:Array/*int*/ = new Array(3);	///< vertices on shape A
-		public var indexB:Array/*int*/ = new Array(3);	///< vertices on shape B
-	}
+	/** Length or area */	public var metric:Number;		public var count:uint;
+	/** Vertices on shape a */	public var indexA:Array/*int*/ = new Array(3);	/** Vertices on shape b */	public var indexB:Array/*int*/ = new Array(3);	}
 	
 }
