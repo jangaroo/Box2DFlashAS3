@@ -65,7 +65,6 @@ package TestBed{
 				m_radius = 0.5;
 				var circle:b2CircleShape = new b2CircleShape(m_radius);
 				m_character = body.CreateFixture2(circle, 1.0);
-				body.SetMassFromShapes();
 				
 				m_state = e_unknown;
 			}

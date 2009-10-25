@@ -57,21 +57,18 @@ package TestBed{
 				bd.position.Set((640/2+100) / m_physScale, (360-5-i*25) / m_physScale);
 				b = m_world.CreateBody(bd);
 				b.CreateFixture(fd);
-				b.SetMassFromShapes();
 			}
 			for (i = 0; i < 10; i++){
 				sd.SetAsBox((10) / m_physScale, (10) / m_physScale);
 				bd.position.Set((640/2-0+Math.random()*0.02 - 0.01) / m_physScale, (360-5-i*25) / m_physScale);
 				b = m_world.CreateBody(bd);
 				b.CreateFixture(fd);
-				b.SetMassFromShapes();
 			}
 			for (i = 0; i < 10; i++){
 				sd.SetAsBox((10) / m_physScale, (10) / m_physScale);
 				bd.position.Set((640/2+200+Math.random()*0.02 - 0.01) / m_physScale, (360-5-i*25) / m_physScale);
 				b = m_world.CreateBody(bd);
 				b.CreateFixture(fd);
-				b.SetMassFromShapes();
 			}
 			// Create ramp
 			var vxs:Array = [new b2Vec2(0, 0),
@@ -83,7 +80,6 @@ package TestBed{
 			bd.position.Set(0, 360 / m_physScale);
 			b = m_world.CreateBody(bd);
 			b.CreateFixture(fd);
-			b.SetMassFromShapes();
 			
 			// Create ball
 			var cd:b2CircleShape = new b2CircleShape();
@@ -96,7 +92,6 @@ package TestBed{
 			bd.position.Set(50/m_physScale, 100 / m_physScale);
 			b = m_world.CreateBody(bd);
 			b.CreateFixture(fd);
-			b.SetMassFromShapes();
 			
 		}
 		

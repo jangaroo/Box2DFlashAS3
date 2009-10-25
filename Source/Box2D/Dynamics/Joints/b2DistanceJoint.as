@@ -141,8 +141,7 @@ public class b2DistanceJoint extends b2Joint
 		var cr2u:Number = (r2X * m_u.y - r2Y * m_u.x);
 		//m_mass = bA->m_invMass + bA->m_invI * cr1u * cr1u + bB->m_invMass + bB->m_invI * cr2u * cr2u;
 		var invMass:Number = bA.m_invMass + bA.m_invI * cr1u * cr1u + bB.m_invMass + bB.m_invI * cr2u * cr2u;
-		//b2Settings.b2Assert(invMass > Number.MIN_VALUE);
-		m_mass = 1.0 / invMass;
+		m_mass = invMass != 0.0 ? 1.0 / invMass : 0.0;
 		
 		if (m_frequencyHz > 0.0)
 		{
@@ -158,10 +157,12 @@ public class b2DistanceJoint extends b2Joint
 			var k:Number = m_mass * omega * omega;
 	
 			// magic formulas
-			m_gamma = 1.0 / (step.dt * (d + step.dt * k));
+			m_gamma = step.dt * (d + step.dt * k);
+			m_gamma = m_gamma != 0.0?1 / m_gamma:0.0;
 			m_bias = C * step.dt * k * m_gamma;
 	
-			m_mass = 1.0 / (invMass + m_gamma);
+			m_mass = invMass + m_gamma;
+			m_mass = m_mass != 0.0 ? 1.0 / m_mass : 0.0;
 		}
 		
 		if (step.warmStarting)

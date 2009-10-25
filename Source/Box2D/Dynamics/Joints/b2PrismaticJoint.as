@@ -374,8 +374,8 @@ public class b2PrismaticJoint extends b2Joint
 			m_a2 = r2X * m_axis.y - r2Y * m_axis.x;
 			
 			m_motorMass = m_invMass1 + m_invMass2 + m_invI1 * m_a1 * m_a1 + m_invI2 * m_a2 * m_a2; 
-			//b2Settings.b2Assert(m_motorMass > B2_FLT_EPSILON);
-			m_motorMass = 1.0 / m_motorMass;
+			if(m_motorMass > Number.MIN_VALUE)
+				m_motorMass = 1.0 / m_motorMass;
 		}
 		
 		// Prismatic constraint.

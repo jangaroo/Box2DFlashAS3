@@ -57,6 +57,7 @@ public class b2Body
 	
 	/**
 	 * Creates a fixture and attach it to this body.
+	 * This function automatically updates the mass of the body.
 	 * @param fixtureDef the fixture definition.
 	 * @warning This function is locked during callbacks.
 	 */
@@ -125,7 +126,16 @@ public class b2Body
 		
 		fixture.m_body = this;
 		
-		// Let the world know we have a new fixture
+		var needMassUpdate:Boolean = fixture.m_massData.mass > 0.0 || fixture.m_massData.I > 0.0;
+		
+		// Adjust mass properties if needed
+		if (needMassUpdate)
+		{
+			ResetMass();
+		}
+		
+		// Let the world know we have a new fixture. This will cause new contacts to be created
+		// at the beginning of the next time step.
 		m_world.m_flags |= b2World.e_newFixture;
 		
 		return fixture;
@@ -134,6 +144,7 @@ public class b2Body
 	/// Creates a fixture from a shape and attach it to this body.
 	/// This is a convenience function. Use b2FixtureDef if you need to set parameters
 	/// like friction, restitution, user data, or filtering.
+	/// This function automatically updates the mass of the body.
 	/// @param shape the shape to be cloned.
 	/// @param density the shape density (set to zero for static bodies).
 	/// @warning This function is locked during callbacks.
@@ -200,6 +211,8 @@ public class b2Body
 			}
 		}
 		
+		var needMassUpdate:Boolean = fixture.m_massData.mass > 0.0 || fixture.m_massData.I > 0.0;
+		
 		var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
 		
 		fixture.Destroy( broadPhase );
@@ -207,169 +220,11 @@ public class b2Body
 		fixture.m_next = null;
 		
 		--m_fixtureCount;
-	}
-
-	/**
-	* Set the mass properties. Note that this changes the center of mass position.
-	* If you are not sure how to compute mass properties, use SetMassFromShapes.
-	* The inertia tensor is assumed to be relative to the center of mass.
-	* @param massData the mass properties.
-	*/
-	public function SetMassData(massData:b2MassData) : void{
-		var fixture:b2Fixture;
 		
-		//b2Settings.b2Assert(m_world.IsLocked() == false);
-		if (m_world.IsLocked() == true)
+		// Adjust mass properties if needed.
+		if (needMassUpdate)
 		{
-			return;
-		}
-		
-		m_invMass = 0.0;
-		m_I = 0.0;
-		m_invI = 0.0;
-		
-		m_mass = massData.mass;
-		
-		if (m_mass > 0.0)
-		{
-			m_invMass = 1.0 / m_mass;
-		}
-		
-		m_I = massData.I;
-		
-		if (m_I > 0.0 && (m_flags & b2Body.e_fixedRotationFlag) == 0)
-		{
-			m_invI = 1.0 / m_I;
-		}
-		
-		// Move center of mass.
-		m_sweep.localCenter.SetV(massData.center);
-		//m_sweep.c0 = m_sweep.c = b2Mul(m_xf, m_sweep.localCenter);
-		//b2MulMV(m_xf.R, m_sweep.localCenter);
-		var tMat:b2Mat22 = m_xf.R;
-		var tVec:b2Vec2 = m_sweep.localCenter;
-		// (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y)
-		m_sweep.c.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
-		// (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y)
-		m_sweep.c.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
-		//return T.position + b2Mul(T.R, v);
-		m_sweep.c.x += m_xf.position.x;
-		m_sweep.c.y += m_xf.position.y;
-		//m_sweep.c0 = m_sweep.c
-		m_sweep.c0.SetV(m_sweep.c);
-		
-		var oldType:int = m_type;
-		if (m_invMass == 0.0 && m_invI == 0.0)
-		{
-			m_type = e_staticType;
-		}
-		else
-		{
-			m_type = e_dynamicType;
-		}
-	
-		// If the body type changed, we need to refilter the broad-phase proxies.
-		if (oldType != m_type)
-		{
-			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
-			{
-				ce.contact.FlagForFiltering();
-			}
-		}
-	}
-
-
-	static private var s_massData:b2MassData = new b2MassData();
-	/**
-	* Compute the mass properties from the attached shapes. You typically call this
-	* after adding all the shapes. If you add or remove shapes later, you may want
-	* to call this again. Note that this changes the center of mass position.
-	*/
-	public function SetMassFromShapes() : void{
-		
-		var f:b2Fixture;
-		
-		//b2Settings.b2Assert(m_world.IsLocked() == false);
-		if (m_world.IsLocked() == true)
-		{
-			return;
-		}
-		
-		// Compute mass data from shapes. Each shape has its own density.
-		m_mass = 0.0;
-		m_invMass = 0.0;
-		m_I = 0.0;
-		m_invI = 0.0;
-		
-		//b2Vec2 center = b2Vec2_zero;
-		var centerX:Number = 0.0;
-		var centerY:Number = 0.0;
-		var massData:b2MassData = s_massData;
-		for (f = m_fixtureList; f; f = f.m_next)
-		{
-			f.ComputeMass(massData);
-			m_mass += massData.mass;
-			//center += massData.mass * massData.center;
-			centerX += massData.mass * massData.center.x;
-			centerY += massData.mass * massData.center.y;
-			m_I += massData.I;
-		}
-		
-		// Compute center of mass, and shift the origin to the COM.
-		if (m_mass > 0.0)
-		{
-			m_invMass = 1.0 / m_mass;
-			centerX *= m_invMass;
-			centerY *= m_invMass;
-		}
-		
-		if (m_I > 0.0 && (m_flags & e_fixedRotationFlag) == 0)
-		{
-			// Center the inertia about the center of mass.
-			//m_I -= m_mass * b2Dot(center, center);
-			m_I -= m_mass * (centerX * centerX + centerY * centerY);
-			//b2Settings.b2Assert(m_I > 0.0);
-			m_invI = 1.0 / m_I;
-		}
-		else
-		{
-			m_I = 0.0;
-			m_invI = 0.0;
-		}
-		
-		// Move center of mass.
-		m_sweep.localCenter.Set(centerX, centerY);
-		//m_sweep.c0 = m_sweep.c = b2Mul(m_xf, m_sweep.localCenter);
-		//b2MulMV(m_xf.R, m_sweep.localCenter);
-		var tMat:b2Mat22 = m_xf.R;
-		var tVec:b2Vec2 = m_sweep.localCenter;
-		// (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y)
-		m_sweep.c.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
-		// (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y)
-		m_sweep.c.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
-		//return T.position + b2Mul(T.R, v);
-		m_sweep.c.x += m_xf.position.x;
-		m_sweep.c.y += m_xf.position.y;
-		//m_sweep.c0 = m_sweep.c
-		m_sweep.c0.SetV(m_sweep.c);
-		
-		var oldType:int = m_type;
-		if (m_invMass == 0.0 && m_invI == 0.0)
-		{
-			m_type = e_staticType;
-		}
-		else
-		{
-			m_type = e_dynamicType;
-		}
-		
-		// If the body type changed, we need to refilter the broad-phase proxies.
-		if (oldType != m_type)
-		{
-			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
-			{
-				ce.contact.FlagForFiltering();
-			}
+			ResetMass();
 		}
 	}
 
@@ -530,9 +385,6 @@ public class b2Body
 		bd.isSleeping = IsSleeping();
 		bd.linearDamping = m_linearDamping;
 		bd.linearVelocity.SetV(GetLinearVelocity());
-		bd.massData.mass = GetMass();
-		bd.massData.center = GetLocalCenter();
-		bd.massData.I = GetInertia();
 		bd.position = GetPosition();
 		bd.userData = GetUserData();
 		return bd;
@@ -633,8 +485,8 @@ public class b2Body
 			}
 		}
 		
-		body1.SetMassFromShapes();
-		body2.SetMassFromShapes();
+		body1.ResetMass();
+		body2.ResetMass();
 		
 		// Compute consistent velocites for new bodies based on cached velocity
 		var center1:b2Vec2 = body1.GetWorldCenter();
@@ -676,15 +528,148 @@ public class b2Body
 	}
 	
 	/** 
-	 * Get the mass data of the body.
+	 * Get the mass data of the body. The rotational inertial is relative to the center of mass.
 	 */
-	public function GetMassData():b2MassData
+	public function GetMassData(data:b2MassData):void
 	{
-		var massData:b2MassData = new b2MassData();
-		massData.mass = m_mass;
-		massData.I = m_I;
-		massData.center.SetV(m_sweep.localCenter);
-		return massData;
+		data.mass = m_mass;
+		data.I = m_I;
+		data.center.SetV(m_sweep.localCenter);
+	}
+	
+	/**
+	 * Set the mass properties to override the mass properties of the fixtures
+	 * Note that this changes the center of mass position. You can make
+	 * the body static by using zero mass.
+	 * Note that creating or destroying fixtures can also alter the mass.
+	 * @warming The supplied rotational inertia should be relative to the center of mass
+	 * @param	data the mass properties.
+	 */
+	public function SetMassData(massData:b2MassData):void
+	{
+		b2Settings.b2Assert(m_world.IsLocked() == false);
+		if (m_world.IsLocked() == true)
+		{
+			return;
+		}
+		
+		m_invMass = 0.0;
+		m_I = 0.0;
+		m_invI = 0.0;
+		
+		m_mass = massData.mass;
+		
+		// Compute the center of mass.
+		if (m_mass > 0.0)
+		{
+			m_invMass = 1.0 / m_mass;
+		}
+		
+		if (massData.I > 0.0 && (m_flags & e_fixedRotationFlag) == 0)
+		{
+			// Center the inertia about the center of mass
+			m_I = massData.I - m_mass * (massData.center.x * massData.center.x + massData.center.y * massData.center.y);
+			m_invI = 1.0 / m_I;
+		}
+		
+		// Move center of mass
+		var oldCenter:b2Vec2 = m_sweep.c.Copy();
+		m_sweep.localCenter.SetV(massData.center);
+		m_sweep.c0.SetV(b2Math.b2MulX(m_xf, m_sweep.localCenter));
+		m_sweep.c.SetV(m_sweep.c0);
+		
+		// Update center of mass velocity
+		//m_linearVelocity += b2Cross(m_angularVelocity, m_sweep.c - oldCenter);
+		m_linearVelocity.x += m_angularVelocity * -(m_sweep.c.y - oldCenter.y);
+		m_linearVelocity.y += m_angularVelocity * +(m_sweep.c.x - oldCenter.x);
+		
+		// Determine the new body type
+		var oldType:int = m_type;
+		if (m_invMass == 0.0 && m_invI == 0.0)
+		{
+			m_type = e_staticType;
+		}else {
+			m_type = e_dynamicType;
+		}
+		
+		// If the body type changed we need to flag contacts for filtering
+		if (oldType != m_type)
+		{
+			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
+			{
+				ce.contact.FlagForFiltering();
+			}
+		}
+	}
+	
+	/// This resets the mass properties to the sum of the mass properties of the fixtures.
+	/// This normally does not need to be called unless you called SetMassData to override
+	/// the mass and later you want to reset the mass.
+	public function ResetMass():void
+	{
+		// Compute mass data from shapes. Each shape has it's own density
+		m_mass = 0.0;
+		m_invMass = 0.0;
+		m_I = 0.0;
+		m_invI = 0.0;
+		
+		var center:b2Vec2 = b2Vec2.Make(0, 0);
+		for (var f:b2Fixture = m_fixtureList; f; f = f.m_next)
+		{
+			var massData:b2MassData = f.GetMassData();
+			m_mass += massData.mass;
+			center.x += massData.center.x;
+			center.y += massData.center.y;
+			m_I += massData.I;
+		}
+		
+		// Compute the center of mass.
+		if (m_mass > 0.0)
+		{
+			m_invMass = 1.0 / m_mass;
+			center.x *= m_invMass;
+			center.y *= m_invMass;
+		}
+		
+		if (m_I > 0.0 && (m_flags & e_fixedRotationFlag) == 0)
+		{
+			// Center the inertia about the center of mass
+			m_I -= m_mass * (center.x * center.x + center.y * center.y);
+			b2Settings.b2Assert(m_I > 0);
+			m_invI = 1.0 / m_I;
+		}else {
+			m_I = 0.0;
+			m_invI = 0.0;
+		}
+		
+		// Move center of mass
+		var oldCenter:b2Vec2 = m_sweep.c.Copy();
+		m_sweep.localCenter.SetV(center);
+		m_sweep.c0.SetV(b2Math.b2MulX(m_xf, m_sweep.localCenter));
+		m_sweep.c.SetV(m_sweep.c0);
+		
+		// Update center of mass velocity
+		//m_linearVelocity += b2Cross(m_angularVelocity, m_sweep.c - oldCenter);
+		m_linearVelocity.x += m_angularVelocity * -(m_sweep.c.y - oldCenter.y);
+		m_linearVelocity.y += m_angularVelocity * +(m_sweep.c.x - oldCenter.x);
+		
+		// Determine the new body type
+		var oldType:int = m_type;
+		if (m_invMass == 0.0 && m_invI == 0.0)
+		{
+			m_type = e_staticType;
+		}else {
+			m_type = e_dynamicType;
+		}
+		
+		// If the body type changed we need to flag contacts for filtering
+		if (oldType != m_type)
+		{
+			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
+			{
+				ce.contact.FlagForFiltering();
+			}
+		}
 	}
 	  
 	/**
@@ -1020,7 +1005,7 @@ public class b2Body
 		m_xf.position.SetV(bd.position);
 		m_xf.R.Set(bd.angle);
 		
-		m_sweep.localCenter.SetV(bd.massData.center);
+		m_sweep.localCenter.SetZero();
 		m_sweep.t0 = 1.0;
 		m_sweep.a0 = m_sweep.a = bd.angle;
 		
@@ -1056,36 +1041,13 @@ public class b2Body
 		
 		m_sleepTime = 0.0;
 		
+		m_mass = 0.0;
 		m_invMass = 0.0;
 		m_I = 0.0;
 		m_invI = 0.0;
 		
-		m_mass = bd.massData.mass;
+		m_type = e_staticType;
 		
-		if (m_mass > 0.0)
-		{
-			m_invMass = 1.0 / m_mass;
-		}
-		
-		if ((m_flags & b2Body.e_fixedRotationFlag) == 0)
-		{
-			m_I = bd.massData.I;
-		}
-		
-		if (m_I > 0.0)
-		{
-			m_invI = 1.0 / m_I;
-		}
-		
-		if (m_invMass == 0.0 && m_invI == 0.0)
-		{
-			m_type = e_staticType;
-		}
-		else
-		{
-			m_type = e_dynamicType;
-		}
-	
 		m_userData = bd.userData;
 		
 		m_fixtureList = null;

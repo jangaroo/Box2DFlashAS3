@@ -63,7 +63,6 @@ package TestBed{
 					body = m_world.CreateBody(bd);
 					body.CreateFixture2(cd1, 2.0);
 					//body.CreateFixture2(cd2, 0.0); // massless
-					body.SetMassFromShapes();
 				}
 			}
 			
@@ -84,7 +83,6 @@ package TestBed{
 					body = m_world.CreateBody(bd);
 					body.CreateFixture2(pd1, 2.0);
 					body.CreateFixture2(pd2, 2.0);
-					body.SetMassFromShapes();
 				}
 			}
 			
@@ -122,7 +120,6 @@ package TestBed{
 					body = m_world.CreateBody(bd);
 					body.CreateFixture2(sd1, 2.0);
 					body.CreateFixture2(sd2, 2.0);
-					body.SetMassFromShapes();
 				}
 			}
 			
@@ -142,7 +139,6 @@ package TestBed{
 				body.CreateFixture2(sd_bottom, 4.0);
 				body.CreateFixture2(sd_left, 4.0);
 				body.CreateFixture2(sd_right, 4.0);
-				body.SetMassFromShapes();
 			}
 			
 		}

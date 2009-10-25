@@ -54,8 +54,6 @@ package TestBed{
 				
 				m_shape2.SetAsOrientedBox(0.5, 0.5, new b2Vec2( 0.5, 0.0));
 				m_piece2 = m_body1.CreateFixture2(m_shape2, 1.0);
-				
-				m_body1.SetMassFromShapes();
 			}
 			
 			m_break = false;

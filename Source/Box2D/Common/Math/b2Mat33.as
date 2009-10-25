@@ -98,8 +98,10 @@ public class b2Mat33
 		var a22:Number = col2.y;
 		//float32 det = a11 * a22 - a12 * a21;
 		var det:Number = a11 * a22 - a12 * a21;
-		//b2Settings.b2Assert(det != 0.0);
-		det = 1.0 / det;
+		if (det != 0.0)
+		{
+			det = 1.0 / det;
+		}
 		out.x = det * (a22 * bX - a12 * bY);
 		out.y = det * (a11 * bY - a21 * bX);
 		
@@ -122,8 +124,10 @@ public class b2Mat33
 		var det:Number = 	a11 * (a22 * a33 - a32 * a23) +
 							a21 * (a32 * a13 - a12 * a33) +
 							a31 * (a12 * a23 - a22 * a13);
-		//b2Settings.b2Assert(det!=0.0);
-		det = 1.0 / det;
+		if (det != 0.0)
+		{
+			det = 1.0 / det;
+		}
 		//out.x = det * b2Dot(b, b2Cross(col2, col3));
 		out.x = det * (	bX * (a22 * a33 - a32 * a23) +
 						bY * (a32 * a13 - a12 * a33) +

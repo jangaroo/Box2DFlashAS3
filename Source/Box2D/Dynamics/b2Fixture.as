@@ -154,12 +154,11 @@ public class b2Fixture
 		return m_shape.RayCast(output, input, m_body.GetTransform());
 	}
 	
-	/// Compute the mass properties of this shape using its dimensions and density.
-	/// The inertia tensor is computed about the local origin, not the centroid.
-	/// @param massData returns the mass data for this shape.
-	public function ComputeMass(massData:b2MassData):void
+	/// Get the mass data for this fixture. The mass data is based on the density and
+	/// the shape. The rotational inertia is about the shape's origin.
+	public function GetMassData():b2MassData
 	{
-		m_shape.ComputeMass(massData, m_density);
+		return m_massData;
 	}
 	
 	/// Get the coefficient of friction.
@@ -186,18 +185,6 @@ public class b2Fixture
 		m_restitution = restitution;
 	}
 	
-	/// Get the density.
-	public function GetDensity():Number
-	{
-		return m_density;
-	}
-	
-	/// Set the density.
-	/// @warning this does not automatically update the mass of the parent body.
-	public function SetDensity(density:Number):void
-	{
-		m_density = density;
-	}
 	/**
 	 * @private
 	 */
@@ -210,7 +197,8 @@ public class b2Fixture
 		//m_proxyId = b2BroadPhase.e_nullProxy;
 		m_shape = null;
 		
-		m_density = 0.0;
+		m_massData = new b2MassData();
+		
 		m_friction = 0.0;
 		m_restitution = 0.0;
 	}
@@ -220,7 +208,6 @@ public class b2Fixture
 	{
 		m_userData = def.userData;
 		m_friction = def.friction;
-		m_density = def.density;
 		
 		m_body = body;
 		m_next = null;
@@ -230,6 +217,8 @@ public class b2Fixture
 		m_isSensor = def.isSensor;
 		
 		m_shape = def.shape.Copy();
+		
+		m_shape.ComputeMass(m_massData, def.density);
 		
 		// Create proxy in the broad-phase
 		m_shape.ComputeAABB(m_aabb, xf);
@@ -264,11 +253,11 @@ public class b2Fixture
 	}
 	
 	b2internal var m_aabb:b2AABB;
+	b2internal var m_massData:b2MassData;
 	b2internal var m_next:b2Fixture;
 	b2internal var m_body:b2Body;
 	b2internal var m_shape:b2Shape;
 	
-	b2internal var m_density:Number;
 	b2internal var m_friction:Number;
 	b2internal var m_restitution:Number;
 	

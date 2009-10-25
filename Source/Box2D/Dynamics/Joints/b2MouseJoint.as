@@ -40,6 +40,8 @@ use namespace b2internal;
 * specified world point. This a soft constraint with a maximum
 * force. This allows the constraint to stretch and without
 * applying huge forces.
+* Note: this joint is not fully documented as it is intended primarily
+* for the testbed. See that for more instructions.
 * @see b2MouseJointDef
 */
 
@@ -119,7 +121,8 @@ public class b2MouseJoint extends b2Joint
 		// gamma has units of inverse mass
 		// beta hs units of inverse time
 		//b2Settings.b2Assert(d + step.dt * k > Number.MIN_VALUE)
-		m_gamma = 1.0 / (step.dt * (d + step.dt * k));
+		m_gamma = step.dt * (d + step.dt * k);
+		m_gamma = m_gamma != 0 ? 1 / m_gamma:0.0;
 		m_beta = step.dt * k * m_gamma;
 		
 		var tMat:b2Mat22;

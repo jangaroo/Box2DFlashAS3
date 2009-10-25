@@ -65,7 +65,6 @@ package TestBed{
 				
 				body = m_world.CreateBody(bd);
 				body.CreateFixture2(cd, 1.0);
-				body.SetMassFromShapes();
 			}
 			
 			{
@@ -80,7 +79,6 @@ package TestBed{
 				bd.position = b2Math.AddVV(pivot, m_offset);
 				m_chassis = m_world.CreateBody(bd);
 				m_chassis.CreateFixture(fd);
-				m_chassis.SetMassFromShapes();
 			}
 			
 			{
@@ -94,7 +92,6 @@ package TestBed{
 				bd.position = b2Math.AddVV(pivot, m_offset);
 				m_wheel = m_world.CreateBody(bd);
 				m_wheel.CreateFixture(fd);
-				m_wheel.SetMassFromShapes();
 			}
 			
 			{
@@ -184,9 +181,6 @@ package TestBed{
 			
 			body1.CreateFixture(fd1);
 			body2.CreateFixture(fd2);
-			
-			body1.SetMassFromShapes();
-			body2.SetMassFromShapes();
 			
 			var djd:b2DistanceJointDef = new b2DistanceJointDef();
 			

@@ -40,6 +40,7 @@ public class b2MassData
 	public var center:b2Vec2 = new b2Vec2(0,0);
 	/**
 	* The rotational inertia of the shape.
+	* This may be about the center or local origin, depending on usage.
 	*/
 	public var I:Number = 0.0;
 }

@@ -228,8 +228,7 @@ public class b2GearJoint extends b2Joint
 		}
 		
 		// Compute effective mass.
-		//b2Settings.b2Assert(K > 0.0);
-		m_mass = 1.0 / K;
+		m_mass = K > 0.0?1.0 / K:0.0;
 		
 		if (step.warmStarting)
 		{

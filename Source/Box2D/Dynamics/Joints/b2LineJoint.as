@@ -361,8 +361,7 @@ public class b2LineJoint extends b2Joint
 			m_a2 = r2X * m_axis.y - r2Y * m_axis.x;
 			
 			m_motorMass = m_invMass1 + m_invMass2 + m_invI1 * m_a1 * m_a1 + m_invI2 * m_a2 * m_a2; 
-			//b2Settings.b2Assert(m_motorMass > B2_FLT_EPSILON);
-			m_motorMass = 1.0 / m_motorMass;
+			m_motorMass = m_motorMass > Number.MIN_VALUE?1.0 / m_motorMass:0.0;
 		}
 		
 		// Prismatic constraint.
@@ -521,7 +520,13 @@ public class b2LineJoint extends b2Joint
 			
 			// f2(1) = invK(1,1) * (-Cdot(1) - K(1,3) * (f2(2) - f1(2))) + f1(1) 
 			var b:Number = -Cdot1 - (m_impulse.y - f1.y) * m_K.col2.x;
-			var f2r:Number = b / m_K.col1.x + f1.x;
+			var f2r:Number;
+			if (m_K.col1.x != 0.0)
+			{
+				f2r = b / m_K.col1.x + f1.x;
+			}else {
+				f2r = f1.x;
+			}
 			m_impulse.x = f2r;
 			
 			df.x = m_impulse.x - f1.x;
@@ -543,7 +548,13 @@ public class b2LineJoint extends b2Joint
 		else
 		{
 			// Limit is inactive, just solve the prismatic constraint in block form. 
-			var df2:Number = (-Cdot1) / m_K.col1.x;
+			var df2:Number;
+			if (m_K.col1.x != 0.0)
+			{
+				df2 = ( -Cdot1) / m_K.col1.x;
+			}else {
+				df2 = 0.0;
+			}
 			m_impulse.x += df2;
 			
 			PX = df2 * m_perp.x;
@@ -687,7 +698,13 @@ public class b2LineJoint extends b2Joint
 			
 			var k11:Number  = m1 + m2 + i1 * m_s1 * m_s1 + i2 * m_s2 * m_s2;
 			
-			var impulse1:Number = ( -C1) / k11;
+			var impulse1:Number;
+			if (k11 != 0.0)
+			{
+				impulse1 = ( -C1) / k11;
+			}else {
+				impulse1 = 0.0;
+			}
 			impulse.x = impulse1;
 			impulse.y = 0.0;
 		}
