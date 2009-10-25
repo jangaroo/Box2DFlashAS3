@@ -106,6 +106,7 @@ import flash.display.MovieClip;
 			//	TestEdges,				// Edges & Raycast
 			//	TestBuoyancy,			// Buoyancy
 				TestOneSidedPlatform,	// One Sided Platform
+				TestBreakable,			// Breakable
 			null
 			];
 			tests.length -= 1;

@@ -101,22 +101,22 @@ import TestBed.TestOneSidedPlatform;
 
 class ContactListener extends b2ContactListener
 {
-	private var self:TestOneSidedPlatform;
-	public function ContactListener(self:TestOneSidedPlatform)
+	private var test:TestOneSidedPlatform;
+	public function ContactListener(test:TestOneSidedPlatform)
 	{
-		this.self = self;
+		this.test = test;
 	}
 	override public function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void 
 	{
 		var fixtureA:b2Fixture = contact.GetFixtureA();
 		var fixtureB:b2Fixture = contact.GetFixtureB();
-		if (fixtureA != self.m_platform && fixtureA != self.m_character)
+		if (fixtureA != test.m_platform && fixtureA != test.m_character)
 			return;
-		if (fixtureB != self.m_platform && fixtureB != self.m_character)
+		if (fixtureB != test.m_platform && fixtureB != test.m_character)
 			return;
 			
-		var position:b2Vec2 = self.m_character.GetBody().GetPosition();
-		if (position.y > self.m_top)
+		var position:b2Vec2 = test.m_character.GetBody().GetPosition();
+		if (position.y > test.m_top)
 			contact.Disable();
 	}
 }

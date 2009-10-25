@@ -517,6 +517,26 @@ public class b2Body
 	public function GetAngularVelocity() : Number{
 		return m_angularVelocity;
 	}
+	
+	public function GetDefinition() : b2BodyDef
+	{
+		var bd:b2BodyDef = new b2BodyDef();
+		bd.allowSleep = (m_flags & e_allowSleepFlag) > 0;
+		bd.angle = GetAngle();
+		bd.angularDamping = m_angularDamping;
+		bd.angularVelocity = m_angularVelocity;
+		bd.fixedRotation = (m_flags & e_fixedRotationFlag) > 0;
+		bd.isBullet = (m_flags & e_bulletFlag) > 0;
+		bd.isSleeping = IsSleeping();
+		bd.linearDamping = m_linearDamping;
+		bd.linearVelocity.SetV(GetLinearVelocity());
+		bd.massData.mass = GetMass();
+		bd.massData.center = GetLocalCenter();
+		bd.massData.I = GetInertia();
+		bd.position = GetPosition();
+		bd.userData = GetUserData();
+		return bd;
+	}
 
 	/**
 	* Apply a force at a world point. If the force is not
@@ -568,6 +588,75 @@ public class b2Body
 		m_linearVelocity.y += m_invMass * impulse.y;
 		//m_angularVelocity += m_invI * b2Cross(point - m_sweep.c, impulse);
 		m_angularVelocity += m_invI * ((point.x - m_sweep.c.x) * impulse.y - (point.y - m_sweep.c.y) * impulse.x);
+	}
+	
+	/**
+	 * Splits a body into two, preserving dynamic properties
+	 * @param	callback Called once per fixture, return true to move this fixture to the new body
+	 * <code>function Callback(fixture:b2Fixture):Boolean</code>
+	 * @return The newly created bodies
+	 */
+	public function Split(callback:Function):b2Body
+	{
+		var linearVelocity:b2Vec2 = GetLinearVelocity();
+		var angularVelocity:Number = GetAngularVelocity();
+		var center:b2Vec2 = GetWorldCenter();
+		var body1:b2Body = this;
+		var body2:b2Body = m_world.CreateBody(GetDefinition());
+		
+		var prev:b2Fixture;
+		for (var f:b2Fixture = body1.m_fixtureList; f; )
+		{
+			if (callback(f))
+			{
+				var next:b2Fixture = f.m_next;
+				// Remove fixture
+				if (prev)
+				{
+					prev.m_next = next;
+				}else {
+					body1.m_fixtureList = next;
+				}
+				body1.m_fixtureCount--;
+				
+				// Add fixture
+				f.m_next = body2.m_fixtureList;
+				body2.m_fixtureList = f;
+				body2.m_fixtureCount++;
+				
+				f.m_body = body2;
+				
+				f = next;
+			}else {
+				prev = f;
+				f = f.m_next
+			}
+		}
+		
+		body1.SetMassFromShapes();
+		body2.SetMassFromShapes();
+		
+		// Compute consistent velocites for new bodies based on cached velocity
+		var center1:b2Vec2 = body1.GetWorldCenter();
+		var center2:b2Vec2 = body2.GetWorldCenter();
+		
+		var velocity1:b2Vec2 = b2Math.AddVV(linearVelocity, 
+			b2Math.b2CrossFV(angularVelocity,
+				b2Math.SubtractVV(center1, center)));
+				
+		var velocity2:b2Vec2 = b2Math.AddVV(linearVelocity, 
+			b2Math.b2CrossFV(angularVelocity,
+				b2Math.SubtractVV(center2, center)));
+				
+		body1.SetLinearVelocity(velocity1);
+		body2.SetLinearVelocity(velocity2);
+		body1.SetAngularVelocity(angularVelocity);
+		body2.SetAngularVelocity(angularVelocity);
+		
+		body1.SynchronizeFixtures();
+		body2.SynchronizeFixtures();
+		
+		return body2;
 	}
 
 	/**
@@ -956,14 +1045,14 @@ public class b2Body
 		m_prev = null;
 		m_next = null;
 		
+		m_linearVelocity.SetV(bd.linearVelocity);
+		m_angularVelocity = bd.angularVelocity;
+		
 		m_linearDamping = bd.linearDamping;
 		m_angularDamping = bd.angularDamping;
 		
 		m_force.Set(0.0, 0.0);
 		m_torque = 0.0;
-		
-		m_linearVelocity.SetZero();
-		m_angularVelocity = 0.0;
 		
 		m_sleepTime = 0.0;
 		

@@ -65,7 +65,6 @@ package TestBed{
 			dbgDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 			m_world.SetDebugDraw(dbgDraw);
 			
-			
 			// Create border of boxes
 			var wall:b2PolygonShape= new b2PolygonShape();
 			var wallBd:b2BodyDef = new b2BodyDef();

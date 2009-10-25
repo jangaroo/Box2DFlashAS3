@@ -203,7 +203,7 @@ public class b2TimeOfImpact
 					else
 					{
 						x2 = x;
-						f2 = x;
+						f2 = f;
 					}
 					
 					++rootIterCount;
