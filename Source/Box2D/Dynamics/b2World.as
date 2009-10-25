@@ -719,14 +719,15 @@ public class b2World
 	/// Query the world for all fixtures that potentially overlap the
 	/// provided AABB.
 	/// @param callback a user implemented callback class. It should match signature
-	/// <code>function Callback(fixture:b2Fixture):void</code>
+	/// <code>function Callback(fixture:b2Fixture):Boolean</code>
+	/// Return true to continue to the next fixture.
 	/// @param aabb the query box.
 	public function QueryAABB(callback:Function, aabb:b2AABB):void
 	{
 		var broadPhase:IBroadPhase = m_contactManager.m_broadPhase;
-		function WorldQueryWrapper(proxy:*):void
+		function WorldQueryWrapper(proxy:*):Boolean
 		{
-			callback(broadPhase.GetUserData(proxy));
+			return callback(broadPhase.GetUserData(proxy));
 		}
 		broadPhase.Query(WorldQueryWrapper, aabb);
 	}

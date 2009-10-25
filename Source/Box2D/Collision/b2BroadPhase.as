@@ -656,7 +656,10 @@ public class b2BroadPhase implements IBroadPhase
 		{
 			var proxy:b2Proxy =  m_queryResults[i];
 			//b2Settings.b2Assert(proxy.IsValid());
-			callback(proxy.userData);
+			if (!callback(proxy.userData))
+			{
+				break;
+			}
 		}
 		
 		// Prepare for next query.

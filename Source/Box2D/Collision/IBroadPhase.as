@@ -33,7 +33,7 @@
 		/// the supplied AABB, and return a Boolean indicating if 
 		/// the broaphase should proceed to the next match.
 		/// @param callback This function should be a function matching signature
-		/// <code>function Callback(proxy:*):void</code>
+		/// <code>function Callback(proxy:*):Boolean</code>
 		function Query(callback:Function, aabb:b2AABB):void;
 		
 		/// Ray-cast  agains the proxies in the tree. This relies on the callback
