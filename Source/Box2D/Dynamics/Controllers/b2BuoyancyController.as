@@ -84,16 +84,15 @@ public class b2BuoyancyController extends b2Controller
 			var massc:b2Vec2 = new b2Vec2();
 			var area:Number = 0.0;
 			var mass:Number = 0.0;
-			for(var shape:b2Shape=body.GetShapeList();shape;shape=shape.GetNext()){
+			for(var fixture:b2Fixture=body.GetFixtureList();fixture;fixture=fixture.GetNext()){
 				var sc:b2Vec2 = new b2Vec2();
-				var sarea:Number = shape.ComputeSubmergedArea(normal, offset, body.GetTransform(), sc);
+				var sarea:Number = fixture.GetShape().ComputeSubmergedArea(normal, offset, body.GetTransform(), sc);
 				area += sarea;
 				areac.x += sarea * sc.x;
 				areac.y += sarea * sc.y;
 				var shapeDensity:Number;
 				if (useDensity) {
-					//TODO: Implement when fixtures comes in.
-					//shapeDensity = shape.GetDensity();
+					//TODO: Figure out what to do now density is gone
 					shapeDensity = 1;
 				}else{
 					shapeDensity = 1;

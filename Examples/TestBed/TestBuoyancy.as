@@ -51,110 +51,121 @@ package TestBed{
 			var i:int;
 			var anchor:b2Vec2 = new b2Vec2();
 			var body:b2Body;
-			
+			var fd:b2FixtureDef;
 			
 			// Spawn in a bunch of crap
 			for (i = 0; i < 5; i++){
 				var bodyDef:b2BodyDef = new b2BodyDef();
 				//bodyDef.isBullet = true;
-				var boxDef:b2PolygonDef = new b2PolygonDef();
-				boxDef.density = 1.0;
+				var boxDef:b2PolygonShape = new b2PolygonShape();
+				fd = new b2FixtureDef();
+				fd.shape = boxDef;
+				fd.density = 1.0;
 				// Override the default friction.
-				boxDef.friction = 0.3;
-				boxDef.restitution = 0.1;
+				fd.friction = 0.3;
+				fd.restitution = 0.1;
 				boxDef.SetAsBox((Math.random() * 5 + 10) / m_physScale, (Math.random() * 5 + 10) / m_physScale);
 				bodyDef.position.Set((Math.random() * 400 + 120) / m_physScale, (Math.random() * 150 + 50) / m_physScale);
 				bodyDef.angle = Math.random() * Math.PI;
 				body = m_world.CreateBody(bodyDef);
-				body.CreateShape(boxDef);
-				body.SetMassFromShapes();
+				body.CreateFixture(fd);
 				m_bodies.push(body);
 				
 			}
 			for (i = 0; i < 5; i++){
 				var bodyDefC:b2BodyDef = new b2BodyDef();
 				//bodyDefC.isBullet = true;
-				var circDef:b2CircleDef = new b2CircleDef();
-				circDef.density = 1.0;
-				circDef.radius = (Math.random() * 5 + 10) / m_physScale;
+				var circDef:b2CircleShape= new b2CircleShape((Math.random() * 5 + 10) / m_physScale);
+				fd = new b2FixtureDef();
+				fd.shape = circDef;
+				fd.density = 1.0;
 				// Override the default friction.
-				circDef.friction = 0.3;
-				circDef.restitution = 0.1;
+				fd.friction = 0.3;
+				fd.restitution = 0.1;
 				bodyDefC.position.Set((Math.random() * 400 + 120) / m_physScale, (Math.random() * 150 + 50) / m_physScale);
 				bodyDefC.angle = Math.random() * Math.PI;
 				body = m_world.CreateBody(bodyDefC);
-				body.CreateShape(circDef);
-				body.SetMassFromShapes();
+				body.CreateFixture(fd);
 				m_bodies.push(body);
 			}
 			for (i = 0; i < 15; i++){
 				var bodyDefP:b2BodyDef = new b2BodyDef();
 				//bodyDefP.isBullet = true;
-				var polyDef:b2PolygonDef = new b2PolygonDef();
-				if (Math.random() > 0.66){
-					polyDef.vertexCount = 4;
-					polyDef.vertices[0].Set((-10 -Math.random()*10) / m_physScale, ( 10 +Math.random()*10) / m_physScale);
-					polyDef.vertices[1].Set(( -5 -Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
-					polyDef.vertices[2].Set((  5 +Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
-					polyDef.vertices[3].Set(( 10 +Math.random()*10) / m_physScale, ( 10 +Math.random()*10) / m_physScale);
+				var polyDef:b2PolygonShape = new b2PolygonShape();
+				if (Math.random() > 0.66) {
+					polyDef.SetAsArray([
+						new b2Vec2((-10 -Math.random()*10) / m_physScale, ( 10 +Math.random()*10) / m_physScale),
+						new b2Vec2(( -5 -Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale),
+						new b2Vec2((  5 +Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale),
+						new b2Vec2(( 10 +Math.random() * 10) / m_physScale, ( 10 +Math.random() * 10) / m_physScale)
+						]);
 				}
-				else if (Math.random() > 0.5){
-					polyDef.vertexCount = 5;
-					polyDef.vertices[0].Set(0, (10 +Math.random()*10) / m_physScale);
-					polyDef.vertices[2].Set((-5 -Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
-					polyDef.vertices[3].Set(( 5 +Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
-					polyDef.vertices[1].Set((polyDef.vertices[0].x + polyDef.vertices[2].x), (polyDef.vertices[0].y + polyDef.vertices[2].y));
-					polyDef.vertices[1].Multiply(Math.random()/2+0.8);
-					polyDef.vertices[4].Set((polyDef.vertices[3].x + polyDef.vertices[0].x), (polyDef.vertices[3].y + polyDef.vertices[0].y));
-					polyDef.vertices[4].Multiply(Math.random()/2+0.8);
+				else if (Math.random() > 0.5) 
+				{
+					var array:Array = [];
+					array[0] = new b2Vec2(0, (10 +Math.random()*10) / m_physScale);
+					array[2] = new b2Vec2((-5 -Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
+					array[3] = new b2Vec2(( 5 +Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
+					array[1] = new b2Vec2((array[0].x + array[2].x), (array[0].y + array[2].y));
+					array[1].Multiply(Math.random()/2+0.8);
+					array[4] = new b2Vec2((array[3].x + array[0].x), (array[3].y + array[0].y));
+					array[4].Multiply(Math.random() / 2 + 0.8);
+					polyDef.SetAsArray(array);
 				}
-				else{
-					polyDef.vertexCount = 3;
-					polyDef.vertices[0].Set(0, (10 +Math.random()*10) / m_physScale);
-					polyDef.vertices[1].Set((-5 -Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
-					polyDef.vertices[2].Set(( 5 +Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale);
+				else 
+				{
+					polyDef.SetAsArray([
+						new b2Vec2(0, (10 +Math.random()*10) / m_physScale),
+						new b2Vec2((-5 -Math.random()*10) / m_physScale, (-10 -Math.random()*10) / m_physScale),
+						new b2Vec2(( 5 +Math.random() * 10) / m_physScale, ( -10 -Math.random() * 10) / m_physScale)
+					]);
 				}
-				polyDef.density = 1.0;
-				polyDef.friction = 0.3;
-				polyDef.restitution = 0.1;
+				fd = new b2FixtureDef();
+				fd.shape = polyDef;
+				fd.density = 1.0;
+				fd.friction = 0.3;
+				fd.restitution = 0.1;
 				bodyDefP.position.Set((Math.random() * 400 + 120) / m_physScale, (Math.random() * 150 + 50) / m_physScale);
 				bodyDefP.angle = Math.random() * Math.PI;
 				body = m_world.CreateBody(bodyDefP);
-				body.CreateShape(polyDef);
-				body.SetMassFromShapes();
+				body.CreateFixture(fd);
 				m_bodies.push(body);
 			}
 			
 			//Add some exciting bath toys
-			boxDef.density = 3.0;
 			boxDef.SetAsBox(40 / m_physScale, 10 / m_physScale);
+			fd = new b2FixtureDef();
+			fd.shape = boxDef;
+			fd.density = 3.0;
 			bodyDef.position.Set(50 / m_physScale, 300 / m_physScale);
 			bodyDef.angle = 0;
 			body = m_world.CreateBody(bodyDef);
-			body.CreateShape(boxDef);
-			body.SetMassFromShapes();
+			body.CreateFixture(fd);
 			m_bodies.push(body);
 			
 			bodyDef.position.Set(300/ m_physScale, 300 / m_physScale);
 			body = m_world.CreateBody(bodyDef);
-			circDef.density =2;
-			circDef.radius = 7 / m_physScale;
-			circDef.localPosition.Set(30 / m_physScale, 0 / m_physScale);
-			body.CreateShape(circDef);
-			circDef.localPosition.Set(-30 / m_physScale, 0 / m_physScale);
-			body.CreateShape(circDef);
-			circDef.localPosition.Set(0 / m_physScale, 30 / m_physScale);
-			body.CreateShape(circDef);
-			circDef.localPosition.Set(0 / m_physScale, -30 / m_physScale);
-			body.CreateShape(circDef);
+			circDef = new b2CircleShape(7 / m_physScale);
+			fd = new b2FixtureDef();
+			fd.shape = circDef;
+			fd.density =2;
+			circDef.b2internal::m_p.Set(30 / m_physScale, 0 / m_physScale);
+			body.CreateFixture(fd);
+			circDef.b2internal::m_p.Set(-30 / m_physScale, 0 / m_physScale);
+			body.CreateFixture(fd);
+			circDef.b2internal::m_p.Set(0 / m_physScale, 30 / m_physScale);
+			body.CreateFixture(fd);
+			circDef.b2internal::m_p.Set(0 / m_physScale, -30 / m_physScale);
+			body.CreateFixture(fd);
 			
-			boxDef.density = 2.0;
+			fd = new b2FixtureDef();
+			fd.shape = boxDef;
+			fd.density = 2.0;
 			boxDef.SetAsBox(30 / m_physScale, 2 / m_physScale);
-			body.CreateShape(boxDef);
-			boxDef.density = 2.0;
+			body.CreateFixture(fd);
+			fd.density = 2.0;
 			boxDef.SetAsBox(2 / m_physScale, 30 / m_physScale);
-			body.CreateShape(boxDef);
-			body.SetMassFromShapes();
+			body.CreateFixture(fd);
 			m_bodies.push(body);
 			
 			for each(body in m_bodies)

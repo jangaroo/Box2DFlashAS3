@@ -104,7 +104,7 @@ import flash.display.MovieClip;
 			//	TestCCD,				// CCD
 				TestTheoJansen,			// Theo Jansen
 			//	TestEdges,				// Edges & Raycast
-			//	TestBuoyancy,			// Buoyancy
+				TestBuoyancy,			// Buoyancy
 				TestOneSidedPlatform,	// One Sided Platform
 				TestBreakable,			// Breakable
 			null
