@@ -588,6 +588,8 @@ public class b2Body
 		if (m_invMass == 0.0 && m_invI == 0.0)
 		{
 			m_type = e_staticType;
+			m_linearVelocity.SetZero();
+			m_angularVelocity = 0.0;
 		}else {
 			m_type = e_dynamicType;
 		}
@@ -618,8 +620,8 @@ public class b2Body
 		{
 			var massData:b2MassData = f.GetMassData();
 			m_mass += massData.mass;
-			center.x += massData.center.x;
-			center.y += massData.center.y;
+			center.x += massData.center.x * massData.mass;
+			center.y += massData.center.y * massData.mass;
 			m_I += massData.I;
 		}
 		

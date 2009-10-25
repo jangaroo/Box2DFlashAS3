@@ -62,7 +62,7 @@ package TestBed{
 					bd.angle = b2Math.b2RandomRange(-Math.PI, Math.PI);
 					body = m_world.CreateBody(bd);
 					body.CreateFixture2(cd1, 2.0);
-					//body.CreateFixture2(cd2, 0.0); // massless
+					body.CreateFixture2(cd2, 0.0);
 				}
 			}
 			
