@@ -979,7 +979,7 @@ public class b2World
 		}
 		
 		// Size the island for the worst case.
-		var island:b2Island = new b2Island(m_bodyCount, m_contactCount, m_jointCount, null, m_contactManager.m_contactListener);
+		var island:b2Island = new b2Island(m_bodyCount, m_contactCount, m_jointCount, null, m_contactManager.m_contactListener, m_contactSolver);
 		
 		// Clear all the island flags.
 		for (b = m_bodyList; b; b = b.m_next)
@@ -1140,7 +1140,7 @@ public class b2World
 		var j:b2Joint;
 		
 		// Reserve an island and a queue for TOI island solution.
-		var island:b2Island = new b2Island(m_bodyCount, b2Settings.b2_maxTOIContactsPerIsland, b2Settings.b2_maxTOIJointsPerIsland, null, m_contactManager.m_contactListener);
+		var island:b2Island = new b2Island(m_bodyCount, b2Settings.b2_maxTOIContactsPerIsland, b2Settings.b2_maxTOIJointsPerIsland, null, m_contactManager.m_contactListener, m_contactSolver);
 		
 		//Simple one pass queue
 		//Relies on the fact that we're only making one pass
@@ -1581,6 +1581,7 @@ public class b2World
 	b2internal var m_flags:int;
 
 	b2internal var m_contactManager:b2ContactManager = new b2ContactManager();
+	private var m_contactSolver:b2ContactSolver = new b2ContactSolver();
 
 	b2internal var m_bodyList:b2Body;
 	private var m_jointList:b2Joint;

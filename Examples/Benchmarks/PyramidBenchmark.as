@@ -65,7 +65,6 @@ import Box2D.Common.Math.*;
 					fd.density = 1;
 					fd.shape = box;
 					body.CreateFixture(fd);
-					body.SetMassFromShapes();
 				}
 			}
 		}

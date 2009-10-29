@@ -119,7 +119,8 @@ public class b2Island
 	contactCapacity:int,
 	jointCapacity:int,
 	allocator:*,
-	listener:b2ContactListener)
+	listener:b2ContactListener,
+	contactSolver:b2ContactSolver)
 	{
 		var i:int;
 		
@@ -132,6 +133,7 @@ public class b2Island
 		
 		m_allocator = allocator;
 		m_listener = listener;
+		m_contactSolver = contactSolver;
 		
 		//m_bodies = (b2Body**)allocator->Allocate(bodyCapacity * sizeof(b2Body*));
 		m_bodies = new Array(bodyCapacity);
@@ -194,8 +196,9 @@ public class b2Island
 			b.m_angularVelocity *= b2Math.b2Clamp(1.0 - step.dt * b.m_angularDamping, 0.0, 1.0);
 		}
 		
-		var contactSolver:b2ContactSolver = new b2ContactSolver(step, m_contacts, m_contactCount, m_allocator);
-		
+		m_contactSolver.Initialize(step, m_contacts, m_contactCount, m_allocator);
+		var contactSolver:b2ContactSolver = m_contactSolver;
+
 		// Initialize velocity constraints.
 		contactSolver.InitVelocityConstraints(step);
 		
@@ -340,7 +343,8 @@ public class b2Island
 	{
 		var i:int;
 		var j:int;
-		var contactSolver:b2ContactSolver = new b2ContactSolver(subStep, m_contacts, m_contactCount, m_allocator);
+		m_contactSolver.Initialize(subStep, m_contacts, m_contactCount, m_allocator);
+		var contactSolver:b2ContactSolver = m_contactSolver;
 		
 		// No warm starting needed for TOI events.
 		
@@ -479,6 +483,7 @@ public class b2Island
 
 	private var m_allocator:*;
 	private var m_listener:b2ContactListener;
+	private var m_contactSolver:b2ContactSolver;
 
 	b2internal var m_bodies:Array;
 	b2internal var m_contacts:Array;

@@ -35,7 +35,12 @@ use namespace b2internal;
 */
 public class b2ContactSolver
 {
-	public function b2ContactSolver(step:b2TimeStep, contacts:Array, contactCount:int, allocator:*){
+	public function b2ContactSolver()
+	{
+	}
+	
+	public function Initialize(step:b2TimeStep, contacts:Array, contactCount:int, allocator:*):void
+	{
 		var contact:b2Contact;
 		
 		m_step.Set(step)
@@ -48,9 +53,10 @@ public class b2ContactSolver
 		
 		m_constraintCount = contactCount;
 
-		// fill array
-		for (i = 0; i < m_constraintCount; i++){
-			m_constraints[i] = new b2ContactConstraint();
+		// fill array to hole enough constraints
+		while (m_constraints.length < m_constraintCount)
+		{
+			m_constraints.push(new b2ContactConstraint());
 		}
 		
 		for (i = 0; i < contactCount; ++i)
