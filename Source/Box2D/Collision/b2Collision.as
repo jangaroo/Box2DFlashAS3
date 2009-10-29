@@ -496,7 +496,7 @@ public class b2Collision{
 		manifold.m_localPoint.SetV(circle1.m_p);
 		manifold.m_localPlaneNormal.SetZero();
 		manifold.m_pointCount = 1;
-		manifold.m_points[0].m_localPoint.SetV(circle1.m_p);
+		manifold.m_points[0].m_localPoint.SetV(circle2.m_p);
 		manifold.m_points[0].m_id.key = 0;
 	}
 	

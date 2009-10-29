@@ -950,7 +950,7 @@ internal class b2PositionSolverManifold
 			case b2Manifold.e_circles:
 			{
 				var pointA:b2Vec2 = cc.bodyA.GetWorldPoint(cc.localPoint);
-				var pointB:b2Vec2 = cc.bodyB.GetWorldPoint(cc.localPoint);
+				var pointB:b2Vec2 = cc.bodyB.GetWorldPoint(cc.points[0].localPoint);
 				var dX:Number = pointB.x - pointA.x;
 				var dY:Number = pointB.y - pointA.y;
 				if (dX * dX + dY * dY>Number.MIN_VALUE*Number.MIN_VALUE)

@@ -36,7 +36,7 @@ package TestBed{
 	
 	
 	
-	public class Test{
+	public class Test {
 		
 		public function Test(){
 			
@@ -54,6 +54,7 @@ package TestBed{
 			
 			// Construct a world object
 			m_world = new b2World(gravity, doSleep);
+			//m_world.SetBroadPhase(new b2BroadPhase(worldAABB));
 			// set debug draw
 			var dbgDraw:b2DebugDraw = new b2DebugDraw();
 			//var dbgSprite:Sprite = new Sprite();
@@ -229,7 +230,7 @@ package TestBed{
 			aabb.upperBound.Set(mouseXWorldPhys + 0.001, mouseYWorldPhys + 0.001);
 			var body:b2Body = null;
 			// Query the world for overlapping shapes.
-			function GetBodyCallback(fixture:b2Fixture):void
+			function GetBodyCallback(fixture:b2Fixture):Boolean
 			{
 				var shape:b2Shape = fixture.GetShape();
 				if (fixture.GetBody().IsStatic() == false || includeStatic)
@@ -238,8 +239,10 @@ package TestBed{
 					if (inside)
 					{
 						body = fixture.GetBody();
+						return false;
 					}
 				}
+				return true;
 			}
 			m_world.QueryAABB(GetBodyCallback, aabb);
 			return body;

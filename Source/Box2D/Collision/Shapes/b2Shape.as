@@ -114,6 +114,23 @@ public class b2Shape
 				offset:Number,
 				xf:b2Transform,
 				c:b2Vec2):Number { return 0; };
+				
+	public static function TestOverlap(shape1:b2Shape, transform1:b2Transform, shape2:b2Shape, transform2:b2Transform):Boolean
+	{
+		var input:b2DistanceInput = new b2DistanceInput();
+		input.proxyA = new b2DistanceProxy();
+		input.proxyA.Set(shape1);
+		input.proxyB = new b2DistanceProxy();
+		input.proxyB.Set(shape2);
+		input.transformA = transform1;
+		input.transformB = transform2;
+		input.useRadii = false;
+		var simplexCache:b2SimplexCache = new b2SimplexCache();
+		simplexCache.count = 0;
+		var output:b2DistanceOutput = new b2DistanceOutput();
+		b2Distance.Distance(output, simplexCache, input);
+		return output.distance == 0.0;
+	}
 	
 	//--------------- Internals Below -------------------
 	/**

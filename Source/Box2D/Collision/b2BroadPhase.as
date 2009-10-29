@@ -624,10 +624,10 @@ public class b2BroadPhase implements IBroadPhase
 	{
 		var aabb:b2AABB = new b2AABB();
 		var proxy:b2Proxy = proxy_ as b2Proxy;
-		aabb.lowerBound.x = m_worldAABB.lowerBound.x +  m_bounds[0][proxy.lowerBounds[0]]  / m_quantizationFactor.x;
-		aabb.lowerBound.y = m_worldAABB.lowerBound.y +  m_bounds[1][proxy.lowerBounds[1]]  / m_quantizationFactor.y;
-		aabb.upperBound.x = m_worldAABB.upperBound.x +  m_bounds[0][proxy.upperBounds[0]]  / m_quantizationFactor.x;
-		aabb.upperBound.y = m_worldAABB.upperBound.y +  m_bounds[1][proxy.upperBounds[1]]  / m_quantizationFactor.y;
+		aabb.lowerBound.x = m_worldAABB.lowerBound.x +  m_bounds[0][proxy.lowerBounds[0]].value  / m_quantizationFactor.x;
+		aabb.lowerBound.y = m_worldAABB.lowerBound.y +  m_bounds[1][proxy.lowerBounds[1]].value  / m_quantizationFactor.y;
+		aabb.upperBound.x = m_worldAABB.lowerBound.x +  m_bounds[0][proxy.upperBounds[0]].value  / m_quantizationFactor.x;
+		aabb.upperBound.y = m_worldAABB.lowerBound.y +  m_bounds[1][proxy.upperBounds[1]].value  / m_quantizationFactor.y;
 		return aabb;
 	}
 	
@@ -664,7 +664,7 @@ public class b2BroadPhase implements IBroadPhase
 		{
 			var proxy:b2Proxy =  m_queryResults[i];
 			//b2Settings.b2Assert(proxy.IsValid());
-			if (!callback(proxy.userData))
+			if (!callback(proxy))
 			{
 				break;
 			}

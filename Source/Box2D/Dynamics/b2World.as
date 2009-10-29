@@ -737,6 +737,55 @@ public class b2World
 		}
 		broadPhase.Query(WorldQueryWrapper, aabb);
 	}
+	/**
+	 * Query the world for all fixtures that precisely overlap the
+	 * provided transformed shape.
+	 * @param callback a user implemented callback class. It should match signature
+	 * <code>function Callback(fixture:b2Fixture):Boolean</code>
+	 * Return true to continue to the next fixture.
+	 */
+	public function QueryShape(callback:Function, shape:b2Shape, transform:b2Transform = null):void
+	{
+		if (transform == null)
+		{
+			transform = new b2Transform();
+			transform.SetIdentity();
+		}
+		var broadPhase:IBroadPhase = m_contactManager.m_broadPhase;
+		function WorldQueryWrapper(proxy:*):Boolean
+		{
+			var fixture:b2Fixture = broadPhase.GetUserData(proxy) as b2Fixture
+			if(b2Shape.TestOverlap(shape, transform, fixture.GetShape(), fixture.GetBody().GetTransform()))
+				return callback(fixture);
+			return true;
+		}
+		var aabb:b2AABB = new b2AABB();
+		shape.ComputeAABB(aabb, transform);
+		broadPhase.Query(WorldQueryWrapper, aabb);
+	}
+	
+/**
+	 * Query the world for all fixtures that contain a point.
+	 * @param callback a user implemented callback class. It should match signature
+	 * <code>function Callback(fixture:b2Fixture):Boolean</code>
+	 * Return true to continue to the next fixture.
+	 */
+	public function QueryPoint(callback:Function, p:b2Vec2):void
+	{
+		var broadPhase:IBroadPhase = m_contactManager.m_broadPhase;
+		function WorldQueryWrapper(proxy:*):Boolean
+		{
+			var fixture:b2Fixture = broadPhase.GetUserData(proxy) as b2Fixture
+			if(fixture.TestPoint(p))
+				return callback(fixture);
+			return true;
+		}
+		// Make a small box.
+		var aabb:b2AABB = new b2AABB();
+		aabb.lowerBound.Set(p.x - b2Settings.b2_linearSlop, p.y - b2Settings.b2_linearSlop);
+		aabb.upperBound.Set(p.x + b2Settings.b2_linearSlop, p.y + b2Settings.b2_linearSlop);
+		broadPhase.Query(WorldQueryWrapper, aabb);
+	}
 	
 	/**
 	 * Ray-cast the world for all fixtures in the path of the ray. Your callback
