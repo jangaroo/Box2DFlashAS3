@@ -27,18 +27,22 @@ import Box2D.Common.*;
 */
 public class b2Mat22
 {
-	public function b2Mat22(angle:Number=0, c1:b2Vec2=null, c2:b2Vec2=null)
+	public function b2Mat22()
 	{
-		if (c1!=null && c2!=null){
-			col1.SetV(c1);
-			col2.SetV(c2);
-		}
-		else{
-			var c:Number = Math.cos(angle);
-			var s:Number = Math.sin(angle);
-			col1.x = c; col2.x = -s;
-			col1.y = s; col2.y = c;
-		}
+	}
+	
+	public static function FromAngle(angle:Number):b2Mat22
+	{
+		var mat:b2Mat22 = new b2Mat22();
+		mat.Set(angle);
+		return mat;
+	}
+	
+	public static function FromVV(c1:b2Vec2, c2:b2Vec2):b2Mat22
+	{
+		var mat:b2Mat22 = new b2Mat22();
+		mat.SetVV(c1, c2);
+		return mat;
 	}
 
 	public function Set(angle:Number) : void
@@ -56,7 +60,9 @@ public class b2Mat22
 	}
 	
 	public function Copy():b2Mat22{
-		return new b2Mat22(0, col1, col2);
+		var mat:b2Mat22 = new b2Mat22();
+		mat.SetM(this);
+		return mat;
 	}
 	
 	public function SetM(m:b2Mat22) : void

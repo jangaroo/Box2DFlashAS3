@@ -608,8 +608,8 @@ public class b2LineJoint extends b2Joint
 		var active:Boolean = false;
 		var C2:Number = 0.0;
 		
-		var R1:b2Mat22 = new b2Mat22(a1);
-		var R2:b2Mat22 = new b2Mat22(a2);
+		var R1:b2Mat22 = b2Mat22.FromAngle(a1);
+		var R2:b2Mat22 = b2Mat22.FromAngle(a2);
 		
 		//b2Vec2 r1 = b2Mul(R1, m_localAnchor1 - m_localCenter1);
 		tMat = R1;

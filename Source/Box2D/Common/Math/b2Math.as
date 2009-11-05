@@ -139,14 +139,14 @@ public class b2Math{
 
 	static public function AddMM(A:b2Mat22, B:b2Mat22):b2Mat22
 	{
-		var C:b2Mat22 = new b2Mat22(0, AddVV(A.col1, B.col1), AddVV(A.col2, B.col2));
+		var C:b2Mat22 = b2Mat22.FromVV(AddVV(A.col1, B.col1), AddVV(A.col2, B.col2));
 		return C;
 	}
 
 	// A * B
 	static public function b2MulMM(A:b2Mat22, B:b2Mat22):b2Mat22
 	{
-		var C:b2Mat22 = new b2Mat22(0, b2MulMV(A, B.col1), b2MulMV(A, B.col2));
+		var C:b2Mat22 = b2Mat22.FromVV(b2MulMV(A, B.col1), b2MulMV(A, B.col2));
 		return C;
 	}
 
@@ -155,7 +155,7 @@ public class b2Math{
 	{
 		var c1:b2Vec2 = new b2Vec2(b2Dot(A.col1, B.col1), b2Dot(A.col2, B.col1));
 		var c2:b2Vec2 = new b2Vec2(b2Dot(A.col1, B.col2), b2Dot(A.col2, B.col2));
-		var C:b2Mat22 = new b2Mat22(0, c1, c2);
+		var C:b2Mat22 = b2Mat22.FromVV(c1, c2);
 		return C;
 	}
 
@@ -172,7 +172,7 @@ public class b2Math{
 
 	static public function b2AbsM(A:b2Mat22):b2Mat22
 	{
-		var B:b2Mat22 = new b2Mat22(0, b2AbsV(A.col1), b2AbsV(A.col2));
+		var B:b2Mat22 = b2Mat22.FromVV(b2AbsV(A.col1), b2AbsV(A.col2));
 		return B;
 	}
 
@@ -262,7 +262,7 @@ public class b2Math{
 	static public var tempAABB:b2AABB = new b2AABB();	*/
 	
 	static public const b2Vec2_zero:b2Vec2 = new b2Vec2(0.0, 0.0);
-	static public const b2Mat22_identity:b2Mat22 = new b2Mat22(0, new b2Vec2(1.0, 0.0), new b2Vec2(0.0, 1.0));
+	static public const b2Mat22_identity:b2Mat22 = b2Mat22.FromVV(new b2Vec2(1.0, 0.0), new b2Vec2(0.0, 1.0));
 	static public const b2XForm_identity:b2Transform = new b2Transform(b2Vec2_zero, b2Mat22_identity);
 	
 
