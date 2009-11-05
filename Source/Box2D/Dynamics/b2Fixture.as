@@ -244,6 +244,7 @@ public class b2Fixture
 	{
 		m_userData = def.userData;
 		m_friction = def.friction;
+		m_restitution = def.restitution;
 		
 		m_body = body;
 		m_next = null;
