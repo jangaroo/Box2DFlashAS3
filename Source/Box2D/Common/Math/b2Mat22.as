@@ -29,6 +29,7 @@ public class b2Mat22
 {
 	public function b2Mat22()
 	{
+		col1.x = col2.y = 1.0;
 	}
 	
 	public static function FromAngle(angle:Number):b2Mat22

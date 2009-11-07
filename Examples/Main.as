@@ -96,12 +96,12 @@ import flash.display.MovieClip;
 			}
 			
 			var tests:Array = [
-			//	TestRagdoll,			// Ragdoll
+				TestRagdoll,			// Ragdoll
 				TestCompound,			// Compound Shapes
 			//	TestCrankGearsPulley,	// Crank/Gears/Pulley
-			//	TestBridge,				// Bridge
+				TestBridge,				// Bridge
 				TestStack,				// Stack
-			//	TestCCD,				// CCD
+				TestCCD,				// CCD
 				TestTheoJansen,			// Theo Jansen
 			//	TestEdges,				// Edges & Raycast
 				TestBuoyancy,			// Buoyancy

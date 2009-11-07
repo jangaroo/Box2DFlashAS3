@@ -17,13 +17,6 @@
 			// Add event for main loop
 			addEventListener(Event.ENTER_FRAME, Update, false, 0, true);
 			
-			
-			
-			// Creat world AABB
-			var worldAABB:b2AABB = new b2AABB();
-			worldAABB.lowerBound.Set(-100.0, -100.0);
-			worldAABB.upperBound.Set(100.0, 100.0);
-			
 			// Define the gravity vector
 			var gravity:b2Vec2 = new b2Vec2(0.0, 10.0);
 			
@@ -31,26 +24,25 @@
 			var doSleep:Boolean = true;
 			
 			// Construct a world object
-			m_world = new b2World(worldAABB, gravity, doSleep);
+			m_world = new b2World( gravity, doSleep);
 			
 			// set debug draw
-			/*var dbgDraw:b2DebugDraw = new b2DebugDraw();
-			var dbgSprite:Sprite = new Sprite();
-			addChild(dbgSprite);
-			dbgDraw.m_sprite = dbgSprite;
-			dbgDraw.m_drawScale = 30.0;
-			dbgDraw.m_fillAlpha = 0.0;
-			dbgDraw.m_lineThickness = 1.0;
-			dbgDraw.m_drawFlags = 0xFFFFFFFF;
-			m_world.SetDebugDraw(dbgDraw);*/
+			var debugDraw:b2DebugDraw = new b2DebugDraw();
+			debugDraw.SetSprite(this);
+			debugDraw.SetDrawScale(30.0);
+			debugDraw.SetFillAlpha(0.3);
+			debugDraw.SetLineThickness(1.0);
+			debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+			m_world.SetDebugDraw(debugDraw);
+			m_world.DrawDebugData();
 			
 			
 			
 			// Vars used to create bodies
 			var body:b2Body;
 			var bodyDef:b2BodyDef;
-			var boxDef:b2PolygonDef;
-			var circleDef:b2CircleDef;
+			var boxShape:b2PolygonShape;
+			var circleShape:b2CircleShape;
 			
 			
 			
@@ -59,23 +51,19 @@
 			//bodyDef.position.Set(15, 19);
 			bodyDef.position.Set(10, 12);
 			//bodyDef.angle = 0.1;
-			boxDef = new b2PolygonDef();
-			boxDef.SetAsBox(30, 3);
-			boxDef.friction = 0.3;
-			boxDef.density = 0; // static bodies require zero density
-			/*circleDef = new b2CircleDef();
-			circleDef.radius = 10;
-			circleDef.restitution = 0.2*/
+			boxShape = new b2PolygonShape();
+			boxShape.SetAsBox(30, 3);
+			var fixtureDef:b2FixtureDef = new b2FixtureDef();
+			fixtureDef.shape = boxShape;
+			fixtureDef.friction = 0.3;
+			fixtureDef.density = 0; // static bodies require zero density
 			// Add sprite to body userData
 			bodyDef.userData = new PhysGround();
-			//bodyDef.userData = new PhysCircle();
 			bodyDef.userData.width = 30 * 2 * 30; 
 			bodyDef.userData.height = 30 * 2 * 3; 
 			addChild(bodyDef.userData);
 			body = m_world.CreateBody(bodyDef);
-			body.CreateShape(boxDef);
-			//body.CreateShape(circleDef);
-			body.SetMassFromShapes();
+			body.CreateFixture(fixtureDef);
 			
 			// Add some objects
 			for (var i:int = 1; i < 10; i++){
@@ -86,31 +74,31 @@
 				var rY:Number = Math.random() + 0.5;
 				// Box
 				if (Math.random() < 0.5){
-					boxDef = new b2PolygonDef();
-					boxDef.SetAsBox(rX, rY);
-					boxDef.density = 1.0;
-					boxDef.friction = 0.5;
-					boxDef.restitution = 0.2;
+					boxShape = new b2PolygonShape();
+					boxShape.SetAsBox(rX, rY);
+					fixtureDef.shape = boxShape;
+					fixtureDef.density = 1.0;
+					fixtureDef.friction = 0.5;
+					fixtureDef.restitution = 0.2;
 					bodyDef.userData = new PhysBox();
 					bodyDef.userData.width = rX * 2 * 30; 
 					bodyDef.userData.height = rY * 2 * 30; 
 					body = m_world.CreateBody(bodyDef);
-					body.CreateShape(boxDef);
+					body.CreateFixture(fixtureDef);
 				} 
 				// Circle
 				else {
-					circleDef = new b2CircleDef();
-					circleDef.radius = rX;
-					circleDef.density = 1.0;
-					circleDef.friction = 0.5;
-					circleDef.restitution = 0.2
+					circleShape = new b2CircleShape(rX);
+					fixtureDef.shape = circleShape;
+					fixtureDef.density = 1.0;
+					fixtureDef.friction = 0.5;
+					fixtureDef.restitution = 0.2;
 					bodyDef.userData = new PhysCircle();
 					bodyDef.userData.width = rX * 2 * 30; 
 					bodyDef.userData.height = rX * 2 * 30; 
 					body = m_world.CreateBody(bodyDef);
-					body.CreateShape(circleDef);
+					body.CreateFixture(fixtureDef);
 				}
-				body.SetMassFromShapes();
 				addChild(bodyDef.userData);
 			}
 			

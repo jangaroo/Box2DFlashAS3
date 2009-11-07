@@ -38,10 +38,11 @@ package TestBed{
 			// Set Text field
 			Main.m_aboutText.text = "Ragdolls";
 			
-			var bd:b2BodyDef;
-			var circ:b2CircleDef = new b2CircleDef();
-			var box:b2PolygonDef = new b2PolygonDef();
+			var circ:b2CircleShape; 
+			var box:b2PolygonShape;
+			var bd:b2BodyDef = new b2BodyDef();
 			var jd:b2RevoluteJointDef = new b2RevoluteJointDef();
+			var fixtureDef:b2FixtureDef = new b2FixtureDef();
 			
 			// Add 5 ragdolls along the top
 			for (var i:int = 0; i < 2; i++){
@@ -51,109 +52,119 @@ package TestBed{
 				// BODIES
 				
 				// Head
-				circ.radius = 12.5 / m_physScale;
-				circ.density = 1.0;
-				circ.friction = 0.4;
-				circ.restitution = 0.3;
-				bd = new b2BodyDef();
+				circ = new b2CircleShape( 12.5 / m_physScale );
+				fixtureDef.shape = circ;
+				fixtureDef.density = 1.0;
+				fixtureDef.friction = 0.4;
+				fixtureDef.restitution = 0.3;
 				bd.position.Set(startX / m_physScale, startY / m_physScale);
 				var head:b2Body = m_world.CreateBody(bd);
-				head.CreateShape(circ);
-				head.SetMassFromShapes();
+				head.CreateFixture(fixtureDef);
 				//if (i == 0){
 					head.ApplyImpulse(new b2Vec2(Math.random() * 100 - 50, Math.random() * 100 - 50), head.GetWorldCenter());
 				//}
 				
 				// Torso1
+				box = new b2PolygonShape();
 				box.SetAsBox(15 / m_physScale, 10 / m_physScale);
-				box.density = 1.0;
-				box.friction = 0.4;
-				box.restitution = 0.1;
-				bd = new b2BodyDef();
+				fixtureDef.shape = box;
+				fixtureDef.density = 1.0;
+				fixtureDef.friction = 0.4;
+				fixtureDef.restitution = 0.1;
 				bd.position.Set(startX / m_physScale, (startY + 28) / m_physScale);
 				var torso1:b2Body = m_world.CreateBody(bd);
-				torso1.CreateShape(box);
-				torso1.SetMassFromShapes();
+				torso1.CreateFixture(fixtureDef);
 				// Torso2
 				bd = new b2BodyDef();
+				box = new b2PolygonShape();
+				box.SetAsBox(15 / m_physScale, 10 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set(startX / m_physScale, (startY + 43) / m_physScale);
 				var torso2:b2Body = m_world.CreateBody(bd);
-				torso2.CreateShape(box);
-				torso2.SetMassFromShapes();
+				torso2.CreateFixture(fixtureDef);
 				// Torso3
 				bd = new b2BodyDef();
+				box.SetAsBox(15 / m_physScale, 10 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set(startX / m_physScale, (startY + 58) / m_physScale);
 				var torso3:b2Body = m_world.CreateBody(bd);
-				torso3.CreateShape(box);
-				torso3.SetMassFromShapes();
+				torso3.CreateFixture(fixtureDef);
 				
 				// UpperArm
-				box.SetAsBox(18 / m_physScale, 6.5 / m_physScale);
-				box.density = 1.0;
-				box.friction = 0.4;
-				box.restitution = 0.1;
-				bd = new b2BodyDef();
+				fixtureDef.density = 1.0;
+				fixtureDef.friction = 0.4;
+				fixtureDef.restitution = 0.1;
 				// L
+				box = new b2PolygonShape();
+				box.SetAsBox(18 / m_physScale, 6.5 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX - 30) / m_physScale, (startY + 20) / m_physScale);
 				var upperArmL:b2Body = m_world.CreateBody(bd);
-				upperArmL.CreateShape(box);
-				upperArmL.SetMassFromShapes();
+				upperArmL.CreateFixture(fixtureDef);
 				// R
+				box = new b2PolygonShape();
+				box.SetAsBox(18 / m_physScale, 6.5 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX + 30) / m_physScale, (startY + 20) / m_physScale);
 				var upperArmR:b2Body = m_world.CreateBody(bd);
-				upperArmR.CreateShape(box);
-				upperArmR.SetMassFromShapes();
+				upperArmR.CreateFixture(fixtureDef);
 				
 				// LowerArm
-				box.SetAsBox(17 / m_physScale, 6 / m_physScale);
-				box.density = 1.0;
-				box.friction = 0.4;
-				box.restitution = 0.1;
-				bd = new b2BodyDef();
+				fixtureDef.density = 1.0;
+				fixtureDef.friction = 0.4;
+				fixtureDef.restitution = 0.1;
 				// L
+				box = new b2PolygonShape();
+				box.SetAsBox(17 / m_physScale, 6 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX - 57) / m_physScale, (startY + 20) / m_physScale);
 				var lowerArmL:b2Body = m_world.CreateBody(bd);
-				lowerArmL.CreateShape(box);
-				lowerArmL.SetMassFromShapes();
+				lowerArmL.CreateFixture(fixtureDef);
 				// R
+				box = new b2PolygonShape();
+				box.SetAsBox(17 / m_physScale, 6 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX + 57) / m_physScale, (startY + 20) / m_physScale);
 				var lowerArmR:b2Body = m_world.CreateBody(bd);
-				lowerArmR.CreateShape(box);
-				lowerArmR.SetMassFromShapes();
+				lowerArmR.CreateFixture(fixtureDef);
 				
 				// UpperLeg
-				box.SetAsBox(7.5 / m_physScale, 22 / m_physScale);
-				box.density = 1.0;
-				box.friction = 0.4;
-				box.restitution = 0.1;
-				bd = new b2BodyDef();
+				fixtureDef.density = 1.0;
+				fixtureDef.friction = 0.4;
+				fixtureDef.restitution = 0.1;
 				// L
+				box = new b2PolygonShape();
+				box.SetAsBox(7.5 / m_physScale, 22 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX - 8) / m_physScale, (startY + 85) / m_physScale);
 				var upperLegL:b2Body = m_world.CreateBody(bd);
-				upperLegL.CreateShape(box);
-				upperLegL.SetMassFromShapes();
+				upperLegL.CreateFixture(fixtureDef);
 				// R
+				box = new b2PolygonShape();
+				box.SetAsBox(7.5 / m_physScale, 22 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX + 8) / m_physScale, (startY + 85) / m_physScale);
 				var upperLegR:b2Body = m_world.CreateBody(bd);
-				upperLegR.CreateShape(box);
-				upperLegR.SetMassFromShapes();
+				upperLegR.CreateFixture(fixtureDef);
 				
 				// LowerLeg
-				box.SetAsBox(6 / m_physScale, 20 / m_physScale);
-				box.density = 1.0;
-				box.friction = 0.4;
-				box.restitution = 0.1;
-				bd = new b2BodyDef();
+				fixtureDef.density = 1.0;
+				fixtureDef.friction = 0.4;
+				fixtureDef.restitution = 0.1;
 				// L
+				box = new b2PolygonShape();
+				box.SetAsBox(6 / m_physScale, 20 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX - 8) / m_physScale, (startY + 120) / m_physScale);
 				var lowerLegL:b2Body = m_world.CreateBody(bd);
-				lowerLegL.CreateShape(box);
-				lowerLegL.SetMassFromShapes();
+				lowerLegL.CreateFixture(fixtureDef);
 				// R
+				box = new b2PolygonShape();
+				box.SetAsBox(6 / m_physScale, 20 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((startX + 8) / m_physScale, (startY + 120) / m_physScale);
 				var lowerLegR:b2Body = m_world.CreateBody(bd);
-				lowerLegR.CreateShape(box);
-				lowerLegR.SetMassFromShapes();
+				lowerLegR.CreateFixture(fixtureDef);
 				
 				
 				// JOINTS
@@ -226,40 +237,34 @@ package TestBed{
 			
 			
 			// Add stairs on the left
-			for (var j:int = 1; j <= 10; j++){
+			fixtureDef.density = 0.0;
+			fixtureDef.friction = 0.4;
+			fixtureDef.restitution = 0.3;
+			for (var j:int = 1; j <= 10; j++) {
+				box = new b2PolygonShape();
 				box.SetAsBox((10*j) / m_physScale, 10 / m_physScale);
-				box.density = 0.0;
-				box.friction = 0.4;
-				box.restitution = 0.3;
-				bd = new b2BodyDef();
+				fixtureDef.shape = box;
 				bd.position.Set((10*j) / m_physScale, (150 + 20*j) / m_physScale);
 				head = m_world.CreateBody(bd);
-				head.CreateShape(box);
-				head.SetMassFromShapes();
+				head.CreateFixture(fixtureDef);
 			}
 			
 			// Add stairs on the right
 			for (var k:int = 1; k <= 10; k++){
-				box.SetAsBox((10*k) / m_physScale, 10 / m_physScale);
-				box.density = 0.0;
-				box.friction = 0.4;
-				box.restitution = 0.3;
-				bd = new b2BodyDef();
+				box = new b2PolygonShape();
+				box.SetAsBox((10 * k) / m_physScale, 10 / m_physScale);
+				fixtureDef.shape = box;
 				bd.position.Set((640-10*k) / m_physScale, (150 + 20*k) / m_physScale);
 				head = m_world.CreateBody(bd);
-				head.CreateShape(box);
-				head.SetMassFromShapes();
+				head.CreateFixture(fixtureDef);
 			}
 			
+			box = new b2PolygonShape();
 			box.SetAsBox(30 / m_physScale, 40 / m_physScale);
-			box.density = 0.0;
-			box.friction = 0.4;
-			box.restitution = 0.3;
-			bd = new b2BodyDef();
+			fixtureDef.shape = box;
 			bd.position.Set(320 / m_physScale, 320 / m_physScale);
 			head = m_world.CreateBody(bd);
-			head.CreateShape(box);
-			head.SetMassFromShapes();
+			head.CreateFixture(fixtureDef);
 			
 			
 		}
