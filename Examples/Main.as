@@ -98,7 +98,7 @@ import flash.display.MovieClip;
 			var tests:Array = [
 				TestRagdoll,			// Ragdoll
 				TestCompound,			// Compound Shapes
-			//	TestCrankGearsPulley,	// Crank/Gears/Pulley
+				TestCrankGearsPulley,	// Crank/Gears/Pulley
 				TestBridge,				// Bridge
 				TestStack,				// Stack
 				TestCCD,				// CCD

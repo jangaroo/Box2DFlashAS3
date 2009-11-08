@@ -41,17 +41,19 @@ package TestBed{
 			var ground:b2Body = m_world.GetGroundBody();
 			
 			var body:b2Body;
-			var sd:b2PolygonDef;
+			var sd:b2PolygonShape;
 			var bd:b2BodyDef;
+			var fixtureDef:b2FixtureDef = new b2FixtureDef();
 			
 			//
 			// CRANK
 			//
 			{
 				// Define crank.
-				sd = new b2PolygonDef();
-				sd.SetAsBox(7.5/m_physScale, 30.0/m_physScale);
-				sd.density = 1.0;
+				sd = new b2PolygonShape();
+				sd.SetAsBox(7.5 / m_physScale, 30.0 / m_physScale);
+				fixtureDef.shape = sd;
+				fixtureDef.density = 1.0;
 				
 				var rjd:b2RevoluteJointDef = new b2RevoluteJointDef();
 				
@@ -60,8 +62,7 @@ package TestBed{
 				bd = new b2BodyDef();
 				bd.position.Set(100.0/m_physScale, (360.0-105.0)/m_physScale);
 				body = m_world.CreateBody(bd);
-				body.CreateShape(sd);
-				body.SetMassFromShapes();
+				body.CreateFixture(fixtureDef);
 				
 				rjd.Initialize(prevBody, body, new b2Vec2(100.0/m_physScale, (360.0-75.0)/m_physScale));
 				rjd.motorSpeed = 1.0 * -Math.PI;
@@ -72,11 +73,12 @@ package TestBed{
 				prevBody = body;
 				
 				// Define follower.
-				sd.SetAsBox(7.5/m_physScale, 60.0/m_physScale);
+				sd = new b2PolygonShape;
+				sd.SetAsBox(7.5 / m_physScale, 60.0 / m_physScale);
+				fixtureDef.shape = sd;
 				bd.position.Set(100.0/m_physScale, (360.0-195.0)/m_physScale);
 				body = m_world.CreateBody(bd);
-				body.CreateShape(sd);
-				body.SetMassFromShapes();
+				body.CreateFixture(fixtureDef);
 				
 				rjd.Initialize(prevBody, body, new b2Vec2(100.0/m_physScale, (360.0-135.0)/m_physScale));
 				rjd.enableMotor = false;
@@ -85,11 +87,12 @@ package TestBed{
 				prevBody = body;
 				
 				// Define piston
-				sd.SetAsBox(22.5/m_physScale, 22.5/m_physScale);
+				sd = new b2PolygonShape();
+				sd.SetAsBox(22.5 / m_physScale, 22.5 / m_physScale);
+				fixtureDef.shape = sd;
 				bd.position.Set(100.0/m_physScale, (360.0-255.0)/m_physScale);
 				body = m_world.CreateBody(bd);
-				body.CreateShape(sd);
-				body.SetMassFromShapes();
+				body.CreateFixture(fixtureDef);
 				
 				rjd.Initialize(prevBody, body, new b2Vec2(100.0/m_physScale, (360.0-255.0)/m_physScale));
 				m_world.CreateJoint(rjd);
@@ -103,68 +106,58 @@ package TestBed{
 				m_joint2 = m_world.CreateJoint(pjd) as b2PrismaticJoint;
 				
 				// Create a payload
-				sd.density = 2.0;
+				sd = new b2PolygonShape()
+				sd.SetAsBox(22.5 / m_physScale, 22.5 / m_physScale);
+				fixtureDef.shape = sd;
+				fixtureDef.density = 2.0;
 				bd.position.Set(100.0/m_physScale, (360.0-345.0)/m_physScale);
 				body = m_world.CreateBody(bd);
-				body.CreateShape(sd);
-				body.SetMassFromShapes();
+				body.CreateFixture(fixtureDef);
 			}
 			
 			
 			// 
 			// GEARS
 			//
-			{
-				var circle1:b2CircleDef = new b2CircleDef();
-				circle1.radius = 25 / m_physScale;
-				circle1.density = 5.0;
-				
-				var circle2:b2CircleDef = new b2CircleDef();
-				circle2.radius = 50 / m_physScale;
-				circle2.density = 5.0;
-				
-				var box:b2PolygonDef = new b2PolygonDef();
-				box.SetAsBox(10 / m_physScale, 100 / m_physScale);
-				box.density = 5.0;
+			//{
+				var circle1:b2CircleShape = new b2CircleShape(25 / m_physScale);
+				fixtureDef.shape = circle1;
+				fixtureDef.density = 5.0;
 				
 				var bd1:b2BodyDef = new b2BodyDef();
 				bd1.position.Set(200 / m_physScale, 360/2 / m_physScale);
 				var body1:b2Body = m_world.CreateBody(bd1);
-				body1.CreateShape(circle1);
-				body1.SetMassFromShapes();
+				body1.CreateFixture(fixtureDef);
 				
 				var jd1:b2RevoluteJointDef = new b2RevoluteJointDef();
 				jd1.Initialize(ground, body1, bd1.position);
-				//jd1.anchorPoint.SetV(bd1.position);
-				//jd1.body1 = ground;
-				//jd1.body2 = body1;
 				m_gJoint1 = m_world.CreateJoint(jd1) as b2RevoluteJoint;
+				
+				var circle2:b2CircleShape = new b2CircleShape(50 / m_physScale);
+				fixtureDef.shape = circle2;
+				fixtureDef.density = 5.0;
 				
 				var bd2:b2BodyDef = new b2BodyDef();
 				bd2.position.Set(275 / m_physScale, 360/2 / m_physScale);
 				var body2:b2Body = m_world.CreateBody(bd2);
-				body2.CreateShape(circle2);
-				body2.SetMassFromShapes();
+				body2.CreateFixture(fixtureDef);
 				
 				var jd2:b2RevoluteJointDef = new b2RevoluteJointDef();
 				jd2.Initialize(ground, body2, bd2.position);
-				//jd2.body1 = ground;
-				//jd2.body2 = body2;
-				//jd2.anchorPoint.SetV(bd2.position);
 				m_gJoint2 = m_world.CreateJoint(jd2) as b2RevoluteJoint;
+				
+				var box:b2PolygonShape = new b2PolygonShape();
+				box.SetAsBox(10 / m_physScale, 100 / m_physScale);
+				fixtureDef.shape = box;
+				fixtureDef.density = 5.0;
 				
 				var bd3:b2BodyDef = new b2BodyDef();
 				bd3.position.Set(335 / m_physScale, 360/2 / m_physScale);
 				var body3:b2Body = m_world.CreateBody(bd3);
-				body3.CreateShape(box);
-				body3.SetMassFromShapes();
+				body3.CreateFixture(fixtureDef);
 				
 				var jd3:b2PrismaticJointDef = new b2PrismaticJointDef();
 				jd3.Initialize(ground, body3, bd3.position, new b2Vec2(0,1));
-				//jd3.body1 = ground;
-				//jd3.body2 = body3;
-				//jd3.anchorPoint.SetV(bd3.position);
-				//jd3.axis.Set(0.0, 1.0);
 				jd3.lowerTranslation = -25.0 / m_physScale;
 				jd3.upperTranslation = 100.0 / m_physScale;
 				jd3.enableLimit = true;
@@ -176,7 +169,7 @@ package TestBed{
 				jd4.body2 = body2;
 				jd4.joint1 = m_gJoint1;
 				jd4.joint2 = m_gJoint2;
-				jd4.ratio = circle2.radius / circle1.radius;
+				jd4.ratio = circle2.GetRadius() / circle1.GetRadius();
 				m_gJoint4 = m_world.CreateJoint(jd4) as b2GearJoint;
 				
 				var jd5:b2GearJointDef = new b2GearJointDef();
@@ -184,26 +177,26 @@ package TestBed{
 				jd5.body2 = body3;
 				jd5.joint1 = m_gJoint2;
 				jd5.joint2 = m_gJoint3;
-				jd5.ratio = -1.0 / circle2.radius;
+				jd5.ratio = -1.0 / circle2.GetRadius();
 				m_gJoint5 = m_world.CreateJoint(jd5) as b2GearJoint;
-			}
+			//}
 			
 			
 			
 			//
 			// PULLEY
 			//
-			{
-				sd = new b2PolygonDef();
+			//{
+				sd = new b2PolygonShape();
 				sd.SetAsBox(50 / m_physScale, 20 / m_physScale);
-				sd.density = 5.0;
+				fixtureDef.shape = sd;
+				fixtureDef.density = 5.0;
 				
 				bd = new b2BodyDef();
 				
 				bd.position.Set(480 / m_physScale, 200 / m_physScale);
 				body2 = m_world.CreateBody(bd);
-				body2.CreateShape(sd);
-				body2.SetMassFromShapes();
+				body2.CreateFixture(fixtureDef);
 				
 				var pulleyDef:b2PulleyJointDef = new b2PulleyJointDef();
 				
@@ -221,30 +214,29 @@ package TestBed{
 				
 				
 				// Add a circle to weigh down the pulley
-				var circ:b2CircleDef = new b2CircleDef();
-				circ.radius = 40 / m_physScale;
-				circ.friction = 0.3;
-				circ.restitution = 0.3;
-				circ.density = 5.0;
+				var circ:b2CircleShape = new b2CircleShape(40 / m_physScale);
+				fixtureDef.shape = circ;
+				fixtureDef.friction = 0.3;
+				fixtureDef.restitution = 0.3;
+				fixtureDef.density = 5.0;
 				bd.position.Set(485 / m_physScale, 100 / m_physScale);
 				body1 = m_world.CreateBody(bd);
-				body1.CreateShape(circ);
-				body1.SetMassFromShapes();
-			}
+				body1.CreateFixture(fixtureDef);
+			//}
 			
 			//
 			// LINE JOINT
 			//
 			{
-				sd = new b2PolygonDef();
-				sd.SetAsBox(7.5/m_physScale, 30.0/m_physScale);
-				sd.density = 1.0;
+				sd = new b2PolygonShape();
+				sd.SetAsBox(7.5 / m_physScale, 30.0 / m_physScale);
+				fixtureDef.shape = sd;
+				fixtureDef.density = 1.0;
 				
 				bd = new b2BodyDef();
 				bd.position.Set(500 / m_physScale, 500/2 / m_physScale);
 				body = m_world.CreateBody(bd);
-				body.CreateShape(sd);
-				body.SetMassFromShapes();
+				body.CreateFixture(fixtureDef);
 				
 				var ljd:b2LineJointDef = new b2LineJointDef();
 				ljd.Initialize(ground, body, body.GetPosition(), new b2Vec2(0.4, 0.6));

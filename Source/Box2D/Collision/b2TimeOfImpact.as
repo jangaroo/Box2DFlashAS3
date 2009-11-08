@@ -453,8 +453,8 @@ internal class b2SeparationFunction
 				localPointB = m_proxyB.GetSupportVertex(axisB);
 				pointB = b2Math.b2MulX(transformB, localPointB);
 				
-				//float32 separation = b2Dot(pointB - pointA, m_axis);
-				seperation = (pointB.x - pointA.x) * m_axis.x + (pointB.y - pointA.y) * m_axis.y;
+				//float32 separation = b2Dot(pointB - pointA, normal);
+				seperation = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
 				return seperation;
 			}
 			case e_faceB:
@@ -467,8 +467,8 @@ internal class b2SeparationFunction
 				localPointA = m_proxyA.GetSupportVertex(axisA);
 				pointA = b2Math.b2MulX(transformA, localPointA);
 				
-				//float32 separation = b2Dot(pointA - pointB, m_axis);
-				seperation = (pointA.x - pointB.x) * m_axis.x + (pointA.y - pointB.y) * m_axis.y;
+				//float32 separation = b2Dot(pointA - pointB, normal);
+				seperation = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
 				return seperation;
 			}
 			default:
