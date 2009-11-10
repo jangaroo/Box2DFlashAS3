@@ -42,7 +42,8 @@ use namespace b2internal;
 				case b2Shape.e_circleShape:
 				{
 					var circle:b2CircleShape = shape as b2CircleShape;
-					m_vertices = [circle.m_p];
+					m_vertices = new Vector.<b2Vec2>(1, true);
+					m_vertices[0] = circle.m_p;
 					m_count = 1;
 					m_radius = circle.m_radius;
 				}
@@ -114,7 +115,7 @@ use namespace b2internal;
 			return m_vertices[index];
 		}
 		
- 		public var m_vertices:Array;
+ 		public var m_vertices:Vector.<b2Vec2>;
  		public var m_count:int;
  		public var m_radius:Number;
 	}

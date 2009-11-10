@@ -36,7 +36,7 @@ public class b2Collision{
 	static public const b2_nullFeature:uint = 0x000000ff;//UCHAR_MAX;
 	
 	// Sutherland-Hodgman clipping.
-	static public function ClipSegmentToLine(vOut:Array, vIn:Array, normal:b2Vec2, offset:Number):int
+	static public function ClipSegmentToLine(vOut:Vector.<ClipVertex>, vIn:Vector.<ClipVertex>, normal:b2Vec2, offset:Number):int
 	{
 		var cv: ClipVertex;
 		
@@ -91,11 +91,11 @@ public class b2Collision{
 											poly2:b2PolygonShape, xf2:b2Transform):Number
 	{
 		var count1:int = poly1.m_vertexCount;
-		var vertices1:Array = poly1.m_vertices;
-		var normals1:Array = poly1.m_normals;
+		var vertices1:Vector.<b2Vec2> = poly1.m_vertices;
+		var normals1:Vector.<b2Vec2> = poly1.m_normals;
 		
 		var count2:int = poly2.m_vertexCount;
-		var vertices2:Array = poly2.m_vertices;
+		var vertices2:Vector.<b2Vec2> = poly2.m_vertices;
 		
 		//b2Assert(0 <= edge1 && edge1 < count1);
 		
@@ -152,12 +152,12 @@ public class b2Collision{
 	
 	// Find the max separation between poly1 and poly2 using edge normals
 	// from poly1.
-	static public function FindMaxSeparation(edgeIndex:Array /*int ptr*/, 
+	static public function FindMaxSeparation(edgeIndex:Vector.<int>, 
 											poly1:b2PolygonShape, xf1:b2Transform, 
 											poly2:b2PolygonShape, xf2:b2Transform):Number
 	{
 		var count1:int = poly1.m_vertexCount;
-		var normals1:Array = poly1.m_normals;
+		var normals1:Vector.<b2Vec2> = poly1.m_normals;
 		
 		var tVec:b2Vec2;
 		var tMat:b2Mat22;
@@ -255,16 +255,16 @@ public class b2Collision{
 	
 	
 	
-	static public function FindIncidentEdge(c:Array, 
+	static public function FindIncidentEdge(c:Vector.<ClipVertex>, 
 											poly1:b2PolygonShape, xf1:b2Transform, edge1:int, 
 											poly2:b2PolygonShape, xf2:b2Transform) : void
 	{
 		var count1:int = poly1.m_vertexCount;
-		var normals1:Array = poly1.m_normals;
+		var normals1:Vector.<b2Vec2> = poly1.m_normals;
 		
 		var count2:int = poly2.m_vertexCount;
-		var vertices2:Array = poly2.m_vertices;
-		var normals2:Array = poly2.m_normals;
+		var vertices2:Vector.<b2Vec2> = poly2.m_vertices;
+		var normals2:Vector.<b2Vec2> = poly2.m_normals;
 		
 		//b2Assert(0 <= edge1 && edge1 < count1);
 		
@@ -345,14 +345,16 @@ public class b2Collision{
 		var totalRadius:Number = polyA.m_radius + polyB.m_radius;
 
 		var edgeA:int = 0;
-		var edgeAO:Array = [edgeA];
+		var edgeAO:Vector.<int> = new Vector.<int>(1);
+		edgeAO[0] = edgeA;
 		var separationA:Number = FindMaxSeparation(edgeAO, polyA, xfA, polyB, xfB);
 		edgeA = edgeAO[0];
 		if (separationA > totalRadius)
 			return;
 
 		var edgeB:int = 0;
-		var edgeBO:Array = [edgeB];
+		var edgeBO:Vector.<int> = new Vector.<int>(1);
+		edgeBO[0] = edgeB;
 		var separationB:Number = FindMaxSeparation(edgeBO, polyB, xfB, polyA, xfA);
 		edgeB = edgeBO[0];
 		if (separationB > totalRadius)
@@ -388,11 +390,13 @@ public class b2Collision{
 			flip = 0;
 		}
 
-		var incidentEdge:Array = [new ClipVertex(), new ClipVertex()];
+		var incidentEdge:Vector.<ClipVertex> =  new Vector.<ClipVertex>(2);
+		incidentEdge[0] = new ClipVertex();
+		incidentEdge[1] = new ClipVertex();
 		FindIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
 
 		var count1:int = poly1.m_vertexCount;
-		var vertices1:Array = poly1.m_vertices;
+		var vertices1:Vector.<b2Vec2> = poly1.m_vertices;
 
 		var tVec: b2Vec2 = vertices1[edge1];
 		var v11:b2Vec2 = tVec.Copy();
@@ -423,8 +427,12 @@ public class b2Collision{
 		var sideOffset2:Number = b2Math.b2Dot(tangent, v12) + totalRadius;
 
 		// Clip incident edge against extruded edge1 side edges.
-		var clipPoints1:Array = [new ClipVertex(), new ClipVertex()];
-		var clipPoints2:Array = [new ClipVertex(), new ClipVertex()];
+		var clipPoints1:Vector.<ClipVertex> = new Vector.<ClipVertex>(2);
+		clipPoints1[0] = new ClipVertex();
+		clipPoints1[1] = new ClipVertex();
+		var clipPoints2:Vector.<ClipVertex> = new Vector.<ClipVertex>(2);
+		clipPoints2[0] = new ClipVertex();
+		clipPoints2[1] = new ClipVertex();
 		var np:int;
 
 		// Clip to box side 1
@@ -539,8 +547,8 @@ public class b2Collision{
 		var separation:Number = -Number.MAX_VALUE;
 		var radius:Number = polygon.m_radius + circle.m_radius;
 		var vertexCount:int = polygon.m_vertexCount;
-		var vertices:Array = polygon.m_vertices;
-		var normals:Array = polygon.m_normals;
+		var vertices:Vector.<b2Vec2> = polygon.m_vertices;
+		var normals:Vector.<b2Vec2> = polygon.m_normals;
 
 		for (var i:int = 0; i < vertexCount; ++i)
 		{

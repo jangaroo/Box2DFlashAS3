@@ -46,7 +46,7 @@ use namespace b2internal;
 public class b2Manifold
 {
 	public function b2Manifold(){
-		m_points = new Array(b2Settings.b2_maxManifoldPoints);
+		m_points = new Vector.<b2ManifoldPoint>(b2Settings.b2_maxManifoldPoints);
 		for (var i:int = 0; i < b2Settings.b2_maxManifoldPoints; i++){
 			m_points[i] = new b2ManifoldPoint();
 		}
@@ -78,10 +78,12 @@ public class b2Manifold
 		return copy;
 	}
 	/** The points of contact */	
-	public var m_points:Array/*b2ManifoldPoint*/;	
+	public var m_points:Vector.<b2ManifoldPoint>;	
 	/** Not used for Type e_points*/	
 	public var m_localPlaneNormal:b2Vec2;	
-	/** Usage depends on manifold type */	public var m_localPoint:b2Vec2;	public var m_type:int;
+	/** Usage depends on manifold type */	
+	public var m_localPoint:b2Vec2;	
+	public var m_type:int;
 	/** The number of manifold points */	
 	public var m_pointCount:int = 0;
 	

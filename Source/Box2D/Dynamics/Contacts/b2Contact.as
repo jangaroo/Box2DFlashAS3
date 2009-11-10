@@ -183,9 +183,9 @@ public class b2Contact
 		}
 	}
 	static b2internal function InitializeRegisters() : void{
-		s_registers = new Array(b2Shape.e_shapeTypeCount);
+		s_registers = new Vector.<Vector.<b2ContactRegister> >(b2Shape.e_shapeTypeCount);
 		for (var i:int = 0; i < b2Shape.e_shapeTypeCount; i++){
-			s_registers[i] = new Array(b2Shape.e_shapeTypeCount);
+			s_registers[i] = new Vector.<b2ContactRegister>(b2Shape.e_shapeTypeCount);
 			for (var j:int = 0; j < b2Shape.e_shapeTypeCount; j++){
 				s_registers[i][j] = new b2ContactRegister();
 			}
@@ -403,7 +403,7 @@ public class b2Contact
 		return b2TimeOfImpact.TimeOfImpact(input);
 	}
 	
-	static b2internal var s_registers:Array; //[][]
+	static b2internal var s_registers:Vector.<Vector.<b2ContactRegister> >;
 	static b2internal var s_initialized:Boolean = false;
 
 	b2internal var m_flags:uint;

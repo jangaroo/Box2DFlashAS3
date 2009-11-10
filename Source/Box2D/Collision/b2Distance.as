@@ -52,14 +52,14 @@ public static function Distance(output:b2DistanceOutput, cache:b2SimplexCache, i
 	var simplex:b2Simplex = new b2Simplex();
 	simplex.ReadCache(cache, proxyA, transformA, proxyB, transformB);
 	
-	// Get simplex vertices as an array.
-	var vertices:Array/*b2SimplexVertex*/= simplex.m_vertices;
+	// Get simplex vertices as an vector.
+	var vertices:Vector.<b2SimplexVertex> = simplex.m_vertices;
 	const k_maxIters:int = 20;
 	
 	// These store the vertices of the last simplex so that we
 	// can check for duplicates and preven cycling
-	var saveA:Array/*int*/ = new Array(3);
-	var saveB:Array/*int*/ = new Array(3);
+	var saveA:Vector.<int> = new Vector.<int>(3);
+	var saveB:Vector.<int> = new Vector.<int>(3);
 	var saveCount:int = 0;
 	
 	var closestPoint:b2Vec2 = simplex.GetClosestPoint();
@@ -234,6 +234,13 @@ internal class b2SimplexVertex
 
 internal class b2Simplex
 {
+	
+public function b2Simplex()
+{
+	m_vertices[0] = m_v1;
+	m_vertices[1] = m_v2;
+	m_vertices[2] = m_v3;
+}
 
 public function ReadCache(cache:b2SimplexCache, 
 			proxyA:b2DistanceProxy, transformA:b2Transform,
@@ -246,7 +253,7 @@ public function ReadCache(cache:b2SimplexCache,
 	
 	// Copy data from cache.
 	m_count = cache.count;
-	var vertices:Array/*b2SimplexVertex*/ = m_vertices;
+	var vertices:Vector.<b2SimplexVertex> = m_vertices;
 	for (var i:int = 0; i < m_count; i++)
 	{
 		var v:b2SimplexVertex = vertices[i];
@@ -292,7 +299,7 @@ public function WriteCache(cache:b2SimplexCache):void
 {
 	cache.metric = GetMetric();
 	cache.count = uint(m_count);
-	var vertices:Array/*b2SimplexVertex*/ = m_vertices;
+	var vertices:Vector.<b2SimplexVertex> = m_vertices;
 	for (var i:int = 0; i < m_count; i++)
 	{
 		cache.indexA[i] = uint(vertices[i].indexA);
@@ -564,6 +571,6 @@ public function Solve3():void
 public var m_v1:b2SimplexVertex = new b2SimplexVertex();
 public var m_v2:b2SimplexVertex = new b2SimplexVertex();
 public var m_v3:b2SimplexVertex = new b2SimplexVertex();
-public var m_vertices:Array = [m_v1, m_v2, m_v3];
+public var m_vertices:Vector.<b2SimplexVertex> = new Vector.<b2SimplexVertex>(3);
 public var m_count:int;
 }

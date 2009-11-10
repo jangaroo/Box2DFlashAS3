@@ -96,7 +96,7 @@ package TestBed{
 				sd1.m_vertices[0] = b2Math.b2MulX(xf1, new b2Vec2(-30.0/m_physScale, 0.0));
 				sd1.m_vertices[1] = b2Math.b2MulX(xf1, new b2Vec2(30.0/m_physScale, 0.0));
 				sd1.m_vertices[2] = b2Math.b2MulX(xf1, new b2Vec2(0.0, 15.0 / m_physScale));
-				sd1.SetAsArray(sd1.m_vertices, sd1.m_vertexCount);
+				sd1.SetAsVector(sd1.m_vertices, sd1.m_vertexCount);
 				
 				var xf2:b2Transform = new b2Transform();
 				xf2.R.Set(-0.3524 * Math.PI);
@@ -107,7 +107,7 @@ package TestBed{
 				sd2.m_vertices[0] = b2Math.b2MulX(xf2, new b2Vec2(-30.0/m_physScale, 0.0));
 				sd2.m_vertices[1] = b2Math.b2MulX(xf2, new b2Vec2(30.0/m_physScale, 0.0));
 				sd2.m_vertices[2] = b2Math.b2MulX(xf2, new b2Vec2(0.0, 15.0 / m_physScale));
-				sd2.SetAsArray(sd2.m_vertices, sd2.m_vertexCount);
+				sd2.SetAsVector(sd2.m_vertices, sd2.m_vertexCount);
 				
 				bd = new b2BodyDef();
 				bd.fixedRotation = true;

@@ -22,9 +22,19 @@ package Box2D.Collision {
 /**
 * @private
 */
-public class b2BoundValues{
-	public var lowerValues:Array = [0,0];
-	public var upperValues:Array = [0,0];
+public class b2BoundValues {
+	public function b2BoundValues()
+	{
+		lowerValues = new Vector.<Number>();
+		lowerValues[0] = 0.0;
+		lowerValues[1] = 0.0;
+		upperValues = new Vector.<Number>();
+		upperValues[0] = 0.0;
+		upperValues[1] = 0.0;
+	}
+	
+	public var lowerValues:Vector.<Number>;
+	public var upperValues:Vector.<Number>;
 }
 	
 	

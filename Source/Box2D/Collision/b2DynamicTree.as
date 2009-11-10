@@ -176,7 +176,7 @@ package Box2D.Collision
 			if (m_root == null)
 				return;
 				
-			var stack:Array/*b2DynamicTreeNode*/ = [];
+			var stack:Vector.<b2DynamicTreeNode> = new Vector.<b2DynamicTreeNode>();
 			
 			var count:int = 0;
 			stack[count++] = m_root;
@@ -243,7 +243,7 @@ package Box2D.Collision
 				segmentAABB.upperBound.y = Math.max(p1.y, tY);
 			}
 			
-			var stack:Array/*b2DynamicTreeNode*/ = [];
+			var stack:Vector.<b2DynamicTreeNode> = new Vector.<b2DynamicTreeNode>();
 			
 			var count:int = 0;
 			stack[count++] = m_root;

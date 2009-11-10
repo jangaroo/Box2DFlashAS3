@@ -64,9 +64,9 @@ public class b2BroadPhase implements IBroadPhase
 		m_proxyCount = 0;
 		
 		// bounds array
-		m_bounds = new Array(2);
+		m_bounds = new Vector.<Vector.<b2Bound> >();
 		for (i = 0; i < 2; i++){
-			m_bounds[i] = new Array();
+			m_bounds[i] = new Vector.<b2Bound>();
 		}
 		
 		//b2Vec2 d = worldAABB.upperBound - worldAABB.lowerBound;
@@ -143,17 +143,19 @@ public class b2BroadPhase implements IBroadPhase
 		
 		var boundCount:uint = 2 * m_proxyCount;
 		
-		var lowerValues:Array = new Array();
-		var upperValues:Array = new Array();
+		var lowerValues:Vector.<Number> = new Vector.<Number>();
+		var upperValues:Vector.<Number> = new Vector.<Number>();
 		ComputeBounds(lowerValues, upperValues, aabb);
 		
 		for (var axis:int = 0; axis < 2; ++axis)
 		{
-			var bounds:Array = m_bounds[axis];
+			var bounds:Vector.<b2Bound> = m_bounds[axis];
 			var lowerIndex:uint;
 			var upperIndex:uint;
-			var lowerIndexOut:Array = [lowerIndex];
-			var upperIndexOut:Array = [upperIndex];
+			var lowerIndexOut:Vector.<uint> = new Vector.<uint>();
+			lowerIndexOut.push(lowerIndex);
+			var upperIndexOut:Vector.<uint> = new Vector.<uint>();
+			upperIndexOut.push(upperIndex);
 			QueryAxis(lowerIndexOut, upperIndexOut, lowerValues[axis], upperValues[axis], bounds, boundCount, axis);
 			lowerIndex = lowerIndexOut[0];
 			upperIndex = upperIndexOut[0];
@@ -232,7 +234,7 @@ public class b2BroadPhase implements IBroadPhase
 		
 		for (var axis:int = 0; axis < 2; ++axis)
 		{
-			var bounds:Array = m_bounds[axis];
+			var bounds:Vector.<b2Bound> = m_bounds[axis];
 			
 			var lowerIndex:uint = proxy.lowerBounds[axis];
 			var upperIndex:uint = proxy.upperBounds[axis];
@@ -273,7 +275,8 @@ public class b2BroadPhase implements IBroadPhase
 			
 			// Query for pairs to be removed. lowerIndex and upperIndex are not needed.
 			// make lowerIndex and upper output using an array and do this for others if compiler doesn't pick them up
-			QueryAxis([0], [0], lowerValue, upperValue, bounds, boundCount - 2, axis);
+			var ignore:Vector.<uint> = new Vector.<uint>();
+			QueryAxis(ignore, ignore, lowerValue, upperValue, bounds, boundCount - 2, axis);
 		}
 		
 		//b2Settings.b2Assert(m_queryResultCount < b2Settings.b2_maxProxies);
@@ -349,7 +352,7 @@ public class b2BroadPhase implements IBroadPhase
 		
 		for (axis = 0; axis < 2; ++axis)
 		{
-			var bounds:Array = m_bounds[axis];
+			var bounds:Vector.<b2Bound> = m_bounds[axis];
 			
 			var lowerIndex:uint = proxy.lowerBounds[axis];
 			var upperIndex:uint = proxy.upperBounds[axis];
@@ -646,14 +649,16 @@ public class b2BroadPhase implements IBroadPhase
 	 */
 	public function Query(callback:Function, aabb:b2AABB):void
 	{
-		var lowerValues:Array = new Array();
-		var upperValues:Array = new Array();
+		var lowerValues:Vector.<Number> = new Vector.<Number>();
+		var upperValues:Vector.<Number> = new Vector.<Number>();
 		ComputeBounds(lowerValues, upperValues, aabb);
 		
 		var lowerIndex:uint;
 		var upperIndex:uint;
-		var lowerIndexOut:Array = [lowerIndex];
-		var upperIndexOut:Array = [upperIndex];
+		var lowerIndexOut:Vector.<uint> = new Vector.<uint>();
+		lowerIndexOut.push(lowerIndex);
+		var upperIndexOut:Vector.<uint> = new Vector.<uint>();
+		upperIndexOut.push(upperIndex);
 		QueryAxis(lowerIndexOut, upperIndexOut, lowerValues[0], upperValues[0], m_bounds[0], 2*m_proxyCount, 0);
 		QueryAxis(lowerIndexOut, upperIndexOut, lowerValues[1], upperValues[1], m_bounds[1], 2*m_proxyCount, 1);
 		
@@ -683,7 +688,7 @@ public class b2BroadPhase implements IBroadPhase
 		
 		for (var axis:int = 0; axis < 2; ++axis)
 		{
-			var bounds:b2Bound = m_bounds[axis];
+			var bounds:Vector.<b2Bound> = m_bounds[axis];
 			
 			var boundCount:uint = 2 * m_proxyCount;
 			var stabbingCount:uint = 0;
@@ -758,8 +763,10 @@ public class b2BroadPhase implements IBroadPhase
 		//First deal with all the proxies that contain segment.p1
 		var lowerIndex:uint;
 		var upperIndex:uint;
-		var lowerIndexOut:Array = [lowerIndex];
-		var upperIndexOut:Array = [upperIndex];
+		var lowerIndexOut:Vector.<uint> = new Vector.<uint>(); 
+		lowerIndexOut.push(lowerIndex);
+		var upperIndexOut:Vector.<uint> = new Vector.<uint>();
+		upperIndexOut.push(upperIndex);
 		QueryAxis(lowerIndexOut, upperIndexOut, startValues[0], startValues2[0], m_bounds[0], 2*m_proxyCount, 0);
 		if(sx>=0)	xIndex = upperIndexOut[0]-1;
 		else		xIndex = lowerIndexOut[0];
@@ -878,7 +885,7 @@ public class b2BroadPhase implements IBroadPhase
 	}
 	
 //private:
-	private function ComputeBounds(lowerValues:Array, upperValues:Array, aabb:b2AABB) : void
+	private function ComputeBounds(lowerValues:Vector.<Number>, upperValues:Vector.<Number>, aabb:b2AABB) : void
 	{
 		//b2Settings.b2Assert(aabb.upperBound.x >= aabb.lowerBound.x);
 		//b2Settings.b2Assert(aabb.upperBound.y >= aabb.lowerBound.y);
@@ -914,7 +921,7 @@ public class b2BroadPhase implements IBroadPhase
 		
 		for (var axis:int = 0; axis < 2; ++axis)
 		{
-			var bounds:Array = m_bounds[axis];
+			var bounds:Vector.<b2Bound> = m_bounds[axis];
 			
 			//b2Settings.b2Assert(p1.lowerBounds[axis] < 2 * m_proxyCount);
 			//b2Settings.b2Assert(p1.upperBounds[axis] < 2 * m_proxyCount);
@@ -939,7 +946,7 @@ public class b2BroadPhase implements IBroadPhase
 	{
 		for (var axis:int = 0; axis < 2; ++axis)
 		{
-			var bounds:Array = m_bounds[axis];
+			var bounds:Vector.<b2Bound> = m_bounds[axis];
 			
 			//b2Settings.b2Assert(p.lowerBounds[axis] < 2 * m_proxyCount);
 			//b2Settings.b2Assert(p.upperBounds[axis] < 2 * m_proxyCount);
@@ -956,7 +963,7 @@ public class b2BroadPhase implements IBroadPhase
 		return true;
 	}
 
-	private function QueryAxis(lowerQueryOut:Array, upperQueryOut:Array, lowerValue:uint, upperValue:uint, bounds:Array, boundCount:uint, axis:int) : void{
+	private function QueryAxis(lowerQueryOut:Vector.<uint>, upperQueryOut:Vector.<uint>, lowerValue:uint, upperValue:uint, bounds:Vector.<b2Bound>, boundCount:uint, axis:int) : void{
 		
 		var lowerQuery:uint = BinarySearch(bounds, boundCount, lowerValue);
 		var upperQuery:uint = BinarySearch(bounds, boundCount, upperValue);
@@ -1037,7 +1044,7 @@ public class b2BroadPhase implements IBroadPhase
 	b2internal var m_proxyPool:Array = new Array();
 	private var m_freeProxy:b2Proxy;
 
-	b2internal var m_bounds:Array = new Array();
+	b2internal var m_bounds:Vector.<Vector.<b2Bound> > ;
 
 	private var m_querySortKeys:Array = new Array();
 	private var m_queryResults:Array = new Array();
@@ -1054,7 +1061,7 @@ public class b2BroadPhase implements IBroadPhase
 	static public const b2_nullEdge:uint = b2Settings.USHRT_MAX;
 
 
-	static public function BinarySearch(bounds:Array, count:int, value:uint):uint
+	static public function BinarySearch(bounds:Vector.<b2Bound>, count:int, value:uint):uint
 	{
 		var low:int = 0;
 		var high:int = count - 1;

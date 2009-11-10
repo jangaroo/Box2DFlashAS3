@@ -136,17 +136,17 @@ public class b2Island
 		m_contactSolver = contactSolver;
 		
 		//m_bodies = (b2Body**)allocator->Allocate(bodyCapacity * sizeof(b2Body*));
-		m_bodies = new Array(bodyCapacity);
+		m_bodies = new Vector.<b2Body>(bodyCapacity);
 		for (i = 0; i < bodyCapacity; i++)
 			m_bodies[i] = null;
 		
 		//m_contacts = (b2Contact**)allocator->Allocate(contactCapacity	 * sizeof(b2Contact*));
-		m_contacts = new Array(contactCapacity);
+		m_contacts = new Vector.<b2Contact>(contactCapacity);
 		for (i = 0; i < contactCapacity; i++)
 			m_contacts[i] = null;
 		
 		//m_joints = (b2Joint**)allocator->Allocate(jointCapacity * sizeof(b2Joint*));
-		m_joints = new Array(jointCapacity);
+		m_joints = new Vector.<b2Joint>(jointCapacity);
 		for (i = 0; i < jointCapacity; i++)
 			m_joints[i] = null;
 		
@@ -437,7 +437,7 @@ public class b2Island
 	}
 
 	static private var s_reportCR:b2ContactResult = new b2ContactResult();
-	public function Report(constraints:Array) : void
+	public function Report(constraints:Vector.<b2ContactConstraint>) : void
 	{
 		var tMat:b2Mat22;
 		var tVec:b2Vec2;
@@ -485,9 +485,9 @@ public class b2Island
 	private var m_listener:b2ContactListener;
 	private var m_contactSolver:b2ContactSolver;
 
-	b2internal var m_bodies:Array;
-	b2internal var m_contacts:Array;
-	b2internal var m_joints:Array;
+	b2internal var m_bodies:Vector.<b2Body>;
+	b2internal var m_contacts:Vector.<b2Contact>;
+	b2internal var m_joints:Vector.<b2Joint>;
 
 	b2internal var m_bodyCount:int;
 	b2internal var m_jointCount:int;

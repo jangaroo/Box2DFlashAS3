@@ -66,6 +66,22 @@ public class b2PolygonShape extends b2Shape
 	 */
 	public function SetAsArray(vertices:Array, vertexCount:Number = 0):void
 	{
+		SetAsVector(Vector.<b2Vec2>(vertices), vertexCount);
+	}
+	
+	public static function AsArray(vertices:Array, vertexCount:Number):b2PolygonShape
+	{
+		var polygonShape:b2PolygonShape = new b2PolygonShape();
+		polygonShape.SetAsArray(vertices, vertexCount);
+		return polygonShape;
+	}
+	
+	/**
+	 * Copy vertices. This assumes the vertices define a convex polygon.
+	 * It is assumed that the exterior is the the right of each edge.
+	 */
+	public function SetAsVector(vertices:Vector.<b2Vec2>, vertexCount:Number = 0):void
+	{
 		if (vertexCount == 0)
 			vertexCount = vertices.length;
 			
@@ -120,10 +136,10 @@ public class b2PolygonShape extends b2Shape
 		m_centroid = ComputeCentroid(m_vertices, m_vertexCount);
 	}
 	
-	public static function AsArray(vertices:Array, vertexCount:Number):b2PolygonShape
+	public static function AsVector(vertices:Vector.<b2Vec2>, vertexCount:Number):b2PolygonShape
 	{
 		var polygonShape:b2PolygonShape = new b2PolygonShape();
-		polygonShape.SetAsArray(vertices, vertexCount);
+		polygonShape.SetAsVector(vertices, vertexCount);
 		return polygonShape;
 	}
 	
@@ -509,7 +525,7 @@ public class b2PolygonShape extends b2Shape
 		var normalL:b2Vec2 = b2Math.b2MulTMV(xf.R, normal);
 		var offsetL:Number = offset - b2Math.b2Dot(normal, xf.position);
 		
-		var depths:Array/*Number*/ = new Array();
+		var depths:Vector.<Number> = new Vector.<Number>();
 		var diveCount:int = 0;
 		var intoIndex:int = -1;
 		var outoIndex:int = -1;
@@ -621,14 +637,14 @@ public class b2PolygonShape extends b2Shape
 	/**
 	* Get the vertices in local coordinates.
 	*/
-	public function GetVertices() : Array{
+	public function GetVertices() : Vector.<b2Vec2>{
 		return m_vertices;
 	}
 	
 	/**
 	* Get the edge normal vectors. There is one for each vertex.
 	*/
-	public function GetNormals() : Array
+	public function GetNormals() : Vector.<b2Vec2>
 	{
 		return m_normals;
 	}
@@ -717,8 +733,8 @@ public class b2PolygonShape extends b2Shape
 		m_type = e_polygonShape;
 		
 		m_centroid = new b2Vec2();
-		m_vertices = new Array(b2Settings.b2_maxPolygonVertices);
-		m_normals = new Array(b2Settings.b2_maxPolygonVertices);
+		m_vertices = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices);
+		m_normals = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices);
 
 		for (var i:int = 0; i < b2Settings.b2_maxPolygonVertices; i++)
 		{
@@ -730,8 +746,8 @@ public class b2PolygonShape extends b2Shape
 	// Local position of the polygon centroid.
 	b2internal var m_centroid:b2Vec2;
 
-	b2internal var m_vertices:Array/*b2Vec2*/;
-	b2internal var m_normals:Array/*b2Vec2*/;
+	b2internal var m_vertices:Vector.<b2Vec2>;
+	b2internal var m_normals:Vector.<b2Vec2>;
 	
 	b2internal var m_vertexCount:int;
 	
@@ -739,11 +755,11 @@ public class b2PolygonShape extends b2Shape
 	
 	/**
 	 * Computes the centroid of the given polygon
-	 * @param	vs		array of b2Vec specifying a polygon
+	 * @param	vs		vector of b2Vec specifying a polygon
 	 * @param	count	length of vs
 	 * @return the polygon centroid
 	 */
-	static public function ComputeCentroid(vs:Array, count:int) : b2Vec2
+	static public function ComputeCentroid(vs:Vector.<b2Vec2>, count:uint) : b2Vec2
 	{
 		//b2Settings.b2Assert(count >= 3);
 		
@@ -809,11 +825,11 @@ public class b2PolygonShape extends b2Shape
 	 * Computes a polygon's OBB
 	 * @see http://www.geometrictools.com/Documentation/MinimumAreaRectangle.pdf
 	 */
-	static b2internal function ComputeOBB(obb:b2OBB, vs:Array, count:int) : void
+	static b2internal function ComputeOBB(obb:b2OBB, vs:Vector.<b2Vec2>, count:int) : void
 	{
 		var i:int;
 		//b2Settings.b2Assert(count <= b2Settings.b2_maxPolygonVertices);
-		var p:Array = new Array(b2Settings.b2_maxPolygonVertices + 1);
+		var p:Vector.<b2Vec2> = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices + 1);
 		for (i = 0; i < count; ++i)
 		{
 			p[i] = vs[i];

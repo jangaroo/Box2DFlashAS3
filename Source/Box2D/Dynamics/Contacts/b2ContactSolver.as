@@ -39,7 +39,7 @@ public class b2ContactSolver
 	{
 	}
 	
-	public function Initialize(step:b2TimeStep, contacts:Array, contactCount:int, allocator:*):void
+	public function Initialize(step:b2TimeStep, contacts:Vector.<b2Contact>, contactCount:int, allocator:*):void
 	{
 		var contact:b2Contact;
 		
@@ -53,7 +53,7 @@ public class b2ContactSolver
 		
 		m_constraintCount = contactCount;
 
-		// fill array to hole enough constraints
+		// fill vector to hole enough constraints
 		while (m_constraints.length < m_constraintCount)
 		{
 			m_constraints.push(new b2ContactConstraint());
@@ -919,7 +919,7 @@ public class b2ContactSolver
 //#endif
 	private var m_step:b2TimeStep = new b2TimeStep();
 	private var m_allocator:*;
-	b2internal var m_constraints:Array/*b2ContactConstraint*/ = new Array();
+	b2internal var m_constraints:Vector.<b2ContactConstraint> = new Vector.<b2ContactConstraint> ();
 	private var m_constraintCount:int;
 };
 
@@ -935,8 +935,8 @@ internal class b2PositionSolverManifold
 	public function b2PositionSolverManifold()
 	{
 		m_normal = new b2Vec2();
-		m_separations = new Array(b2Settings.b2_maxManifoldPoints);
-		m_points = new Array(b2Settings.b2_maxManifoldPoints);
+		m_separations = new Vector.<Number>(b2Settings.b2_maxManifoldPoints);
+		m_points = new Vector.<b2Vec2>(b2Settings.b2_maxManifoldPoints);
 		for (var i:int = 0; i < b2Settings.b2_maxManifoldPoints; i++)
 		{
 			m_points[i] = new b2Vec2();
@@ -1008,6 +1008,6 @@ internal class b2PositionSolverManifold
 	}
 	
 	public var m_normal:b2Vec2;
-	public var m_points:Array/*b2Vec2*/;
-	public var m_separations:Array/*Number*/;
+	public var m_points:Vector.<b2Vec2>;
+	public var m_separations:Vector.<Number>;
 }

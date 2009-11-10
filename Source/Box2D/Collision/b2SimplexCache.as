@@ -25,7 +25,13 @@ package Box2D.Collision
 	 */
 	public class b2SimplexCache 
 	{
-	/** Length or area */	public var metric:Number;		public var count:uint;
-	/** Vertices on shape a */	public var indexA:Array/*int*/ = new Array(3);	/** Vertices on shape b */	public var indexB:Array/*int*/ = new Array(3);	}
+	/** Length or area */	
+	public var metric:Number;		
+	public var count:uint;
+	/** Vertices on shape a */	
+	public var indexA:Vector.<int> = new Vector.<int>(3);	
+	/** Vertices on shape b */	
+	public var indexB:Vector.<int> = new Vector.<int>(3);	
+}
 	
 }

@@ -34,14 +34,14 @@ use namespace b2internal;
 public class b2ContactConstraint
 {
 	public function b2ContactConstraint(){
-		points = new Array(b2Settings.b2_maxManifoldPoints);
+		points = new Vector.<b2ContactConstraintPoint>(b2Settings.b2_maxManifoldPoints);
 		for (var i:int = 0; i < b2Settings.b2_maxManifoldPoints; i++){
 			points[i] = new b2ContactConstraintPoint();
 		}
 		
 		
 	}
-	public var points:Array;
+	public var points:Vector.<b2ContactConstraintPoint>;
 	public var localPlaneNormal:b2Vec2 = new b2Vec2();
 	public var localPoint:b2Vec2 = new b2Vec2();
 	public var normal:b2Vec2 = new b2Vec2();

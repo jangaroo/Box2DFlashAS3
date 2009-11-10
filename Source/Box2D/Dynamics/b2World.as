@@ -840,93 +840,17 @@ public class b2World
 		return result;
 	}
 	
-	public function RayCastAll(point1:b2Vec2, point2:b2Vec2):Array/*b2Fixture*/
+	public function RayCastAll(point1:b2Vec2, point2:b2Vec2):Vector.<b2Fixture>
 	{
-		var result:Array/*b2Fixture*/ = [];
+		var result:Vector.<b2Fixture> = new Vector.<b2Fixture>();
 		function RayCastAllWrapper(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
 		{
-			result.push(fixture);
+			result[result.length] = fixture;
 			return 1;
 		}
 		RayCast(RayCastAllWrapper, point1, point2);
 		return result;
 	}
-		
-	/**
-	* Query the world for all shapes that intersect a given segment. You provide a shap
-	* pointer buffer of specified size. The number of shapes found is returned, and the buffer
-	* is filled in order of intersection
-	* @param segment defines the begin and end point of the ray cast, from p1 to p2.
-	* Use b2Segment.Extend to create (semi-)infinite rays
-	* @param shapes a user allocated shape pointer array of size maxCount (or greater).
-	* @param maxCount the capacity of the shapes array
-	* @param solidShapes determines if shapes that the ray starts in are counted as hits.
-	* @param userData passed through the world's contact filter, with method RayCollide. This can be used to filter valid shapes
-	* @return the number of shapes found.
-	* @see #Query()
-	* @see b2ContactFilter#RayCollide()
-	*/
-	//TODO_BORIS
-	/*
-	public function Raycast(segment:b2Segment, shapes:Array, maxCount:int, solidShapes:Boolean, userData:*) : int{
-		var results:Array = new Array(maxCount);
-		
-		m_raycastSegment = segment;
-		m_raycastUserData = userData;
-		var count:int;
-		if(solidShapes)
-			count = m_broadPhase.QuerySegment(segment, results, maxCount, RaycastSortKey);
-		else
-			count = m_broadPhase.QuerySegment(segment, results, maxCount, RaycastSortKey2);
-		
-		
-		for (var i:int = 0; i < count; ++i)
-		{
-			shapes[i] = results[i];
-		}
-		
-		//m_stackAllocator.Free(results);
-		return count;
-	}*/
-	
-	/**
-	* Performs a raycast as with Raycast, finding the first intersecting shape.
-	* @param segment defines the begin and end point of the ray cast, from p1 to p2.
-	* Use b2Segment.Extend to create (semi-)infinite rays	
-	* @param lambda returns the hit fraction. You can use this to compute the contact point
-	* p = (1 - lambda) * segment.p1 + lambda * segment.p2.
-	* 
-	* lambda should be an array with one member. After calling TestSegment, you can retrieve the output value with
-	* lambda[0].
-	* @param normal returns the normal at the contact point. If there is no intersection, the normal
-	* is not set.
-	* @param solidShapes determines if shapes that the ray starts in are counted as hits.
-	* @param userData passed through the world's contact filter, with method RayCollide. This can be used to filter valid shapes.
-	* @return the colliding shape shape, or null if not found.
-	* @see Box2D.Collision.Shapes.b2Shape#TestSegment()
-	* @see b2ContactFilter#RayCollide()
-	*/
-	//TODO_BORIS
-	/*
-	public function RaycastOne(segment:b2Segment,
-								lambda:Array, // float pointer
-								normal:b2Vec2, // pointer
-								solidShapes:Boolean, 
-								userData:*
-								) : b2Shape {
-		var shapes:Array = new Array(1);
-		var count:Number = Raycast(segment,shapes,1,solidShapes,userData);
-		if(count==0)
-			return null;
-		if(count>1)
-			trace(count);
-		//Redundantly do TestSegment a second time, as the previous one's results are inaccessible
-		var shape:b2Shape = shapes[0];
-		var xf:b2Transform = shape.GetBody().GetTransform();
-		shape.TestSegment(xf,lambda,normal,segment,1);
-		//We already know it returned true
-		return shape;
-	}*/
 
 	/**
 	* Get the world body list. With the returned body, use b2Body::GetNext to get
@@ -998,7 +922,7 @@ public class b2World
 		// Build and simulate all awake islands.
 		var stackSize:int = m_bodyCount;
 		//b2Body** stack = (b2Body**)m_stackAllocator.Allocate(stackSize * sizeof(b2Body*));
-		var stack:Array = new Array(stackSize);
+		var stack:Vector.<b2Body> = new Vector.<b2Body>(stackSize);
 		for (var seed:b2Body = m_bodyList; seed; seed = seed.m_next)
 		{
 			if (seed.m_flags & (b2Body.e_islandFlag | b2Body.e_sleepFlag))
@@ -1152,7 +1076,7 @@ public class b2World
 		//  --queueSize;
 		
 		var queueCapacity:int = m_bodyCount;
-		var queue:Array/*b2Body*/ = new Array(queueCapacity);
+		var queue:Vector.<b2Body> = new Vector.<b2Body>(queueCapacity);
 		
 		for (b = m_bodyList; b; b = b.m_next)
 		{
@@ -1524,10 +1448,10 @@ public class b2World
 				var i:int;
 				var poly:b2PolygonShape = (shape as b2PolygonShape);
 				var vertexCount:int = poly.GetVertexCount();
-				var localVertices:Array = poly.GetVertices();
+				var localVertices:Vector.<b2Vec2> = poly.GetVertices();
 				
 				//b2Assert(vertexCount <= b2_maxPolygonVertices);
-				var vertices:Array = new Array(b2Settings.b2_maxPolygonVertices);
+				var vertices:Vector.<b2Vec2> = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices);
 				
 				for (i = 0; i < vertexCount; ++i)
 				{
