@@ -62,7 +62,7 @@ import flash.display.MovieClip;
 		private var timeStep:Number = 1.0 / frequency;
 		private var totalRuns:int = 10;
 		private var runCount:int;
-		private var data:Array/*Number*/ = [];
+		private var data:Vector.<Number> = new Vector.<Number>();
 		
 		public function Benchmark()
 		{
