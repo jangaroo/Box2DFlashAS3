@@ -363,7 +363,7 @@ public class b2Island
 			contactSolver.SolveVelocityConstraints();
 			for (j = 0; j < m_jointCount;++j)
 			{
-				m_joints[j].InitVelocityConstraints(subStep);
+				m_joints[j].SolveVelocityConstraints(subStep);
 			}
 		}
 		
@@ -436,7 +436,7 @@ public class b2Island
 		Report(contactSolver.m_constraints);
 	}
 
-	static private var s_reportCR:b2ContactResult = new b2ContactResult();
+	private static var s_impulse:b2ContactImpulse = new b2ContactImpulse();
 	public function Report(constraints:Vector.<b2ContactConstraint>) : void
 	{
 		var tMat:b2Mat22;
@@ -451,13 +451,12 @@ public class b2Island
 			var c:b2Contact = m_contacts[i];
 			var cc:b2ContactConstraint = constraints[ i ];
 			
-			var impulse:b2ContactImpulse = new b2ContactImpulse();
 			for (var j:int = 0; j < cc.pointCount; ++j)
 			{
-				impulse.normalImpulses[j] = cc.points[j].normalImpulse;
-				impulse.tangentImpulses[j] = cc.points[j].tangentImpulse;
+				s_impulse.normalImpulses[j] = cc.points[j].normalImpulse;
+				s_impulse.tangentImpulses[j] = cc.points[j].tangentImpulse;
 			}
-			m_listener.PostSolve(c, impulse);
+			m_listener.PostSolve(c, s_impulse);
 		}
 	}
 	

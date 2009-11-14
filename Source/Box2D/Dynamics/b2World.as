@@ -1052,6 +1052,8 @@ public class b2World
 		
 	}
 	
+	private static var s_backupA:b2Sweep = new b2Sweep();
+	private static var s_backupB:b2Sweep = new b2Sweep();
 	// Find TOI contacts and solve them.
 	b2internal function SolveTOI(step:b2TimeStep) : void{
 		
@@ -1185,8 +1187,8 @@ public class b2World
 			fB = minContact.m_fixtureB;
 			bA = fA.m_body;
 			bB = fB.m_body;
-			var backupA:b2Sweep = bA.m_sweep.Copy();
-			var backupB:b2Sweep = bB.m_sweep.Copy();
+			s_backupA.Set(bA.m_sweep);
+			s_backupB.Set(bB.m_sweep);
 			bA.Advance(minTOI);
 			bB.Advance(minTOI);
 			
@@ -1198,8 +1200,8 @@ public class b2World
 			if (minContact.IsSolid() == false)
 			{
 				// Restore the sweeps
-				bA.m_sweep = backupA;
-				bB.m_sweep = backupB;
+				bA.m_sweep.Set(s_backupA);
+				bB.m_sweep.Set(s_backupB);
 				bA.SynchronizeTransform();
 				bB.SynchronizeTransform();
 				continue;

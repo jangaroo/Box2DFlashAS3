@@ -93,7 +93,7 @@ public class b2DynamicTreeBroadPhase implements IBroadPhase
 				// Grow the pair buffer as needed
 				if (m_pairCount == m_pairBuffer.length)
 				{
-					m_pairBuffer.push(new b2DynamicTreePair());
+					m_pairBuffer[m_pairCount] = new b2DynamicTreePair();
 				}
 				
 				var pair:b2DynamicTreePair = m_pairBuffer[m_pairCount];
@@ -170,7 +170,7 @@ public class b2DynamicTreeBroadPhase implements IBroadPhase
 	
 	private function BufferMove(proxy:b2DynamicTreeNode):void
 	{
-		m_moveBuffer.push(proxy);
+		m_moveBuffer[m_moveBuffer.length] = proxy;
 	}
 	
 	private function UnBufferMove(proxy:b2DynamicTreeNode):void

@@ -392,15 +392,15 @@ public class b2Contact
 
 	b2internal virtual function Evaluate() : void{};
 	
+	private static var s_input:b2TOIInput = new b2TOIInput();
 	b2internal function ComputeTOI(sweepA:b2Sweep, sweepB:b2Sweep):Number
 	{
-		var input:b2TOIInput = new b2TOIInput();
-		input.proxyA.Set(m_fixtureA.GetShape());
-		input.proxyB.Set(m_fixtureB.GetShape());
-		input.sweepA = sweepA;
-		input.sweepB = sweepB;
-		input.tolerance = b2Settings.b2_linearSlop;
-		return b2TimeOfImpact.TimeOfImpact(input);
+		s_input.proxyA.Set(m_fixtureA.GetShape());
+		s_input.proxyB.Set(m_fixtureB.GetShape());
+		s_input.sweepA = sweepA;
+		s_input.sweepB = sweepB;
+		s_input.tolerance = b2Settings.b2_linearSlop;
+		return b2TimeOfImpact.TimeOfImpact(s_input);
 	}
 	
 	static b2internal var s_registers:Vector.<Vector.<b2ContactRegister> >;

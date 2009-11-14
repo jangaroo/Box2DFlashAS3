@@ -681,10 +681,10 @@ public class b2Body
 	}
 	  
 	/**
-	* Get the world coordinates of a point given the local coordinates.
-	* @param localPoint a point on the body measured relative the the body's origin.
-	* @return the same point expressed in world coordinates.
-	*/
+	 * Get the world coordinates of a point given the local coordinates.
+	 * @param localPoint a point on the body measured relative the the body's origin.
+	 * @return the same point expressed in world coordinates.
+	 */
 	public function GetWorldPoint(localPoint:b2Vec2) : b2Vec2{
 		//return b2Math.b2MulX(m_xf, localPoint);
 		var A:b2Mat22 = m_xf.R;
@@ -696,28 +696,28 @@ public class b2Body
 	}
 
 	/**
-	* Get the world coordinates of a vector given the local coordinates.
-	* @param localVector a vector fixed in the body.
-	* @return the same vector expressed in world coordinates.
-	*/
+	 * Get the world coordinates of a vector given the local coordinates.
+	 * @param localVector a vector fixed in the body.
+	 * @return the same vector expressed in world coordinates.
+	 */
 	public function GetWorldVector(localVector:b2Vec2) : b2Vec2{
 		return b2Math.b2MulMV(m_xf.R, localVector);
 	}
 
 	/**
-	* Gets a local point relative to the body's origin given a world point.
-	* @param a point in world coordinates.
-	* @return the corresponding local point relative to the body's origin.
-	*/
+	 * Gets a local point relative to the body's origin given a world point.
+	 * @param a point in world coordinates.
+	 * @return the corresponding local point relative to the body's origin.
+	 */
 	public function GetLocalPoint(worldPoint:b2Vec2) : b2Vec2{
 		return b2Math.b2MulXT(m_xf, worldPoint);
 	}
 
 	/**
-	* Gets a local vector given a world vector.
-	* @param a vector in world coordinates.
-	* @return the corresponding local vector.
-	*/
+	 * Gets a local vector given a world vector.
+	 * @param a vector in world coordinates.
+	 * @return the corresponding local vector.
+	 */
 	public function GetLocalVector(worldVector:b2Vec2) : b2Vec2{
 		return b2Math.b2MulTMV(m_xf.R, worldVector);
 	}

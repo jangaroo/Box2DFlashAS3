@@ -30,6 +30,16 @@ import Box2D.Common.*;
 */
 public class b2Sweep
 {
+	public function Set(other:b2Sweep):void
+	{
+		localCenter.SetV(other.localCenter);
+		c0.SetV(other.c0);
+		c.SetV(other.c);
+		a0 = other.a0;
+		a = other.a;
+		t0 = other.t0;
+	}
+	
 	public function Copy():b2Sweep
 	{
 		var copy:b2Sweep = new b2Sweep();

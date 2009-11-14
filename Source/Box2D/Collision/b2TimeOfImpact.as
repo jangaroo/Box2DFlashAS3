@@ -39,6 +39,12 @@ public class b2TimeOfImpact
 	private static var b2_toiRootIters:int = 0;
 	private static var b2_toiMaxRootIters:int = 0;
 
+	private static var s_cache:b2SimplexCache = new b2SimplexCache();
+	private static var s_distanceInput:b2DistanceInput = new b2DistanceInput();
+	private static var s_xfA:b2Transform = new b2Transform();
+	private static var s_xfB:b2Transform = new b2Transform();
+	private static var s_fcn:b2SeparationFunction = new b2SeparationFunction();
+	private static var s_distanceOutput:b2DistanceOutput = new b2DistanceOutput();
 	public static function TimeOfImpact(input:b2TOIInput):Number
 	{
 		++b2_toiCalls;
@@ -62,36 +68,31 @@ public class b2TimeOfImpact
 		var target:Number = 0.0;
 		
 		// Prepare input for distance query.
-		var cache:b2SimplexCache = new b2SimplexCache();
-		cache.count = 0;
-		var distanceInput:b2DistanceInput = new b2DistanceInput();
-		distanceInput.useRadii = false;
+		s_cache.count = 0;
+		s_distanceInput.useRadii = false;
 		
-		var xfA:b2Transform = new b2Transform();
-		var xfB:b2Transform = new b2Transform();
-		var fcn:b2SeparationFunction = new b2SeparationFunction();
 		for (;; )
 		{
-			sweepA.GetTransform(xfA, alpha);
-			sweepB.GetTransform(xfB, alpha);
+			sweepA.GetTransform(s_xfA, alpha);
+			sweepB.GetTransform(s_xfB, alpha);
 			
 			// Get the distance between shapes
-			distanceInput.proxyA = proxyA;
-			distanceInput.proxyB = proxyB;
-			distanceInput.transformA = xfA;
-			distanceInput.transformB = xfB;
-			var distanceOutput:b2DistanceOutput = new b2DistanceOutput();
-			b2Distance.Distance(distanceOutput, cache, distanceInput);
+			s_distanceInput.proxyA = proxyA;
+			s_distanceInput.proxyB = proxyB;
+			s_distanceInput.transformA = s_xfA;
+			s_distanceInput.transformB = s_xfB;
 			
-			if (distanceOutput.distance <= 0.0)
+			b2Distance.Distance(s_distanceOutput, s_cache, s_distanceInput);
+			
+			if (s_distanceOutput.distance <= 0.0)
 			{
 				alpha = 1.0;
 				break;
 			}
 			
-			fcn.Initialize(cache, proxyA, xfA, proxyB, xfB);
+			s_fcn.Initialize(s_cache, proxyA, s_xfA, proxyB, s_xfB);
 			
-			var separation:Number = fcn.Evaluate(xfA, xfB);
+			var separation:Number = s_fcn.Evaluate(s_xfA, s_xfB);
 			if (separation <= 0.0)
 			{
 				alpha = 1.0;
@@ -154,10 +155,10 @@ public class b2TimeOfImpact
 				
 				var f1:Number = separation;
 				
-				sweepA.GetTransform(xfA, x2);
-				sweepB.GetTransform(xfB, x2);
+				sweepA.GetTransform(s_xfA, x2);
+				sweepB.GetTransform(s_xfB, x2);
 				
-				var f2:Number = fcn.Evaluate(xfA, xfB);
+				var f2:Number = s_fcn.Evaluate(s_xfA, s_xfB);
 				
 				// If intervals don't overlap at t2, then we are done
 				if (f2 >= target)
@@ -183,10 +184,10 @@ public class b2TimeOfImpact
 						x = 0.5 * (x1 + x2);
 					}
 					
-					sweepA.GetTransform(xfA, x);
-					sweepB.GetTransform(xfB, x);
+					sweepA.GetTransform(s_xfA, x);
+					sweepB.GetTransform(s_xfB, x);
 					
-					var f:Number = fcn.Evaluate(xfA, xfB);
+					var f:Number = s_fcn.Evaluate(s_xfA, s_xfB);
 					
 					if (b2Math.b2Abs(f - target) < 0.025 * tolerance)
 					{
@@ -241,245 +242,4 @@ public class b2TimeOfImpact
 
 }
 
-}
-
-import Box2D.Collision.*;
-import Box2D.Collision.Shapes.*;
-import Box2D.Common.*;
-import Box2D.Common.Math.*;
-
-/**
-* @private
-*/
-internal class b2SeparationFunction
-{
-	//enum Type
-	public static const e_points:int = 0x01;
-	public static const e_faceA:int = 0x02;
-	public static const e_faceB:int = 0x04;
-	
-	public function Initialize(cache:b2SimplexCache,
-								proxyA:b2DistanceProxy, transformA:b2Transform,
-								proxyB:b2DistanceProxy, transformB:b2Transform):void
-	{
-		m_proxyA = proxyA;
-		m_proxyB = proxyB;
-		var count:int = cache.count;
-		b2Settings.b2Assert(0 < count && count < 3);
-		
-		var localPointA:b2Vec2;
-		var localPointA1:b2Vec2;
-		var localPointA2:b2Vec2;
-		var localPointB:b2Vec2;
-		var localPointB1:b2Vec2;
-		var localPointB2:b2Vec2;
-		var pointA:b2Vec2;
-		var pointB:b2Vec2;
-		var normal:b2Vec2;
-		var s:Number;
-		var sgn:Number;
-		
-		if (count == 1)
-		{
-			m_type = e_points;
-			localPointA = m_proxyA.GetVertex(cache.indexA[0]);
-			localPointB = m_proxyB.GetVertex(cache.indexB[0]);
-			pointA = b2Math.b2MulX(transformA, localPointA);
-			pointB = b2Math.b2MulX(transformB, localPointB);
-			m_axis = b2Math.SubtractVV(pointB, pointA);
-			m_axis.Normalize();
-		}
-		else if (cache.indexB[0] == cache.indexB[1])
-		{
-			// Two points on A and one on B
-			m_type = e_faceA;
-			localPointA1 = m_proxyA.GetVertex(cache.indexA[0]);
-			localPointA2 = m_proxyA.GetVertex(cache.indexA[1]);
-			localPointB = m_proxyB.GetVertex(cache.indexB[0]);
-			m_localPoint.x = 0.5 * (localPointA1.x + localPointA2.x);
-			m_localPoint.y = 0.5 * (localPointA1.y + localPointA2.y);
-			m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
-			m_axis.Normalize();
-			
-			normal = b2Math.b2MulMV(transformA.R, m_axis);
-			pointA = b2Math.b2MulX(transformA, m_localPoint);
-			pointB = b2Math.b2MulX(transformB, localPointB);
-			
-			//float32 s = b2Dot(pointB - pointA, normal);
-			s = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
-			if (s < 0.0)
-			{
-				m_axis = m_axis.Negative();
-			}
-		}
-		else if (cache.indexA[0] == cache.indexA[0])
-		{
-			// Two points on B and one on A
-			m_type = e_faceB;
-			localPointB1 = m_proxyB.GetVertex(cache.indexB[0]);
-			localPointB2 = m_proxyB.GetVertex(cache.indexB[1]);
-			localPointA = m_proxyA.GetVertex(cache.indexA[0]);
-			m_localPoint.x = 0.5 * (localPointB1.x + localPointB2.x);
-			m_localPoint.y = 0.5 * (localPointB1.y + localPointB2.y);
-			m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
-			m_axis.Normalize();
-			
-			normal = b2Math.b2MulMV(transformB.R, m_axis);
-			pointB = b2Math.b2MulX(transformB, m_localPoint);
-			pointA = b2Math.b2MulX(transformA, localPointA);
-			
-			//float32 s = b2Dot(pointA - pointB, normal);
-			s = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
-			if (s < 0.0)
-			{
-				m_axis = m_axis.Negative();
-			}
-		}
-		else
-		{
-			// Two points on B and two points on A.
-			// The faces are parallel.
-			localPointA1 = m_proxyA.GetVertex(cache.indexA[0]);
-			localPointA2 = m_proxyA.GetVertex(cache.indexA[1]);
-			localPointB1 = m_proxyB.GetVertex(cache.indexB[0]);
-			localPointB2 = m_proxyB.GetVertex(cache.indexB[1]);
-			
-			var pA:b2Vec2 = b2Math.b2MulX(transformA, localPointA);
-			var dA:b2Vec2 = b2Math.b2MulMV(transformA.R, b2Math.SubtractVV(localPointA2, localPointA1));
-			var pB:b2Vec2 = b2Math.b2MulX(transformB, localPointB);
-			var dB:b2Vec2 = b2Math.b2MulMV(transformB.R, b2Math.SubtractVV(localPointB2, localPointB1));
-			
-			var a:Number = dA.x * dA.x + dA.y * dA.y;
-			var e:Number = dB.x * dB.x + dB.y * dB.y;
-			var r:b2Vec2 = b2Math.SubtractVV(dB, dA);
-			var c:Number = dA.x * r.x + dA.y * r.y;
-			var f:Number = dB.x * r.x + dB.y * r.y;
-			
-			var b:Number = dA.x * dB.x + dA.y * dB.y;
-			var denom:Number = a * e-b * b;
-			
-			s = 0.0;
-			if (denom != 0.0)
-			{
-				s = b2Math.b2Clamp((b * f - c * e) / denom, 0.0, 1.0);
-			}
-			
-			var t:Number = (b * s + f) / e;
-			if (t < 0.0)
-			{
-				t = 0.0;
-				s = b2Math.b2Clamp((b - c) / a, 0.0, 1.0);
-			}
-			
-			//b2Vec2 localPointA = localPointA1 + s * (localPointA2 - localPointA1);
-			localPointA = new b2Vec2();
-			localPointA.x = localPointA1.x + s * (localPointA2.x - localPointA1.x);
-			localPointA.y = localPointA1.y + s * (localPointA2.y - localPointA1.y);
-			//b2Vec2 localPointB = localPointB1 + s * (localPointB2 - localPointB1);
-			localPointB = new b2Vec2();
-			localPointB.x = localPointB1.x + s * (localPointB2.x - localPointB1.x);
-			localPointB.y = localPointB1.y + s * (localPointB2.y - localPointB1.y);
-			
-			if (s == 0.0 || s == 1.0)
-			{
-				m_type = e_faceB;
-				m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
-				
-				m_localPoint = localPointB;
-				
-				normal = b2Math.b2MulMV(transformB.R, m_axis);
-				pointB = b2Math.b2MulX(transformB, m_localPoint);
-				pointA = b2Math.b2MulX(transformA, localPointA);
-				
-				//float32 sgn = b2Dot(pointA - pointB, normal);
-				sgn = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
-				if (s < 0.0)
-				{
-					m_axis = m_axis.Negative();
-				}
-			}
-			else
-			{
-				m_type = e_faceA;
-				m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
-				
-				m_localPoint = localPointA;
-				
-				normal = b2Math.b2MulMV(transformA.R, m_axis);
-				pointA = b2Math.b2MulX(transformA, m_localPoint);
-				pointB = b2Math.b2MulX(transformB, localPointB);
-				
-				//float32 sgn = b2Dot(pointB - pointA, normal);
-				sgn = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
-				if (s < 0.0)
-				{
-					m_axis = m_axis.Negative();
-				}
-			}
-		}
-	}
-	
-	public function Evaluate(transformA:b2Transform, transformB:b2Transform):Number
-	{
-		var axisA:b2Vec2;
-		var axisB:b2Vec2;
-		var localPointA:b2Vec2
-		var localPointB:b2Vec2;
-		var pointA:b2Vec2;
-		var pointB:b2Vec2;
-		var seperation:Number;
-		var normal:b2Vec2;
-		switch(m_type)
-		{
-			case e_points:
-			{
-				axisA = b2Math.b2MulTMV(transformA.R, m_axis);
-				axisB = b2Math.b2MulTMV(transformB.R, m_axis.Negative());
-				localPointA = m_proxyA.GetSupportVertex(axisA);
-				localPointB = m_proxyB.GetSupportVertex(axisB);
-				pointA = b2Math.b2MulX(transformA, localPointA);
-				pointB = b2Math.b2MulX(transformB, localPointB);
-				//float32 separation = b2Dot(pointB - pointA, m_axis);
-				seperation = (pointB.x - pointA.x) * m_axis.x + (pointB.y - pointA.y) * m_axis.y;
-				return seperation;
-			}
-			case e_faceA:
-			{
-				normal = b2Math.b2MulMV(transformA.R, m_axis);
-				pointA = b2Math.b2MulX(transformA, m_localPoint);
-				
-				axisB = b2Math.b2MulTMV(transformB.R, normal.Negative());
-				
-				localPointB = m_proxyB.GetSupportVertex(axisB);
-				pointB = b2Math.b2MulX(transformB, localPointB);
-				
-				//float32 separation = b2Dot(pointB - pointA, normal);
-				seperation = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
-				return seperation;
-			}
-			case e_faceB:
-			{
-				normal = b2Math.b2MulMV(transformB.R, m_axis);
-				pointB = b2Math.b2MulX(transformB, m_localPoint);
-				
-				axisA = b2Math.b2MulTMV(transformA.R, normal.Negative());
-				
-				localPointA = m_proxyA.GetSupportVertex(axisA);
-				pointA = b2Math.b2MulX(transformA, localPointA);
-				
-				//float32 separation = b2Dot(pointA - pointB, normal);
-				seperation = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
-				return seperation;
-			}
-			default:
-			b2Settings.b2Assert(false);
-			return 0.0;
-		}
-	}
-	
-	public var m_proxyA:b2DistanceProxy;
-	public var m_proxyB:b2DistanceProxy;
-	public var m_type:int;
-	public var m_localPoint:b2Vec2 = new b2Vec2();
-	public var m_axis:b2Vec2 = new b2Vec2();
 }

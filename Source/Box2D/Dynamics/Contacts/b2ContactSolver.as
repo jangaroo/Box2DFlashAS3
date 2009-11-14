@@ -39,6 +39,7 @@ public class b2ContactSolver
 	{
 	}
 	
+	private static var s_worldManifold:b2WorldManifold = new b2WorldManifold();
 	public function Initialize(step:b2TimeStep, contacts:Vector.<b2Contact>, contactCount:int, allocator:*):void
 	{
 		var contact:b2Contact;
@@ -53,10 +54,10 @@ public class b2ContactSolver
 		
 		m_constraintCount = contactCount;
 
-		// fill vector to hole enough constraints
+		// fill vector to hold enough constraints
 		while (m_constraints.length < m_constraintCount)
 		{
-			m_constraints.push(new b2ContactConstraint());
+			m_constraints[m_constraints.length] = new b2ContactConstraint();
 		}
 		
 		for (i = 0; i < contactCount; ++i)
@@ -86,11 +87,10 @@ public class b2ContactSolver
 			
 			b2Settings.b2Assert(manifold.m_pointCount > 0);
 			
-			var worldManifold:b2WorldManifold = new b2WorldManifold();
-			worldManifold.Initialize(manifold, bodyA.m_xf, radiusA, bodyB.m_xf, radiusB);
+			s_worldManifold.Initialize(manifold, bodyA.m_xf, radiusA, bodyB.m_xf, radiusB);
 			
-			var normalX:Number = worldManifold.m_normal.x;
-			var normalY:Number = worldManifold.m_normal.y;
+			var normalX:Number = s_worldManifold.m_normal.x;
+			var normalY:Number = s_worldManifold.m_normal.y;
 			
 			var cc:b2ContactConstraint = m_constraints[ i ];
 			cc.bodyA = bodyA; //p
@@ -120,10 +120,10 @@ public class b2ContactSolver
 				
 				ccp.localPoint.SetV(cp.m_localPoint);
 				
-				var rAX:Number = ccp.rA.x = worldManifold.m_points[k].x - bodyA.m_sweep.c.x;
-				var rAY:Number = ccp.rA.y = worldManifold.m_points[k].y - bodyA.m_sweep.c.y;
-				var rBX:Number = ccp.rB.x = worldManifold.m_points[k].x - bodyB.m_sweep.c.x;
-				var rBY:Number = ccp.rB.y = worldManifold.m_points[k].y - bodyB.m_sweep.c.y;
+				var rAX:Number = ccp.rA.x = s_worldManifold.m_points[k].x - bodyA.m_sweep.c.x;
+				var rAY:Number = ccp.rA.y = s_worldManifold.m_points[k].y - bodyA.m_sweep.c.y;
+				var rBX:Number = ccp.rB.x = s_worldManifold.m_points[k].x - bodyB.m_sweep.c.x;
+				var rBY:Number = ccp.rB.y = s_worldManifold.m_points[k].y - bodyB.m_sweep.c.y;
 				
 				var rnA:Number = rAX * normalY - rAY * normalX;//b2Math.b2Cross(r1, normal);
 				var rnB:Number = rBX * normalY - rBY * normalX;//b2Math.b2Cross(r2, normal);
@@ -851,6 +851,7 @@ public class b2ContactSolver
 //	}
 //#else
 	// Sequential solver.
+	private static var s_psm:b2PositionSolverManifold = new b2PositionSolverManifold();
 	public function SolvePositionConstraints(baumgarte:Number):Boolean
 	{
 		var minSeparation:Number = 0.0;
@@ -866,17 +867,17 @@ public class b2ContactSolver
 			var invMassB:Number = bodyB.m_mass * bodyB.m_invMass;
 			var invIB:Number = bodyB.m_mass * bodyB.m_invI;
 			
-			var psm:b2PositionSolverManifold = new b2PositionSolverManifold();
-			psm.Initialize(c);
-			var normal:b2Vec2 = psm.m_normal;
+			
+			s_psm.Initialize(c);
+			var normal:b2Vec2 = s_psm.m_normal;
 			
 			// Solve normal constraints
 			for (var j:int = 0; j < c.pointCount; j++)
 			{
 				var ccp:b2ContactConstraintPoint = c.points[j];
 				
-				var point:b2Vec2 = psm.m_points[j];
-				var separation:Number = psm.m_separations[j];
+				var point:b2Vec2 = s_psm.m_points[j];
+				var separation:Number = s_psm.m_separations[j];
 				
 				var rAX:Number = point.x - bodyA.m_sweep.c.x;
 				var rAY:Number = point.y - bodyA.m_sweep.c.y;
@@ -923,91 +924,4 @@ public class b2ContactSolver
 	private var m_constraintCount:int;
 };
 
-}
-import Box2D.Dynamics.Contacts.*;
-import Box2D.Dynamics.*;
-import Box2D.Common.*;
-import Box2D.Common.Math.*;
-import Box2D.Collision.*;
-
-internal class b2PositionSolverManifold
-{
-	public function b2PositionSolverManifold()
-	{
-		m_normal = new b2Vec2();
-		m_separations = new Vector.<Number>(b2Settings.b2_maxManifoldPoints);
-		m_points = new Vector.<b2Vec2>(b2Settings.b2_maxManifoldPoints);
-		for (var i:int = 0; i < b2Settings.b2_maxManifoldPoints; i++)
-		{
-			m_points[i] = new b2Vec2();
-		}
-	}
-	
-	public function Initialize(cc:b2ContactConstraint):void
-	{
-		b2Settings.b2Assert(cc.pointCount > 0);
-		
-		var planePoint:b2Vec2;
-		var i:int;
-		var clipPoint:b2Vec2;
-		
-		switch(cc.type)
-		{
-			case b2Manifold.e_circles:
-			{
-				var pointA:b2Vec2 = cc.bodyA.GetWorldPoint(cc.localPoint);
-				var pointB:b2Vec2 = cc.bodyB.GetWorldPoint(cc.points[0].localPoint);
-				var dX:Number = pointB.x - pointA.x;
-				var dY:Number = pointB.y - pointA.y;
-				if (dX * dX + dY * dY>Number.MIN_VALUE*Number.MIN_VALUE)
-				{
-					m_normal.x = dX;
-					m_normal.y = dY;
-					m_normal.Normalize();
-				}
-				else
-				{
-					m_normal.x = 1.0;
-					m_normal.y = 0.0;
-				}
-				m_points[0].x = 0.5 * (pointA.x + pointB.x);
-				m_points[0].y = 0.5 * (pointA.y + pointB.y);
-				m_separations[0] = dX * m_normal.x + dY * m_normal.y - cc.radius;
-			}
-			break;
-			case b2Manifold.e_faceA:
-			{
-				m_normal = cc.bodyA.GetWorldVector(cc.localPlaneNormal);
-				planePoint = cc.bodyA.GetWorldPoint(cc.localPoint);
-				
-				for (i = 0; i < cc.pointCount;++i)
-				{
-					clipPoint = cc.bodyB.GetWorldPoint(cc.points[i].localPoint);
-					m_separations[i] = (clipPoint.x - planePoint.x) * m_normal.x + (clipPoint.y - planePoint.y) * m_normal.y - cc.radius;
-					m_points[i] = clipPoint;
-				}
-			}
-			break;
-			case b2Manifold.e_faceB:
-			{
-				m_normal = cc.bodyB.GetWorldVector(cc.localPlaneNormal);
-				planePoint = cc.bodyB.GetWorldPoint(cc.localPoint);
-				
-				for (i = 0; i < cc.pointCount;++i)
-				{
-					clipPoint = cc.bodyA.GetWorldPoint(cc.points[i].localPoint);
-					m_separations[i] = (clipPoint.x - planePoint.x) * m_normal.x + (clipPoint.y - planePoint.y) * m_normal.y - cc.radius;
-					m_points[i] = clipPoint;
-				}
-				
-				// Ensure normal points from A to B
-				m_normal = m_normal.Negative();
-			}
-			break;
-		}
-	}
-	
-	public var m_normal:b2Vec2;
-	public var m_points:Vector.<b2Vec2>;
-	public var m_separations:Vector.<Number>;
 }

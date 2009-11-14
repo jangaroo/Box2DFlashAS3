@@ -66,7 +66,12 @@ public class b2PolygonShape extends b2Shape
 	 */
 	public function SetAsArray(vertices:Array, vertexCount:Number = 0):void
 	{
-		SetAsVector(new Vector.<b2Vec2>().concat(vertices), vertexCount);
+		var v:Vector.<b2Vec2> = new Vector.<b2Vec2>();
+		for each(var tVec:b2Vec2 in vertices)
+		{
+			v.push(tVec);
+		}
+		SetAsVector(v, vertexCount);
 	}
 	
 	public static function AsArray(vertices:Array, vertexCount:Number):b2PolygonShape
