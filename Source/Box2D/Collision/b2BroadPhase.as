@@ -311,8 +311,8 @@ public class b2BroadPhase implements IBroadPhase
 	public function MoveProxy(proxy_:*, aabb:b2AABB, displacement:b2Vec2) : void {
 		var proxy:b2Proxy = proxy_ as b2Proxy;
 		
-		var as3arr: Array;
-		var as3int: int;
+		var as3arr:Vector.<uint>;
+		var as3int:int;
 		
 		var axis:uint;
 		var index:uint;
