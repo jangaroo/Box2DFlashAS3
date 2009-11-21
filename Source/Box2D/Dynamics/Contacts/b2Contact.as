@@ -65,7 +65,7 @@ public class b2Contact
 	}
 	
 	/**
-	 * Is this contact solid? Returns fals if the shapes are separate,
+	 * Is this contact solid? Returns false if the shapes are separate,
 	 * sensors, or the contact has been disabled.
 	 * @return true if this contact should generate a response.
 	 */
@@ -303,9 +303,10 @@ public class b2Contact
 	
 	b2internal function Update(listener:b2ContactListener) : void
 	{
-		//TODO: Avoid a copy here
-		// Perhaps an alternating scheme?
-		var oldManifold:b2Manifold = m_manifold.Copy();
+		// Swap old & new manifold
+		var tManifold:b2Manifold = m_oldManifold;
+		m_oldManifold = m_manifold;
+		m_manifold = tManifold;
 		
 		// Re-enable this contact
 		m_flags &= ~e_disabledFlag;
@@ -322,7 +323,7 @@ public class b2Contact
 		var bodyA:b2Body = m_fixtureA.m_body;
 		var bodyB:b2Body = m_fixtureB.m_body;
 		
-		var oldCount:Number = oldManifold.m_pointCount;
+		var oldCount:Number = m_oldManifold.m_pointCount;
 		var newCount:Number = m_manifold.m_pointCount;
 		
 		if (newCount == 0 && oldCount > 0)
@@ -350,9 +351,9 @@ public class b2Contact
 			mp2.m_tangentImpulse = 0.0;
 			var id2:b2ContactID = mp2.m_id;
 
-			for (var j:int = 0; j < oldManifold.m_pointCount; ++j)
+			for (var j:int = 0; j < m_oldManifold.m_pointCount; ++j)
 			{
-				var mp1:b2ManifoldPoint = oldManifold.m_points[j];
+				var mp1:b2ManifoldPoint = m_oldManifold.m_points[j];
 
 				if (mp1.m_id.key == id2.key)
 				{
@@ -384,7 +385,7 @@ public class b2Contact
 
 		if ((m_flags & e_sensorFlag) == 0)
 		{
-			listener.PreSolve(this, oldManifold);
+			listener.PreSolve(this, m_oldManifold);
 		}
 	}
 
@@ -419,7 +420,8 @@ public class b2Contact
 	b2internal var m_fixtureA:b2Fixture;
 	b2internal var m_fixtureB:b2Fixture;
 
-	b2internal var m_manifold:b2Manifold = new b2Manifold;
+	b2internal var m_manifold:b2Manifold = new b2Manifold();
+	b2internal var m_oldManifold:b2Manifold = new b2Manifold();
 	
 	b2internal var m_toi:Number;
 };

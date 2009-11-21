@@ -38,7 +38,7 @@ public class b2Collision{
 	// Sutherland-Hodgman clipping.
 	static public function ClipSegmentToLine(vOut:Vector.<ClipVertex>, vIn:Vector.<ClipVertex>, normal:b2Vec2, offset:Number):int
 	{
-		var cv: ClipVertex;
+		var cv:ClipVertex;
 		
 		// Start with no output points
 		var numOut:int = 0;
@@ -53,8 +53,8 @@ public class b2Collision{
 		var distance1:Number = b2Math.b2Dot(normal, vIn1) - offset;
 		
 		// If the points are behind the plane
-		if (distance0 <= 0.0) vOut[numOut++] = vIn[0];
-		if (distance1 <= 0.0) vOut[numOut++] = vIn[1];
+		if (distance0 <= 0.0) vOut[numOut++].Set(vIn[0]);
+		if (distance1 <= 0.0) vOut[numOut++].Set(vIn[1]);
 		
 		// If the points are on different sides of the plane
 		if (distance0 * distance1 < 0.0)
@@ -326,8 +326,18 @@ public class b2Collision{
 	}
 	
 	
-	
-
+	private static function makeClipPointVector():Vector.<ClipVertex>
+	{
+		var r:Vector.<ClipVertex> = new Vector.<ClipVertex>(2);
+		r[0] = new ClipVertex();
+		r[1] = new ClipVertex();
+		return r;
+	}
+	private static var s_incidentEdge:Vector.<ClipVertex> = makeClipPointVector();
+	private static var s_clipPoints1:Vector.<ClipVertex> = makeClipPointVector();
+	private static var s_clipPoints2:Vector.<ClipVertex> = makeClipPointVector();
+	private static var s_edgeAO:Vector.<int> = new Vector.<int>(1);
+	private static var s_edgeBO:Vector.<int> = new Vector.<int>(1);
 	// Find edge normal of max separation on A - return if separating axis is found
 	// Find edge normal of max separation on B - return if separation axis is found
 	// Choose reference edge as min(minA, minB)
@@ -345,18 +355,16 @@ public class b2Collision{
 		var totalRadius:Number = polyA.m_radius + polyB.m_radius;
 
 		var edgeA:int = 0;
-		var edgeAO:Vector.<int> = new Vector.<int>(1);
-		edgeAO[0] = edgeA;
-		var separationA:Number = FindMaxSeparation(edgeAO, polyA, xfA, polyB, xfB);
-		edgeA = edgeAO[0];
+		s_edgeAO[0] = edgeA;
+		var separationA:Number = FindMaxSeparation(s_edgeAO, polyA, xfA, polyB, xfB);
+		edgeA = s_edgeAO[0];
 		if (separationA > totalRadius)
 			return;
 
 		var edgeB:int = 0;
-		var edgeBO:Vector.<int> = new Vector.<int>(1);
-		edgeBO[0] = edgeB;
-		var separationB:Number = FindMaxSeparation(edgeBO, polyB, xfB, polyA, xfA);
-		edgeB = edgeBO[0];
+		s_edgeBO[0] = edgeB;
+		var separationB:Number = FindMaxSeparation(s_edgeBO, polyB, xfB, polyA, xfA);
+		edgeB = s_edgeBO[0];
 		if (separationB > totalRadius)
 			return;
 
@@ -390,9 +398,7 @@ public class b2Collision{
 			flip = 0;
 		}
 
-		var incidentEdge:Vector.<ClipVertex> =  new Vector.<ClipVertex>(2);
-		incidentEdge[0] = new ClipVertex();
-		incidentEdge[1] = new ClipVertex();
+		var incidentEdge:Vector.<ClipVertex> = s_incidentEdge; 
 		FindIncidentEdge(incidentEdge, poly1, xf1, edge1, poly2, xf2);
 
 		var count1:int = poly1.m_vertexCount;
@@ -427,12 +433,8 @@ public class b2Collision{
 		var sideOffset2:Number = b2Math.b2Dot(tangent, v12) + totalRadius;
 
 		// Clip incident edge against extruded edge1 side edges.
-		var clipPoints1:Vector.<ClipVertex> = new Vector.<ClipVertex>(2);
-		clipPoints1[0] = new ClipVertex();
-		clipPoints1[1] = new ClipVertex();
-		var clipPoints2:Vector.<ClipVertex> = new Vector.<ClipVertex>(2);
-		clipPoints2[0] = new ClipVertex();
-		clipPoints2[1] = new ClipVertex();
+		var clipPoints1:Vector.<ClipVertex> = s_clipPoints1;
+		var clipPoints2:Vector.<ClipVertex> = s_clipPoints2;
 		var np:int;
 
 		// Clip to box side 1

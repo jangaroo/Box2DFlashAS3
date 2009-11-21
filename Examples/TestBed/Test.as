@@ -92,8 +92,7 @@ package TestBed{
 		}
 		
 		
-		public function Update():void{
-			
+		public function Update():void {
 			// Update mouse joint
 			UpdateMouseWorld()
 			MouseDestroy();

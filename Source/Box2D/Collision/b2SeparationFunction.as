@@ -47,9 +47,14 @@ internal class b2SeparationFunction
 		var localPointB:b2Vec2;
 		var localPointB1:b2Vec2;
 		var localPointB2:b2Vec2;
-		var pointA:b2Vec2;
-		var pointB:b2Vec2;
-		var normal:b2Vec2;
+		var pointAX:Number;
+		var pointAY:Number;
+		var pointBX:Number;
+		var pointBY:Number;
+		var normalX:Number;
+		var normalY:Number;
+		var tMat:b2Mat22;
+		var tVec:b2Vec2;
 		var s:Number;
 		var sgn:Number;
 		
@@ -58,9 +63,19 @@ internal class b2SeparationFunction
 			m_type = e_points;
 			localPointA = m_proxyA.GetVertex(cache.indexA[0]);
 			localPointB = m_proxyB.GetVertex(cache.indexB[0]);
-			pointA = b2Math.b2MulX(transformA, localPointA);
-			pointB = b2Math.b2MulX(transformB, localPointB);
-			m_axis = b2Math.SubtractVV(pointB, pointA);
+			//pointA = b2Math.b2MulX(transformA, localPointA);
+			tVec = localPointA;
+			tMat = transformA.R;
+			pointAX = transformA.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y)
+			pointAY = transformA.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y)
+			//pointB = b2Math.b2MulX(transformB, localPointB);
+			tVec = localPointB;
+			tMat = transformB.R;
+			pointBX = transformB.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y)
+			pointBY = transformB.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y)
+			//m_axis = b2Math.SubtractVV(pointB, pointA);
+			m_axis.x = pointBX - pointAX;
+			m_axis.y = pointBY - pointAY;
 			m_axis.Normalize();
 		}
 		else if (cache.indexB[0] == cache.indexB[1])
@@ -75,12 +90,24 @@ internal class b2SeparationFunction
 			m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
 			m_axis.Normalize();
 			
-			normal = b2Math.b2MulMV(transformA.R, m_axis);
-			pointA = b2Math.b2MulX(transformA, m_localPoint);
-			pointB = b2Math.b2MulX(transformB, localPointB);
+			//normal = b2Math.b2MulMV(transformA.R, m_axis);
+			tVec = m_axis;
+			tMat = transformA.R;
+			normalX = tMat.col1.x * tVec.x + tMat.col2.x * tVec.y;
+			normalY = tMat.col1.y * tVec.x + tMat.col2.y * tVec.y;
+			//pointA = b2Math.b2MulX(transformA, m_localPoint);
+			tVec = m_localPoint;
+			tMat = transformA.R;
+			pointAX = transformA.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+			pointAY = transformA.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+			//pointB = b2Math.b2MulX(transformB, localPointB);
+			tVec = localPointB;
+			tMat = transformB.R;
+			pointBX = transformB.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+			pointBY = transformB.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
 			
 			//float32 s = b2Dot(pointB - pointA, normal);
-			s = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
+			s = (pointBX - pointAX) * normalX + (pointBY - pointAY) * normalY;
 			if (s < 0.0)
 			{
 				m_axis = m_axis.Negative();
@@ -98,12 +125,24 @@ internal class b2SeparationFunction
 			m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
 			m_axis.Normalize();
 			
-			normal = b2Math.b2MulMV(transformB.R, m_axis);
-			pointB = b2Math.b2MulX(transformB, m_localPoint);
-			pointA = b2Math.b2MulX(transformA, localPointA);
+			//normal = b2Math.b2MulMV(transformB.R, m_axis);
+			tVec = m_axis;
+			tMat = transformB.R;
+			normalX = tMat.col1.x * tVec.x + tMat.col2.x * tVec.y;
+			normalY = tMat.col1.y * tVec.x + tMat.col2.y * tVec.y;
+			//pointB = b2Math.b2MulX(transformB, m_localPoint);
+			tVec = m_localPoint;
+			tMat = transformB.R;
+			pointBX = transformB.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+			pointBY = transformB.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+			//pointA = b2Math.b2MulX(transformA, localPointA);
+			tVec = localPointA;
+			tMat = transformA.R;
+			pointAX = transformA.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+			pointAY = transformA.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
 			
 			//float32 s = b2Dot(pointA - pointB, normal);
-			s = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
+			s = (pointAX - pointBX) * normalX + (pointAY - pointBY) * normalY;
 			if (s < 0.0)
 			{
 				m_axis = m_axis.Negative();
@@ -161,12 +200,24 @@ internal class b2SeparationFunction
 				
 				m_localPoint = localPointB;
 				
-				normal = b2Math.b2MulMV(transformB.R, m_axis);
-				pointB = b2Math.b2MulX(transformB, m_localPoint);
-				pointA = b2Math.b2MulX(transformA, localPointA);
+				//normal = b2Math.b2MulMV(transformB.R, m_axis);
+				tVec = m_axis;
+				tMat = transformB.R;
+				normalX = tMat.col1.x * tVec.x + tMat.col2.x * tVec.y;
+				normalY = tMat.col1.y * tVec.x + tMat.col2.y * tVec.y;
+				//pointB = b2Math.b2MulX(transformB, m_localPoint);
+				tVec = m_localPoint;
+				tMat = transformB.R;
+				pointBX = transformB.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+				pointBY = transformB.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+				//pointA = b2Math.b2MulX(transformA, localPointA);
+				tVec = localPointA;
+				tMat = transformA.R;
+				pointAX = transformA.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+				pointAY = transformA.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
 				
 				//float32 sgn = b2Dot(pointA - pointB, normal);
-				sgn = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;
+				sgn = (pointAX - pointBX) * normalX + (pointAY - pointBY) * normalY;
 				if (s < 0.0)
 				{
 					m_axis = m_axis.Negative();
@@ -179,12 +230,24 @@ internal class b2SeparationFunction
 				
 				m_localPoint = localPointA;
 				
-				normal = b2Math.b2MulMV(transformA.R, m_axis);
-				pointA = b2Math.b2MulX(transformA, m_localPoint);
-				pointB = b2Math.b2MulX(transformB, localPointB);
+				//normal = b2Math.b2MulMV(transformA.R, m_axis);
+				tVec = m_axis;
+				tMat = transformA.R;
+				normalX = tMat.col1.x * tVec.x + tMat.col2.x * tVec.y;
+				normalY = tMat.col1.y * tVec.x + tMat.col2.y * tVec.y;
+				//pointA = b2Math.b2MulX(transformA, m_localPoint);
+				tVec = m_localPoint;
+				tMat = transformA.R;
+				pointAX = transformA.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+				pointAY = transformA.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+				//pointB = b2Math.b2MulX(transformB, localPointB);
+				tVec = localPointB;
+				tMat = transformB.R;
+				pointBX = transformB.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+				pointBY = transformB.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
 				
 				//float32 sgn = b2Dot(pointB - pointA, normal);
-				sgn = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
+				sgn = (pointBX - pointAX) * normalX + (pointBY - pointAY) * normalY;
 				if (s < 0.0)
 				{
 					m_axis = m_axis.Negative();

@@ -114,13 +114,21 @@ Baumgarte method in performance critical scenarios.
 */
 public class b2Island
 {
-	public function b2Island(
+	
+	public function b2Island()
+	{
+		m_bodies = new Vector.<b2Body>();
+		m_contacts = new Vector.<b2Contact>();
+		m_joints = new Vector.<b2Joint>();
+	}
+	
+	public function Initialize(
 	bodyCapacity:int,
 	contactCapacity:int,
 	jointCapacity:int,
 	allocator:*,
 	listener:b2ContactListener,
-	contactSolver:b2ContactSolver)
+	contactSolver:b2ContactSolver):void
 	{
 		var i:int;
 		
@@ -135,19 +143,13 @@ public class b2Island
 		m_listener = listener;
 		m_contactSolver = contactSolver;
 		
-		//m_bodies = (b2Body**)allocator->Allocate(bodyCapacity * sizeof(b2Body*));
-		m_bodies = new Vector.<b2Body>(bodyCapacity);
-		for (i = 0; i < bodyCapacity; i++)
+		for (i = m_bodies.length; i < bodyCapacity; i++)
 			m_bodies[i] = null;
 		
-		//m_contacts = (b2Contact**)allocator->Allocate(contactCapacity	 * sizeof(b2Contact*));
-		m_contacts = new Vector.<b2Contact>(contactCapacity);
-		for (i = 0; i < contactCapacity; i++)
+		for (i = m_contacts.length; i < contactCapacity; i++)
 			m_contacts[i] = null;
 		
-		//m_joints = (b2Joint**)allocator->Allocate(jointCapacity * sizeof(b2Joint*));
-		m_joints = new Vector.<b2Joint>(jointCapacity);
-		for (i = 0; i < jointCapacity; i++)
+		for (i = m_joints.length; i < jointCapacity; i++)
 			m_joints[i] = null;
 		
 	}
@@ -439,8 +441,6 @@ public class b2Island
 	private static var s_impulse:b2ContactImpulse = new b2ContactImpulse();
 	public function Report(constraints:Vector.<b2ContactConstraint>) : void
 	{
-		var tMat:b2Mat22;
-		var tVec:b2Vec2;
 		if (m_listener == null)
 		{
 			return;

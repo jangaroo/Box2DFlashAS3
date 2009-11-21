@@ -16,30 +16,32 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision{
-	
-	
-import Box2D.Common.Math.*;
-import Box2D.Collision.*;
-
-import Box2D.Common.b2internal;
-use namespace b2internal;
-	
-	
-/**
-* @private
-*/
-public class ClipVertex
+package Box2D.Collision 
 {
-	public function Set(other:ClipVertex):void
+	
+import Box2D.Collision.*;
+import Box2D.Collision.Shapes.*;
+import Box2D.Common.*;
+import Box2D.Common.Math.*;
+
+internal class b2SimplexVertex
+{
+	public function Set(other:b2SimplexVertex):void
 	{
-		v.SetV(other.v);
-		id.Set(other.id);
+		wA.SetV(other.wA);
+		wB.SetV(other.wB);
+		w.SetV(other.w);
+		a = other.a;
+		indexA = other.indexA;
+		indexB = other.indexB;
 	}
 	
-	public var v:b2Vec2 = new b2Vec2();
-	public var id:b2ContactID = new b2ContactID();
-};
-	
+	public var wA:b2Vec2;		// support point in proxyA
+	public var wB:b2Vec2;		// support point in proxyB
+	public var w:b2Vec2;		// wB - wA
+	public var a:Number;		// barycentric coordinate for closest point
+	public var indexA:int;	// wA index
+	public var indexB:int;	// wB index
+}
 	
 }

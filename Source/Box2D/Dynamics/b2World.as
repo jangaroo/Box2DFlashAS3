@@ -903,7 +903,8 @@ public class b2World
 		}
 		
 		// Size the island for the worst case.
-		var island:b2Island = new b2Island(m_bodyCount, m_contactCount, m_jointCount, null, m_contactManager.m_contactListener, m_contactSolver);
+		var island:b2Island = m_island;
+		island.Initialize(m_bodyCount, m_contactCount, m_jointCount, null, m_contactManager.m_contactListener, m_contactSolver);
 		
 		// Clear all the island flags.
 		for (b = m_bodyList; b; b = b.m_next)
@@ -1054,6 +1055,7 @@ public class b2World
 	
 	private static var s_backupA:b2Sweep = new b2Sweep();
 	private static var s_backupB:b2Sweep = new b2Sweep();
+	private static var s_queue:Vector.<b2Body> = new Vector.<b2Body>();
 	// Find TOI contacts and solve them.
 	b2internal function SolveTOI(step:b2TimeStep) : void{
 		
@@ -1066,7 +1068,8 @@ public class b2World
 		var j:b2Joint;
 		
 		// Reserve an island and a queue for TOI island solution.
-		var island:b2Island = new b2Island(m_bodyCount, b2Settings.b2_maxTOIContactsPerIsland, b2Settings.b2_maxTOIJointsPerIsland, null, m_contactManager.m_contactListener, m_contactSolver);
+		var island:b2Island = m_island;
+		island.Initialize(m_bodyCount, b2Settings.b2_maxTOIContactsPerIsland, b2Settings.b2_maxTOIJointsPerIsland, null, m_contactManager.m_contactListener, m_contactSolver);
 		
 		//Simple one pass queue
 		//Relies on the fact that we're only making one pass
@@ -1077,8 +1080,7 @@ public class b2World
 		//  poppedElement = queue[queueStart++];
 		//  --queueSize;
 		
-		var queueCapacity:int = m_bodyCount;
-		var queue:Vector.<b2Body> = new Vector.<b2Body>(queueCapacity);
+		var queue:Vector.<b2Body> = s_queue;
 		
 		for (b = m_bodyList; b; b = b.m_next)
 		{
@@ -1507,7 +1509,11 @@ public class b2World
 	b2internal var m_flags:int;
 
 	b2internal var m_contactManager:b2ContactManager = new b2ContactManager();
+	
+	// These two are stored purely for efficiency purposes, they don't maintain
+	// any data outside of a call to Step
 	private var m_contactSolver:b2ContactSolver = new b2ContactSolver();
+	private var m_island:b2Island = new b2Island();
 
 	b2internal var m_bodyList:b2Body;
 	private var m_jointList:b2Joint;
