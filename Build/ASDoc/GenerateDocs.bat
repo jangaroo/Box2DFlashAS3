@@ -18,6 +18,7 @@ REM Run ASDoc
     -window-title "Box2DFlashAS3 Documentation" ^
     -main-title "Box2DFlashAS3 Documentation" ^
     -templates-path=templates ^
+    -target-player 10 ^
     2> asdoc_errors.txt
 REM Add the following for a nice footer
 REM -footer "Box2DFlashAS3 r37"
