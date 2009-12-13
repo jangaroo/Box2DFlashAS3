@@ -262,8 +262,8 @@ package Box2D.Collision
 				
 				var c:b2Vec2 = node.aabb.GetCenter();
 				var h:b2Vec2 = node.aabb.GetExtents();
-				var separation:Number = Math.abs(
-					v.x * (p1.x - c.x) + v.y * (p1.y - c.y) - abs_v.x * h.x - abs_v.y * h.y);
+				var separation:Number = Math.abs(v.x * (p1.x - c.x) + v.y * (p1.y - c.y))
+										- abs_v.x * h.x - abs_v.y * h.y;
 				if (separation > 0.0)
 					continue;
 				
