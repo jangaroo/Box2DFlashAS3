@@ -820,7 +820,7 @@ public class b2World
 				var point:b2Vec2 = new b2Vec2(
 					(1.0 - fraction) * point1.x + fraction * point2.x,
 					(1.0 - fraction) * point1.y + fraction * point2.y);
-				return callback(fixture, point1, output.normal, fraction);
+				return callback(fixture, point, output.normal, fraction);
 			}
 			return input.maxFraction;
 		}
