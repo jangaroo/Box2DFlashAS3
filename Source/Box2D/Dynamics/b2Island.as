@@ -174,7 +174,7 @@ public class b2Island
 		{
 			b = m_bodies[i];
 			
-			if (b.IsStatic())
+			if (b.GetType() != b2Body.b2_dynamicBody)
 				continue;
 			
 			// Integrate velocities.
@@ -230,7 +230,7 @@ public class b2Island
 		{
 			b = m_bodies[i];
 			
-			if (b.IsStatic())
+			if (b.GetType() == b2Body.b2_staticBody)
 				continue;
 				
 			// Check for large velocities.
@@ -302,18 +302,18 @@ public class b2Island
 			for (i = 0; i < m_bodyCount; ++i)
 			{
 				b = m_bodies[i];
-				if (b.m_invMass == 0.0)
+				if (b.GetType() != b2Body.b2_dynamicBody)
 				{
 					continue;
 				}
 				
-				if ((b.m_flags & b2Body.e_allowSleepFlag) == 0)
+				if ((b.m_flags & b2Body.e_autoSleepFlag) == 0)
 				{
 					b.m_sleepTime = 0.0;
 					minSleepTime = 0.0;
 				}
 				
-				if ((b.m_flags & b2Body.e_allowSleepFlag) == 0 ||
+				if ((b.m_flags & b2Body.e_autoSleepFlag) == 0 ||
 					b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
 					b2Math.b2Dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr)
 				{
@@ -331,10 +331,8 @@ public class b2Island
 			{
 				for (i = 0; i < m_bodyCount; ++i)
 				{
-					b = m_bodies[i];
-					b.m_flags |= b2Body.e_sleepFlag;
-					b.m_linearVelocity.SetZero();
-					b.m_angularVelocity = 0.0;
+					b = m_bodies[i]; 
+					b.SetAwake(false);
 				}
 			}
 		}
@@ -377,7 +375,7 @@ public class b2Island
 		{
 			var b:b2Body = m_bodies[i];
 			
-			if (b.IsStatic())
+			if (b.GetType() == b2Body.b2_staticBody)
 				continue;
 				
 			// Check for large velocities.

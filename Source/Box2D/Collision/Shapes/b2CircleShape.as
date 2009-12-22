@@ -72,7 +72,7 @@ public class b2CircleShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
+	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):Boolean
 	{
 		//b2Vec2 position = transform.position + b2Mul(transform.R, m_p);
 		var tMat:b2Mat22 = transform.R;
@@ -85,13 +85,13 @@ public class b2CircleShape extends b2Shape
 		//float32 b = b2Dot(s, s) - m_radius * m_radius;
 		var b:Number = (sX*sX + sY*sY) - m_radius * m_radius;
 		
-		// Does the segment start inside the circle?
+		/*// Does the segment start inside the circle?
 		if (b < 0.0)
 		{
 			output.fraction = 0;
 			output.hit = e_startsInsideCollide;
 			return;
-		}
+		}*/
 		
 		// Solve quadratic equation.
 		//b2Vec2 r = input.p2 - input.p1;
@@ -106,8 +106,7 @@ public class b2CircleShape extends b2Shape
 		// Check for negative discriminant and short segment.
 		if (sigma < 0.0 || rr < Number.MIN_VALUE)
 		{
-			output.hit = e_missCollide;
-			return;
+			return false;
 		}
 		
 		// Find the point of intersection of the line with the circle.
@@ -118,16 +117,14 @@ public class b2CircleShape extends b2Shape
 		{
 			a /= rr;
 			output.fraction = a;
-			//output.normal = s + a * r;
+			// manual inline of: output.normal = s + a * r;
 			output.normal.x = sX + a * rX;
 			output.normal.y = sY + a * rY;
 			output.normal.Normalize();
-			output.hit = e_hitCollide;
-			return;
+			return true;
 		}
 		
-		output.hit = e_missCollide;
-		return;
+		return false;
 	}
 
 	/**

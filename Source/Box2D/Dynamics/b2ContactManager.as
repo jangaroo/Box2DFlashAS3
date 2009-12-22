@@ -56,12 +56,7 @@ public class b2ContactManager
 		// Are the fixtures on the same body?
 		if (bodyA == bodyB)
 			return;
-			
-		// Are both bodies static?
-		if (bodyA.IsStatic() && bodyB.IsStatic())
-		{
-			return;
-		}
+		
 		// Does a contact already exist?
 		var edge:b2ContactEdge = bodyB.GetContactList();
 		while (edge)
@@ -78,8 +73,8 @@ public class b2ContactManager
 			edge = edge.next;
 		}
 		
-		//Does a joint override collision?
-		if (bodyB.IsConnected(bodyA))
+		//Does a joint override collision? Is at least one body dynamic?
+		if (bodyB.ShouldCollide(bodyA) == false)
 		{
 			return;
 		}
@@ -226,7 +221,7 @@ public class b2ContactManager
 			var fixtureB:b2Fixture = c.GetFixtureB();
 			var bodyA:b2Body = fixtureA.GetBody();
 			var bodyB:b2Body = fixtureB.GetBody();
-			if (bodyA.IsSleeping() && bodyB.IsSleeping())
+			if (bodyA.IsAwake() == false && bodyB.IsAwake() == false)
 			{
 				c = c.GetNext();
 				continue;
@@ -235,19 +230,10 @@ public class b2ContactManager
 			// Is this contact flagged for filtering?
 			if (c.m_flags & b2Contact.e_filterFlag)
 			{
-				// Are both bodies static
-				if (bodyA.IsStatic() && bodyB.IsStatic())
+				// Should these bodies collide?
+				if (bodyB.ShouldCollide(bodyA) == false)
 				{
 					var cNuke:b2Contact = c;
-					c = cNuke.GetNext();
-					Destroy(cNuke);
-					continue;
-				}
-				
-				// Does a joint override collision?
-				if (bodyB.IsConnected(bodyA))
-				{
-					cNuke = c;
 					c = cNuke.GetNext();
 					Destroy(cNuke);
 					continue;

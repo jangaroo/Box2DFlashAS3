@@ -30,13 +30,6 @@ package Box2D.Collision
 		 * The fraction between p1 and p2 that the collision occurs at
 		 */
 		public var fraction:Number;
-		/**
-		 * One of the values
-		 * b2Shape.e_hitCollide
-		 * b2Shape.e_missCollide
-		 * b2Shape e_startsInsideCollide
-		 */
-		public var hit:int;
 	}
 	
 }

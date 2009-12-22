@@ -273,7 +273,7 @@ public class b2PolygonShape extends b2Shape
 	/**
 	 * @inheritDoc
 	 */
-	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
+	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):Boolean
 	{
 		var lower:Number = 0.0;
 		var upper:Number = input.maxFraction;
@@ -283,6 +283,7 @@ public class b2PolygonShape extends b2Shape
 		var tMat:b2Mat22;
 		var tVec:b2Vec2;
 		
+		// Put the ray into the polygon's frame of reference. (AS3 Port Manual inlining follows)
 		//b2Vec2 p1 = b2MulT(transform.R, segment.p1 - transform.position);
 		tX = input.p1.x - transform.position.x;
 		tY = input.p1.y - transform.position.y;
@@ -317,10 +318,9 @@ public class b2PolygonShape extends b2Shape
 			
 			if (denominator == 0.0)
 			{
-				if (numerator < 0)
+				if (numerator < 0.0)
 				{
-					output.hit = e_missCollide;
-					return;
+					return false;
 				}
 			}
 			else
@@ -346,8 +346,7 @@ public class b2PolygonShape extends b2Shape
 			
 			if (upper < lower)
 			{
-				output.hit = e_missCollide;
-				return;
+				return false;
 			}
 		}
 		
@@ -361,13 +360,10 @@ public class b2PolygonShape extends b2Shape
 			tVec = m_normals[index];
 			output.normal.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
 			output.normal.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
-			output.hit = e_hitCollide;
-			return;
+			return true;
 		}
 		
-		output.fraction = 0;
-		output.hit = e_startsInsideCollide;
-		return;
+		return false;
 	}
 
 

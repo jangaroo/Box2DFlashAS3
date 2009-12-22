@@ -53,6 +53,7 @@ package TestBed{
 				fixtureDef.friction = 0.2;
 				
 				var bd:b2BodyDef = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				
 				var jd:b2RevoluteJointDef = new b2RevoluteJointDef();
 				const numPlanks:int = 10;
@@ -89,6 +90,7 @@ package TestBed{
 			// Spawn in a bunch of crap
 			for (i = 0; i < 5; i++){
 				var bodyDef:b2BodyDef = new b2BodyDef();
+				bodyDef.type = b2Body.b2_dynamicBody;
 				var boxShape:b2PolygonShape = new b2PolygonShape();
 				fixtureDef.shape = boxShape
 				fixtureDef.density = 1.0;
@@ -104,6 +106,7 @@ package TestBed{
 			}
 			for (i = 0; i < 5; i++){
 				var bodyDefC:b2BodyDef = new b2BodyDef();
+				bodyDefC.type = b2Body.b2_dynamicBody;
 				var circShape:b2CircleShape = new b2CircleShape((Math.random() * 5 + 10) / m_physScale);
 				fixtureDef.shape = circShape
 				fixtureDef.density = 1.0;
@@ -119,6 +122,7 @@ package TestBed{
 			var j:int;
 			for (i = 0; i < 15; i++){
 				var bodyDefP:b2BodyDef = new b2BodyDef();
+				bodyDefP.type = b2Body.b2_dynamicBody;
 				var polyShape:b2PolygonShape = new b2PolygonShape();
 				var vertices:Array = new Array();
 				var vertexCount:int;

@@ -53,11 +53,11 @@ public class b2LineJointDef extends b2JointDef
 	
 	public function Initialize(bA:b2Body, bB:b2Body, anchor:b2Vec2, axis:b2Vec2) : void
 	{
-		body1 = bA;
-		body2 = bB;
-		localAnchor1 = body1.GetLocalPoint(anchor);
-		localAnchor2 = body2.GetLocalPoint(anchor);
-		localAxis1 = body1.GetLocalVector(axis);
+		bodyA = bA;
+		bodyB = bB;
+		localAnchor1 = bodyA.GetLocalPoint(anchor);
+		localAnchor2 = bodyB.GetLocalPoint(anchor);
+		localAxis1 = bodyA.GetLocalVector(axis);
 	}
 	
 	/**

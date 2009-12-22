@@ -19,6 +19,8 @@
 package Box2D.Dynamics{
 
 
+import Box2D.Collision.b2Bound;
+import Box2D.Collision.b2BroadPhase;
 import Box2D.Collision.IBroadPhase;
 import Box2D.Dynamics.*;
 import Box2D.Dynamics.Controllers.b2ControllerEdge;
@@ -56,8 +58,53 @@ public class b2Body
 	}
 	
 	/**
-	 * Creates a fixture and attach it to this body.
-	 * This function automatically updates the mass of the body.
+	 * Set the type of this body. This may alter the mass and velocity
+	 * @param	type - enum stored as a static member of b2Body
+	 */ 
+	public function SetType( type:uint ):void
+	{
+		if ( m_type == type )
+		{
+			return;
+		}
+		
+		m_type = type;
+		
+		ResetMassData();
+		
+		if ( m_type == b2_staticBody )
+		{
+			m_linearVelocity.SetZero();
+			m_angularVelocity = 0.0;
+		}
+		
+		SetAwake(true);
+		
+		m_force.SetZero();
+		m_torque = 0.0;
+		
+		// Since the body type changed, we need to flag contacts for filtering.
+		for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
+		{
+			ce.contact.FlagForFiltering();
+		} 
+	}
+	
+	/**
+	 * Get the type of this body.
+	 * @return type enum as a uint
+	 */ 
+	public function GetType():uint
+	{
+		return m_type;
+	}
+	
+	/**
+	 * Creates a fixture and attach it to this body. Use this function if you need
+	 * to set some fixture parameters, like friction. Otherwise you can create the
+	 * fixture directly from a shape.
+	 * If the density is non-zero, this function automatically updates the mass of the body.
+	 * Contacts are not created until the next time step.
 	 * @param fixtureDef the fixture definition.
 	 * @warning This function is locked during callbacks.
 	 */
@@ -115,10 +162,14 @@ public class b2Body
 			return s0;
 		}*/
 		
-		var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
-		
 		var fixture:b2Fixture = new b2Fixture();
-		fixture.Create(broadPhase, this, m_xf, def);
+		fixture.Create(this, m_xf, def);
+		
+		if ( m_flags & e_activeFlag )
+		{
+			var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
+			fixture.CreateProxy(broadPhase, m_xf);
+		}
 		
 		fixture.m_next = m_fixtureList;
 		m_fixtureList = fixture;
@@ -126,12 +177,10 @@ public class b2Body
 		
 		fixture.m_body = this;
 		
-		var needMassUpdate:Boolean = fixture.m_massData.mass > 0.0 || fixture.m_massData.I > 0.0;
-		
 		// Adjust mass properties if needed
-		if (needMassUpdate)
+		if (fixture.m_density > 0.0)
 		{
-			ResetMass();
+			ResetMassData();
 		}
 		
 		// Let the world know we have a new fixture. This will cause new contacts to be created
@@ -161,8 +210,10 @@ public class b2Body
 	
 	/**
 	 * Destroy a fixture. This removes the fixture from the broad-phase and
-	 * therefore destroys any contacts associated with this fixture. All fixtures
-	 * attached to a body are implicitly destroyed when the body is destroyed.
+	 * destroys all contacts associated with this fixture. This will
+	 * automatically adjust the mass of the body if the body is dynamic and the
+	 * fixture has positive density.
+	 * All fixtures attached to a body are implicitly destroyed when the body is destroyed.
 	 * @param fixture the fixture to be removed.
 	 * @warning This function is locked during callbacks.
 	 */
@@ -215,21 +266,24 @@ public class b2Body
 			}
 		}
 		
-		var needMassUpdate:Boolean = fixture.m_massData.mass > 0.0 || fixture.m_massData.I > 0.0;
+		if ( m_flags & e_activeFlag )
+		{
+			var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
+			fixture.DestroyProxy(broadPhase);
+		}
+		else
+		{
+			//b2Assert(fixture->m_proxyId == b2BroadPhase::e_nullProxy);
+		}
 		
-		var broadPhase:IBroadPhase = m_world.m_contactManager.m_broadPhase;
-		
-		fixture.Destroy( broadPhase );
+		fixture.Destroy();
 		fixture.m_body = null;
 		fixture.m_next = null;
 		
 		--m_fixtureCount;
 		
-		// Adjust mass properties if needed.
-		if (needMassUpdate)
-		{
-			ResetMass();
-		}
+		// Reset the mass data.
+		ResetMassData();
 	}
 
 	/**
@@ -245,6 +299,12 @@ public class b2Body
 		
 		//b2Settings.b2Assert(m_world.IsLocked() == false);
 		if (m_world.IsLocked() == true)
+		{
+			return;
+		}
+		
+		// static bodies are not allowed to move.
+		if (m_type == b2_staticBody)
 		{
 			return;
 		}
@@ -349,7 +409,11 @@ public class b2Body
 	* Set the linear velocity of the center of mass.
 	* @param v the new linear velocity of the center of mass.
 	*/
-	public function SetLinearVelocity(v:b2Vec2) : void{
+	public function SetLinearVelocity(v:b2Vec2) : void {
+		if ( m_type == b2_staticBody )
+		{
+			return;
+		}
 		m_linearVelocity.SetV(v);
 	}
 
@@ -365,7 +429,11 @@ public class b2Body
 	* Set the angular velocity.
 	* @param omega the new angular velocity in radians/second.
 	*/
-	public function SetAngularVelocity(omega:Number) : void{
+	public function SetAngularVelocity(omega:Number) : void {
+		if ( m_type == b2_staticBody )
+		{
+			return;
+		}
 		m_angularVelocity = omega;
 	}
 
@@ -380,13 +448,14 @@ public class b2Body
 	public function GetDefinition() : b2BodyDef
 	{
 		var bd:b2BodyDef = new b2BodyDef();
-		bd.allowSleep = (m_flags & e_allowSleepFlag) > 0;
+		bd.type = GetType();
+		bd.autoSleep = (m_flags & e_autoSleepFlag) == e_autoSleepFlag;
 		bd.angle = GetAngle();
 		bd.angularDamping = m_angularDamping;
 		bd.angularVelocity = m_angularVelocity;
-		bd.fixedRotation = (m_flags & e_fixedRotationFlag) > 0;
-		bd.isBullet = (m_flags & e_bulletFlag) > 0;
-		bd.isSleeping = IsSleeping();
+		bd.fixedRotation = (m_flags & e_fixedRotationFlag) == e_fixedRotationFlag;
+		bd.bullet = (m_flags & e_bulletFlag) == e_bulletFlag;
+		bd.awake = (m_flags & e_awakeFlag) == e_awakeFlag;
 		bd.linearDamping = m_linearDamping;
 		bd.linearVelocity.SetV(GetLinearVelocity());
 		bd.position = GetPosition();
@@ -402,10 +471,16 @@ public class b2Body
 	* @param point the world position of the point of application.
 	*/
 	public function ApplyForce(force:b2Vec2, point:b2Vec2) : void{
-		if (IsSleeping())
+		if (m_type != b2_dynamicBody)
 		{
-			WakeUp();
+			return;
 		}
+		
+		if (IsAwake() == false)
+		{
+			SetAwake(true);
+		}
+		
 		//m_force += force;
 		m_force.x += force.x;
 		m_force.y += force.y;
@@ -419,10 +494,15 @@ public class b2Body
 	* This wakes up the body.
 	* @param torque about the z-axis (out of the screen), usually in N-m.
 	*/
-	public function ApplyTorque(torque:Number) : void{
-		if (IsSleeping())
+	public function ApplyTorque(torque:Number) : void {
+		if (m_type != b2_dynamicBody)
 		{
-			WakeUp();
+			return;
+		}
+		
+		if (IsAwake() == false)
+		{
+			SetAwake(true);
 		}
 		m_torque += torque;
 	}
@@ -435,9 +515,14 @@ public class b2Body
 	* @param point the world position of the point of application.
 	*/
 	public function ApplyImpulse(impulse:b2Vec2, point:b2Vec2) : void{
-		if (IsSleeping())
+		if (m_type != b2_dynamicBody)
 		{
-			WakeUp();
+			return;
+		}
+		
+		if (IsAwake() == false)
+		{
+			SetAwake(true);
 		}
 		//m_linearVelocity += m_invMass * impulse;
 		m_linearVelocity.x += m_invMass * impulse.x;
@@ -489,8 +574,8 @@ public class b2Body
 			}
 		}
 		
-		body1.ResetMass();
-		body2.ResetMass();
+		body1.ResetMassData();
+		body2.ResetMassData();
 		
 		// Compute consistent velocites for new bodies based on cached velocity
 		var center1:b2Vec2 = body1.GetWorldCenter();
@@ -543,9 +628,9 @@ public class b2Body
 	
 	/**
 	 * Set the mass properties to override the mass properties of the fixtures
-	 * Note that this changes the center of mass position. You can make
-	 * the body static by using zero mass.
+	 * Note that this changes the center of mass position.
 	 * Note that creating or destroying fixtures can also alter the mass.
+	 * This function has no effect if the body isn't dynamic.
 	 * @warming The supplied rotational inertia should be relative to the center of mass
 	 * @param	data the mass properties.
 	 */
@@ -557,6 +642,11 @@ public class b2Body
 			return;
 		}
 		
+		if (m_type != b2_dynamicBody)
+		{
+			return;
+		}
+		
 		m_invMass = 0.0;
 		m_I = 0.0;
 		m_invI = 0.0;
@@ -564,10 +654,11 @@ public class b2Body
 		m_mass = massData.mass;
 		
 		// Compute the center of mass.
-		if (m_mass > 0.0)
+		if (m_mass <= 0.0)
 		{
-			m_invMass = 1.0 / m_mass;
+			m_mass = 1.0;
 		}
+		m_invMass = 1.0 / m_mass;
 		
 		if (massData.I > 0.0 && (m_flags & e_fixedRotationFlag) == 0)
 		{
@@ -587,25 +678,6 @@ public class b2Body
 		m_linearVelocity.x += m_angularVelocity * -(m_sweep.c.y - oldCenter.y);
 		m_linearVelocity.y += m_angularVelocity * +(m_sweep.c.x - oldCenter.x);
 		
-		// Determine the new body type
-		var oldType:int = m_type;
-		if (m_invMass == 0.0 && m_invI == 0.0)
-		{
-			m_type = e_staticType;
-			m_linearVelocity.SetZero();
-			m_angularVelocity = 0.0;
-		}else {
-			m_type = e_dynamicType;
-		}
-		
-		// If the body type changed we need to flag contacts for filtering
-		if (oldType != m_type)
-		{
-			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
-			{
-				ce.contact.FlagForFiltering();
-			}
-		}
 	}
 	
 	/**
@@ -613,17 +685,31 @@ public class b2Body
 	 * This normally does not need to be called unless you called SetMassData to override
 	 * the mass and later you want to reset the mass.
 	 */
-	public function ResetMass():void
+	public function ResetMassData():void
 	{
 		// Compute mass data from shapes. Each shape has it's own density
 		m_mass = 0.0;
 		m_invMass = 0.0;
 		m_I = 0.0;
 		m_invI = 0.0;
+		m_sweep.localCenter.SetZero();
 		
+		// Static and kinematic bodies have zero mass.
+		if (m_type == b2_staticBody || m_type == b2_kinematicBody)
+		{
+			return;
+		}
+		//b2Assert(m_type == b2_dynamicBody);
+		
+		// Accumulate mass over all fixtures.
 		var center:b2Vec2 = b2Vec2.Make(0, 0);
 		for (var f:b2Fixture = m_fixtureList; f; f = f.m_next)
 		{
+			if (f.m_density == 0.0)
+			{
+				continue;
+			}
+			
 			var massData:b2MassData = f.GetMassData();
 			m_mass += massData.mass;
 			center.x += massData.center.x * massData.mass;
@@ -637,6 +723,12 @@ public class b2Body
 			m_invMass = 1.0 / m_mass;
 			center.x *= m_invMass;
 			center.y *= m_invMass;
+		}
+		else
+		{
+			// Force all dynamic bodies to have a positive mass.
+			m_mass = 1.0;
+			m_invMass = 1.0;
 		}
 		
 		if (m_I > 0.0 && (m_flags & e_fixedRotationFlag) == 0)
@@ -661,23 +753,6 @@ public class b2Body
 		m_linearVelocity.x += m_angularVelocity * -(m_sweep.c.y - oldCenter.y);
 		m_linearVelocity.y += m_angularVelocity * +(m_sweep.c.x - oldCenter.x);
 		
-		// Determine the new body type
-		var oldType:int = m_type;
-		if (m_invMass == 0.0 && m_invI == 0.0)
-		{
-			m_type = e_staticType;
-		}else {
-			m_type = e_dynamicType;
-		}
-		
-		// If the body type changed we need to flag contacts for filtering
-		if (oldType != m_type)
-		{
-			for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
-			{
-				ce.contact.FlagForFiltering();
-			}
-		}
 	}
 	  
 	/**
@@ -782,13 +857,6 @@ public class b2Body
 	{
 		m_angularDamping = angularDamping;
 	}
-	
-	/**
-	* Is this body treated like a bullet for continuous collision detection?
-	*/
-	public function IsBullet() : Boolean{
-		return (m_flags & e_bulletFlag) == e_bulletFlag;
-	}
 
 	/**
 	* Should this body be treated like a bullet for continuous collision detection?
@@ -804,124 +872,156 @@ public class b2Body
 		}
 	}
 
+	/**
+	* Is this body treated like a bullet for continuous collision detection?
+	*/
+	public function IsBullet() : Boolean{
+		return (m_flags & e_bulletFlag) == e_bulletFlag;
+	}
 	
 	/**
-	* Is this body prevented from rotating?
+	 * Is this body allowed to sleep
+	 * @param	flag
+	 */
+	public function SetSleepingAllowed(flag:Boolean):void{
+		if (flag)
+		{
+			m_flags |= e_autoSleepFlag;
+		}
+		else
+		{
+			m_flags &= ~e_autoSleepFlag;
+			SetAwake(true);
+		}
+	}
+	
+	/**
+	 * Set the sleep state of the body. A sleeping body has vety low CPU cost.
+	 * @param	flag - set to true to put body to sleep, false to wake it
+	 */
+	public function SetAwake(flag:Boolean):void {
+		if (flag)
+		{
+			m_flags |= e_awakeFlag;
+			m_sleepTime = 0.0;
+		}
+		else
+		{
+			m_flags &= ~e_awakeFlag;
+			m_sleepTime = 0.0;
+			m_linearVelocity.SetZero();
+			m_angularVelocity = 0.0;
+			m_force.SetZero();
+			m_torque = 0.0;
+		}
+	}
+	
+	/**
+	 * Get the sleeping state of this body.
+	 * @return true if body is sleeping
+	 */
+	public function IsAwake():Boolean {
+		return (m_flags & e_awakeFlag) == e_awakeFlag;
+	}
+	
+	/**
+	 * Set this body to have fixed rotation. This causes the mass to be reset.
+	 * @param	fixed - true means no rotation
+	 */
+	public function SetFixedRotation(fixed:Boolean):void
+	{
+		if(fixed)
+		{
+			m_flags |= e_fixedRotationFlag;
+		}
+		else
+		{
+			m_flags &= ~e_fixedRotationFlag;
+		}
+		
+		ResetMassData();
+	}
+	
+	/**
+	* Does this body have fixed rotation?
+	* @return true means fixed rotation
 	*/
 	public function IsFixedRotation():Boolean
 	{
 		return (m_flags & e_fixedRotationFlag)==e_fixedRotationFlag;
 	}
-	/**
-	* Set if this body is prevented from rotating.
+	
+	/** Set the active state of the body. An inactive body is not
+	* simulated and cannot be collided with or woken up.
+	* If you pass a flag of true, all fixtures will be added to the
+	* broad-phase.
+	* If you pass a flag of false, all fixtures will be removed from
+	* the broad-phase and all contacts will be destroyed.
+	* Fixtures and joints are otherwise unaffected. You may continue
+	* to create/destroy fixtures and joints on inactive bodies.
+	* Fixtures on an inactive body are implicitly inactive and will
+	* not participate in collisions, ray-casts, or queries.
+	* Joints connected to an inactive body are implicitly inactive.
+	* An inactive body is still owned by a b2World object and remains
+	* in the body list.
 	*/
-	public function SetFixedRotation(fixed:Boolean):void
-	{
-		if(fixed)
+	public function SetActive( flag:Boolean ):void{
+		if (flag == IsActive())
 		{
-			m_angularVelocity = 0.0;
-			m_invI = 0.0;
-			m_flags |= e_fixedRotationFlag;
+			return;
+		}
+		
+		var broadPhase:IBroadPhase;
+		var f:b2Fixture;
+		if (flag)
+		{
+			m_flags |= e_activeFlag;
+
+			// Create all proxies.
+			broadPhase = m_world.m_contactManager.m_broadPhase;
+			for ( f = m_fixtureList; f; f = f.m_next)
+			{
+				f.CreateProxy(broadPhase, m_xf);
+			}
+			// Contacts are created the next time step.
 		}
 		else
 		{
-			if(m_I > 0.0)
+			m_flags &= ~e_activeFlag;
+
+			// Destroy all proxies.
+			broadPhase = m_world.m_contactManager.m_broadPhase;
+			for ( f = m_fixtureList; f; f = f.m_next)
 			{
-				//Recover m_invI from m_I
-				m_invI = 1.0/m_I
-				m_flags &= e_fixedRotationFlag;
+				f.DestroyProxy(broadPhase);
 			}
-			//TODO: Else what?
+
+			// Destroy the attached contacts.
+			var ce:b2ContactEdge = m_contactList;
+			while (ce)
+			{
+				var ce0:b2ContactEdge = ce;
+				ce = ce.next;
+				m_world.m_contactManager.Destroy(ce0.contact);
+			}
+			m_contactList = null;
 		}
 	}
 	
-	
-	
 	/**
-	* Is this body static (immovable)?
-	*/
-	public function IsStatic() : Boolean{
-		return m_type == e_staticType;
-	}
-	
-	/**
-	* Make this body static (immovable).
-	* Use SetMass and SetMassFromShapes to make bodies dynamic
-	*/
-	public function SetStatic():void
-	{
-		if(m_type == e_staticType)
-			return
-			
-		m_mass = 0.0;
-		m_invMass = 0.0;
-		m_I = 0.0;
-		m_invI = 0.0;
-		m_type = e_staticType;
-		
-		for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
-		{
-			ce.contact.FlagForFiltering();
-		}
-	}
-
-	/**
-	* Is this body dynamic (movable)?
-	*/
-	public function IsDynamic() :Boolean{
-		return m_type == e_dynamicType;
-	}
-
-	/**
-	* Is this body sleeping (not simulating).
-	*/
-	public function IsSleeping() : Boolean{
-		return (m_flags & e_sleepFlag) == e_sleepFlag;
+	 * Get the active state of the body.
+	 * @return true if active.
+	 */ 
+	public function IsActive():Boolean{
+		return (m_flags & e_activeFlag) == e_activeFlag;
 	}
 	
 	/**
 	* Is this body allowed to sleep?
 	*/
-	public function IsAllowSleeping():Boolean
+	public function IsSleepingAllowed():Boolean
 	{
-		return(m_flags & e_allowSleepFlag) == e_allowSleepFlag;
-	}
-	
-	/**
-	* You can disable sleeping on this body.
-	*/
-	public function AllowSleeping(flag:Boolean) : void{
-		if (flag)
-		{
-			m_flags |= e_allowSleepFlag;
-		}
-		else
-		{
-			m_flags &= ~e_allowSleepFlag;
-			WakeUp();
-		}
-	}
-
-	/**
-	* Wake up this body so it will begin simulating.
-	*/
-	public function WakeUp() : void{
-		m_flags &= ~e_sleepFlag;
-		m_sleepTime = 0.0;
-	}
-
-	/**
-	* Put this body to sleep so it will stop simulating.
-	* This also sets the velocity to zero.
-	*/
-	public function PutToSleep() : void
-	{
-		m_flags |= e_sleepFlag;
-		m_sleepTime = 0.0;
-		m_linearVelocity.SetZero();
-		m_angularVelocity = 0.0;
-		m_force.SetZero();
-		m_torque = 0.0;
+		return(m_flags & e_autoSleepFlag) == e_autoSleepFlag;
 	}
 
 	/**
@@ -991,7 +1091,7 @@ public class b2Body
 		
 		m_flags = 0;
 		
-		if (bd.isBullet)
+		if (bd.bullet )
 		{
 			m_flags |= e_bulletFlag;
 		}
@@ -999,13 +1099,17 @@ public class b2Body
 		{
 			m_flags |= e_fixedRotationFlag;
 		}
-		if (bd.allowSleep)
+		if (bd.autoSleep)
 		{
-			m_flags |= e_allowSleepFlag;
+			m_flags |= e_autoSleepFlag;
 		}
-		if (bd.isSleeping)
+		if (bd.awake)
 		{
-			m_flags |= e_sleepFlag;
+			m_flags |= e_awakeFlag;
+		}
+		if (bd.active)
+		{
+			m_flags |= e_activeFlag;
 		}
 		
 		m_world = world;
@@ -1049,12 +1153,21 @@ public class b2Body
 		
 		m_sleepTime = 0.0;
 		
-		m_mass = 0.0;
-		m_invMass = 0.0;
+		m_type = bd.type;
+		
+		if (m_type == b2_dynamicBody)
+		{
+			m_mass = 1.0;
+			m_invMass = 1.0;
+		}
+		else
+		{
+			m_mass = 0.0;
+			m_invMass = 0.0;
+		}
+		
 		m_I = 0.0;
 		m_invI = 0.0;
-		
-		m_type = e_staticType;
 		
 		m_userData = bd.userData;
 		
@@ -1097,14 +1210,23 @@ public class b2Body
 
 	// This is used to prevent connected bodies from colliding.
 	// It may lie, depending on the collideConnected flag.
-	b2internal function IsConnected(other:b2Body) : Boolean{
+	b2internal function ShouldCollide(other:b2Body) : Boolean {
+		// At least one body should be dynamic
+		if (m_type != b2_dynamicBody && other.m_type != b2_dynamicBody )
+		{
+			return false;
+		}
+		// Does a joint prevent collision?
 		for (var jn:b2JointEdge = m_jointList; jn; jn = jn.next)
 		{
 			if (jn.other == other)
-				return jn.joint.m_collideConnected == false;
+			if (jn.joint.m_collideConnected == false)
+			{
+				return false;
+			}
 		}
 		
-		return false;
+		return true;
 	}
 
 	b2internal function Advance(t:Number) : void{
@@ -1116,7 +1238,7 @@ public class b2Body
 	}
 
 	b2internal var m_flags:uint;
-	private var m_type:int;
+	b2internal var m_type:int;
 	
 	b2internal var m_islandIndex:int;
 
@@ -1158,18 +1280,23 @@ public class b2Body
 	//enum
 	//{
 		static b2internal var e_islandFlag:uint			= 0x0001;
-		static b2internal var e_sleepFlag:uint			= 0x0002;
-		static b2internal var e_allowSleepFlag:uint		= 0x0004;
-		static b2internal var e_bulletFlag:uint			= 0x0005;
+		static b2internal var e_awakeFlag:uint			= 0x0002;
+		static b2internal var e_autoSleepFlag:uint		= 0x0004;
+		static b2internal var e_bulletFlag:uint			= 0x0008;
 		static b2internal var e_fixedRotationFlag:uint	= 0x0010;
+		static b2internal var e_activeFlag:uint			= 0x0020;
 	//};
 
 	// m_type
 	//enum
 	//{
-		static b2internal var e_staticType:uint 	= 1;
-		static b2internal var e_dynamicType:uint 	= 2;
-		static b2internal var e_maxTypes:uint 		= 3;
+		/// The body type.
+		/// static: zero mass, zero velocity, never moves
+		/// kinematic: zero mass, non-zero velocity set by user, moved by solver
+		/// dynamic: positive mass, non-zero velocity determined by forces, moved by solver
+		static public var b2_staticBody:uint = 0;
+		static public var b2_kinematicBody:uint = 1;
+		static public var b2_dynamicBody:uint = 2;
 	//};
 	
 };

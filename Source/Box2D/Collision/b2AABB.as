@@ -68,12 +68,11 @@ public class b2AABB
 	}
 	
 	// From Real-time Collision Detection, p179.
-	public function RayCast(output:b2RayCastOutput, input:b2RayCastInput):void
+	public function RayCast(output:b2RayCastOutput, input:b2RayCastInput):Boolean
 	{
-		var tmin:Number = Number.MIN_VALUE;
+		var tmin:Number = -Number.MAX_VALUE;
 		var tmax:Number = Number.MAX_VALUE;
 		
-		output.hit = b2Shape.e_missCollide;
 		var pX:Number = input.p1.x;
 		var pY:Number = input.p1.y;
 		var dX:Number = input.p2.x - input.p1.x;
@@ -95,7 +94,7 @@ public class b2AABB
 			{
 				// Parallel.
 				if (pX < lowerBound.x || upperBound.x < pX)
-					return;
+					return false;
 			}
 			else
 			{
@@ -126,7 +125,7 @@ public class b2AABB
 				tmax = Math.min(tmax, t2);
 				
 				if (tmin > tmax)
-					return;
+					return false;
 			}
 		}
 		//y
@@ -135,7 +134,7 @@ public class b2AABB
 			{
 				// Parallel.
 				if (pY < lowerBound.y || upperBound.y < pY)
-					return;
+					return false;
 			}
 			else
 			{
@@ -166,9 +165,12 @@ public class b2AABB
 				tmax = Math.min(tmax, t2);
 				
 				if (tmin > tmax)
-					return;
+					return false;
 			}
 		}
+		
+		output.fraction = tmin;
+		return true;
 	}
 	
 	public function TestOverlap(other:b2AABB):Boolean

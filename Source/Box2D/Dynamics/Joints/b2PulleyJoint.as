@@ -40,11 +40,11 @@ use namespace b2internal;
 public class b2PulleyJoint extends b2Joint
 {
 	/** @inheritDoc */
-	public override function GetAnchor1():b2Vec2{
+	public override function GetAnchorA():b2Vec2{
 		return m_bodyA.GetWorldPoint(m_localAnchor1);
 	}
 	/** @inheritDoc */
-	public override function GetAnchor2():b2Vec2{
+	public override function GetAnchorB():b2Vec2{
 		return m_bodyB.GetWorldPoint(m_localAnchor2);
 	}
 

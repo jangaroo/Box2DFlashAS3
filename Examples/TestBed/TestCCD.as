@@ -48,7 +48,8 @@ package TestBed{
 			// Create 'basket'
 			{
 				bd = new b2BodyDef();
-				bd.isBullet = true;
+				bd.type = b2Body.b2_dynamicBody;
+				bd.bullet = true;
 				bd.position.Set( 150.0/m_physScale, 100.0/m_physScale );
 				body = m_world.CreateBody(bd);
 				var sd_bottom:b2PolygonShape = new b2PolygonShape();
@@ -75,7 +76,8 @@ package TestBed{
 				fixtureDef.density = 1.0;
 				fixtureDef.restitution = 1.1;
 				bd = new b2BodyDef();
-				bd.isBullet = true;
+				bd.type = b2Body.b2_dynamicBody;
+				bd.bullet = true;
 				bd.position.Set( (Math.random()*300 + 250)/m_physScale, (Math.random()*320 + 20)/m_physScale );
 				body = m_world.CreateBody(bd);
 				body.CreateFixture(fixtureDef);

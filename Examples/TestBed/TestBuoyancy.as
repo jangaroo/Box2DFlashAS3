@@ -56,6 +56,7 @@ package TestBed{
 			// Spawn in a bunch of crap
 			for (i = 0; i < 5; i++){
 				var bodyDef:b2BodyDef = new b2BodyDef();
+				bodyDef.type = b2Body.b2_dynamicBody;
 				//bodyDef.isBullet = true;
 				var boxDef:b2PolygonShape = new b2PolygonShape();
 				fd = new b2FixtureDef();
@@ -74,6 +75,7 @@ package TestBed{
 			}
 			for (i = 0; i < 5; i++){
 				var bodyDefC:b2BodyDef = new b2BodyDef();
+				bodyDefC.type = b2Body.b2_dynamicBody;
 				//bodyDefC.isBullet = true;
 				var circDef:b2CircleShape= new b2CircleShape((Math.random() * 5 + 10) / m_physScale);
 				fd = new b2FixtureDef();
@@ -90,6 +92,7 @@ package TestBed{
 			}
 			for (i = 0; i < 15; i++){
 				var bodyDefP:b2BodyDef = new b2BodyDef();
+				bodyDefP.type = b2Body.b2_dynamicBody;
 				//bodyDefP.isBullet = true;
 				var polyDef:b2PolygonShape = new b2PolygonShape();
 				if (Math.random() > 0.66) {

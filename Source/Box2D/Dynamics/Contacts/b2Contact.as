@@ -43,8 +43,8 @@ use namespace b2internal;
 public class b2Contact
 {
 	/**
-	 * Get the contact manifold. Do not set the point count to zero. Instead
-	 * call disable
+	 * Get the contact manifold. Do not modify the manifold unless you understand the
+	 * internals of Box2D
 	 */
 	public function GetManifold():b2Manifold
 	{
@@ -65,21 +65,11 @@ public class b2Contact
 	}
 	
 	/**
-	 * Is this contact solid? Returns false if the shapes are separate,
-	 * sensors, or the contact has been disabled.
-	 * @return true if this contact should generate a response.
-	 */
-	public function IsSolid():Boolean
-	{
-		return (m_flags & (e_sensorFlag | e_disabledFlag)) == 0;
-	}
-	
-	/**
 	 * Is this contact touching.
 	 */
 	public function IsTouching():Boolean
 	{
-		return (m_flags & e_touchingFlag) != 0; 
+		return (m_flags & e_touchingFlag) == e_touchingFlag; 
 	}
 	
 	/**
@@ -87,14 +77,13 @@ public class b2Contact
 	 */
 	public function IsContinuous():Boolean
 	{
-		return (m_flags & e_continuousFlag) != 0; 
+		return (m_flags & e_continuousFlag) == e_continuousFlag; 
 	}
 	
 	/**
 	 * Change this to be a sensor or-non-sensor contact.
 	 */
-	public function SetAsSensor(sensor:Boolean):void
-	{
+	public function SetSensor(sensor:Boolean):void{
 		if (sensor)
 		{
 			m_flags |= e_sensorFlag;
@@ -106,13 +95,34 @@ public class b2Contact
 	}
 	
 	/**
-	 * Disable this contact. This can be used inside the pre-solve
+	 * Is this contact a sensor?
+	 */
+	public function IsSensor():Boolean{
+		return (m_flags & e_sensorFlag) == e_sensorFlag;
+	}
+	
+	/**
+	 * Enable/disable this contact. This can be used inside the pre-solve
 	 * contact listener. The contact is only disabled for the current
 	 * time step (or sub-step in continuous collision).
 	 */
-	public function Disable():void
-	{
-		m_flags |= e_disabledFlag;
+	public function SetEnabled(flag:Boolean):void{
+		if (flag)
+		{
+			m_flags |= e_enabledFlag;
+		}
+		else
+		{
+			m_flags &= ~e_enabledFlag;
+		}
+	}
+	
+	/**
+	 * Has this contact been disabled?
+	 * @return
+	 */
+	public function IsEnabled():Boolean {
+		return (m_flags & e_enabledFlag) == e_enabledFlag;
 	}
 	
 	/**
@@ -161,8 +171,8 @@ public class b2Contact
 	static b2internal var e_toiFlag:uint		= 0x0008;
 	// Set when shapes are touching
 	static b2internal var e_touchingFlag:uint	= 0x0010;
-	// Disabled (by user)
-	static b2internal var e_disabledFlag:uint	= 0x0020;
+	// This contact can be disabled (by user)
+	static b2internal var e_enabledFlag:uint	= 0x0020;
 	// This contact needs filtering because a fixture filter was changed.
 	static b2internal var e_filterFlag:uint		= 0x0040;
 
@@ -241,8 +251,8 @@ public class b2Contact
 		
 		if (contact.m_manifold.m_pointCount > 0)
 		{
-			contact.m_fixtureA.m_body.WakeUp();
-			contact.m_fixtureB.m_body.WakeUp();
+			contact.m_fixtureA.m_body.SetAwake(true);
+			contact.m_fixtureB.m_body.SetAwake(true);
 		}
 		
 		var type1:int = contact.m_fixtureA.GetType();
@@ -259,7 +269,7 @@ public class b2Contact
 	/** @private */
 	public function b2Contact(fixtureA:b2Fixture=null, fixtureB:b2Fixture=null)
 	{
-		m_flags = 0;
+		m_flags = e_enabledFlag;
 		
 		if (!fixtureA || !fixtureB){
 			m_fixtureA = null;
@@ -275,11 +285,9 @@ public class b2Contact
 		var bodyA:b2Body = fixtureA.GetBody();
 		var bodyB:b2Body = fixtureB.GetBody();
 		
-		if (bodyA.IsStatic() || bodyA.IsBullet() || bodyB.IsStatic() || bodyB.IsBullet())
+		if (bodyA.GetType() != b2Body.b2_dynamicBody || bodyA.IsBullet() || bodyB.GetType() != b2Body.b2_dynamicBody || bodyB.IsBullet())
 		{
 			m_flags |= e_continuousFlag;
-		}else{
-			m_flags &= ~e_continuousFlag;
 		}
 		
 		m_fixtureA = fixtureA;
@@ -309,7 +317,7 @@ public class b2Contact
 		m_manifold = tManifold;
 		
 		// Re-enable this contact
-		m_flags &= ~e_disabledFlag;
+		m_flags |= e_enabledFlag;
 		
 		if (m_fixtureA.m_aabb.TestOverlap(m_fixtureB.m_aabb))
 		{
@@ -328,12 +336,12 @@ public class b2Contact
 		
 		if (newCount == 0 && oldCount > 0)
 		{
-			bodyA.WakeUp();
-			bodyB.WakeUp();
+			bodyA.SetAwake(true);
+			bodyB.SetAwake(true);
 		}
 		
 		// Slow contacts don't generate TOI events.
-		if (bodyA.IsStatic() || bodyA.IsBullet() || bodyB.IsStatic() || bodyB.IsBullet())
+		if (bodyA.GetType() != b2Body.b2_dynamicBody || bodyA.IsBullet() || bodyB.GetType() != b2Body.b2_dynamicBody || bodyB.IsBullet())
 		{
 			m_flags |= e_continuousFlag;
 		}

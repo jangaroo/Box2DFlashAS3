@@ -82,9 +82,9 @@ public class b2Shape
 	 * @param input the ray-cast input parameters.
 	 * @param transform the transform to be applied to the shape.
 	 */
-	public virtual function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
+	public virtual function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):Boolean
 	{
-		output.hit = e_missCollide;
+		return false;
 	}
 
 	/**

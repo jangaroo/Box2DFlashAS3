@@ -48,11 +48,11 @@ use namespace b2internal;
 public class b2MouseJoint extends b2Joint
 {
 	/** @inheritDoc */
-	public override function GetAnchor1():b2Vec2{
+	public override function GetAnchorA():b2Vec2{
 		return m_target;
 	}
 	/** @inheritDoc */
-	public override function GetAnchor2():b2Vec2{
+	public override function GetAnchorB():b2Vec2{
 		return m_bodyB.GetWorldPoint(m_localAnchor);
 	}
 	/** @inheritDoc */
@@ -69,8 +69,8 @@ public class b2MouseJoint extends b2Joint
 	* Use this to update the target point.
 	*/
 	public function SetTarget(target:b2Vec2) : void{
-		if (m_bodyB.IsSleeping()){
-			m_bodyB.WakeUp();
+		if (m_bodyB.IsAwake() == false){
+			m_bodyB.SetAwake(true);
 		}
 		m_target = target;
 	}

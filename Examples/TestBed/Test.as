@@ -167,13 +167,13 @@ package TestBed{
 				if (body)
 				{
 					var md:b2MouseJointDef = new b2MouseJointDef();
-					md.body1 = m_world.GetGroundBody();
-					md.body2 = body;
+					md.bodyA = m_world.GetGroundBody();
+					md.bodyB = body;
 					md.target.Set(mouseXWorldPhys, mouseYWorldPhys);
 					md.collideConnected = true;
 					md.maxForce = 300.0 * body.GetMass();
 					m_mouseJoint = m_world.CreateJoint(md) as b2MouseJoint;
-					body.WakeUp();
+					body.SetAwake(true);
 				}
 			}
 			
@@ -228,11 +228,13 @@ package TestBed{
 			aabb.lowerBound.Set(mouseXWorldPhys - 0.001, mouseYWorldPhys - 0.001);
 			aabb.upperBound.Set(mouseXWorldPhys + 0.001, mouseYWorldPhys + 0.001);
 			var body:b2Body = null;
+			var fixture:b2Fixture;
+			
 			// Query the world for overlapping shapes.
 			function GetBodyCallback(fixture:b2Fixture):Boolean
 			{
 				var shape:b2Shape = fixture.GetShape();
-				if (fixture.GetBody().IsStatic() == false || includeStatic)
+				if (fixture.GetBody().GetType() != b2Body.b2_staticBody || includeStatic)
 				{
 					var inside:Boolean = shape.TestPoint(fixture.GetBody().GetTransform(), mousePVec);
 					if (inside)

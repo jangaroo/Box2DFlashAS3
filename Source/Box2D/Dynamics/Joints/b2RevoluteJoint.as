@@ -51,11 +51,11 @@ use namespace b2internal;
 public class b2RevoluteJoint extends b2Joint
 {
 	/** @inheritDoc */
-	public override function GetAnchor1() :b2Vec2{
+	public override function GetAnchorA() :b2Vec2{
 		return m_bodyA.GetWorldPoint(m_localAnchor1);
 	}
 	/** @inheritDoc */
-	public override function GetAnchor2() :b2Vec2{
+	public override function GetAnchorB() :b2Vec2{
 		return m_bodyB.GetWorldPoint(m_localAnchor2);
 	}
 
@@ -127,8 +127,8 @@ public class b2RevoluteJoint extends b2Joint
 	* Is the joint motor enabled?
 	*/
 	public function IsMotorEnabled() :Boolean {
-		m_bodyA.WakeUp();
-		m_bodyB.WakeUp();
+		m_bodyA.SetAwake(true);
+		m_bodyB.SetAwake(true);
 		return m_enableMotor;
 	}
 
@@ -143,8 +143,8 @@ public class b2RevoluteJoint extends b2Joint
 	* Set the motor speed in radians per second.
 	*/
 	public function SetMotorSpeed(speed:Number) : void {
-		m_bodyA.WakeUp();
-		m_bodyB.WakeUp();
+		m_bodyA.SetAwake(true);
+		m_bodyB.SetAwake(true);
 		m_motorSpeed = speed;
 	}
 

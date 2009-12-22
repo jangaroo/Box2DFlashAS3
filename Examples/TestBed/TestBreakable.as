@@ -45,6 +45,7 @@ package TestBed{
 			// Breakable Dynamic Body
 			{
 				var bd:b2BodyDef = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				bd.position.Set(5.0, 5.0);
 				bd.angle = 0.25 * Math.PI;
 				m_body1 = m_world.CreateBody(bd);

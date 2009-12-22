@@ -56,12 +56,12 @@ public class b2PulleyJointDef extends b2JointDef
 				anchor1:b2Vec2, anchor2:b2Vec2,
 				r:Number) : void
 	{
-		body1 = bA;
-		body2 = bB;
+		bodyA = bA;
+		bodyB = bB;
 		groundAnchor1.SetV( ga1 );
 		groundAnchor2.SetV( ga2 );
-		localAnchor1 = body1.GetLocalPoint(anchor1);
-		localAnchor2 = body2.GetLocalPoint(anchor2);
+		localAnchor1 = bodyA.GetLocalPoint(anchor1);
+		localAnchor2 = bodyB.GetLocalPoint(anchor2);
 		//b2Vec2 d1 = anchor1 - ga1;
 		var d1X:Number = anchor1.x - ga1.x;
 		var d1Y:Number = anchor1.y - ga1.y;

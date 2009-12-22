@@ -43,6 +43,7 @@ package TestBed{
 			var fd:b2FixtureDef = new b2FixtureDef();
 			var sd:b2PolygonShape = new b2PolygonShape();
 			var bd:b2BodyDef = new b2BodyDef();
+			bd.type = b2Body.b2_dynamicBody;
 			//bd.isBullet = true;
 			var b:b2Body;
 			fd.density = 1.0;
@@ -76,6 +77,7 @@ package TestBed{
 				new b2Vec2(200 / m_physScale, 0)];
 			sd.SetAsArray(vxs, vxs.length);
 			fd.density = 0;
+			bd.type = b2Body.b2_staticBody;
 			bd.userData = "ramp";
 			bd.position.Set(0, 360 / m_physScale);
 			b = m_world.CreateBody(bd);
@@ -88,6 +90,7 @@ package TestBed{
 			fd.restitution = 0.2;
 			fd.friction = 0.5;
 			fd.shape = cd;
+			bd.type = b2Body.b2_dynamicBody;
 			bd.userData = "ball";
 			bd.position.Set(50/m_physScale, 100 / m_physScale);
 			b = m_world.CreateBody(bd);

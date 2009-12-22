@@ -50,6 +50,8 @@ package TestBed{
 				var startY:Number = 20 + Math.random() * 50;
 				
 				// BODIES
+				// Set these to dynamic bodies
+				bd.type = b2Body.b2_dynamicBody;
 				
 				// Head
 				circ = new b2CircleShape( 12.5 / m_physScale );
@@ -75,7 +77,6 @@ package TestBed{
 				var torso1:b2Body = m_world.CreateBody(bd);
 				torso1.CreateFixture(fixtureDef);
 				// Torso2
-				bd = new b2BodyDef();
 				box = new b2PolygonShape();
 				box.SetAsBox(15 / m_physScale, 10 / m_physScale);
 				fixtureDef.shape = box;
@@ -83,7 +84,6 @@ package TestBed{
 				var torso2:b2Body = m_world.CreateBody(bd);
 				torso2.CreateFixture(fixtureDef);
 				// Torso3
-				bd = new b2BodyDef();
 				box.SetAsBox(15 / m_physScale, 10 / m_physScale);
 				fixtureDef.shape = box;
 				bd.position.Set(startX / m_physScale, (startY + 58) / m_physScale);
@@ -236,7 +236,8 @@ package TestBed{
 			}
 			
 			
-			// Add stairs on the left
+			// Add stairs on the left, these are static bodies so set the type accordingly
+			bd.type = b2Body.b2_staticBody;
 			fixtureDef.density = 0.0;
 			fixtureDef.friction = 0.4;
 			fixtureDef.restitution = 0.3;

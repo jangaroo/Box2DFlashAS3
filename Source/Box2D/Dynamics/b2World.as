@@ -235,7 +235,8 @@ public class b2World
 				m_destructionListener.SayGoodbyeFixture(f0);
 			}
 			
-			f0.Destroy(m_contactManager.m_broadPhase);
+			f0.DestroyProxy(m_contactManager.m_broadPhase);
+			f0.Destroy();
 			//f0->~b2Fixture();
 			//m_blockAllocator.Free(f0, sizeof(b2Fixture));
 			
@@ -301,24 +302,12 @@ public class b2World
 		if (j.m_bodyB.m_jointList) j.m_bodyB.m_jointList.prev = j.m_edgeB;
 		j.m_bodyB.m_jointList = j.m_edgeB;
 		
-		var bodyA:b2Body = def.body1;
-		var bodyB:b2Body = def.body2;
-		
-		var staticA:Boolean = bodyA.IsStatic();
-		var staticB:Boolean = bodyB.IsStatic();
+		var bodyA:b2Body = def.bodyA;
+		var bodyB:b2Body = def.bodyB;
 		
 		// If the joint prevents collisions, then flag any contacts for filtering.
-		if (def.collideConnected == false && (staticA == false || staticB == false))
+		if (def.collideConnected == false )
 		{
-			// Ensure we iterate over contacts on a dynamic body (usually have less contacts
-			// than a static body). Ideally we will have a contact count on both bodies.
-			if (staticB)
-			{
-				var bodyC:b2Body = bodyA;
-				bodyA = bodyB;
-				bodyB = bodyC;
-			}
-			
 			var edge:b2ContactEdge = bodyB.GetContactList();
 			while (edge)
 			{
@@ -370,8 +359,8 @@ public class b2World
 		var bodyB:b2Body = j.m_bodyB;
 		
 		// Wake up connected bodies.
-		bodyA.WakeUp();
-		bodyB.WakeUp();
+		bodyA.SetAwake(true);
+		bodyB.SetAwake(true);
 		
 		// Remove from body 1.
 		if (j.m_edgeA.prev)
@@ -559,9 +548,6 @@ public class b2World
 	* @param positionIterations for the position constraint solver.
 	*/
 	public function Step(dt:Number, velocityIterations:int, positionIterations:int) : void{
-		
-		//var height:int = m_contactManager.m_broadPhase.ComputeHeight();
-		
 		if (m_flags & e_newFixture)
 		{
 			m_contactManager.FindNewContacts();
@@ -633,12 +619,14 @@ public class b2World
 		var invQ:b2Vec2 = new b2Vec2;
 		var x1:b2Vec2 = new b2Vec2;
 		var x2:b2Vec2 = new b2Vec2;
-		var color:b2Color = new b2Color(0,0,0);
 		var xf:b2Transform;
 		var b1:b2AABB = new b2AABB();
 		var b2:b2AABB = new b2AABB();
 		var vs:Array = [new b2Vec2(), new b2Vec2(), new b2Vec2(), new b2Vec2()];
 		
+		// Store color here and reuse, to reduce allocations
+		var color:b2Color = new b2Color(0, 0, 0);
+			
 		if (flags & b2DebugDraw.e_shapeBit)
 		{
 			for (b = m_bodyList; b; b = b.m_next)
@@ -647,17 +635,30 @@ public class b2World
 				for (f = b.GetFixtureList(); f; f = f.m_next)
 				{
 					s = f.GetShape();
-					if (b.IsStatic())
+					if (b.IsActive() == false)
 					{
-						DrawShape(s, xf, new b2Color(0.5, 0.9, 0.5));
+						color.Set(0.5, 0.5, 0.3);
+						DrawShape(s, xf, color);
 					}
-					else if (b.IsSleeping())
+					else if (b.GetType() == b2Body.b2_staticBody)
 					{
-						DrawShape(s, xf, new b2Color(0.5, 0.5, 0.9));
+						color.Set(0.5, 0.9, 0.5);
+						DrawShape(s, xf, color);
+					}
+					else if (b.GetType() == b2Body.b2_kinematicBody)
+					{
+						color.Set(0.5, 0.5, 0.9);
+						DrawShape(s, xf, color);
+					}
+					else if (b.IsAwake() == false)
+					{
+						color.Set(0.6, 0.6, 0.6);
+						DrawShape(s, xf, color);
 					}
 					else
 					{
-						DrawShape(s, xf, new b2Color(0.9, 0.9, 0.9));
+						color.Set(0.9, 0.7, 0.7);
+						DrawShape(s, xf, color);
 					}
 				}
 			}
@@ -667,10 +668,7 @@ public class b2World
 		{
 			for (j = m_jointList; j; j = j.m_next)
 			{
-				//if (j.m_type != b2Joint.e_mouseJoint)
-				//{
-					DrawJoint(j);
-				//}
+				DrawJoint(j);
 			}
 		}
 		
@@ -684,7 +682,17 @@ public class b2World
 		
 		if (flags & b2DebugDraw.e_pairBit)
 		{
-			//TODO_ERIN
+			color.Set(0.3, 0.9, 0.9);
+			for (var contact:b2Contact = m_contactManager.m_contactList; contact; contact = contact.GetNext())
+			{
+				var fixtureA:b2Fixture = contact.GetFixtureA();
+				var fixtureB:b2Fixture = contact.GetFixtureB();
+
+				var cA:b2Vec2 = fixtureA.GetAABB().GetCenter();
+				var cB:b2Vec2 = fixtureB.GetAABB().GetCenter();
+
+				m_debugDraw.DrawSegment(cA, cB, color);
+			}
 		}
 		
 		if (flags & b2DebugDraw.e_aabbBit)
@@ -695,6 +703,10 @@ public class b2World
 			
 			for (b= m_bodyList; b; b = b.GetNext())
 			{
+				if (b.IsActive() == false)
+				{
+					continue;
+				}
 				for (f = b.GetFixtureList(); f; f = f.GetNext())
 				{
 					var aabb:b2AABB = bp.GetFatAABB(f.m_proxy);
@@ -813,8 +825,8 @@ public class b2World
 		{
 			var userData:* = broadPhase.GetUserData(proxy);
 			var fixture:b2Fixture = userData as b2Fixture;
-			fixture.RayCast(output, input);
-			if (output.hit == b2Shape.e_hitCollide)
+			var hit:Boolean = fixture.RayCast(output, input);
+			if (hit)
 			{
 				var fraction:Number = output.fraction;
 				var point:b2Vec2 = new b2Vec2(
@@ -926,12 +938,18 @@ public class b2World
 		var stack:Vector.<b2Body> = new Vector.<b2Body>(stackSize);
 		for (var seed:b2Body = m_bodyList; seed; seed = seed.m_next)
 		{
-			if (seed.m_flags & (b2Body.e_islandFlag | b2Body.e_sleepFlag))
+			if (seed.m_flags & b2Body.e_islandFlag )
 			{
 				continue;
 			}
 			
-			if (seed.IsStatic())
+			if (seed.IsAwake() == false || seed.IsActive() == false)
+			{
+				continue;
+			}
+			
+			// The seed can be dynamic or kinematic.
+			if (seed.GetType() == b2Body.b2_staticBody)
 			{
 				continue;
 			}
@@ -947,14 +965,18 @@ public class b2World
 			{
 				// Grab the next body off the stack and add it to the island.
 				b = stack[--stackCount];
+				//b2Assert(b.IsActive() == true);
 				island.AddBody(b);
 				
 				// Make sure the body is awake.
-				b.m_flags &= ~b2Body.e_sleepFlag;
+				if (b.IsAwake() == false)
+				{
+					b.SetAwake(true);
+				}
 				
 				// To keep islands as small as possible, we don't
 				// propagate islands across static bodies.
-				if (b.IsStatic())
+				if (b.GetType() == b2Body.b2_staticBody)
 				{
 					continue;
 				}
@@ -969,8 +991,10 @@ public class b2World
 						continue;
 					}
 					
-					// Is this contact touching?
-					if (ce.contact.IsSolid() == false || ce.contact.IsTouching() == false)
+					// Is this contact solid and touching?
+					if (ce.contact.IsSensor() == true ||
+						ce.contact.IsEnabled() == false ||
+						ce.contact.IsTouching() == false)
 					{
 						continue;
 					}
@@ -1000,11 +1024,17 @@ public class b2World
 						continue;
 					}
 					
+					other = jn.other;
+					
+					// Don't simulate joints connected to inactive bodies.
+					if (other.IsActive() == false)
+					{
+						continue;
+					}
+					
 					island.AddJoint(jn.joint);
 					jn.joint.m_islandFlag = true;
 					
-					//var other:b2Body = jn.other;
-					other = jn.other;
 					if (other.m_flags & b2Body.e_islandFlag)
 					{
 						continue;
@@ -1022,7 +1052,7 @@ public class b2World
 			{
 				// Allow static bodies to participate in other islands.
 				b = island.m_bodies[i];
-				if (b.IsStatic())
+				if (b.GetType() == b2Body.b2_staticBody)
 				{
 					b.m_flags &= ~b2Body.e_islandFlag;
 				}
@@ -1034,12 +1064,12 @@ public class b2World
 		// Synchronize fixutres, check for out of range bodies.
 		for (b = m_bodyList; b; b = b.m_next)
 		{
-			if (b.m_flags & b2Body.e_sleepFlag)
+			if (b.IsAwake() == false || b.IsActive() == false)
 			{
 				continue;
 			}
 			
-			if (b.IsStatic())
+			if (b.GetType() == b2Body.b2_staticBody)
 			{
 				continue;
 			}
@@ -1110,7 +1140,9 @@ public class b2World
 			for (c = m_contactList; c; c = c.m_next)
 			{
 				// Can this contact generate a solid TOI contact?
- 				if (c.IsSolid() == false || c.IsContinuous() == false)
+ 				if (c.IsSensor() == true ||
+					c.IsEnabled() == false ||
+					c.IsContinuous() == false)
 				{
 					continue;
 				}
@@ -1131,7 +1163,8 @@ public class b2World
 					bA = fA.m_body;
 					bB = fB.m_body;
 					
-					if ((bA.IsStatic() || bA.IsSleeping()) && (bB.IsStatic() || bB.IsSleeping()))
+					if ((bA.GetType() != b2Body.b2_dynamicBody || bA.IsAwake() == false) &&
+						(bB.GetType() != b2Body.b2_dynamicBody || bB.IsAwake() == false))
 					{
 						continue;
 					}
@@ -1199,7 +1232,8 @@ public class b2World
 			minContact.m_flags &= ~b2Contact.e_toiFlag;
 			
 			// Is the contact solid?
-			if (minContact.IsSolid() == false)
+			if (minContact.IsSensor() == true ||
+				minContact.IsEnabled() == false)
 			{
 				// Restore the sweeps
 				bA.m_sweep.Set(s_backupA);
@@ -1218,7 +1252,7 @@ public class b2World
 			
 			// Build the TOI island. We need a dynamic seed.
 			var seed:b2Body = bA;
-			if (seed.IsStatic())
+			if (seed.GetType() != b2Body.b2_dynamicBody)
 			{
 				seed = bB;
 			}
@@ -1240,11 +1274,14 @@ public class b2World
 				island.AddBody(b);
 				
 				// Make sure the body is awake.
-				b.m_flags &= ~b2Body.e_sleepFlag;
+				if (b.IsAwake() == false)
+				{
+					b.SetAwake(true);
+				}
 				
 				// To keep islands as small as possible, we don't
-				// propagate islands across static bodies.
-				if (b.IsStatic())
+				// propagate islands across static or kinematic bodies.
+				if (b.GetType() != b2Body.b2_dynamicBody)
 				{
 					continue;
 				}
@@ -1264,8 +1301,10 @@ public class b2World
 						continue;
 					}
 					
-					// Is this contact solid and touching? For performance we are not updating this contact.
-					if (cEdge.contact.IsSolid() == false || cEdge.contact.IsTouching() == false)
+					// Skip sperate, sensor, or disabled contacts.
+					if (cEdge.contact.IsSensor() == true ||
+						cEdge.contact.IsEnabled() == false ||
+						cEdge.contact.IsTouching() == false)
 					{
 						continue;
 					}
@@ -1282,11 +1321,11 @@ public class b2World
 						continue;
 					}
 					
-					// March forward, this can do no harm since this is the min TOI.
-					if (other.IsStatic() == false)
+					// Synchronize the connected body.
+					if (other.GetType() != b2Body.b2_dynamicBody)
 					{
 						other.Advance(minTOI);
-						other.WakeUp();
+						other.SetAwake(true);
 					}
 					
 					//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
@@ -1304,17 +1343,23 @@ public class b2World
 				if (jEdge.joint.m_islandFlag == true)
 					continue;
 				
+				other = jEdge.other;
+				if (other.IsActive() == false)
+				{
+					continue;
+				}
+				
 				island.AddJoint(jEdge.joint);
 				jEdge.joint.m_islandFlag = true;
-				other = jEdge.other;
 				
 				if (other.m_flags & b2Body.e_islandFlag)
 					continue;
 					
-				if (!other.IsStatic())
+				// Synchronize the connected body.
+				if (other.GetType() != b2Body.b2_dynamicBody)
 				{
 					other.Advance(minTOI);
-					other.WakeUp();
+					other.SetAwake(true);
 				}
 				
 				//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
@@ -1341,12 +1386,12 @@ public class b2World
 				b = island.m_bodies[i];
 				b.m_flags &= ~b2Body.e_islandFlag;
 				
-				if (b.m_flags & b2Body.e_sleepFlag)
+				if (b.IsAwake() == false)
 				{
 					continue;
 				}
 				
-				if (b.IsStatic())
+				if (b.GetType() != b2Body.b2_dynamicBody)
 				{
 					continue;
 				}
@@ -1389,14 +1434,14 @@ public class b2World
 	//
 	b2internal function DrawJoint(joint:b2Joint) : void{
 		
-		var b1:b2Body = joint.m_bodyA;
-		var b2:b2Body = joint.m_bodyB;
+		var b1:b2Body = joint.GetBodyA();
+		var b2:b2Body = joint.GetBodyB();
 		var xf1:b2Transform = b1.m_xf;
 		var xf2:b2Transform = b2.m_xf;
 		var x1:b2Vec2 = xf1.position;
 		var x2:b2Vec2 = xf2.position;
-		var p1:b2Vec2 = joint.GetAnchor1();
-		var p2:b2Vec2 = joint.GetAnchor2();
+		var p1:b2Vec2 = joint.GetAnchorA();
+		var p2:b2Vec2 = joint.GetAnchorB();
 		
 		//b2Color color(0.5f, 0.8f, 0.8f);
 		var color:b2Color = s_jointColor;
@@ -1477,35 +1522,6 @@ public class b2World
 		}
 	}
 	
-	
-	/*
-	b2internal var m_raycastUserData:*;
-	b2internal var m_raycastSegment:b2Segment;
-	b2internal var m_raycastNormal:b2Vec2 = new b2Vec2();
-	b2internal function RaycastSortKey(shape:b2Shape):Number{
-		if(m_contactManager.m_contactFilter && !m_contactManager.m_contactFilter.RayCollide(m_raycastUserData,shape))
-			return -1;
-		
-		var body:b2Body = shape.GetBody();
-		var xf:b2Transform = body.GetTransform();
-		var lambda:Array = [0];
-		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)==b2Shape.e_missCollide)
-			return -1;
-		return lambda[0];
-	}
-	
-	b2internal function RaycastSortKey2(shape:b2Shape):Number{
-		if(m_contactFilter && !m_contactFilter.RayCollide(m_raycastUserData,shape))
-			return -1;
-		
-		var body:b2Body = shape.GetBody();
-		var xf:b2Transform = body.GetTransform();
-		var lambda:Array = [0];
-		if(shape.TestSegment(xf, lambda, m_raycastNormal, m_raycastSegment, 1)!=b2Shape.e_hitCollide)
-			return -1;
-		return lambda[0];
-	}
-	*/
 	b2internal var m_flags:int;
 
 	b2internal var m_contactManager:b2ContactManager = new b2ContactManager();

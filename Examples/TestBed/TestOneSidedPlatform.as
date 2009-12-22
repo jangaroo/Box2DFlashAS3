@@ -59,6 +59,7 @@ package TestBed{
 			// Actor
 			{
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				bd.position.Set(10.0, 12.0);
 				body = m_world.CreateBody(bd);
 				
@@ -116,6 +117,6 @@ class ContactListener extends b2ContactListener
 			
 		var position:b2Vec2 = test.m_character.GetBody().GetPosition();
 		if (position.y > test.m_top)
-			contact.Disable();
+			contact.SetEnabled(false);
 	}
 }

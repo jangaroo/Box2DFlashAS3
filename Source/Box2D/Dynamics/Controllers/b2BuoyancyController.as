@@ -75,7 +75,7 @@ public class b2BuoyancyController extends b2Controller
 		}
 		for(var i:b2ControllerEdge=m_bodyList;i;i=i.nextBody){
 			var body:b2Body = i.body;
-			if(body.IsSleeping()){
+			if(body.IsAwake() == false){
 				//Buoyancy force is just a function of position,
 				//so unlike most forces, it is safe to ignore sleeping bodes
 				continue;

@@ -60,6 +60,7 @@ package TestBed{
 				cd = new b2CircleShape(7.5/tScale);
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				// Position in world space
 				bd.position.Set((Math.random() * 620 + 10)/m_physScale, 350/m_physScale);
 				
@@ -75,6 +76,7 @@ package TestBed{
 				fd.density = 1.0;
 				fd.filter.groupIndex = -1;
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				//bd.position = pivot + m_offset;
 				bd.position = b2Math.AddVV(pivot, m_offset);
 				m_chassis = m_world.CreateBody(bd);
@@ -88,6 +90,7 @@ package TestBed{
 				fd.density = 1.0;
 				fd.filter.groupIndex = -1;
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				//bd.position = pivot + m_offset;
 				bd.position = b2Math.AddVV(pivot, m_offset);
 				m_wheel = m_world.CreateBody(bd);
@@ -169,7 +172,9 @@ package TestBed{
 			
 			//b2BodyDef bd1, bd2;
 			var bd1:b2BodyDef = new b2BodyDef();
+			bd1.type = b2Body.b2_dynamicBody;
 			var bd2:b2BodyDef = new b2BodyDef();
+			bd2.type = b2Body.b2_dynamicBody;
 			bd1.position.SetV(m_offset);
 			bd2.position = b2Math.AddVV(p4, m_offset);
 			
@@ -215,22 +220,22 @@ package TestBed{
 			
 			//case 'a':
 			if (Input.isKeyPressed(65)){ // A
-				m_chassis.WakeUp();
+				m_chassis.SetAwake(true);
 				m_motorJoint.SetMotorSpeed(-m_motorSpeed);
 			}
 			//case 's':
 			if (Input.isKeyPressed(83)){ // S
-				m_chassis.WakeUp();
+				m_chassis.SetAwake(true);
 				m_motorJoint.SetMotorSpeed(0.0);
 			}
 			//case 'd':
 			if (Input.isKeyPressed(68)){ // D
-				m_chassis.WakeUp();
+				m_chassis.SetAwake(true);
 				m_motorJoint.SetMotorSpeed(m_motorSpeed);
 			}
 			//case 'm':
 			if (Input.isKeyPressed(77)){ // M
-				m_chassis.WakeUp();
+				m_chassis.SetAwake(true);
 				m_motorJoint.EnableMotor(!m_motorJoint.IsMotorEnabled());
 			}
 			

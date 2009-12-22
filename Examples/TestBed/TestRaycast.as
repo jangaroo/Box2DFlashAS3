@@ -52,6 +52,7 @@ package TestBed{
 			fd.restitution = 0.3;
 			fd.userData="laser";
 			var bd:b2BodyDef = new b2BodyDef();
+			bd.type = b2Body.b2_dynamicBody;
 			bd.position.Set(320 / m_physScale, 150 / m_physScale);
 			bd.position.Set(40 / m_physScale, 150 / m_physScale);
 			laser = m_world.CreateBody(bd);

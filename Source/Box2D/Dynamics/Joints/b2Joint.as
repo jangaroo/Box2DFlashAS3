@@ -42,13 +42,13 @@ public class b2Joint
 	}
 	
 	/**
-	* Get the anchor point on body1 in world coordinates.
+	* Get the anchor point on bodyA in world coordinates.
 	*/
-	public virtual function GetAnchor1():b2Vec2{return null};
+	public virtual function GetAnchorA():b2Vec2{return null};
 	/**
-	* Get the anchor point on body2 in world coordinates.
+	* Get the anchor point on bodyB in world coordinates.
 	*/
-	public virtual function GetAnchor2():b2Vec2{return null};
+	public virtual function GetAnchorB():b2Vec2{return null};
 	
 	/**
 	* Get the reaction force on body2 at the joint anchor.
@@ -62,7 +62,7 @@ public class b2Joint
 	/**
 	* Get the first body attached to this joint.
 	*/
-	public function GetBody1():b2Body
+	public function GetBodyA():b2Body
 	{
 		return m_bodyA;
 	}
@@ -70,7 +70,7 @@ public class b2Joint
 	/**
 	* Get the second body attached to this joint.
 	*/
-	public function GetBody2():b2Body
+	public function GetBodyB():b2Body
 	{
 		return m_bodyB;
 	}
@@ -96,6 +96,14 @@ public class b2Joint
 		m_userData = data;
 	}
 
+	/**
+	 * Short-cut function to determine if either body is inactive.
+	 * @return
+	 */
+	public function IsActive():Boolean {
+		return m_bodyA.IsActive() && m_bodyB.IsActive();
+	}
+	
 	//--------------- Internals Below -------------------
 
 	static b2internal function Create(def:b2JointDef, allocator:*):b2Joint{
@@ -203,8 +211,8 @@ public class b2Joint
 		m_type = def.type;
 		m_prev = null;
 		m_next = null;
-		m_bodyA = def.body1;
-		m_bodyB = def.body2;
+		m_bodyA = def.bodyA;
+		m_bodyB = def.bodyB;
 		m_collideConnected = def.collideConnected;
 		m_islandFlag = false;
 		m_userData = def.userData;
@@ -216,13 +224,6 @@ public class b2Joint
 
 	// This returns true if the position errors are within tolerance.
 	b2internal virtual function SolvePositionConstraints(baumgarte:Number):Boolean { return false };
-	
-	b2internal function ComputeXForm(xf:b2Transform, center:b2Vec2, localCenter:b2Vec2, angle:Number):void
-	{
-		xf.R.Set(angle);
-		//xf->position = center - b2Mul(xf->R, localCenter);
-		xf.position.SetV(b2Math.SubtractVV(center, b2Math.b2MulMV(xf.R, localCenter)));
-	}
 
 	b2internal var m_type:int;
 	b2internal var m_prev:b2Joint;
@@ -238,12 +239,12 @@ public class b2Joint
 	private var m_userData:*;
 	
 	// Cache here per time step to reduce cache misses.
-	b2internal var m_localCenter1:b2Vec2 = new b2Vec2();
-	b2internal var m_localCenter2:b2Vec2 = new b2Vec2();
-	b2internal var m_invMass1:Number;
-	b2internal var m_invMass2:Number;
-	b2internal var m_invI1:Number;
-	b2internal var m_invI2:Number;
+	b2internal var m_localCenterA:b2Vec2 = new b2Vec2();
+	b2internal var m_localCenterB:b2Vec2 = new b2Vec2();
+	b2internal var m_invMassA:Number;
+	b2internal var m_invMassB:Number;
+	b2internal var m_invIA:Number;
+	b2internal var m_invIB:Number;
 	
 	// ENUMS
 	

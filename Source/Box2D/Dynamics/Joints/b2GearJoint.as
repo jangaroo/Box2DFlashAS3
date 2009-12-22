@@ -46,12 +46,12 @@ use namespace b2internal;
 public class b2GearJoint extends b2Joint
 {
 	/** @inheritDoc */
-	public override function GetAnchor1():b2Vec2{
+	public override function GetAnchorA():b2Vec2{
 		//return m_bodyA->GetWorldPoint(m_localAnchor1);
 		return m_bodyA.GetWorldPoint(m_localAnchor1);
 	}
 	/** @inheritDoc */
-	public override function GetAnchor2():b2Vec2{
+	public override function GetAnchorB():b2Vec2{
 		//return m_bodyB->GetWorldPoint(m_localAnchor2);
 		return m_bodyB.GetWorldPoint(m_localAnchor2);
 	}
@@ -60,7 +60,7 @@ public class b2GearJoint extends b2Joint
 		// TODO_ERIN not tested
 		// b2Vec2 P = m_impulse * m_J.linear2;
 		//return inv_dt * P;
-		return new b2Vec2(inv_dt * m_impulse * m_J.linear2.x, inv_dt * m_impulse * m_J.linear2.y);
+		return new b2Vec2(inv_dt * m_impulse * m_J.linearB.x, inv_dt * m_impulse * m_J.linearB.y);
 	}
 	/** @inheritDoc */
 	public override function GetReactionTorque(inv_dt:Number):Number{
@@ -72,12 +72,12 @@ public class b2GearJoint extends b2Joint
 		var tX:Number = tMat.col1.x * rX + tMat.col2.x * rY;
 		rY = tMat.col1.y * rX + tMat.col2.y * rY;
 		rX = tX;
-		//b2Vec2 P = m_impulse * m_J.linear2;
-		var PX:Number = m_impulse * m_J.linear2.x;
-		var PY:Number = m_impulse * m_J.linear2.y;
-		//float32 L = m_impulse * m_J.angular2 - b2Cross(r, P);
+		//b2Vec2 P = m_impulse * m_J.linearB;
+		var PX:Number = m_impulse * m_J.linearB.x;
+		var PY:Number = m_impulse * m_J.linearB.y;
+		//float32 L = m_impulse * m_J.angularB - b2Cross(r, P);
 		//return inv_dt * L;
-		return inv_dt * (m_impulse * m_J.angular2 - rX * PY + rY * PX);
+		return inv_dt * (m_impulse * m_J.angularB - rX * PY + rY * PX);
 	}
 
 	/**
@@ -99,8 +99,8 @@ public class b2GearJoint extends b2Joint
 		
 		//b2Settings.b2Assert(type1 == b2Joint.e_revoluteJoint || type1 == b2Joint.e_prismaticJoint);
 		//b2Settings.b2Assert(type2 == b2Joint.e_revoluteJoint || type2 == b2Joint.e_prismaticJoint);
-		//b2Settings.b2Assert(def.joint1.m_bodyA.IsStatic());
-		//b2Settings.b2Assert(def.joint2.m_bodyA.IsStatic());
+		//b2Settings.b2Assert(def.joint1.GetBodyA().GetType() == b2Body.b2_staticBody);
+		//b2Settings.b2Assert(def.joint2.GetBodyA().GetType() == b2Body.b2_staticBody);
 		
 		m_revolute1 = null;
 		m_prismatic1 = null;
@@ -110,8 +110,8 @@ public class b2GearJoint extends b2Joint
 		var coordinate1:Number;
 		var coordinate2:Number;
 		
-		m_ground1 = def.joint1.m_bodyA;
-		m_bodyA = def.joint1.m_bodyB;
+		m_ground1 = def.joint1.GetBodyA();
+		m_bodyA = def.joint1.GetBodyB();
 		if (type1 == b2Joint.e_revoluteJoint)
 		{
 			m_revolute1 = def.joint1 as b2RevoluteJoint;
@@ -127,8 +127,8 @@ public class b2GearJoint extends b2Joint
 			coordinate1 = m_prismatic1.GetJointTranslation();
 		}
 		
-		m_ground2 = def.joint2.m_bodyA;
-		m_bodyB = def.joint2.m_bodyB;
+		m_ground2 = def.joint2.GetBodyA();
+		m_bodyB = def.joint2.GetBodyB();
 		if (type2 == b2Joint.e_revoluteJoint)
 		{
 			m_revolute2 = def.joint2 as b2RevoluteJoint;
@@ -173,7 +173,7 @@ public class b2GearJoint extends b2Joint
 		
 		if (m_revolute1)
 		{
-			m_J.angular1 = -1.0;
+			m_J.angularA = -1.0;
 			K += bA.m_invI;
 		}
 		else
@@ -193,15 +193,15 @@ public class b2GearJoint extends b2Joint
 			
 			//var crug:Number = b2Cross(r, ug);
 			crug = rX * ugY - rY * ugX;
-			//m_J.linear1 = -ug;
-			m_J.linear1.Set(-ugX, -ugY);
-			m_J.angular1 = -crug;
+			//m_J.linearA = -ug;
+			m_J.linearA.Set(-ugX, -ugY);
+			m_J.angularA = -crug;
 			K += bA.m_invMass + bA.m_invI * crug * crug;
 		}
 		
 		if (m_revolute2)
 		{
-			m_J.angular2 = -m_ratio;
+			m_J.angularB = -m_ratio;
 			K += m_ratio * m_ratio * bB.m_invI;
 		}
 		else
@@ -221,9 +221,9 @@ public class b2GearJoint extends b2Joint
 			
 			//float32 crug = b2Cross(r, ug);
 			crug = rX * ugY - rY * ugX;
-			//m_J.linear2 = -m_ratio * ug;
-			m_J.linear2.Set(-m_ratio*ugX, -m_ratio*ugY);
-			m_J.angular2 = -m_ratio * crug;
+			//m_J.linearB = -m_ratio * ug;
+			m_J.linearB.Set(-m_ratio*ugX, -m_ratio*ugY);
+			m_J.angularB = -m_ratio * crug;
 			K += m_ratio * m_ratio * (bB.m_invMass + bB.m_invI * crug * crug);
 		}
 		
@@ -233,14 +233,14 @@ public class b2GearJoint extends b2Joint
 		if (step.warmStarting)
 		{
 			// Warm starting.
-			//bA.m_linearVelocity += bA.m_invMass * m_impulse * m_J.linear1;
-			bA.m_linearVelocity.x += bA.m_invMass * m_impulse * m_J.linear1.x;
-			bA.m_linearVelocity.y += bA.m_invMass * m_impulse * m_J.linear1.y;
-			bA.m_angularVelocity += bA.m_invI * m_impulse * m_J.angular1;
-			//bB.m_linearVelocity += bB.m_invMass * m_impulse * m_J.linear2;
-			bB.m_linearVelocity.x += bB.m_invMass * m_impulse * m_J.linear2.x;
-			bB.m_linearVelocity.y += bB.m_invMass * m_impulse * m_J.linear2.y;
-			bB.m_angularVelocity += bB.m_invI * m_impulse * m_J.angular2;
+			//bA.m_linearVelocity += bA.m_invMass * m_impulse * m_J.linearA;
+			bA.m_linearVelocity.x += bA.m_invMass * m_impulse * m_J.linearA.x;
+			bA.m_linearVelocity.y += bA.m_invMass * m_impulse * m_J.linearA.y;
+			bA.m_angularVelocity += bA.m_invI * m_impulse * m_J.angularA;
+			//bB.m_linearVelocity += bB.m_invMass * m_impulse * m_J.linearB;
+			bB.m_linearVelocity.x += bB.m_invMass * m_impulse * m_J.linearB.x;
+			bB.m_linearVelocity.y += bB.m_invMass * m_impulse * m_J.linearB.y;
+			bB.m_angularVelocity += bB.m_invI * m_impulse * m_J.angularB;
 		}
 		else
 		{
@@ -261,12 +261,12 @@ public class b2GearJoint extends b2Joint
 		var impulse:Number = - m_mass * Cdot;
 		m_impulse += impulse;
 		
-		bA.m_linearVelocity.x += bA.m_invMass * impulse * m_J.linear1.x;
-		bA.m_linearVelocity.y += bA.m_invMass * impulse * m_J.linear1.y;
-		bA.m_angularVelocity  += bA.m_invI * impulse * m_J.angular1;
-		bB.m_linearVelocity.x += bB.m_invMass * impulse * m_J.linear2.x;
-		bB.m_linearVelocity.y += bB.m_invMass * impulse * m_J.linear2.y;
-		bB.m_angularVelocity  += bB.m_invI * impulse * m_J.angular2;
+		bA.m_linearVelocity.x += bA.m_invMass * impulse * m_J.linearA.x;
+		bA.m_linearVelocity.y += bA.m_invMass * impulse * m_J.linearA.y;
+		bA.m_angularVelocity  += bA.m_invI * impulse * m_J.angularA;
+		bB.m_linearVelocity.x += bB.m_invMass * impulse * m_J.linearB.x;
+		bB.m_linearVelocity.y += bB.m_invMass * impulse * m_J.linearB.y;
+		bB.m_angularVelocity  += bB.m_invI * impulse * m_J.angularB;
 	}
 	
 	b2internal override function SolvePositionConstraints(baumgarte:Number):Boolean
@@ -302,12 +302,12 @@ public class b2GearJoint extends b2Joint
 		
 		var impulse:Number = -m_mass * C;
 		
-		bA.m_sweep.c.x += bA.m_invMass * impulse * m_J.linear1.x;
-		bA.m_sweep.c.y += bA.m_invMass * impulse * m_J.linear1.y;
-		bA.m_sweep.a += bA.m_invI * impulse * m_J.angular1;
-		bB.m_sweep.c.x += bB.m_invMass * impulse * m_J.linear2.x;
-		bB.m_sweep.c.y += bB.m_invMass * impulse * m_J.linear2.y;
-		bB.m_sweep.a += bB.m_invI * impulse * m_J.angular2;
+		bA.m_sweep.c.x += bA.m_invMass * impulse * m_J.linearA.x;
+		bA.m_sweep.c.y += bA.m_invMass * impulse * m_J.linearA.y;
+		bA.m_sweep.a += bA.m_invI * impulse * m_J.angularA;
+		bB.m_sweep.c.x += bB.m_invMass * impulse * m_J.linearB.x;
+		bB.m_sweep.c.y += bB.m_invMass * impulse * m_J.linearB.y;
+		bB.m_sweep.a += bB.m_invI * impulse * m_J.angularB;
 		
 		bA.SynchronizeTransform();
 		bB.SynchronizeTransform();

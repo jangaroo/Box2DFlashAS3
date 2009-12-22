@@ -54,6 +54,7 @@ package TestBed{
 				cd2.m_p.Set( 15.0 / m_physScale, 15.0 / m_physScale);
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				
 				for (i = 0; i < 5; ++i)
 				{
@@ -74,6 +75,7 @@ package TestBed{
 				pd2.SetAsOrientedBox(7.5/m_physScale, 15.0/m_physScale, new b2Vec2(0.0, -15.0/m_physScale), 0.5 * Math.PI);
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				
 				for (i = 0; i < 5; ++i)
 				{
@@ -110,6 +112,7 @@ package TestBed{
 				sd2.SetAsVector(sd2.m_vertices, sd2.m_vertexCount);
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				bd.fixedRotation = true;
 				
 				for (i = 0; i < 5; ++i)
@@ -134,6 +137,7 @@ package TestBed{
 				sd_right.SetAsOrientedBox(4.5/m_physScale, 81.0/m_physScale, new b2Vec2(43.5/m_physScale, -70.5/m_physScale), 0.2);
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				bd.position.Set( 320.0/m_physScale, 300.0/m_physScale );
 				body = m_world.CreateBody(bd);
 				body.CreateFixture2(sd_bottom, 4.0);

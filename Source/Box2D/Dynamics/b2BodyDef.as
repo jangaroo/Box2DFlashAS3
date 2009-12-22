@@ -49,10 +49,12 @@ public class b2BodyDef
 		angularVelocity = 0.0;
 		linearDamping = 0.0;
 		angularDamping = 0.0;
-		allowSleep = true;
-		isSleeping = false;
+		autoSleep = true;
+		awake = true;
 		fixedRotation = false;
-		isBullet = false;
+		bullet = false;
+		type = b2Body.b2_staticBody;
+		active = true;
 	}
 
 	/**
@@ -99,12 +101,12 @@ public class b2BodyDef
 	* Set this flag to false if this body should never fall asleep. Note that
 	* this increases CPU usage.
 	*/
-	public var allowSleep:Boolean;
+	public var autoSleep:Boolean;
 
 	/**
-	* Is this body initially sleeping?
+	* Is this body initially awake or sleeping?
 	*/
-	public var isSleeping:Boolean;
+	public var awake:Boolean;
 
 	/**
 	* Should this body be prevented from rotating? Useful for characters.
@@ -117,7 +119,17 @@ public class b2BodyDef
 	* static bodies.
 	* @warning You should use this flag sparingly since it increases processing time.
 	*/
-	public var isBullet:Boolean;
+	public var bullet:Boolean;
+	
+	/**
+	 * Does this body start out active?
+	 */ 
+	public var active:Boolean;
+
+	/** The body type: static, kinematic, or dynamic. A member of the b2BodyType class
+	 * Note: if a dynamic body would have zero mass, the mass is set to one.
+	 */
+	public var type:uint;
 };
 
 

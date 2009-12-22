@@ -103,11 +103,11 @@ use namespace b2internal;
 public class b2PrismaticJoint extends b2Joint
 {
 	/** @inheritDoc */
-	public override function GetAnchor1():b2Vec2{
+	public override function GetAnchorA():b2Vec2{
 		return m_bodyA.GetWorldPoint(m_localAnchor1);
 	}
 	/** @inheritDoc */
-	public override function GetAnchor2():b2Vec2{
+	public override function GetAnchorB():b2Vec2{
 		return m_bodyB.GetWorldPoint(m_localAnchor2);
 	}
 	/** @inheritDoc */
@@ -207,8 +207,8 @@ public class b2PrismaticJoint extends b2Joint
 	*/
 	public function EnableLimit(flag:Boolean) : void
 	{
-		m_bodyA.WakeUp();
-		m_bodyB.WakeUp();
+		m_bodyA.SetAwake(true);
+		m_bodyB.SetAwake(true);
 		m_enableLimit = flag;
 	}
 	/**
@@ -231,8 +231,8 @@ public class b2PrismaticJoint extends b2Joint
 	public function SetLimits(lower:Number, upper:Number) : void
 	{
 		//b2Settings.b2Assert(lower <= upper);
-		m_bodyA.WakeUp();
-		m_bodyB.WakeUp();
+		m_bodyA.SetAwake(true);
+		m_bodyB.SetAwake(true);
 		m_lowerTranslation = lower;
 		m_upperTranslation = upper;
 	}
@@ -248,8 +248,8 @@ public class b2PrismaticJoint extends b2Joint
 	*/
 	public function EnableMotor(flag:Boolean) : void
 	{
-		m_bodyA.WakeUp();
-		m_bodyB.WakeUp();
+		m_bodyA.SetAwake(true);
+		m_bodyB.SetAwake(true);
 		m_enableMotor = flag;
 	}
 	/**
@@ -257,8 +257,8 @@ public class b2PrismaticJoint extends b2Joint
 	*/
 	public function SetMotorSpeed(speed:Number) : void
 	{
-		m_bodyA.WakeUp();
-		m_bodyB.WakeUp();
+		m_bodyA.SetAwake(true);
+		m_bodyB.SetAwake(true);
 		m_motorSpeed = speed;
 	}
 	/**
@@ -274,8 +274,8 @@ public class b2PrismaticJoint extends b2Joint
 	*/
 	public function SetMaxMotorForce(force:Number) : void
 	{
-		m_bodyA.WakeUp();
-		m_bodyB.WakeUp();
+		m_bodyA.SetAwake(true);
+		m_bodyB.SetAwake(true);
 		m_maxMotorForce = force;
 	}
 	/**
@@ -330,12 +330,8 @@ public class b2PrismaticJoint extends b2Joint
 		var tMat:b2Mat22;
 		var tX:Number;
 		
-		// You cannot create prismatic joint between bodies that
-		// both have fixed rotation.
-		//b2Settings.b2Assert(bA.m_invI > 0.0 || bB.m_invI > 0.0);
-		
-		m_localCenter1.SetV(bA.GetLocalCenter());
-		m_localCenter2.SetV(bB.GetLocalCenter());
+		m_localCenterA.SetV(bA.GetLocalCenter());
+		m_localCenterB.SetV(bB.GetLocalCenter());
 		
 		var xf1:b2Transform = bA.GetTransform();
 		var xf2:b2Transform = bB.GetTransform();
@@ -343,15 +339,15 @@ public class b2PrismaticJoint extends b2Joint
 		// Compute the effective masses.
 		//b2Vec2 r1 = b2Mul(bA->m_xf.R, m_localAnchor1 - bA->GetLocalCenter());
 		tMat = bA.m_xf.R;
-		var r1X:Number = m_localAnchor1.x - bA.m_sweep.localCenter.x;
-		var r1Y:Number = m_localAnchor1.y - bA.m_sweep.localCenter.y;
+		var r1X:Number = m_localAnchor1.x - m_localCenterA.x;
+		var r1Y:Number = m_localAnchor1.y - m_localCenterA.y;
 		tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
 		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
 		r1X = tX;
 		//b2Vec2 r2 = b2Mul(bB->m_xf.R, m_localAnchor2 - bB->GetLocalCenter());
 		tMat = bB.m_xf.R;
-		var r2X:Number = m_localAnchor2.x - bB.m_sweep.localCenter.x;
-		var r2Y:Number = m_localAnchor2.y - bB.m_sweep.localCenter.y;
+		var r2X:Number = m_localAnchor2.x - m_localCenterB.x;
+		var r2Y:Number = m_localAnchor2.y - m_localCenterB.y;
 		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
 		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
 		r2X = tX;
@@ -360,10 +356,10 @@ public class b2PrismaticJoint extends b2Joint
 		var dX:Number = bB.m_sweep.c.x + r2X - bA.m_sweep.c.x - r1X;
 		var dY:Number = bB.m_sweep.c.y + r2Y - bA.m_sweep.c.y - r1Y;
 		
-		m_invMass1 = bA.m_invMass;
-		m_invMass2 = bB.m_invMass;
-		m_invI1 = bA.m_invI;
-		m_invI2 = bB.m_invI;
+		m_invMassA = bA.m_invMass;
+		m_invMassB = bB.m_invMass;
+		m_invIA = bA.m_invI;
+		m_invIB = bB.m_invI;
 		
 		// Compute motor Jacobian and effective mass.
 		{
@@ -373,7 +369,7 @@ public class b2PrismaticJoint extends b2Joint
 			//m_a2 = b2Math.b2Cross(r2, m_axis);
 			m_a2 = r2X * m_axis.y - r2Y * m_axis.x;
 			
-			m_motorMass = m_invMass1 + m_invMass2 + m_invI1 * m_a1 * m_a1 + m_invI2 * m_a2 * m_a2; 
+			m_motorMass = m_invMassA + m_invMassB + m_invIA * m_a1 * m_a1 + m_invIB * m_a2 * m_a2; 
 			if(m_motorMass > Number.MIN_VALUE)
 				m_motorMass = 1.0 / m_motorMass;
 		}
@@ -386,10 +382,10 @@ public class b2PrismaticJoint extends b2Joint
 			//m_s2 = b2Math.b2Cross(r2, m_perp);
 			m_s2 = r2X * m_perp.y - r2Y * m_perp.x;
 			
-			var m1:Number = m_invMass1;
-			var m2:Number = m_invMass2;
-			var i1:Number = m_invI1;
-			var i2:Number = m_invI2;
+			var m1:Number = m_invMassA;
+			var m2:Number = m_invMassB;
+			var i1:Number = m_invIA;
+			var i2:Number = m_invIB;
 			
 			m_K.col1.x = m1 + m2 + i1 * m_s1 * m_s1 + i2 * m_s2 * m_s2;
  	  	  	m_K.col1.y = i1 * m_s1 + i2 * m_s2;
@@ -456,17 +452,17 @@ public class b2PrismaticJoint extends b2Joint
 			var L1:Number = m_impulse.x * m_s1 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a1;
 			var L2:Number = m_impulse.x * m_s2 + m_impulse.y + (m_motorImpulse + m_impulse.z) * m_a2; 
 
-			//bA->m_linearVelocity -= m_invMass1 * P;
-			bA.m_linearVelocity.x -= m_invMass1 * PX;
-			bA.m_linearVelocity.y -= m_invMass1 * PY;
-			//bA->m_angularVelocity -= m_invI1 * L1;
-			bA.m_angularVelocity -= m_invI1 * L1;
+			//bA->m_linearVelocity -= m_invMassA * P;
+			bA.m_linearVelocity.x -= m_invMassA * PX;
+			bA.m_linearVelocity.y -= m_invMassA * PY;
+			//bA->m_angularVelocity -= m_invIA * L1;
+			bA.m_angularVelocity -= m_invIA * L1;
 			
-			//bB->m_linearVelocity += m_invMass2 * P;
-			bB.m_linearVelocity.x += m_invMass2 * PX;
-			bB.m_linearVelocity.y += m_invMass2 * PY;
-			//bB->m_angularVelocity += m_invI2 * L2;
-			bB.m_angularVelocity += m_invI2 * L2;
+			//bB->m_linearVelocity += m_invMassB * P;
+			bB.m_linearVelocity.x += m_invMassB * PX;
+			bB.m_linearVelocity.y += m_invMassB * PY;
+			//bB->m_angularVelocity += m_invIB * L2;
+			bB.m_angularVelocity += m_invIB * L2;
 		}
 		else
 		{
@@ -505,13 +501,13 @@ public class b2PrismaticJoint extends b2Joint
 			L1 = impulse * m_a1;
 			L2 = impulse * m_a2;
 			
-			v1.x -= m_invMass1 * PX;
-			v1.y -= m_invMass1 * PY;
-			w1 -= m_invI1 * L1;
+			v1.x -= m_invMassA * PX;
+			v1.y -= m_invMassA * PY;
+			w1 -= m_invIA * L1;
 			
-			v2.x += m_invMass2 * PX;
-			v2.y += m_invMass2 * PY;
-			w2 += m_invI2 * L2;
+			v2.x += m_invMassB * PX;
+			v2.y += m_invMassB * PY;
+			w2 += m_invIB * L2;
 		}
 		
 		//Cdot1.x = b2Dot(m_perp, v2 - v1) + m_s2 * w2 - m_s1 * w1; 
@@ -557,13 +553,13 @@ public class b2PrismaticJoint extends b2Joint
 			L1 = df.x * m_s1 + df.y + df.z * m_a1;
 			L2 = df.x * m_s2 + df.y + df.z * m_a2;
 			
-			v1.x -= m_invMass1 * PX;
-			v1.y -= m_invMass1 * PY;
-			w1 -= m_invI1 * L1;
+			v1.x -= m_invMassA * PX;
+			v1.y -= m_invMassA * PY;
+			w1 -= m_invIA * L1;
 			
-			v2.x += m_invMass2 * PX;
-			v2.y += m_invMass2 * PY;
-			w2 += m_invI2 * L2;
+			v2.x += m_invMassB * PX;
+			v2.y += m_invMassB * PY;
+			w2 += m_invIB * L2;
 		}
 		else
 		{
@@ -577,13 +573,13 @@ public class b2PrismaticJoint extends b2Joint
 			L1 = df2.x * m_s1 + df2.y;
 			L2 = df2.x * m_s2 + df2.y;
 			
-			v1.x -= m_invMass1 * PX;
-			v1.y -= m_invMass1 * PY;
-			w1 -= m_invI1 * L1;
+			v1.x -= m_invMassA * PX;
+			v1.y -= m_invMassA * PY;
+			w1 -= m_invIA * L1;
 			
-			v2.x += m_invMass2 * PX;
-			v2.y += m_invMass2 * PY;
-			w2 += m_invI2 * L2;
+			v2.x += m_invMassB * PX;
+			v2.y += m_invMassB * PY;
+			w2 += m_invIB * L2;
 		}
 		
 		bA.m_linearVelocity.SetV(v1);
@@ -626,17 +622,17 @@ public class b2PrismaticJoint extends b2Joint
 		var R1:b2Mat22 = b2Mat22.FromAngle(a1);
 		var R2:b2Mat22 = b2Mat22.FromAngle(a2);
 		
-		//b2Vec2 r1 = b2Mul(R1, m_localAnchor1 - m_localCenter1);
+		//b2Vec2 r1 = b2Mul(R1, m_localAnchor1 - m_localCenterA);
 		tMat = R1;
-		var r1X:Number = m_localAnchor1.x - m_localCenter1.x;
-		var r1Y:Number = m_localAnchor1.y - m_localCenter1.y;
+		var r1X:Number = m_localAnchor1.x - m_localCenterA.x;
+		var r1Y:Number = m_localAnchor1.y - m_localCenterA.y;
 		tX =  (tMat.col1.x * r1X + tMat.col2.x * r1Y);
 		r1Y = (tMat.col1.y * r1X + tMat.col2.y * r1Y);
 		r1X = tX;
-		//b2Vec2 r2 = b2Mul(R2, m_localAnchor2 - m_localCenter2);
+		//b2Vec2 r2 = b2Mul(R2, m_localAnchor2 - m_localCenterB);
 		tMat = R2;
-		var r2X:Number = m_localAnchor2.x - m_localCenter2.x;
-		var r2Y:Number = m_localAnchor2.y - m_localCenter2.y;
+		var r2X:Number = m_localAnchor2.x - m_localCenterB.x;
+		var r2Y:Number = m_localAnchor2.y - m_localCenterB.y;
 		tX =  (tMat.col1.x * r2X + tMat.col2.x * r2Y);
 		r2Y = (tMat.col1.y * r2X + tMat.col2.y * r2Y);
 		r2X = tX;
@@ -693,10 +689,10 @@ public class b2PrismaticJoint extends b2Joint
 		
 		if (active)
 		{
-			m1 = m_invMass1;
-			m2 = m_invMass2;
-			i1 = m_invI1;
-			i2 = m_invI2;
+			m1 = m_invMassA;
+			m2 = m_invMassB;
+			i1 = m_invIA;
+			i2 = m_invIB;
 			
 			m_K.col1.x = m1 + m2 + i1 * m_s1 * m_s1 + i2 * m_s2 * m_s2;
  	  	  	m_K.col1.y = i1 * m_s1 + i2 * m_s2;
@@ -712,10 +708,10 @@ public class b2PrismaticJoint extends b2Joint
 		}
 		else
 		{
-			m1 = m_invMass1;
-			m2 = m_invMass2;
-			i1 = m_invI1;
-			i2 = m_invI2;
+			m1 = m_invMassA;
+			m2 = m_invMassB;
+			i1 = m_invIA;
+			i2 = m_invIB;
 			
 			var k11:Number  = m1 + m2 + i1 * m_s1 * m_s1 + i2 * m_s2 * m_s2;
 			var k12:Number = i1 * m_s1 + i2 * m_s2;
@@ -735,13 +731,13 @@ public class b2PrismaticJoint extends b2Joint
 		var L1:Number = impulse.x * m_s1 + impulse.y + impulse.z * m_a1;
 		var L2:Number = impulse.x * m_s2 + impulse.y + impulse.z * m_a2;
 		
-		c1.x -= m_invMass1 * PX;
-		c1.y -= m_invMass1 * PY;
-		a1 -= m_invI1 * L1;
+		c1.x -= m_invMassA * PX;
+		c1.y -= m_invMassA * PY;
+		a1 -= m_invIA * L1;
 		
-		c2.x += m_invMass2 * PX;
-		c2.y += m_invMass2 * PY;
-		a2 += m_invI2 * L2;
+		c2.x += m_invMassB * PX;
+		c2.y += m_invMassB * PY;
+		a2 += m_invIB * L2;
 		
 		// TODO_ERIN remove need for this
 		//bA.m_sweep.c = c1;	//Already done by reference

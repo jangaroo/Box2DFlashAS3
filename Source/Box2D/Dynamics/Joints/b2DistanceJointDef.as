@@ -55,10 +55,10 @@ public class b2DistanceJointDef extends b2JointDef
 	public function Initialize(bA:b2Body, bB:b2Body,
 								anchor1:b2Vec2, anchor2:b2Vec2) : void
 	{
-		body1 = bA;
-		body2 = bB;
-		localAnchor1.SetV( body1.GetLocalPoint(anchor1));
-		localAnchor2.SetV( body2.GetLocalPoint(anchor2));
+		bodyA = bA;
+		bodyB = bB;
+		localAnchor1.SetV( bodyA.GetLocalPoint(anchor1));
+		localAnchor2.SetV( bodyB.GetLocalPoint(anchor2));
 		var dX:Number = anchor2.x - anchor1.x;
 		var dY:Number = anchor2.y - anchor1.y;
 		length = Math.sqrt(dX*dX + dY*dY);

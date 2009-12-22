@@ -60,6 +60,7 @@ package TestBed{
 				var prevBody:b2Body = ground;
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				bd.position.Set(100.0/m_physScale, (360.0-105.0)/m_physScale);
 				body = m_world.CreateBody(bd);
 				body.CreateFixture(fixtureDef);
@@ -125,6 +126,7 @@ package TestBed{
 				fixtureDef.density = 5.0;
 				
 				var bd1:b2BodyDef = new b2BodyDef();
+				bd1.type = b2Body.b2_dynamicBody;
 				bd1.position.Set(200 / m_physScale, 360/2 / m_physScale);
 				var body1:b2Body = m_world.CreateBody(bd1);
 				body1.CreateFixture(fixtureDef);
@@ -138,6 +140,7 @@ package TestBed{
 				fixtureDef.density = 5.0;
 				
 				var bd2:b2BodyDef = new b2BodyDef();
+				bd2.type = b2Body.b2_dynamicBody;
 				bd2.position.Set(275 / m_physScale, 360/2 / m_physScale);
 				var body2:b2Body = m_world.CreateBody(bd2);
 				body2.CreateFixture(fixtureDef);
@@ -152,6 +155,7 @@ package TestBed{
 				fixtureDef.density = 5.0;
 				
 				var bd3:b2BodyDef = new b2BodyDef();
+				bd3.type = b2Body.b2_dynamicBody;
 				bd3.position.Set(335 / m_physScale, 360/2 / m_physScale);
 				var body3:b2Body = m_world.CreateBody(bd3);
 				body3.CreateFixture(fixtureDef);
@@ -165,16 +169,16 @@ package TestBed{
 				m_gJoint3 = m_world.CreateJoint(jd3) as b2PrismaticJoint;
 				
 				var jd4:b2GearJointDef = new b2GearJointDef();
-				jd4.body1 = body1;
-				jd4.body2 = body2;
+				jd4.bodyA = body1;
+				jd4.bodyB = body2;
 				jd4.joint1 = m_gJoint1;
 				jd4.joint2 = m_gJoint2;
 				jd4.ratio = circle2.GetRadius() / circle1.GetRadius();
 				m_gJoint4 = m_world.CreateJoint(jd4) as b2GearJoint;
 				
 				var jd5:b2GearJointDef = new b2GearJointDef();
-				jd5.body1 = body2;
-				jd5.body2 = body3;
+				jd5.bodyA = body2;
+				jd5.bodyB = body3;
 				jd5.joint1 = m_gJoint2;
 				jd5.joint2 = m_gJoint3;
 				jd5.ratio = -1.0 / circle2.GetRadius();
@@ -193,6 +197,7 @@ package TestBed{
 				fixtureDef.density = 5.0;
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				
 				bd.position.Set(480 / m_physScale, 200 / m_physScale);
 				body2 = m_world.CreateBody(bd);
@@ -234,6 +239,7 @@ package TestBed{
 				fixtureDef.density = 1.0;
 				
 				bd = new b2BodyDef();
+				bd.type = b2Body.b2_dynamicBody;
 				bd.position.Set(500 / m_physScale, 500/2 / m_physScale);
 				body = m_world.CreateBody(bd);
 				body.CreateFixture(fixtureDef);

@@ -47,7 +47,7 @@ public class b2EdgeShape extends b2Shape
 	/**
 	* @inheritDoc
 	*/
-	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):void
+	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):Boolean
 	{
 		var tMat:b2Mat22;
 		var rX: Number = input.p2.x - input.p1.x;
@@ -85,14 +85,12 @@ public class b2EdgeShape extends b2Shape
 					var nLen: Number = Math.sqrt(nX * nX + nY * nY);
 					output.normal.x = nX / nLen;
 					output.normal.y = nY / nLen;
-					output.hit = e_hitCollide;
-					return;
+					return true;
 				}
 			}
 		}
-	
-		output.hit = e_missCollide;
-		return;
+		
+		return false;
 	}
 
 	/**
