@@ -56,7 +56,7 @@ public class b2Controller
 	
 	public function RemoveBody(body:b2Body) : void
 	{
-		var edge:b2ControllerEdge;
+		var edge:b2ControllerEdge = body.m_controllerList;
 		while (edge && edge.controller != this)
 			edge = edge.nextController;
 			

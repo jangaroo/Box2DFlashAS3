@@ -205,7 +205,7 @@ public class b2World
 		
 		// Detach controllers attached to this body
 		var coe:b2ControllerEdge = b.m_controllerList;
-		while (ce)
+		while (coe)
 		{
 			var coe0:b2ControllerEdge = coe;
 			coe = coe.nextController;
