@@ -58,8 +58,6 @@ public class b2Transform
 		R.SetIdentity();
 	}
 
-	
-
 	public function Set(x:b2Transform) : void{
 
 		position.SetV(x.position);

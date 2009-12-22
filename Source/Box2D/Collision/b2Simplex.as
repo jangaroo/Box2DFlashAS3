@@ -306,7 +306,7 @@ public function Solve3():void
 	{
 		var inv_d12:Number = 1.0 / (d12_1 + d12_2);
 		m_v1.a = d12_1 * inv_d12;
-		m_v2.a = d12_1 * inv_d12;
+		m_v2.a = d12_2 * inv_d12;
 		m_count = 2;
 		return;
 	}

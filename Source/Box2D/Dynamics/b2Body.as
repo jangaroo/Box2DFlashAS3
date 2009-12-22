@@ -303,12 +303,6 @@ public class b2Body
 			return;
 		}
 		
-		// static bodies are not allowed to move.
-		if (m_type == b2_staticBody)
-		{
-			return;
-		}
-		
 		m_xf.R.Set(angle);
 		m_xf.position.SetV(position);
 		
@@ -1291,7 +1285,7 @@ public class b2Body
 	//enum
 	//{
 		/// The body type.
-		/// static: zero mass, zero velocity, never moves
+		/// static: zero mass, zero velocity, may be manually moved
 		/// kinematic: zero mass, non-zero velocity set by user, moved by solver
 		/// dynamic: positive mass, non-zero velocity determined by forces, moved by solver
 		static public var b2_staticBody:uint = 0;

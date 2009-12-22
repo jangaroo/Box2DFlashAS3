@@ -344,7 +344,7 @@ public class b2PolygonShape extends b2Shape
 				}
 			}
 			
-			if (upper < lower)
+			if (upper < lower - Number.MIN_VALUE)
 			{
 				return false;
 			}

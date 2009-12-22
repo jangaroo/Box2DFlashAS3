@@ -263,7 +263,7 @@ public class b2Math{
 	
 	static public const b2Vec2_zero:b2Vec2 = new b2Vec2(0.0, 0.0);
 	static public const b2Mat22_identity:b2Mat22 = b2Mat22.FromVV(new b2Vec2(1.0, 0.0), new b2Vec2(0.0, 1.0));
-	static public const b2XForm_identity:b2Transform = new b2Transform(b2Vec2_zero, b2Mat22_identity);
+	static public const b2Transform_identity:b2Transform = new b2Transform(b2Vec2_zero, b2Mat22_identity);
 	
 
 }

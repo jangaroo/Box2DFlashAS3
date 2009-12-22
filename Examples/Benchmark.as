@@ -61,7 +61,7 @@ import flash.display.MovieClip;
 		private var world:b2World;
 		private var result:XML;
 		private var timeStep:Number = 1.0 / frequency;
-		private var totalRuns:int = 1;
+		private var totalRuns:int = 10;
 		private var runCount:int;
 		private var data:Vector.<Number> = new Vector.<Number>();
 		
@@ -155,6 +155,7 @@ import flash.display.MovieClip;
 			for (var n:int = 0; n < steps; n++)
 			{
 				world.Step(timeStep, velocityIterations, positionIterations);
+				world.ClearForces();
 			}
 			var end:int = getTimer();
 			return end - start;

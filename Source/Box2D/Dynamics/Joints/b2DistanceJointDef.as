@@ -53,14 +53,14 @@ public class b2DistanceJointDef extends b2JointDef
 	* anchors.
 	*/
 	public function Initialize(bA:b2Body, bB:b2Body,
-								anchor1:b2Vec2, anchor2:b2Vec2) : void
+								anchorA:b2Vec2, anchorB:b2Vec2) : void
 	{
 		bodyA = bA;
 		bodyB = bB;
-		localAnchor1.SetV( bodyA.GetLocalPoint(anchor1));
-		localAnchor2.SetV( bodyB.GetLocalPoint(anchor2));
-		var dX:Number = anchor2.x - anchor1.x;
-		var dY:Number = anchor2.y - anchor1.y;
+		localAnchorA.SetV( bodyA.GetLocalPoint(anchorA));
+		localAnchorB.SetV( bodyB.GetLocalPoint(anchorB));
+		var dX:Number = anchorB.x - anchorA.x;
+		var dY:Number = anchorB.y - anchorA.y;
 		length = Math.sqrt(dX*dX + dY*dY);
 		frequencyHz = 0.0;
 		dampingRatio = 0.0;
@@ -69,12 +69,12 @@ public class b2DistanceJointDef extends b2JointDef
 	/**
 	* The local anchor point relative to body1's origin.
 	*/
-	public var localAnchor1:b2Vec2 = new b2Vec2();
+	public var localAnchorA:b2Vec2 = new b2Vec2();
 
 	/**
 	* The local anchor point relative to body2's origin.
 	*/
-	public var localAnchor2:b2Vec2 = new b2Vec2();
+	public var localAnchorB:b2Vec2 = new b2Vec2();
 
 	/**
 	* The equilibrium length between the anchor points.

@@ -595,6 +595,19 @@ public class b2World
 		m_flags &= ~e_locked;
 	}
 	
+	/**
+	 * Call this after you are done with time steps to clear the forces. You normally
+	 * call this after each call to Step, unless you are performing sub-steps.
+	 */
+	public function ClearForces() : void
+	{
+		for (var body:b2Body = m_bodyList; body; body = body.m_next)
+		{
+			body.m_force.SetZero();
+			body.m_torque = 0.0;
+		}
+	}
+	
 	static private var s_xf:b2Transform = new b2Transform();
 	/**
 	 * Call this to draw shapes and other debug draw data.
@@ -727,7 +740,7 @@ public class b2World
 				xf = s_xf;
 				xf.R = b.m_xf.R;
 				xf.position = b.GetWorldCenter();
-				m_debugDraw.DrawXForm(xf);
+				m_debugDraw.DrawTransform(xf);
 			}
 		}
 	}

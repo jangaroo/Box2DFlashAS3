@@ -183,10 +183,6 @@ public class b2Island
 			b.m_linearVelocity.y += step.dt * (gravity.y + b.m_invMass * b.m_force.y);
 			b.m_angularVelocity += step.dt * b.m_invI * b.m_torque;
 			
-			// Reset forces.
-			b.m_force.SetZero();
-			b.m_torque = 0.0;
-			
 			// Apply damping.
 			// ODE: dv/dt + c * v = 0
 			// Solution: v(t) = v0 * exp(-c * t)

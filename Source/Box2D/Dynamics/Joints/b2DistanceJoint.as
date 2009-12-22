@@ -81,10 +81,8 @@ public class b2DistanceJoint extends b2Joint
 		var tMat:b2Mat22;
 		var tX:Number;
 		var tY:Number;
-		//m_localAnchor1 = def->localAnchor1;
-		m_localAnchor1.SetV(def.localAnchor1);
-		//m_localAnchor2 = def->localAnchor2;
-		m_localAnchor2.SetV(def.localAnchor2);
+		m_localAnchor1.SetV(def.localAnchorA);
+		m_localAnchor2.SetV(def.localAnchorB);
 		
 		m_length = def.length;
 		m_frequencyHz = def.frequencyHz;
