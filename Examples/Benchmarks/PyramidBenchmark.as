@@ -52,6 +52,7 @@ import Box2D.Common.Math.*;
 			var ground:b2PolygonShape = b2PolygonShape.AsBox(20, .5);
 			body.CreateFixture2(ground);
 			
+			bodyDef.type = b2Body.b2_dynamicBody;
 			var box:b2PolygonShape = b2PolygonShape.AsBox(.5, .5);
 			for (var row:int = 0; row < size; row++)
 			{

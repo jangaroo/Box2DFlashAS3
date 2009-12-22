@@ -44,7 +44,8 @@ import flash.display.MovieClip;
 			//"SAP";
 			
 		public var test:IBenchmark = 
-			new PyramidBenchmark();
+			//new PyramidBenchmark();
+			new RagdollBenchmark();
 			//new NullBenchmark();
 			
 		public var doSleep:Boolean = false;
@@ -60,7 +61,7 @@ import flash.display.MovieClip;
 		private var world:b2World;
 		private var result:XML;
 		private var timeStep:Number = 1.0 / frequency;
-		private var totalRuns:int = 10;
+		private var totalRuns:int = 1;
 		private var runCount:int;
 		private var data:Vector.<Number> = new Vector.<Number>();
 		
@@ -169,6 +170,7 @@ import flash.display.MovieClip;
 			debugDraw.SetLineThickness(1.0);
 			debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 			world.SetDebugDraw(debugDraw);
+			this.graphics.clear();
 			world.DrawDebugData();
 			
 			// Show the text
