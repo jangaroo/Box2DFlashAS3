@@ -66,10 +66,10 @@ public class b2GravityController extends b2Controller
 						continue;
 					f = new b2Vec2(dx,dy);
 					f.Multiply(G / r2 / Math.sqrt(r2) * mass1* body2.GetMass());
-					if(!body1.IsSleeping())
+					if(body1.IsAwake())
 						body1.ApplyForce(f,p1);
 					f.Multiply(-1);
-					if(!body2.IsSleeping())
+					if(body2.IsAwake())
 						body2.ApplyForce(f,p2);
 				}
 			}
@@ -88,10 +88,10 @@ public class b2GravityController extends b2Controller
 						continue;
 					f = new b2Vec2(dx,dy);
 					f.Multiply(G / r2 * mass1 * body2.GetMass());
-					if(!body1.IsSleeping())
+					if(body1.IsAwake())
 						body1.ApplyForce(f,p1);
 					f.Multiply(-1);
-					if(!body2.IsSleeping())
+					if(body2.IsAwake())
 						body2.ApplyForce(f,p2);
 				}
 			}

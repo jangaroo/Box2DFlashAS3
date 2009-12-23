@@ -37,7 +37,7 @@ public class b2ConstantForceController extends b2Controller
 	public override function Step(step:b2TimeStep):void{
 		for(var i:b2ControllerEdge=m_bodyList;i;i=i.nextBody){
 			var body:b2Body = i.body;
-			if(body.IsSleeping())
+			if(!body.IsAwake())
 				continue;
 			body.ApplyForce(F,body.GetWorldCenter());
 		}

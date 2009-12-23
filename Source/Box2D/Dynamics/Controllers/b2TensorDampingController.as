@@ -70,7 +70,7 @@ public class b2TensorDampingController extends b2Controller
 			timestep = maxTimestep;
 		for(var i:b2ControllerEdge=m_bodyList;i;i=i.nextBody){
 			var body:b2Body = i.body;
-			if(body.IsSleeping()){
+			if(!body.IsAwake()){
 				//Sleeping bodies are still - so have no damping
 				continue;
 			}

@@ -38,7 +38,7 @@ public class b2ConstantAccelController extends b2Controller
 		var smallA:b2Vec2 = new b2Vec2(A.x*step.dt,A.y*step.dt);
 		for(var i:b2ControllerEdge=m_bodyList;i;i=i.nextBody){
 			var body:b2Body = i.body;
-			if(body.IsSleeping())
+			if(!body.IsAwake())
 				continue;
 			//Am being lazy here
 			body.SetLinearVelocity(new b2Vec2(
