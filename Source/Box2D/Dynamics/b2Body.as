@@ -729,6 +729,7 @@ public class b2Body
 		{
 			// Center the inertia about the center of mass
 			m_I -= m_mass * (center.x * center.x + center.y * center.y);
+			m_I *= m_inertiaScale;
 			b2Settings.b2Assert(m_I > 0);
 			m_invI = 1.0 / m_I;
 		}else {
@@ -1163,6 +1164,8 @@ public class b2Body
 		m_I = 0.0;
 		m_invI = 0.0;
 		
+		m_inertiaScale = bd.inertiaScale;
+		
 		m_userData = bd.userData;
 		
 		m_fixtureList = null;
@@ -1261,6 +1264,8 @@ public class b2Body
 
 	b2internal var m_mass:Number, m_invMass:Number;
 	b2internal var m_I:Number, m_invI:Number;
+	
+	b2internal var m_inertiaScale:Number;
 
 	b2internal var m_linearDamping:Number;
 	b2internal var m_angularDamping:Number;

@@ -47,8 +47,8 @@ public class b2RevoluteJointDef extends b2JointDef
 	public function b2RevoluteJointDef()
 	{
 		type = b2Joint.e_revoluteJoint;
-		localAnchor1.Set(0.0, 0.0);
-		localAnchor2.Set(0.0, 0.0);
+		localAnchorA.Set(0.0, 0.0);
+		localAnchorB.Set(0.0, 0.0);
 		referenceAngle = 0.0;
 		lowerAngle = 0.0;
 		upperAngle = 0.0;
@@ -65,23 +65,23 @@ public class b2RevoluteJointDef extends b2JointDef
 	public function Initialize(bA:b2Body, bB:b2Body, anchor:b2Vec2) : void{
 		bodyA = bA;
 		bodyB = bB;
-		localAnchor1 = bodyA.GetLocalPoint(anchor);
-		localAnchor2 = bodyB.GetLocalPoint(anchor);
+		localAnchorA = bodyA.GetLocalPoint(anchor);
+		localAnchorB = bodyB.GetLocalPoint(anchor);
 		referenceAngle = bodyB.GetAngle() - bodyA.GetAngle();
 	}
 
 	/**
-	* The local anchor point relative to body1's origin.
+	* The local anchor point relative to bodyA's origin.
 	*/
-	public var localAnchor1:b2Vec2 = new b2Vec2();
+	public var localAnchorA:b2Vec2 = new b2Vec2();
 
 	/**
-	* The local anchor point relative to body2's origin.
+	* The local anchor point relative to bodyB's origin.
 	*/
-	public var localAnchor2:b2Vec2 = new b2Vec2();
+	public var localAnchorB:b2Vec2 = new b2Vec2();
 
 	/**
-	* The body2 angle minus body1 angle in the reference state (radians).
+	* The bodyB angle minus bodyA angle in the reference state (radians).
 	*/
 	public var referenceAngle:Number;
 

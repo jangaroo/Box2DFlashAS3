@@ -219,6 +219,11 @@ public class b2Island
 		}
 		
 		// Post-solve (store impulses for warm starting).
+		for (i = 0; i < m_jointCount; ++i)
+		{
+			joint = m_joints[i];
+			joint.FinalizeVelocityConstraints();
+		}
 		contactSolver.FinalizeVelocityConstraints();
 		
 		// Integrate positions.

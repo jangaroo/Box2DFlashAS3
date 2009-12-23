@@ -66,7 +66,7 @@ public class b2PulleyJoint extends b2Joint
 	/**
 	 * Get the first ground anchor.
 	 */
-	public function GetGroundAnchor1() :b2Vec2
+	public function GetGroundAnchorA() :b2Vec2
 	{
 		//return m_ground.m_xf.position + m_groundAnchor1;
 		var a:b2Vec2 = m_ground.m_xf.position.Copy();
@@ -77,7 +77,7 @@ public class b2PulleyJoint extends b2Joint
 	/**
 	 * Get the second ground anchor.
 	 */
-	public function GetGroundAnchor2() :b2Vec2
+	public function GetGroundAnchorB() :b2Vec2
 	{
 		//return m_ground.m_xf.position + m_groundAnchor2;
 		var a:b2Vec2 = m_ground.m_xf.position.Copy();
@@ -137,24 +137,24 @@ public class b2PulleyJoint extends b2Joint
 		var tY:Number;
 		
 		m_ground = m_bodyA.m_world.m_groundBody;
-		//m_groundAnchor1 = def->groundAnchor1 - m_ground->m_xf.position;
-		m_groundAnchor1.x = def.groundAnchor1.x - m_ground.m_xf.position.x;
-		m_groundAnchor1.y = def.groundAnchor1.y - m_ground.m_xf.position.y;
-		//m_groundAnchor2 = def->groundAnchor2 - m_ground->m_xf.position;
-		m_groundAnchor2.x = def.groundAnchor2.x - m_ground.m_xf.position.x;
-		m_groundAnchor2.y = def.groundAnchor2.y - m_ground.m_xf.position.y;
-		//m_localAnchor1 = def->localAnchor1;
-		m_localAnchor1.SetV(def.localAnchor1);
-		//m_localAnchor2 = def->localAnchor2;
-		m_localAnchor2.SetV(def.localAnchor2);
+		//m_groundAnchor1 = def->groundAnchorA - m_ground->m_xf.position;
+		m_groundAnchor1.x = def.groundAnchorA.x - m_ground.m_xf.position.x;
+		m_groundAnchor1.y = def.groundAnchorA.y - m_ground.m_xf.position.y;
+		//m_groundAnchor2 = def->groundAnchorB - m_ground->m_xf.position;
+		m_groundAnchor2.x = def.groundAnchorB.x - m_ground.m_xf.position.x;
+		m_groundAnchor2.y = def.groundAnchorB.y - m_ground.m_xf.position.y;
+		//m_localAnchor1 = def->localAnchorA;
+		m_localAnchor1.SetV(def.localAnchorA);
+		//m_localAnchor2 = def->localAnchorB;
+		m_localAnchor2.SetV(def.localAnchorB);
 		
 		//b2Settings.b2Assert(def.ratio != 0.0);
 		m_ratio = def.ratio;
 		
-		m_constant = def.length1 + m_ratio * def.length2;
+		m_constant = def.lengthA + m_ratio * def.lengthB;
 		
-		m_maxLength1 = b2Math.b2Min(def.maxLength1, m_constant - m_ratio * b2_minPulleyLength);
-		m_maxLength2 = b2Math.b2Min(def.maxLength2, (m_constant - b2_minPulleyLength) / m_ratio);
+		m_maxLength1 = b2Math.b2Min(def.maxLengthA, m_constant - m_ratio * b2_minPulleyLength);
+		m_maxLength2 = b2Math.b2Min(def.maxLengthB, (m_constant - b2_minPulleyLength) / m_ratio);
 		
 		m_impulse = 0.0;
 		m_limitImpulse1 = 0.0;

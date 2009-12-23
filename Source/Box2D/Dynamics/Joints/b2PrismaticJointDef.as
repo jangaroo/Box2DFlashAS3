@@ -42,7 +42,7 @@ public class b2PrismaticJointDef extends b2JointDef
 		type = b2Joint.e_prismaticJoint;
 		//localAnchor1.SetZero();
 		//localAnchor2.SetZero();
-		localAxis1.Set(1.0, 0.0);
+		localAxisA.Set(1.0, 0.0);
 		referenceAngle = 0.0;
 		enableLimit = false;
 		lowerTranslation = 0.0;
@@ -56,29 +56,29 @@ public class b2PrismaticJointDef extends b2JointDef
 	{
 		bodyA = bA;
 		bodyB = bB;
-		localAnchor1 = bodyA.GetLocalPoint(anchor);
-		localAnchor2 = bodyB.GetLocalPoint(anchor);
-		localAxis1 = bodyA.GetLocalVector(axis);
+		localAnchorA = bodyA.GetLocalPoint(anchor);
+		localAnchorB = bodyB.GetLocalPoint(anchor);
+		localAxisA = bodyA.GetLocalVector(axis);
 		referenceAngle = bodyB.GetAngle() - bodyA.GetAngle();
 	}
 
 	/**
-	* The local anchor point relative to body1's origin.
+	* The local anchor point relative to bodyA's origin.
 	*/
-	public var localAnchor1:b2Vec2 = new b2Vec2();
+	public var localAnchorA:b2Vec2 = new b2Vec2();
 
 	/**
-	* The local anchor point relative to body2's origin.
+	* The local anchor point relative to bodyB's origin.
 	*/
-	public var localAnchor2:b2Vec2 = new b2Vec2();
+	public var localAnchorB:b2Vec2 = new b2Vec2();
 
 	/**
 	* The local translation axis in body1.
 	*/
-	public var localAxis1:b2Vec2 = new b2Vec2();
+	public var localAxisA:b2Vec2 = new b2Vec2();
 
 	/**
-	* The constrained angle between the bodies: body2_angle - body1_angle.
+	* The constrained angle between the bodies: bodyB_angle - bodyA_angle.
 	*/
 	public var referenceAngle:Number;
 

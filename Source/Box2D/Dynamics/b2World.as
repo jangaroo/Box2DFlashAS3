@@ -1468,8 +1468,8 @@ public class b2World
 		case b2Joint.e_pulleyJoint:
 			{
 				var pulley:b2PulleyJoint = (joint as b2PulleyJoint);
-				var s1:b2Vec2 = pulley.GetGroundAnchor1();
-				var s2:b2Vec2 = pulley.GetGroundAnchor2();
+				var s1:b2Vec2 = pulley.GetGroundAnchorA();
+				var s2:b2Vec2 = pulley.GetGroundAnchorB();
 				m_debugDraw.DrawSegment(s1, p1, color);
 				m_debugDraw.DrawSegment(s2, p2, color);
 				m_debugDraw.DrawSegment(s1, s2, color);

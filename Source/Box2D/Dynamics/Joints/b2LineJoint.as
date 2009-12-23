@@ -290,9 +290,9 @@ public class b2LineJoint extends b2Joint
 		var tX:Number;
 		var tY:Number;
 		
-		m_localAnchor1.SetV(def.localAnchor1);
-		m_localAnchor2.SetV(def.localAnchor2);
-		m_localXAxis1.SetV(def.localAxis1);
+		m_localAnchor1.SetV(def.localAnchorA);
+		m_localAnchor2.SetV(def.localAnchorB);
+		m_localXAxis1.SetV(def.localAxisA);
 		
 		//m_localYAxis1 = b2Cross(1.0f, m_localXAxis1);
 		m_localYAxis1.x = -m_localXAxis1.y;

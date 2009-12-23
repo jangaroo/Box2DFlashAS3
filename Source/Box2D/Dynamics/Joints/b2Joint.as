@@ -160,6 +160,20 @@ public class b2Joint
 			}
 			break;
 			
+		case e_weldJoint:
+			{
+				//void* mem = allocator->Allocate(sizeof(b2WeldJoint));
+				joint = new b2WeldJoint(def as b2WeldJointDef);
+			}
+			break;
+			
+		case e_frictionJoint:
+			{
+				//void* mem = allocator->Allocate(sizeof(b2FrictionJoint));
+				joint = new b2FrictionJoint(def as b2FrictionJointDef);
+			}
+			break;
+			
 		default:
 			//b2Settings.b2Assert(false);
 			break;
@@ -199,6 +213,14 @@ public class b2Joint
 		case e_lineJoint:
 			allocator->Free(joint, sizeof(b2LineJoint));
 			break;
+			
+		case e_weldJoint:
+			allocator->Free(joint, sizeof(b2WeldJoint));
+			break;
+			
+		case e_frictionJoint:
+			allocator->Free(joint, sizeof(b2FrictionJoint));
+			break;
 		
 		default:
 			b2Assert(false);
@@ -220,7 +242,8 @@ public class b2Joint
 	//virtual ~b2Joint() {}
 
 	b2internal virtual function InitVelocityConstraints(step:b2TimeStep) : void{};
-	b2internal virtual function SolveVelocityConstraints(step:b2TimeStep) : void{};
+	b2internal virtual function SolveVelocityConstraints(step:b2TimeStep) : void { };
+	b2internal virtual function FinalizeVelocityConstraints() : void{};
 
 	// This returns true if the position errors are within tolerance.
 	b2internal virtual function SolvePositionConstraints(baumgarte:Number):Boolean { return false };
@@ -257,6 +280,8 @@ public class b2Joint
 	static b2internal const e_mouseJoint:int = 5;
 	static b2internal const e_gearJoint:int = 6;
 	static b2internal const e_lineJoint:int = 7;
+	static b2internal const e_weldJoint:int = 8;
+	static b2internal const e_frictionJoint:int = 9;
 
 	// enum b2LimitState
 	static b2internal const e_inactiveLimit:int = 0;

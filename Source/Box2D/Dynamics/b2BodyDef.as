@@ -55,6 +55,7 @@ public class b2BodyDef
 		bullet = false;
 		type = b2Body.b2_staticBody;
 		active = true;
+		inertiaScale = 1.0;
 	}
 
 	/**
@@ -130,6 +131,12 @@ public class b2BodyDef
 	 * Note: if a dynamic body would have zero mass, the mass is set to one.
 	 */
 	public var type:uint;
+	
+	/**
+	 * Scales the inertia tensor.
+	 * @warning Experimental
+	 */
+	public var inertiaScale:Number;
 };
 
 

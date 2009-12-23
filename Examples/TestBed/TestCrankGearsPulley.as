@@ -211,8 +211,8 @@ package TestBed{
 				var groundAnchor2:b2Vec2 = new b2Vec2(480 / m_physScale, 50 / m_physScale);
 				pulleyDef.Initialize(body3, body2, groundAnchor1, groundAnchor2, anchor1, anchor2, 2.0);
 				
-				pulleyDef.maxLength1 = 200 / m_physScale;
-				pulleyDef.maxLength2 = 150 / m_physScale;
+				pulleyDef.maxLengthA = 200 / m_physScale;
+				pulleyDef.maxLengthB = 150 / m_physScale;
 				
 				//m_joint1 = m_world.CreateJoint(pulleyDef) as b2PulleyJoint;
 				m_world.CreateJoint(pulleyDef) as b2PulleyJoint;

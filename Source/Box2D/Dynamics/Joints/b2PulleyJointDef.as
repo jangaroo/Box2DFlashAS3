@@ -39,87 +39,87 @@ public class b2PulleyJointDef extends b2JointDef
 	public function b2PulleyJointDef()
 	{
 		type = b2Joint.e_pulleyJoint;
-		groundAnchor1.Set(-1.0, 1.0);
-		groundAnchor2.Set(1.0, 1.0);
-		localAnchor1.Set(-1.0, 0.0);
-		localAnchor2.Set(1.0, 0.0);
-		length1 = 0.0;
-		maxLength1 = 0.0;
-		length2 = 0.0;
-		maxLength2 = 0.0;
+		groundAnchorA.Set(-1.0, 1.0);
+		groundAnchorB.Set(1.0, 1.0);
+		localAnchorA.Set(-1.0, 0.0);
+		localAnchorB.Set(1.0, 0.0);
+		lengthA = 0.0;
+		maxLengthA = 0.0;
+		lengthB = 0.0;
+		maxLengthB = 0.0;
 		ratio = 1.0;
 		collideConnected = true;
 	}
 	
 	public function Initialize(bA:b2Body, bB:b2Body,
-				ga1:b2Vec2, ga2:b2Vec2,
-				anchor1:b2Vec2, anchor2:b2Vec2,
+				gaA:b2Vec2, gaB:b2Vec2,
+				anchorA:b2Vec2, anchorB:b2Vec2,
 				r:Number) : void
 	{
 		bodyA = bA;
 		bodyB = bB;
-		groundAnchor1.SetV( ga1 );
-		groundAnchor2.SetV( ga2 );
-		localAnchor1 = bodyA.GetLocalPoint(anchor1);
-		localAnchor2 = bodyB.GetLocalPoint(anchor2);
-		//b2Vec2 d1 = anchor1 - ga1;
-		var d1X:Number = anchor1.x - ga1.x;
-		var d1Y:Number = anchor1.y - ga1.y;
+		groundAnchorA.SetV( gaA );
+		groundAnchorB.SetV( gaB );
+		localAnchorA = bodyA.GetLocalPoint(anchorA);
+		localAnchorB = bodyB.GetLocalPoint(anchorB);
+		//b2Vec2 d1 = anchorA - gaA;
+		var d1X:Number = anchorA.x - gaA.x;
+		var d1Y:Number = anchorA.y - gaA.y;
 		//length1 = d1.Length();
-		length1 = Math.sqrt(d1X*d1X + d1Y*d1Y);
+		lengthA = Math.sqrt(d1X*d1X + d1Y*d1Y);
 		
 		//b2Vec2 d2 = anchor2 - ga2;
-		var d2X:Number = anchor2.x - ga2.x;
-		var d2Y:Number = anchor2.y - ga2.y;
+		var d2X:Number = anchorB.x - gaB.x;
+		var d2Y:Number = anchorB.y - gaB.y;
 		//length2 = d2.Length();
-		length2 = Math.sqrt(d2X*d2X + d2Y*d2Y);
+		lengthB = Math.sqrt(d2X*d2X + d2Y*d2Y);
 		
 		ratio = r;
 		//b2Settings.b2Assert(ratio > Number.MIN_VALUE);
-		var C:Number = length1 + ratio * length2;
-		maxLength1 = C - ratio * b2PulleyJoint.b2_minPulleyLength;
-		maxLength2 = (C - b2PulleyJoint.b2_minPulleyLength) / ratio;
+		var C:Number = lengthA + ratio * lengthB;
+		maxLengthA = C - ratio * b2PulleyJoint.b2_minPulleyLength;
+		maxLengthB = (C - b2PulleyJoint.b2_minPulleyLength) / ratio;
 	}
 
 	/**
 	* The first ground anchor in world coordinates. This point never moves.
 	*/
-	public var groundAnchor1:b2Vec2 = new b2Vec2();
+	public var groundAnchorA:b2Vec2 = new b2Vec2();
 	
 	/**
 	* The second ground anchor in world coordinates. This point never moves.
 	*/
-	public var groundAnchor2:b2Vec2 = new b2Vec2();
+	public var groundAnchorB:b2Vec2 = new b2Vec2();
 	
 	/**
-	* The local anchor point relative to body1's origin.
+	* The local anchor point relative to bodyA's origin.
 	*/
-	public var localAnchor1:b2Vec2 = new b2Vec2();
+	public var localAnchorA:b2Vec2 = new b2Vec2();
 	
 	/**
-	* The local anchor point relative to body2's origin.
+	* The local anchor point relative to bodyB's origin.
 	*/
-	public var localAnchor2:b2Vec2 = new b2Vec2();
+	public var localAnchorB:b2Vec2 = new b2Vec2();
 	
 	/**
-	* The a reference length for the segment attached to body1.
+	* The a reference length for the segment attached to bodyA.
 	*/
-	public var length1:Number;
+	public var lengthA:Number;
 	
 	/**
-	* The maximum length of the segment attached to body1.
+	* The maximum length of the segment attached to bodyA.
 	*/
-	public var maxLength1:Number;
+	public var maxLengthA:Number;
 	
 	/**
-	* The a reference length for the segment attached to body2.
+	* The a reference length for the segment attached to bodyB.
 	*/
-	public var length2:Number;
+	public var lengthB:Number;
 	
 	/**
-	* The maximum length of the segment attached to body2.
+	* The maximum length of the segment attached to bodyB.
 	*/
-	public var maxLength2:Number;
+	public var maxLengthB:Number;
 	
 	/**
 	* The pulley ratio, used to simulate a block-and-tackle.

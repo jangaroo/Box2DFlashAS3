@@ -55,6 +55,7 @@ package TestBed{
 			// Construct a world object
 			m_world = new b2World(gravity, doSleep);
 			//m_world.SetBroadPhase(new b2BroadPhase(worldAABB));
+			m_world.SetWarmStarting(true);
 			// set debug draw
 			var dbgDraw:b2DebugDraw = new b2DebugDraw();
 			//var dbgSprite:Sprite = new Sprite();

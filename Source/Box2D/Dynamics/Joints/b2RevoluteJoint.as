@@ -175,10 +175,10 @@ public class b2RevoluteJoint extends b2Joint
 	public function b2RevoluteJoint(def:b2RevoluteJointDef){
 		super(def);
 		
-		//m_localAnchor1 = def->localAnchor1;
-		m_localAnchor1.SetV(def.localAnchor1);
-		//m_localAnchor2 = def->localAnchor2;
-		m_localAnchor2.SetV(def.localAnchor2);
+		//m_localAnchor1 = def->localAnchorA;
+		m_localAnchor1.SetV(def.localAnchorA);
+		//m_localAnchor2 = def->localAnchorB;
+		m_localAnchor2.SetV(def.localAnchorB);
 		
 		m_referenceAngle = def.referenceAngle;
 		
