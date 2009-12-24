@@ -49,8 +49,8 @@ public class b2Collision{
 		var vIn1:b2Vec2 = cv.v;
 		
 		// Calculate the distance of end points to the line
-		var distance0:Number = b2Math.b2Dot(normal, vIn0) - offset;
-		var distance1:Number = b2Math.b2Dot(normal, vIn1) - offset;
+		var distance0:Number = normal.x * vIn0.x + normal.y * vIn0.y - offset;
+		var distance1:Number = normal.x * vIn1.x + normal.y * vIn1.y - offset;
 		
 		// If the points are behind the plane
 		if (distance0 <= 0.0) vOut[numOut++].Set(vIn[0]);
@@ -338,6 +338,11 @@ public class b2Collision{
 	private static var s_clipPoints2:Vector.<ClipVertex> = makeClipPointVector();
 	private static var s_edgeAO:Vector.<int> = new Vector.<int>(1);
 	private static var s_edgeBO:Vector.<int> = new Vector.<int>(1);
+	private static var s_localTangent:b2Vec2 = new b2Vec2();
+	private static var s_localNormal:b2Vec2 = new b2Vec2();
+	private static var s_planePoint:b2Vec2 = new b2Vec2();
+	private static var s_normal:b2Vec2 = new b2Vec2();
+	private static var s_tangent:b2Vec2 = new b2Vec2();
 	// Find edge normal of max separation on A - return if separating axis is found
 	// Find edge normal of max separation on B - return if separation axis is found
 	// Choose reference edge as min(minA, minB)
@@ -376,6 +381,7 @@ public class b2Collision{
 		var flip:uint;
 		const k_relativeTol:Number = 0.98;
 		const k_absoluteTol:Number = 0.001;
+		var tMat:b2Mat22;
 
 		if (separationB > k_relativeTol * separationA + k_absoluteTol)
 		{
@@ -414,14 +420,25 @@ public class b2Collision{
 			v12 = tVec.Copy();
 		}
 
-		var localTangent:b2Vec2 = b2Math.SubtractVV(v12 , v11);
+		var localTangent:b2Vec2 = s_localTangent;
+		localTangent.Set(v12.x - v11.x, v12.y - v11.y);
 		localTangent.Normalize();
 		
-		var localNormal:b2Vec2 = b2Math.b2CrossVF(localTangent, 1.0);
-		var planePoint:b2Vec2 = new b2Vec2(0.5 * (v11.x + v12.x), 0.5 * (v11.y + v12.y));
+		var localNormal:b2Vec2 = s_localNormal;
+		localNormal.x = localTangent.y;
+		localNormal.y = -localTangent.x;
 		
-		var tangent:b2Vec2 = b2Math.b2MulMV(xf1.R, localTangent);
-		var normal:b2Vec2 = b2Math.b2CrossVF(tangent, 1.0);
+		var planePoint:b2Vec2 = s_planePoint;
+		planePoint.Set(0.5 * (v11.x + v12.x), 0.5 * (v11.y + v12.y));
+		
+		var tangent:b2Vec2 = s_tangent;
+		//tangent = b2Math.b2MulMV(xf1.R, localTangent);
+		tMat = xf1.R;
+		tangent.x = (tMat.col1.x * localTangent.x + tMat.col2.x * localTangent.y);
+		tangent.y = (tMat.col1.y * localTangent.x + tMat.col2.y * localTangent.y);
+		var normal:b2Vec2 = s_normal;
+		normal.x = tangent.y;
+		normal.y = -tangent.x;
 		
 		v11 = b2Math.b2MulX(xf1, v11);
 		v12 = b2Math.b2MulX(xf1, v12);
@@ -462,7 +479,12 @@ public class b2Collision{
 			if (separation <= totalRadius)
 			{
 				var cp:b2ManifoldPoint = manifold.m_points[ pointCount ];
-				cp.m_localPoint = b2Math.b2MulXT(xf2, cv.v);
+				//cp.m_localPoint = b2Math.b2MulXT(xf2, cv.v);
+				tMat = xf2.R;
+				var tX:Number = cv.v.x - xf2.position.x;
+				var tY:Number = cv.v.y - xf2.position.y;
+				cp.m_localPoint.x = (tX * tMat.col1.x + tY * tMat.col1.y );
+				cp.m_localPoint.y = (tX * tMat.col2.x + tY * tMat.col2.y );
 				cp.m_id.Set(cv.id);
 				cp.m_id.features.flip = flip;
 				++pointCount;

@@ -65,8 +65,8 @@ public class b2ContactSolver
 			contact = contacts[i];
 			var fixtureA:b2Fixture = contact.m_fixtureA;
 			var fixtureB:b2Fixture = contact.m_fixtureB;
-			var shapeA:b2Shape = fixtureA.GetShape();
-			var shapeB:b2Shape = fixtureB.GetShape();
+			var shapeA:b2Shape = fixtureA.m_shape;
+			var shapeB:b2Shape = fixtureB.m_shape;
 			var radiusA:Number = shapeA.m_radius;
 			var radiusB:Number = shapeB.m_radius;
 			var bodyA:b2Body = fixtureA.m_body;
@@ -380,7 +380,9 @@ public class b2ContactSolver
 				lambda = -ccp.normalMass * (vn - ccp.velocityBias);
 				
 				// b2Clamp the accumulated impulse
-				newImpulse = b2Math.b2Max(ccp.normalImpulse + lambda, 0.0);
+				//newImpulse = b2Math.b2Max(ccp.normalImpulse + lambda, 0.0);
+				newImpulse = ccp.normalImpulse + lambda;
+				newImpulse = newImpulse > 0 ? newImpulse : 0.0;
 				lambda = newImpulse - ccp.normalImpulse;
 				
 				// Apply contact impulse

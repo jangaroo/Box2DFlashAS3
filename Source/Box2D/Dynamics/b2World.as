@@ -540,6 +540,7 @@ public class b2World
 		return m_groundBody;
 	}
 
+	private static var s_timestep2:b2TimeStep = new b2TimeStep();
 	/**
 	* Take a time step. This performs collision detection, integration,
 	* and constraint solution.
@@ -556,7 +557,7 @@ public class b2World
 		
 		m_flags |= e_locked;
 		
-		var step:b2TimeStep = new b2TimeStep();
+		var step:b2TimeStep = s_timestep2;
 		step.dt = dt;
 		step.velocityIterations = velocityIterations;
 		step.positionIterations = positionIterations;
@@ -918,6 +919,7 @@ public class b2World
 	// Internal yet public to make life easier.
 
 	// Find islands, integrate and solve constraints, solve position constraints
+	private var s_stack:Vector.<b2Body> = new Vector.<b2Body>();
 	b2internal function Solve(step:b2TimeStep) : void{
 		var b:b2Body;
 		
@@ -948,7 +950,7 @@ public class b2World
 		// Build and simulate all awake islands.
 		var stackSize:int = m_bodyCount;
 		//b2Body** stack = (b2Body**)m_stackAllocator.Allocate(stackSize * sizeof(b2Body*));
-		var stack:Vector.<b2Body> = new Vector.<b2Body>(stackSize);
+		var stack:Vector.<b2Body> = s_stack;
 		for (var seed:b2Body = m_bodyList; seed; seed = seed.m_next)
 		{
 			if (seed.m_flags & b2Body.e_islandFlag )
@@ -1073,6 +1075,11 @@ public class b2World
 		}
 		
 		//m_stackAllocator.Free(stack);
+		for (i = 0; i < stack.length;++i)
+		{
+			if (!stack[i]) break;
+			stack[i] = null;
+		}
 		
 		// Synchronize fixutres, check for out of range bodies.
 		for (b = m_bodyList; b; b = b.m_next)
@@ -1098,6 +1105,7 @@ public class b2World
 	
 	private static var s_backupA:b2Sweep = new b2Sweep();
 	private static var s_backupB:b2Sweep = new b2Sweep();
+	private static var s_timestep:b2TimeStep = new b2TimeStep();
 	private static var s_queue:Vector.<b2Body> = new Vector.<b2Body>();
 	// Find TOI contacts and solve them.
 	b2internal function SolveTOI(step:b2TimeStep) : void{
@@ -1381,7 +1389,7 @@ public class b2World
 				other.m_flags |= b2Body.e_islandFlag;
 			}
 			
-			var subStep:b2TimeStep = new b2TimeStep();
+			var subStep:b2TimeStep = s_timestep;
 			subStep.warmStarting = false;
 			subStep.dt = (1.0 - minTOI) * step.dt;
 			subStep.inv_dt = 1.0 / subStep.dt;
@@ -1440,7 +1448,6 @@ public class b2World
 		}
 		
 		//m_stackAllocator.Free(queue);
-		
 	}
 	
 	static private var s_jointColor:b2Color = new b2Color(0.5, 0.8, 0.8);

@@ -235,16 +235,18 @@ public class b2Island
 				continue;
 				
 			// Check for large velocities.
-			var translation:b2Vec2 = b2Math.MulFV(step.dt, b.m_linearVelocity);
+			// b2Vec2 translation = step.dt * b.m_linearVelocity;
+			var translationX:Number = step.dt * b.m_linearVelocity.x;
+			var translationY:Number = step.dt * b.m_linearVelocity.y;
 			//if (b2Dot(translation, translation) > b2_maxTranslationSquared)
-			if ((translation.LengthSquared()) > b2Settings.b2_maxTranslationSquared)
+			if ((translationX*translationX+translationY*translationY) > b2Settings.b2_maxTranslationSquared)
 			{
 				b.m_linearVelocity.Normalize();
 				b.m_linearVelocity.x *= b2Settings.b2_maxTranslation * step.inv_dt;
 				b.m_linearVelocity.y *= b2Settings.b2_maxTranslation * step.inv_dt;
 			}
 			var rotation:Number = step.dt * b.m_angularVelocity;
-			if (rotation* rotation > b2Settings.b2_maxRotationSquared)
+			if (rotation * rotation > b2Settings.b2_maxRotationSquared)
 			{
 				if (b.m_angularVelocity < 0.0)
 				{
@@ -380,9 +382,11 @@ public class b2Island
 				continue;
 				
 			// Check for large velocities.
-			var translation:b2Vec2 = b2Math.MulFV(subStep.dt, b.m_linearVelocity);
+			// b2Vec2 translation = subStep.dt * b.m_linearVelocity;
+			var translationX:Number = subStep.dt * b.m_linearVelocity.x;
+			var translationY:Number = subStep.dt * b.m_linearVelocity.y;
 			//if (b2Dot(translation, translation) > b2_maxTranslationSquared)
-			if ((translation.LengthSquared()) > b2Settings.b2_maxTranslationSquared)
+			if ((translationX*translationX+translationY*translationY) > b2Settings.b2_maxTranslationSquared)
 			{
 				b.m_linearVelocity.Normalize();
 				b.m_linearVelocity.x *= b2Settings.b2_maxTranslation * subStep.inv_dt;
@@ -390,7 +394,7 @@ public class b2Island
 			}
 			
 			var rotation:Number = subStep.dt * b.m_angularVelocity;
-			if (rotation* rotation > b2Settings.b2_maxRotationSquared)
+			if (rotation * rotation > b2Settings.b2_maxRotationSquared)
 			{
 				if (b.m_angularVelocity < 0.0)
 				{

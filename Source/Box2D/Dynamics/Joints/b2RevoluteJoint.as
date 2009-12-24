@@ -328,6 +328,9 @@ public class b2RevoluteJoint extends b2Joint
 		}
 	}
 	
+	private var impulse3:b2Vec3 = new b2Vec3();
+	private var impulse2:b2Vec2 = new b2Vec2();
+	private var reduced:b2Vec2 = new b2Vec2();
 	b2internal override function SolveVelocityConstraints(step:b2TimeStep) : void {
 		var bA:b2Body = m_bodyA;
 		var bB:b2Body = m_bodyB;
@@ -336,7 +339,6 @@ public class b2RevoluteJoint extends b2Joint
 		var tX:Number;
 		
 		var newImpulse:Number;
-		var reduced:b2Vec2;
 		var r1X:Number;
 		var r1Y:Number;
 		var r2X:Number;
@@ -391,7 +393,7 @@ public class b2RevoluteJoint extends b2Joint
 			var Cdot1Y:Number = v2.y + (w2 * r2X) - v1.y - (w1 * r1X);
 			var Cdot2:Number  = w2 - w1;
 			
-			var impulse3:b2Vec3 = m_mass.Solve33(new b2Vec3(), -Cdot1X, -Cdot1Y, -Cdot2);
+			m_mass.Solve33(impulse3, -Cdot1X, -Cdot1Y, -Cdot2);
 			
 			if (m_limitState == e_equalLimits)
 			{
@@ -402,7 +404,7 @@ public class b2RevoluteJoint extends b2Joint
 				newImpulse = m_impulse.z + impulse3.z;
 				if (newImpulse < 0.0)
 				{
-					reduced = m_mass.Solve22(new b2Vec2(), -Cdot1X, -Cdot1Y);
+					m_mass.Solve22(reduced, -Cdot1X, -Cdot1Y);
 					impulse3.x = reduced.x;
 					impulse3.y = reduced.y;
 					impulse3.z = -m_impulse.z;
@@ -416,7 +418,7 @@ public class b2RevoluteJoint extends b2Joint
 				newImpulse = m_impulse.z + impulse3.z;
 				if (newImpulse > 0.0)
 				{
-					reduced = m_mass.Solve22(new b2Vec2(), -Cdot1X, -Cdot1Y);
+					m_mass.Solve22(reduced, -Cdot1X, -Cdot1Y);
 					impulse3.x = reduced.x;
 					impulse3.y = reduced.y;
 					impulse3.z = -m_impulse.z;
@@ -455,7 +457,7 @@ public class b2RevoluteJoint extends b2Joint
 			var CdotX:Number = v2.x + ( -w2 * r2Y) - v1.x - ( -w1 * r1Y);
 			var CdotY:Number = v2.y + (w2 * r2X) - v1.y - (w1 * r1X);
 			
-			var impulse2:b2Vec2 = m_mass.Solve22(new b2Vec2(), -CdotX, -CdotY);
+			m_mass.Solve22(impulse2, -CdotX, -CdotY);
 			
 			m_impulse.x += impulse2.x;
 			m_impulse.y += impulse2.y;
