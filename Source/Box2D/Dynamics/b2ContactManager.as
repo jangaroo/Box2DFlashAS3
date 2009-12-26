@@ -41,6 +41,7 @@ public class b2ContactManager
 		m_contactCount = 0;
 		m_contactFilter = b2ContactFilter.b2_defaultFilter;
 		m_contactListener = b2ContactListener.b2_defaultListener;
+		m_contactFactory = new b2ContactFactory(m_allocator);
 		m_broadPhase = new b2DynamicTreeBroadPhase();
 	};
 
@@ -86,7 +87,7 @@ public class b2ContactManager
 		}
 		
 		// Call the factory.
-		var c:b2Contact = b2Contact.Create(fixtureA, fixtureB, m_allocator);
+		var c:b2Contact = m_contactFactory.Create(fixtureA, fixtureB);
 		
 		// Contact creation may swap shapes.
 		fixtureA = c.GetFixtureA();
@@ -203,7 +204,7 @@ public class b2ContactManager
 		}
 		
 		// Call the factory.
-		b2Contact.Destroy(c, m_allocator);
+		m_contactFactory.Destroy(c);
 		--m_contactCount;
 	}
 	
@@ -275,11 +276,12 @@ public class b2ContactManager
 	b2internal var m_world:b2World;
 	b2internal var m_broadPhase:IBroadPhase;
 	
-	public var m_contactList:b2Contact;
-	public var m_contactCount:int;
-	public var m_contactFilter:b2ContactFilter;
-	public var m_contactListener:b2ContactListener;
-	public var m_allocator:*;
+	b2internal var m_contactList:b2Contact;
+	b2internal var m_contactCount:int;
+	b2internal var m_contactFilter:b2ContactFilter;
+	b2internal var m_contactListener:b2ContactListener;
+	b2internal var m_contactFactory:b2ContactFactory;
+	b2internal var m_allocator:*;
 };
 
 }

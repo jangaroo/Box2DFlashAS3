@@ -34,14 +34,14 @@ use namespace b2internal;
 */
 public class b2PolyAndEdgeContact extends b2Contact{
 	
-	static public function Create(fixtureA:b2Fixture, fixtureB:b2Fixture, allocator:*):b2Contact{
-		return new b2PolyAndEdgeContact(fixtureA, fixtureB);
+	static public function Create(allocator:*):b2Contact{
+		return new b2PolyAndEdgeContact();
 	}
 	static public function Destroy(contact:b2Contact, allocator:*): void{
 	}
 
-	public function b2PolyAndEdgeContact(fixtureA:b2Fixture, fixtureB:b2Fixture){
-		super(fixtureA, fixtureB);
+	public function Reset(fixtureA:b2Fixture, fixtureB:b2Fixture):void{
+		super.Reset(fixtureA, fixtureB);
 		b2Settings.b2Assert(fixtureA.GetType() == b2Shape.e_polygonShape);
 		b2Settings.b2Assert(fixtureB.GetType() == b2Shape.e_edgeShape);
 	}

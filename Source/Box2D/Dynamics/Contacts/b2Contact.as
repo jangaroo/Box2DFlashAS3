@@ -176,98 +176,13 @@ public class b2Contact
 	// This contact needs filtering because a fixture filter was changed.
 	static b2internal var e_filterFlag:uint		= 0x0040;
 
-	static b2internal function AddType(createFcn:Function, destroyFcn:Function, type1:int, type2:int) : void
+	public function b2Contact()
 	{
-		//b2Settings.b2Assert(b2Shape.e_unknownShape < type1 && type1 < b2Shape.e_shapeTypeCount);
-		//b2Settings.b2Assert(b2Shape.e_unknownShape < type2 && type2 < b2Shape.e_shapeTypeCount);
-		
-		s_registers[type1][type2].createFcn = createFcn;
-		s_registers[type1][type2].destroyFcn = destroyFcn;
-		s_registers[type1][type2].primary = true;
-		
-		if (type1 != type2)
-		{
-			s_registers[type2][type1].createFcn = createFcn;
-			s_registers[type2][type1].destroyFcn = destroyFcn;
-			s_registers[type2][type1].primary = false;
-		}
+		// Real work is done in Reset
 	}
-	static b2internal function InitializeRegisters() : void{
-		s_registers = new Vector.<Vector.<b2ContactRegister> >(b2Shape.e_shapeTypeCount);
-		for (var i:int = 0; i < b2Shape.e_shapeTypeCount; i++){
-			s_registers[i] = new Vector.<b2ContactRegister>(b2Shape.e_shapeTypeCount);
-			for (var j:int = 0; j < b2Shape.e_shapeTypeCount; j++){
-				s_registers[i][j] = new b2ContactRegister();
-			}
-		}
-		
-		AddType(b2CircleContact.Create, b2CircleContact.Destroy, b2Shape.e_circleShape, b2Shape.e_circleShape);
-		AddType(b2PolyAndCircleContact.Create, b2PolyAndCircleContact.Destroy, b2Shape.e_polygonShape, b2Shape.e_circleShape);
-		AddType(b2PolygonContact.Create, b2PolygonContact.Destroy, b2Shape.e_polygonShape, b2Shape.e_polygonShape);
-		
-		AddType(b2EdgeAndCircleContact.Create, b2EdgeAndCircleContact.Destroy, b2Shape.e_edgeShape, b2Shape.e_circleShape);
-		AddType(b2PolyAndEdgeContact.Create, b2PolyAndEdgeContact.Destroy, b2Shape.e_polygonShape, b2Shape.e_edgeShape);
-	}
-	static b2internal function Create(fixtureA:b2Fixture, fixtureB:b2Fixture, allocator:*):b2Contact{
-		if (s_initialized == false)
-		{
-			InitializeRegisters();
-			s_initialized = true;
-		}
-		
-		var type1:int = fixtureA.GetType();
-		var type2:int = fixtureB.GetType();
-		
-		//b2Settings.b2Assert(b2Shape.e_unknownShape < type1 && type1 < b2Shape.e_shapeTypeCount);
-		//b2Settings.b2Assert(b2Shape.e_unknownShape < type2 && type2 < b2Shape.e_shapeTypeCount);
-		
-		var reg:b2ContactRegister = s_registers[type1][type2];
-		var createFcn:Function = reg.createFcn;
-		if (createFcn != null)
-		{
-			if (reg.primary)
-			{
-				return createFcn(fixtureA, fixtureB, allocator);
-			}
-			else
-			{
-				return createFcn(fixtureB, fixtureA, allocator);
-				var c:b2Contact = createFcn(fixtureB, fixtureA, allocator);
-				for (var i:int = 0; i < c.m_manifoldCount; ++i)
-				{
-					var m:b2Manifold = c.GetManifold()[ i ];
-					m.normal = m.normal.Negative();
-				}
-				return c;
-			}
-		}
-		else
-		{
-			return null;
-		}
-	}
-	static b2internal function Destroy(contact:b2Contact, allocator:*) : void{
-		//b2Settings.b2Assert(s_initialized == true);
-		
-		if (contact.m_manifold.m_pointCount > 0)
-		{
-			contact.m_fixtureA.m_body.SetAwake(true);
-			contact.m_fixtureB.m_body.SetAwake(true);
-		}
-		
-		var type1:int = contact.m_fixtureA.GetType();
-		var type2:int = contact.m_fixtureB.GetType();
-		
-		//b2Settings.b2Assert(b2Shape.e_unknownShape < type1 && type1 < b2Shape.e_shapeTypeCount);
-		//b2Settings.b2Assert(b2Shape.e_unknownShape < type2 && type2 < b2Shape.e_shapeTypeCount);
-		
-		var reg:b2ContactRegister = s_registers[type1][type2];
-		var destroyFcn:Function = reg.destroyFcn;
-		destroyFcn(contact, allocator);
-	}
-
+	
 	/** @private */
-	public function b2Contact(fixtureA:b2Fixture=null, fixtureB:b2Fixture=null)
+	b2internal function Reset(fixtureA:b2Fixture = null, fixtureB:b2Fixture = null):void
 	{
 		m_flags = e_enabledFlag;
 		
@@ -412,9 +327,6 @@ public class b2Contact
 		return b2TimeOfImpact.TimeOfImpact(s_input);
 	}
 	
-	static b2internal var s_registers:Vector.<Vector.<b2ContactRegister> >;
-	static b2internal var s_initialized:Boolean = false;
-
 	b2internal var m_flags:uint;
 
 	// World pool and list pointers.

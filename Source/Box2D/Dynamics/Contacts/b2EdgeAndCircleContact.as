@@ -33,15 +33,15 @@ use namespace b2internal;
 */
 public class b2EdgeAndCircleContact extends b2Contact
 {
-	static public function Create(fixtureA:b2Fixture, fixtureB:b2Fixture, allocator:*):b2Contact{
-		return new b2EdgeAndCircleContact(fixtureA, fixtureB);
+	static public function Create(allocator:*):b2Contact{
+		return new b2EdgeAndCircleContact();
 	}
 	static public function Destroy(contact:b2Contact, allocator:*) : void{
 		//
 	}
 
-	public function b2EdgeAndCircleContact(fixtureA:b2Fixture, fixtureB:b2Fixture){
-		super(fixtureA, fixtureB);
+	public function Reset(fixtureA:b2Fixture, fixtureB:b2Fixture):void{
+		super.Reset(fixtureA, fixtureB);
 		//b2Settings.b2Assert(m_shape1.m_type == b2Shape.e_circleShape);
 		//b2Settings.b2Assert(m_shape2.m_type == b2Shape.e_circleShape);
 	}
