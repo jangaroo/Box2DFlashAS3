@@ -45,7 +45,8 @@ import flash.display.MovieClip;
 			
 		public var test:IBenchmark = 
 			//new PyramidBenchmark();
-			new RagdollBenchmark();
+			//new RagdollBenchmark();
+			new LotteryBenchmark();
 			//new NullBenchmark();
 			
 		public var doSleep:Boolean = false;
@@ -55,6 +56,7 @@ import flash.display.MovieClip;
 		public var positionIterations:int = 10;
 		public var warmStarting:Boolean = true;
 		public var continuousPhysics:Boolean = false;
+		public var preview:Boolean = false;
 		
 		
 		// Private variables //////////////////
@@ -99,6 +101,12 @@ import flash.display.MovieClip;
 			
 			this.addEventListener(Event.ENTER_FRAME, RunTest);
 		
+			if (preview)
+			{
+				totalRuns = steps;
+				steps = 1;
+				InitWorld();
+			}
 		}
 		
 		private function InitWorld():void
@@ -114,9 +122,12 @@ import flash.display.MovieClip;
 		{
 			if (runCount < totalRuns)
 			{
-				InitWorld();
+				if(!preview)
+					InitWorld();
 				data.push(DoRun());
 				runCount++;
+				if (preview)
+					DisplayScene();
 			}else {
 				removeEventListener(Event.ENTER_FRAME, RunTest);
 				SummarizeResults();
@@ -161,7 +172,7 @@ import flash.display.MovieClip;
 			return end - start;
 		}
 		
-		private function ReportResults():void
+		private function DisplayScene():void
 		{
 			// Show a snapshot of the world in the background.
 			var debugDraw:b2DebugDraw = new b2DebugDraw();
@@ -173,6 +184,11 @@ import flash.display.MovieClip;
 			world.SetDebugDraw(debugDraw);
 			this.graphics.clear();
 			world.DrawDebugData();
+		}
+		
+		private function ReportResults():void
+		{
+			DisplayScene();
 			
 			// Show the text
 			var tf:TextField = new TextField();
