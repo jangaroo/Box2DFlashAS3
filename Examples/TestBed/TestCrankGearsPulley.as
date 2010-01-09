@@ -36,11 +36,12 @@ package TestBed{
 		public function TestCrankGearsPulley(){
 			
 			// Set Text field
-			Main.m_aboutText.text = "Crank/Gears/Pulley";
+			Main.m_aboutText.text = "Joints";
 			
 			var ground:b2Body = m_world.GetGroundBody();
 			
 			var body:b2Body;
+			var circleBody:b2Body;
 			var sd:b2PolygonShape;
 			var bd:b2BodyDef;
 			var fixtureDef:b2FixtureDef = new b2FixtureDef();
@@ -225,7 +226,7 @@ package TestBed{
 				fixtureDef.restitution = 0.3;
 				fixtureDef.density = 5.0;
 				bd.position.Set(485 / m_physScale, 100 / m_physScale);
-				body1 = m_world.CreateBody(bd);
+				body1 = circleBody = m_world.CreateBody(bd);
 				body1.CreateFixture(fixtureDef);
 			//}
 			
@@ -256,6 +257,17 @@ package TestBed{
 				ljd.enableMotor = true;
 				
 				m_world.CreateJoint(ljd);
+			}
+			
+			//
+			// FRICTION JOINT
+			//
+			{
+				var fjd:b2FrictionJointDef = new b2FrictionJointDef();
+				fjd.Initialize(circleBody, m_world.GetGroundBody(), circleBody.GetPosition());
+				fjd.collideConnected = true;
+				fjd.maxForce = 200;
+				m_world.CreateJoint(fjd);
 			}
 		}
 		

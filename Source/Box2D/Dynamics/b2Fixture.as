@@ -200,7 +200,7 @@ public class b2Fixture
 	 * @param	density
 	 */
 	public function SetDensity(density:Number):void {
-		
+		 m_density = density;
 	}
 	
 	/**

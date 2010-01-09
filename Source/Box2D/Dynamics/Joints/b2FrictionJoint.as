@@ -95,7 +95,10 @@ public class b2FrictionJoint extends b2Joint
 		m_localAnchorA.SetV(def.localAnchorA);
 		m_localAnchorB.SetV(def.localAnchorB);
 		
-		m_linearImpulse = new b2Vec2();
+		m_linearMass.SetZero();
+		m_angularMass = 0.0;
+		
+		m_linearImpulse.SetZero();
 		m_angularImpulse = 0.0;
 		
 		m_maxForce = def.maxForce;
@@ -282,10 +285,10 @@ public class b2FrictionJoint extends b2Joint
 	private var m_localAnchorA:b2Vec2 = new b2Vec2();
 	private var m_localAnchorB:b2Vec2 = new b2Vec2();
 	
-	public var m_linearMass:b2Mat22;
+	public var m_linearMass:b2Mat22 = new b2Mat22();
 	public var m_angularMass:Number;
 	
-	private var m_linearImpulse:b2Vec2;
+	private var m_linearImpulse:b2Vec2 = new b2Vec2();
 	private var m_angularImpulse:Number;
 	
 	private var m_maxForce:Number;

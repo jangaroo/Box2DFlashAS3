@@ -349,11 +349,11 @@ public class b2Island
 		m_contactSolver.Initialize(subStep, m_contacts, m_contactCount, m_allocator);
 		var contactSolver:b2ContactSolver = m_contactSolver;
 		
-		// No warm starting needed for TOI events.
-		
-		// For joints, initialize with the last full step warm starting values
-		subStep.warmStarting = true;
-		
+		// No warm starting is needed for TOI events because warm
+		// starting impulses were applied in the discrete solver.
+
+		// Warm starting for joints is off for now, but we need to
+		// call this function to compute Jacobians.
 		for (i = 0; i < m_jointCount;++i)
 		{
 			m_joints[i].InitVelocityConstraints(subStep);

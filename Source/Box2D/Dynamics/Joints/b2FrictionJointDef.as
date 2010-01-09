@@ -36,6 +36,8 @@ public class b2FrictionJointDef extends b2JointDef
 	public function b2FrictionJointDef()
 	{
 		type = b2Joint.e_frictionJoint;
+		maxForce = 0.0;
+		maxTorque = 0.0;
 	}
 	
 	/**
