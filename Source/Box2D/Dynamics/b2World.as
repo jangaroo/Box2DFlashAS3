@@ -769,6 +769,7 @@ public class b2World
 	 * @param callback a user implemented callback class. It should match signature
 	 * <code>function Callback(fixture:b2Fixture):Boolean</code>
 	 * Return true to continue to the next fixture.
+	 * @asonly
 	 */
 	public function QueryShape(callback:Function, shape:b2Shape, transform:b2Transform = null):void
 	{
@@ -790,11 +791,12 @@ public class b2World
 		broadPhase.Query(WorldQueryWrapper, aabb);
 	}
 	
-/**
+	/**
 	 * Query the world for all fixtures that contain a point.
 	 * @param callback a user implemented callback class. It should match signature
 	 * <code>function Callback(fixture:b2Fixture):Boolean</code>
 	 * Return true to continue to the next fixture.
+	 * @asonly
 	 */
 	public function QueryPoint(callback:Function, p:b2Vec2):void
 	{

@@ -58,48 +58,6 @@ public class b2Body
 	}
 	
 	/**
-	 * Set the type of this body. This may alter the mass and velocity
-	 * @param	type - enum stored as a static member of b2Body
-	 */ 
-	public function SetType( type:uint ):void
-	{
-		if ( m_type == type )
-		{
-			return;
-		}
-		
-		m_type = type;
-		
-		ResetMassData();
-		
-		if ( m_type == b2_staticBody )
-		{
-			m_linearVelocity.SetZero();
-			m_angularVelocity = 0.0;
-		}
-		
-		SetAwake(true);
-		
-		m_force.SetZero();
-		m_torque = 0.0;
-		
-		// Since the body type changed, we need to flag contacts for filtering.
-		for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
-		{
-			ce.contact.FlagForFiltering();
-		} 
-	}
-	
-	/**
-	 * Get the type of this body.
-	 * @return type enum as a uint
-	 */ 
-	public function GetType():uint
-	{
-		return m_type;
-	}
-	
-	/**
 	 * Creates a fixture and attach it to this body. Use this function if you need
 	 * to set some fixture parameters, like friction. Otherwise you can create the
 	 * fixture directly from a shape.
@@ -439,11 +397,15 @@ public class b2Body
 		return m_angularVelocity;
 	}
 	
+	/**
+	 * Get the definition containing the body properties.
+	 * @asonly
+	 */
 	public function GetDefinition() : b2BodyDef
 	{
 		var bd:b2BodyDef = new b2BodyDef();
 		bd.type = GetType();
-		bd.autoSleep = (m_flags & e_autoSleepFlag) == e_autoSleepFlag;
+		bd.allowSleep = (m_flags & e_allowSleepFlag) == e_allowSleepFlag;
 		bd.angle = GetAngle();
 		bd.angularDamping = m_angularDamping;
 		bd.angularVelocity = m_angularVelocity;
@@ -530,6 +492,7 @@ public class b2Body
 	 * @param	callback Called once per fixture, return true to move this fixture to the new body
 	 * <code>function Callback(fixture:b2Fixture):Boolean</code>
 	 * @return The newly created bodies
+	 * @asonly
 	 */
 	public function Split(callback:Function):b2Body
 	{
@@ -852,6 +815,48 @@ public class b2Body
 	{
 		m_angularDamping = angularDamping;
 	}
+	
+	/**
+	 * Set the type of this body. This may alter the mass and velocity
+	 * @param	type - enum stored as a static member of b2Body
+	 */ 
+	public function SetType( type:uint ):void
+	{
+		if ( m_type == type )
+		{
+			return;
+		}
+		
+		m_type = type;
+		
+		ResetMassData();
+		
+		if ( m_type == b2_staticBody )
+		{
+			m_linearVelocity.SetZero();
+			m_angularVelocity = 0.0;
+		}
+		
+		SetAwake(true);
+		
+		m_force.SetZero();
+		m_torque = 0.0;
+		
+		// Since the body type changed, we need to flag contacts for filtering.
+		for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
+		{
+			ce.contact.FlagForFiltering();
+		} 
+	}
+	
+	/**
+	 * Get the type of this body.
+	 * @return type enum as a uint
+	 */ 
+	public function GetType():uint
+	{
+		return m_type;
+	}
 
 	/**
 	* Should this body be treated like a bullet for continuous collision detection?
@@ -881,11 +886,11 @@ public class b2Body
 	public function SetSleepingAllowed(flag:Boolean):void{
 		if (flag)
 		{
-			m_flags |= e_autoSleepFlag;
+			m_flags |= e_allowSleepFlag;
 		}
 		else
 		{
-			m_flags &= ~e_autoSleepFlag;
+			m_flags &= ~e_allowSleepFlag;
 			SetAwake(true);
 		}
 	}
@@ -1016,7 +1021,7 @@ public class b2Body
 	*/
 	public function IsSleepingAllowed():Boolean
 	{
-		return(m_flags & e_autoSleepFlag) == e_autoSleepFlag;
+		return(m_flags & e_allowSleepFlag) == e_allowSleepFlag;
 	}
 
 	/**
@@ -1084,6 +1089,14 @@ public class b2Body
 	public function b2Body(bd:b2BodyDef, world:b2World){
 		//b2Settings.b2Assert(world.IsLocked() == false);
 		
+		//b2Settings.b2Assert(bd.position.IsValid());
+ 		//b2Settings.b2Assert(bd.linearVelocity.IsValid());
+ 		//b2Settings.b2Assert(b2Math.b2IsValid(bd.angle));
+ 		//b2Settings.b2Assert(b2Math.b2IsValid(bd.angularVelocity));
+ 		//b2Settings.b2Assert(b2Math.b2IsValid(bd.inertiaScale) && bd.inertiaScale >= 0.0);
+ 		//b2Settings.b2Assert(b2Math.b2IsValid(bd.angularDamping) && bd.angularDamping >= 0.0);
+ 		//b2Settings.b2Assert(b2Math.b2IsValid(bd.linearDamping) && bd.linearDamping >= 0.0);
+		
 		m_flags = 0;
 		
 		if (bd.bullet )
@@ -1094,9 +1107,9 @@ public class b2Body
 		{
 			m_flags |= e_fixedRotationFlag;
 		}
-		if (bd.autoSleep)
+		if (bd.allowSleep)
 		{
-			m_flags |= e_autoSleepFlag;
+			m_flags |= e_allowSleepFlag;
 		}
 		if (bd.awake)
 		{
@@ -1280,7 +1293,7 @@ public class b2Body
 	//{
 		static b2internal var e_islandFlag:uint			= 0x0001;
 		static b2internal var e_awakeFlag:uint			= 0x0002;
-		static b2internal var e_autoSleepFlag:uint		= 0x0004;
+		static b2internal var e_allowSleepFlag:uint		= 0x0004;
 		static b2internal var e_bulletFlag:uint			= 0x0008;
 		static b2internal var e_fixedRotationFlag:uint	= 0x0010;
 		static b2internal var e_activeFlag:uint			= 0x0020;

@@ -234,60 +234,82 @@ public class b2Contact
 		// Re-enable this contact
 		m_flags |= e_enabledFlag;
 		
-		if (m_fixtureA.m_aabb.TestOverlap(m_fixtureB.m_aabb))
-		{
-			Evaluate();
-		}
-		else
-		{
-			m_manifold.m_pointCount = 0;
-		}
+		var touching:Boolean = false;
+		var wasTouching:Boolean = (m_flags & e_touchingFlag) == e_touchingFlag;
 		
 		var bodyA:b2Body = m_fixtureA.m_body;
 		var bodyB:b2Body = m_fixtureB.m_body;
 		
-		var oldCount:Number = m_oldManifold.m_pointCount;
-		var newCount:Number = m_manifold.m_pointCount;
+		var aabbOverlap:Boolean = m_fixtureA.m_aabb.TestOverlap(m_fixtureB.m_aabb);
 		
-		if (newCount == 0 && oldCount > 0)
+		// Is this contat a sensor?
+		if (m_flags  & e_sensorFlag)
 		{
-			bodyA.SetAwake(true);
-			bodyB.SetAwake(true);
-		}
-		
-		// Slow contacts don't generate TOI events.
-		if (bodyA.GetType() != b2Body.b2_dynamicBody || bodyA.IsBullet() || bodyB.GetType() != b2Body.b2_dynamicBody || bodyB.IsBullet())
-		{
-			m_flags |= e_continuousFlag;
+			if (aabbOverlap)
+			{
+				var shapeA:b2Shape = m_fixtureA.GetShape();
+				var shapeB:b2Shape = m_fixtureB.GetShape();
+				var xfA:b2Transform = bodyA.GetTransform();
+				var xfB:b2Transform = bodyB.GetTransform();
+				touching = b2Shape.TestOverlap(shapeA, xfA, shapeB, xfB);
+			}
+			
+			// Sensors don't generate manifolds
+			m_manifold.m_pointCount = 0;
 		}
 		else
 		{
-			m_flags &= ~e_continuousFlag;
-		}
-		
-		// Match old contact ids to new contact ids and copy the
-		// stored impulses to warm start the solver.
-		for (var i:int = 0; i < m_manifold.m_pointCount; ++i)
-		{
-			var mp2:b2ManifoldPoint = m_manifold.m_points[i];
-			mp2.m_normalImpulse = 0.0;
-			mp2.m_tangentImpulse = 0.0;
-			var id2:b2ContactID = mp2.m_id;
-
-			for (var j:int = 0; j < m_oldManifold.m_pointCount; ++j)
+			// Slow contacts don't generate TOI events.
+			if (bodyA.GetType() != b2Body.b2_dynamicBody || bodyA.IsBullet() || bodyB.GetType() != b2Body.b2_dynamicBody || bodyB.IsBullet())
 			{
-				var mp1:b2ManifoldPoint = m_oldManifold.m_points[j];
-
-				if (mp1.m_id.key == id2.key)
+				m_flags |= e_continuousFlag;
+			}
+			else
+			{
+				m_flags &= ~e_continuousFlag;
+			}
+			
+			if (aabbOverlap)
+			{
+				Evaluate();
+				
+				touching = m_manifold.m_pointCount > 0;
+				
+				// Match old contact ids to new contact ids and copy the
+				// stored impulses to warm start the solver.
+				for (var i:int = 0; i < m_manifold.m_pointCount; ++i)
 				{
-					mp2.m_normalImpulse = mp1.m_normalImpulse;
-					mp2.m_tangentImpulse = mp1.m_tangentImpulse;
-					break;
+					var mp2:b2ManifoldPoint = m_manifold.m_points[i];
+					mp2.m_normalImpulse = 0.0;
+					mp2.m_tangentImpulse = 0.0;
+					var id2:b2ContactID = mp2.m_id;
+
+					for (var j:int = 0; j < m_oldManifold.m_pointCount; ++j)
+					{
+						var mp1:b2ManifoldPoint = m_oldManifold.m_points[j];
+
+						if (mp1.m_id.key == id2.key)
+						{
+							mp2.m_normalImpulse = mp1.m_normalImpulse;
+							mp2.m_tangentImpulse = mp1.m_tangentImpulse;
+							break;
+						}
+					}
 				}
+
+			}
+			else
+			{
+				m_manifold.m_pointCount = 0;
+			}
+			if (touching != wasTouching)
+			{
+				bodyA.SetAwake(true);
+				bodyB.SetAwake(true);
 			}
 		}
-		
-		if (newCount > 0)
+				
+		if (touching)
 		{
 			m_flags |= e_touchingFlag;
 		}
@@ -296,12 +318,12 @@ public class b2Contact
 			m_flags &= ~e_touchingFlag;
 		}
 
-		if (oldCount == 0 && newCount > 0)
+		if (wasTouching == false && touching == true)
 		{
 			listener.BeginContact(this);
 		}
 
-		if (oldCount > 0 && newCount == 0)
+		if (wasTouching == true && touching == false)
 		{
 			listener.EndContact(this);
 		}

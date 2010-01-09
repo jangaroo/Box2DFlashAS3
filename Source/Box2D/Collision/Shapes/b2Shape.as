@@ -129,7 +129,7 @@ public class b2Shape
 		simplexCache.count = 0;
 		var output:b2DistanceOutput = new b2DistanceOutput();
 		b2Distance.Distance(output, simplexCache, input);
-		return output.distance == 0.0;
+		return output.distance  < 10.0 * Number.MIN_VALUE;
 	}
 	
 	//--------------- Internals Below -------------------

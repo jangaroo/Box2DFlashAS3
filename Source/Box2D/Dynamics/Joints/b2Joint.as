@@ -51,11 +51,11 @@ public class b2Joint
 	public virtual function GetAnchorB():b2Vec2{return null};
 	
 	/**
-	* Get the reaction force on body2 at the joint anchor.
+	* Get the reaction force on body2 at the joint anchor in Newtons.
 	*/
 	public virtual function GetReactionForce(inv_dt:Number):b2Vec2 {return null};
 	/**
-	* Get the reaction torque on body2.
+	* Get the reaction torque on body2 in N*m.
 	*/
 	public virtual function GetReactionTorque(inv_dt:Number):Number {return 0.0}
 	
@@ -229,7 +229,8 @@ public class b2Joint
 	}
 
 	/** @private */
-	public function b2Joint(def:b2JointDef){
+	public function b2Joint(def:b2JointDef) {
+		b2Settings.b2Assert(def.bodyA != def.bodyB);
 		m_type = def.type;
 		m_prev = null;
 		m_next = null;

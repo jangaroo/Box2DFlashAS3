@@ -20,7 +20,9 @@ package Box2D.Collision
 {
 	import Box2D.Common.*;
 	import Box2D.Common.Math.*;
-
+	
+	// A dynamic AABB tree broad-phase, inspired by Nathanael Presson's btDbvt.
+	
 	/**
 	 * A dynamic tree arranges data in a binary tree to accelerate
 	 * queries such as volume queries and ray casts. Leafs are proxies
@@ -195,6 +197,7 @@ package Box2D.Collision
 					}
 					else
 					{
+						// No stack limit, so no assert
 						stack[count++] = node.child1;
 						stack[count++] = node.child2;
 					}
@@ -291,6 +294,7 @@ package Box2D.Collision
 				}
 				else
 				{
+					// No stack limit, so no assert
 					stack[count++] = node.child1;
 					stack[count++] = node.child2;
 				}

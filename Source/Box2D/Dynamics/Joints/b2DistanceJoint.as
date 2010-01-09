@@ -72,6 +72,42 @@ public class b2DistanceJoint extends b2Joint
 		return 0.0;
 	}
 	
+	/// Set the natural length
+	public function GetLength():Number
+	{
+		return m_length;
+	}
+	
+	/// Get the natural length
+	public function SetLength(length:Number):void
+	{
+		m_length = length;
+	}
+	
+	/// Get the frequency in Hz
+	public function GetFrequency():Number
+	{
+		return m_frequencyHz;
+	}
+	
+	/// Set the frequency in Hz
+	public function SetFrequency(hz:Number):void
+	{
+		m_frequencyHz = hz;
+	}
+	
+	/// Get damping ratio
+	public function GetDampingRatio():Number
+	{
+		return m_dampingRatio;
+	}
+	
+	/// Set damping ratio
+	public function SetDampingRatio(ratio:Number):void
+	{
+		m_dampingRatio = ratio;
+	}
+	
 	//--------------- Internals Below -------------------
 
 	/** @private */

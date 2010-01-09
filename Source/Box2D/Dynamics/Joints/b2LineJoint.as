@@ -263,14 +263,23 @@ public class b2LineJoint extends b2Joint
 	}
 	
 	/**
-	* Set the maximum motor force, usually in N.
-	*/
+	 * Set the maximum motor force, usually in N.
+	 */
 	public function SetMaxMotorForce(force:Number) : void
 	{
 		m_bodyA.SetAwake(true);
 		m_bodyB.SetAwake(true);
 		m_maxMotorForce = force;
 	}
+	
+	/**
+	 * Get the maximum motor force, usually in N.
+	 */
+	public function GetMaxMotorForce():Number
+	{
+		return m_maxMotorForce;
+	}
+	
 	/**
 	* Get the current motor force, usually in N.
 	*/

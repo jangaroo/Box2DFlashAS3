@@ -65,9 +65,15 @@ public class b2MouseJoint extends b2Joint
 	{
 		return 0.0;
 	}
+	
+	public function GetTarget():b2Vec2
+	{
+		return m_target;
+	}
+	
 	/**
-	* Use this to update the target point.
-	*/
+	 * Use this to update the target point.
+	 */
 	public function SetTarget(target:b2Vec2) : void{
 		if (m_bodyB.IsAwake() == false){
 			m_bodyB.SetAwake(true);
@@ -75,11 +81,52 @@ public class b2MouseJoint extends b2Joint
 		m_target = target;
 	}
 
+	/// Get the maximum force in Newtons.
+	public function GetMaxForce():Number
+	{
+		return m_maxForce;
+	}
+	
+	/// Set the maximum force in Newtons.
+	public function SetMaxForce(maxForce:Number):void
+	{
+		m_maxForce = maxForce;
+	}
+	
+	/// Get frequency in Hz
+	public function GetFrequency():Number
+	{
+		return m_frequencyHz;
+	}
+	
+	/// Set the frequency in Hz
+	public function SetFrequency(hz:Number):void
+	{
+		m_frequencyHz = hz;
+	}
+	
+	/// Get damping ratio
+	public function GetDampingRatio():Number
+	{
+		return m_dampingRatio;
+	}
+	
+	/// Set damping ratio
+	public function SetDampingRatio(ratio:Number):void
+	{
+		m_dampingRatio = ratio;
+	}
+	
 	//--------------- Internals Below -------------------
 
 	/** @private */
 	public function b2MouseJoint(def:b2MouseJointDef){
 		super(def);
+		
+		//b2Settings.b2Assert(def.target.IsValid());
+		//b2Settings.b2Assert(b2Math.b2IsValid(def.maxForce) && def.maxForce > 0.0);
+		//b2Settings.b2Assert(b2Math.b2IsValid(def.frequencyHz) && def.frequencyHz > 0.0);
+		//b2Settings.b2Assert(b2Math.b2IsValid(def.dampingRatio) && def.dampingRatio > 0.0);
 		
 		m_target.SetV(def.target);
 		//m_localAnchor = b2MulT(m_bodyB.m_xf, m_target);

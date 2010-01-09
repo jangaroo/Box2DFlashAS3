@@ -77,12 +77,12 @@ public class b2DistanceJointDef extends b2JointDef
 	public var localAnchorB:b2Vec2 = new b2Vec2();
 
 	/**
-	* The equilibrium length between the anchor points.
+	* The natural length between the anchor points.
 	*/
 	public var length:Number;
 
 	/**
-	* The response speed.
+	* The mass-spring-damper frequency in Hertz.
 	*/
 	public var frequencyHz:Number;
 

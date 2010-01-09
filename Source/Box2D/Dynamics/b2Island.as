@@ -305,18 +305,18 @@ public class b2Island
 			for (i = 0; i < m_bodyCount; ++i)
 			{
 				b = m_bodies[i];
-				if (b.GetType() != b2Body.b2_dynamicBody)
+				if (b.GetType() == b2Body.b2_staticBody)
 				{
 					continue;
 				}
 				
-				if ((b.m_flags & b2Body.e_autoSleepFlag) == 0)
+				if ((b.m_flags & b2Body.e_allowSleepFlag) == 0)
 				{
 					b.m_sleepTime = 0.0;
 					minSleepTime = 0.0;
 				}
 				
-				if ((b.m_flags & b2Body.e_autoSleepFlag) == 0 ||
+				if ((b.m_flags & b2Body.e_allowSleepFlag) == 0 ||
 					b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
 					b2Math.b2Dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr)
 				{

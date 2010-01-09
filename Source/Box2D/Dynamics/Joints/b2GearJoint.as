@@ -86,6 +86,14 @@ public class b2GearJoint extends b2Joint
 	public function GetRatio():Number{
 		return m_ratio;
 	}
+	
+	/**
+	 * Set the gear ratio.
+	 */
+	public function SetRatio(ratio:Number):void {
+		//b2Settings.b2Assert(b2Math.b2IsValid(ratio));
+		m_ratio = ratio;
+	}
 
 	//--------------- Internals Below -------------------
 

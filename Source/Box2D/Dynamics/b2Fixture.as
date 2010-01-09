@@ -200,7 +200,8 @@ public class b2Fixture
 	 * @param	density
 	 */
 	public function SetDensity(density:Number):void {
-		 m_density = density;
+		//b2Settings.b2Assert(b2Math.b2IsValid(density) && density >= 0.0);
+		m_density = density;
 	}
 	
 	/**
