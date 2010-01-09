@@ -18,8 +18,6 @@
 
 package Box2D.Collision.Shapes{
 
-
-
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Collision.Shapes.*;
@@ -52,6 +50,7 @@ public class b2PolygonShape extends b2Shape
 			var other2:b2PolygonShape = other as b2PolygonShape;
 			m_centroid.SetV(other2.m_centroid);
 			m_vertexCount = other2.m_vertexCount;
+			Reserve(m_vertexCount);
 			for (var i:int = 0; i < m_vertexCount; i++)
 			{
 				m_vertices[i].SetV(other2.m_vertices[i]);
@@ -90,8 +89,10 @@ public class b2PolygonShape extends b2Shape
 		if (vertexCount == 0)
 			vertexCount = vertices.length;
 			
-		b2Settings.b2Assert(2 <= vertexCount && vertexCount <= b2Settings.b2_maxPolygonVertices);
+		b2Settings.b2Assert(2 <= vertexCount);
 		m_vertexCount = vertexCount;
+		
+		Reserve(vertexCount);
 		
 		var i:int;
 		
@@ -156,6 +157,7 @@ public class b2PolygonShape extends b2Shape
 	public function SetAsBox(hx:Number, hy:Number) : void 
 	{
 		m_vertexCount = 4;
+		Reserve(4);
 		m_vertices[0].Set(-hx, -hy);
 		m_vertices[1].Set( hx, -hy);
 		m_vertices[2].Set( hx,  hy);
@@ -185,6 +187,7 @@ public class b2PolygonShape extends b2Shape
 	public function SetAsOrientedBox(hx:Number, hy:Number, center:b2Vec2 = null, angle:Number = 0.0) : void
 	{
 		m_vertexCount = 4;
+		Reserve(4);
 		m_vertices[0].Set(-hx, -hy);
 		m_vertices[1].Set( hx, -hy);
 		m_vertices[2].Set( hx,  hy);
@@ -220,6 +223,7 @@ public class b2PolygonShape extends b2Shape
 	public function SetAsEdge(v1:b2Vec2, v2:b2Vec2):void
 	{
 		m_vertexCount = 2;
+		Reserve(2);
 		m_vertices[0].SetV(v1);
 		m_vertices[1].SetV(v2);
 		m_centroid.x = 0.5 * (v1.x + v2.x);
@@ -734,10 +738,13 @@ public class b2PolygonShape extends b2Shape
 		m_type = e_polygonShape;
 		
 		m_centroid = new b2Vec2();
-		m_vertices = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices);
-		m_normals = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices);
-
-		for (var i:int = 0; i < b2Settings.b2_maxPolygonVertices; i++)
+		m_vertices = new Vector.<b2Vec2>();
+		m_normals = new Vector.<b2Vec2>();
+	}
+	
+	private function Reserve(count:int):void
+	{
+		for (var i:int = m_vertices.length; i < count; i++)
 		{
 			m_vertices[i] = new b2Vec2();
 			m_normals[i] = new b2Vec2();
@@ -829,8 +836,7 @@ public class b2PolygonShape extends b2Shape
 	static b2internal function ComputeOBB(obb:b2OBB, vs:Vector.<b2Vec2>, count:int) : void
 	{
 		var i:int;
-		//b2Settings.b2Assert(count <= b2Settings.b2_maxPolygonVertices);
-		var p:Vector.<b2Vec2> = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices + 1);
+		var p:Vector.<b2Vec2> = new Vector.<b2Vec2>(count + 1);
 		for (i = 0; i < count; ++i)
 		{
 			p[i] = vs[i];

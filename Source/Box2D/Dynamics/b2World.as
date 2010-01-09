@@ -1521,8 +1521,7 @@ public class b2World
 				var vertexCount:int = poly.GetVertexCount();
 				var localVertices:Vector.<b2Vec2> = poly.GetVertices();
 				
-				//b2Assert(vertexCount <= b2_maxPolygonVertices);
-				var vertices:Vector.<b2Vec2> = new Vector.<b2Vec2>(b2Settings.b2_maxPolygonVertices);
+				var vertices:Vector.<b2Vec2> = new Vector.<b2Vec2>(vertexCount);
 				
 				for (i = 0; i < vertexCount; ++i)
 				{

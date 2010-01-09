@@ -40,17 +40,14 @@ public class b2Settings{
 
 	// Collision
     /**
-    *   Number of manifold points in a b2Manifold. This should NEVER change.
-    */
+     *   Number of manifold points in a b2Manifold. This should NEVER change.
+     */
 	static public const b2_maxManifoldPoints:int = 2;
-    /**
-    * The maximun allowed vertices in a polygon. As polygons must be convex, there is usually little point increasing this.
-    */
-	static public const b2_maxPolygonVertices:int = 8;
+
     /*
-    * The growable broadphase doesn't have upper limits,
-	* so there is no b2_maxProxies or b2_maxPairs settings.
-    */
+     * The growable broadphase doesn't have upper limits,
+	 * so there is no b2_maxProxies or b2_maxPairs settings.
+     */
 	//static public const b2_maxProxies:int = 0;
 	//static public const b2_maxPairs:int = 8 * b2_maxProxies;
 	

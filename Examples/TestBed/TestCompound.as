@@ -29,9 +29,6 @@ package TestBed{
 	import Box2D.Common.*;
 	import Box2D.Common.Math.*;
 	
-	//TODO_BORIS: Remove
-	use namespace b2internal;
-	
 	public class TestCompound extends Test{
 		
 		public function TestCompound(){
@@ -46,12 +43,12 @@ package TestBed{
 			
 			{
 				var cd1:b2CircleShape = new b2CircleShape();
-				cd1.m_radius = 15.0/m_physScale;
-				cd1.m_p.Set( -15.0 / m_physScale, 15.0 / m_physScale);
+				cd1.SetRadius(15.0/m_physScale);
+				cd1.SetLocalPosition(new b2Vec2( -15.0 / m_physScale, 15.0 / m_physScale));
 				
 				var cd2:b2CircleShape = new b2CircleShape();
-				cd2.m_radius = 15.0/m_physScale;
-				cd2.m_p.Set( 15.0 / m_physScale, 15.0 / m_physScale);
+				cd2.SetRadius(15.0/m_physScale);
+				cd2.SetLocalPosition(new b2Vec2(15.0 / m_physScale, 15.0 / m_physScale));
 				
 				bd = new b2BodyDef();
 				bd.type = b2Body.b2_dynamicBody;
@@ -94,22 +91,22 @@ package TestBed{
 				xf1.position = b2Math.b2MulMV(xf1.R, new b2Vec2(1.0, 0.0));
 				
 				var sd1:b2PolygonShape = new b2PolygonShape();
-				sd1.m_vertexCount = 3;
-				sd1.m_vertices[0] = b2Math.b2MulX(xf1, new b2Vec2(-30.0/m_physScale, 0.0));
-				sd1.m_vertices[1] = b2Math.b2MulX(xf1, new b2Vec2(30.0/m_physScale, 0.0));
-				sd1.m_vertices[2] = b2Math.b2MulX(xf1, new b2Vec2(0.0, 15.0 / m_physScale));
-				sd1.SetAsVector(sd1.m_vertices, sd1.m_vertexCount);
+				sd1.SetAsArray([
+					b2Math.b2MulX(xf1, new b2Vec2(-30.0/m_physScale, 0.0)),
+					b2Math.b2MulX(xf1, new b2Vec2(30.0/m_physScale, 0.0)),
+					b2Math.b2MulX(xf1, new b2Vec2(0.0, 15.0 / m_physScale)),
+					]);
 				
 				var xf2:b2Transform = new b2Transform();
 				xf2.R.Set(-0.3524 * Math.PI);
 				xf2.position = b2Math.b2MulMV(xf2.R, new b2Vec2(-30.0/m_physScale, 0.0));
 				
 				var sd2:b2PolygonShape = new b2PolygonShape();
-				sd2.m_vertexCount = 3;
-				sd2.m_vertices[0] = b2Math.b2MulX(xf2, new b2Vec2(-30.0/m_physScale, 0.0));
-				sd2.m_vertices[1] = b2Math.b2MulX(xf2, new b2Vec2(30.0/m_physScale, 0.0));
-				sd2.m_vertices[2] = b2Math.b2MulX(xf2, new b2Vec2(0.0, 15.0 / m_physScale));
-				sd2.SetAsVector(sd2.m_vertices, sd2.m_vertexCount);
+				sd2.SetAsArray([
+					b2Math.b2MulX(xf2, new b2Vec2(-30.0/m_physScale, 0.0)),
+					b2Math.b2MulX(xf2, new b2Vec2(30.0/m_physScale, 0.0)),
+					b2Math.b2MulX(xf2, new b2Vec2(0.0, 15.0 / m_physScale)),
+					]);
 				
 				bd = new b2BodyDef();
 				bd.type = b2Body.b2_dynamicBody;

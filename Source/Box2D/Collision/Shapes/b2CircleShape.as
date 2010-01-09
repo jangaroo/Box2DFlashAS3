@@ -188,17 +188,33 @@ public class b2CircleShape extends b2Shape
 	}
 
 	/**
-	* Get the local position of this circle in its parent body.
-	*/
+	 * Get the local position of this circle in its parent body.
+	 */
 	public function GetLocalPosition() : b2Vec2{
 		return m_p;
 	}
-
+	
 	/**
-	* Get the radius of this circle.
-	*/
-	public function GetRadius() : Number{
+	 * Set the local position of this circle in its parent body.
+	 */
+	public function SetLocalPosition(position:b2Vec2):void {
+		m_p.SetV(position);
+	}
+	
+	/**
+	 * Get the radius of the circle
+	 */
+	public function GetRadius():Number
+	{
 		return m_radius;
+	}
+	
+	/**
+	 * Set the radius of the circle
+	 */
+	public function SetRadius(radius:Number):void
+	{
+		m_radius = radius;
 	}
 
 	public function b2CircleShape(radius:Number = 0){
