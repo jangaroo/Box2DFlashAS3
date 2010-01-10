@@ -295,8 +295,8 @@ public class b2WeldJoint extends b2Joint
 	private var m_localAnchorB:b2Vec2 = new b2Vec2();
 	private var m_referenceAngle:Number;
 	
-	private var m_impulse:b2Vec3;
-	private var m_mass:b2Mat33;
+	private var m_impulse:b2Vec3 = new b2Vec3();
+	private var m_mass:b2Mat33 = new b2Mat33();
 };
 
 }

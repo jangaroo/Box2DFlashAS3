@@ -269,6 +269,17 @@ package TestBed{
 				fjd.maxForce = 200;
 				m_world.CreateJoint(fjd);
 			}
+			
+			//
+			// WELD JOINT
+			//
+			// Not enabled as Weld joints are not encouraged compared with merging two bodies
+			if(false)
+			{
+				var wjd:b2WeldJointDef = new b2WeldJointDef();
+				wjd.Initialize(circleBody, body, circleBody.GetPosition());
+				m_world.CreateJoint(wjd);
+			}
 		}
 		
 		

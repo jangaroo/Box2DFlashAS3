@@ -496,7 +496,7 @@ public class b2Body
 	 */
 	public function Split(callback:Function):b2Body
 	{
-		var linearVelocity:b2Vec2 = GetLinearVelocity();
+		var linearVelocity:b2Vec2 = GetLinearVelocity().Copy();//Reset mass will alter this
 		var angularVelocity:Number = GetAngularVelocity();
 		var center:b2Vec2 = GetWorldCenter();
 		var body1:b2Body = this;
@@ -557,6 +557,53 @@ public class b2Body
 		return body2;
 	}
 
+	/**
+	 * Merges another body into this. Only fixtures, mass and velocity are effected,
+	 * Other properties are ignored
+	 * @asonly
+	 */
+	public function Merge(other:b2Body):void
+	{
+		var f:b2Fixture;
+		for (f = other.m_fixtureList; f; )
+		{
+			var next:b2Fixture = f.m_next;
+			
+			// Remove fixture
+			other.m_fixtureCount--;
+			
+			// Add fixture
+			f.m_next = m_fixtureList;
+			m_fixtureList = f;
+			m_fixtureCount++;
+			
+			f.m_body = body2;
+			
+			f = next;
+		}
+		body1.m_fixtureCount = 0;
+		
+		// Recalculate velocities
+		var body1:b2Body = this;
+		var body2:b2Body = other;
+		
+		// Compute consistent velocites for new bodies based on cached velocity
+		var center1:b2Vec2 = body1.GetWorldCenter();
+		var center2:b2Vec2 = body2.GetWorldCenter();
+		
+		var velocity1:b2Vec2 = body1.GetLinearVelocity().Copy();
+		var velocity2:b2Vec2 = body2.GetLinearVelocity().Copy();
+		
+		var angular1:Number = body1.GetAngularVelocity();
+		var angular:Number = body2.GetAngularVelocity();
+		
+		// TODO
+		
+		body1.ResetMassData();
+		
+		SynchronizeFixtures();
+	}
+	
 	/**
 	* Get the total mass of the body.
 	* @return the mass, usually in kilograms (kg).

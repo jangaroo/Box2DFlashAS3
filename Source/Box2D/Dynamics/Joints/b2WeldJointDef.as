@@ -31,13 +31,14 @@ use namespace b2internal;
  * Weld joint definition. You need to specify local anchor points
  * where they are attached and the relative body angle. The position
  * of the anchor points is important for computing the reaction torque.
- * @see b2FrictionJoint
+ * @see b2WeldJoint
  */
 public class b2WeldJointDef extends b2JointDef
 {
 	public function b2WeldJointDef()
 	{
 		type = b2Joint.e_weldJoint;
+		referenceAngle = 0.0;
 	}
 	
 	/**
