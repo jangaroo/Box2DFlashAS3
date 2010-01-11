@@ -54,7 +54,7 @@ public class b2PolygonContact extends b2Contact
 		var bA:b2Body = m_fixtureA.GetBody();
 		var bB:b2Body = m_fixtureB.GetBody();
 
-		b2Collision.b2CollidePolygons(m_manifold, 
+		b2Collision.CollidePolygons(m_manifold, 
 					m_fixtureA.GetShape() as b2PolygonShape, bA.m_xf, 
 					m_fixtureB.GetShape() as b2PolygonShape, bB.m_xf);
 	}

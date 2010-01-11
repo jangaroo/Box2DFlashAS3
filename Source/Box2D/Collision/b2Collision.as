@@ -326,16 +326,16 @@ public class b2Collision{
 	}
 	
 	
-	private static function makeClipPointVector():Vector.<ClipVertex>
+	private static function MakeClipPointVector():Vector.<ClipVertex>
 	{
 		var r:Vector.<ClipVertex> = new Vector.<ClipVertex>(2);
 		r[0] = new ClipVertex();
 		r[1] = new ClipVertex();
 		return r;
 	}
-	private static var s_incidentEdge:Vector.<ClipVertex> = makeClipPointVector();
-	private static var s_clipPoints1:Vector.<ClipVertex> = makeClipPointVector();
-	private static var s_clipPoints2:Vector.<ClipVertex> = makeClipPointVector();
+	private static var s_incidentEdge:Vector.<ClipVertex> = MakeClipPointVector();
+	private static var s_clipPoints1:Vector.<ClipVertex> = MakeClipPointVector();
+	private static var s_clipPoints2:Vector.<ClipVertex> = MakeClipPointVector();
 	private static var s_edgeAO:Vector.<int> = new Vector.<int>(1);
 	private static var s_edgeBO:Vector.<int> = new Vector.<int>(1);
 	private static var s_localTangent:b2Vec2 = new b2Vec2();
@@ -344,6 +344,8 @@ public class b2Collision{
 	private static var s_normal:b2Vec2 = new b2Vec2();
 	private static var s_tangent:b2Vec2 = new b2Vec2();
 	private static var s_tangent2:b2Vec2 = new b2Vec2();
+	private static var s_v11:b2Vec2 = new b2Vec2();
+	private static var s_v12:b2Vec2 = new b2Vec2();
 	// Find edge normal of max separation on A - return if separating axis is found
 	// Find edge normal of max separation on B - return if separation axis is found
 	// Choose reference edge as min(minA, minB)
@@ -351,7 +353,7 @@ public class b2Collision{
 	// Clip
 	static private var b2CollidePolyTempVec:b2Vec2 = new b2Vec2();
 	// The normal points from 1 to 2
-	static public function b2CollidePolygons(manifold:b2Manifold, 
+	static public function CollidePolygons(manifold:b2Manifold, 
 											polyA:b2PolygonShape, xfA:b2Transform,
 											polyB:b2PolygonShape, xfB:b2Transform) : void
 	{
@@ -376,8 +378,8 @@ public class b2Collision{
 
 		var poly1:b2PolygonShape;	// reference poly
 		var poly2:b2PolygonShape;	// incident poly
-		var xf1:b2Transform = new b2Transform();
-		var xf2:b2Transform = new b2Transform();
+		var xf1:b2Transform;
+		var xf2:b2Transform;
 		var edge1:int;		// reference edge
 		var flip:uint;
 		const k_relativeTol:Number = 0.98;
@@ -388,8 +390,8 @@ public class b2Collision{
 		{
 			poly1 = polyB;
 			poly2 = polyA;
-			xf1.Set(xfB);
-			xf2.Set(xfA);
+			xf1 = xfB;
+			xf2 = xfA;
 			edge1 = edgeB;
 			manifold.m_type = b2Manifold.e_faceB;
 			flip = 1;
@@ -398,8 +400,8 @@ public class b2Collision{
 		{
 			poly1 = polyA;
 			poly2 = polyB;
-			xf1.Set(xfA);
-			xf2.Set(xfB);
+			xf1 = xfA;
+			xf2 = xfB;
 			edge1 = edgeA;
 			manifold.m_type = b2Manifold.e_faceA;
 			flip = 0;
@@ -411,18 +413,16 @@ public class b2Collision{
 		var count1:int = poly1.m_vertexCount;
 		var vertices1:Vector.<b2Vec2> = poly1.m_vertices;
 
-		var tVec: b2Vec2 = vertices1[edge1];
-		var v11:b2Vec2 = tVec.Copy();
+		var local_v11:b2Vec2 = vertices1[edge1];
+		var local_v12:b2Vec2;
 		if (edge1 + 1 < count1) {
-			tVec = vertices1[int(edge1+1)];
-			var v12:b2Vec2 = tVec.Copy();
+			local_v12 = vertices1[int(edge1+1)];
 		} else {
-			tVec = vertices1[0];
-			v12 = tVec.Copy();
+			local_v12 = vertices1[0];
 		}
 
 		var localTangent:b2Vec2 = s_localTangent;
-		localTangent.Set(v12.x - v11.x, v12.y - v11.y);
+		localTangent.Set(local_v12.x - local_v11.x, local_v12.y - local_v11.y);
 		localTangent.Normalize();
 		
 		var localNormal:b2Vec2 = s_localNormal;
@@ -430,7 +430,7 @@ public class b2Collision{
 		localNormal.y = -localTangent.x;
 		
 		var planePoint:b2Vec2 = s_planePoint;
-		planePoint.Set(0.5 * (v11.x + v12.x), 0.5 * (v11.y + v12.y));
+		planePoint.Set(0.5 * (local_v11.x + local_v12.x), 0.5 * (local_v11.y + local_v12.y));
 		
 		var tangent:b2Vec2 = s_tangent;
 		//tangent = b2Math.b2MulMV(xf1.R, localTangent);
@@ -443,15 +443,21 @@ public class b2Collision{
 		var normal:b2Vec2 = s_normal;
 		normal.x = tangent.y;
 		normal.y = -tangent.x;
-		
-		v11 = b2Math.MulX(xf1, v11);
-		v12 = b2Math.MulX(xf1, v12);
+
+		//v11 = b2Math.MulX(xf1, local_v11);
+		//v12 = b2Math.MulX(xf1, local_v12);
+		var v11:b2Vec2 = s_v11;
+		var v12:b2Vec2 = s_v12;
+		v11.x = xf1.position.x + (tMat.col1.x * local_v11.x + tMat.col2.x * local_v11.y);
+		v11.y = xf1.position.y + (tMat.col1.y * local_v11.x + tMat.col2.y * local_v11.y);
+		v12.x = xf1.position.x + (tMat.col1.x * local_v12.x + tMat.col2.x * local_v12.y);
+		v12.y = xf1.position.y + (tMat.col1.y * local_v12.x + tMat.col2.y * local_v12.y);
 
 		// Face offset
-		var frontOffset:Number = b2Math.Dot(normal, v11);
+		var frontOffset:Number = normal.x * v11.x + normal.y * v11.y;
 		// Side offsets, extended by polytope skin thickness
-		var sideOffset1:Number = -b2Math.Dot(tangent, v11) + totalRadius;
-		var sideOffset2:Number = b2Math.Dot(tangent, v12) + totalRadius;
+		var sideOffset1:Number = -tangent.x * v11.x - tangent.y * v11.y + totalRadius;
+		var sideOffset2:Number = tangent.x * v12.x + tangent.y * v12.y + totalRadius;
 
 		// Clip incident edge against extruded edge1 side edges.
 		var clipPoints1:Vector.<ClipVertex> = s_clipPoints1;
@@ -500,7 +506,7 @@ public class b2Collision{
 	
 	
 	
-	static public function b2CollideCircles(
+	static public function CollideCircles(
 		manifold:b2Manifold, 
 		circle1:b2CircleShape, xf1:b2Transform, 
 		circle2:b2CircleShape, xf2:b2Transform) : void
@@ -538,7 +544,7 @@ public class b2Collision{
 	
 	
 	
-	static public function b2CollidePolygonAndCircle(
+	static public function CollidePolygonAndCircle(
 		manifold:b2Manifold, 
 		polygon:b2PolygonShape, xf1:b2Transform,
 		circle:b2CircleShape, xf2:b2Transform) : void
@@ -668,7 +674,7 @@ public class b2Collision{
 
 
 
-	static public function b2TestOverlap(a:b2AABB, b:b2AABB):Boolean
+	static public function TestOverlap(a:b2AABB, b:b2AABB):Boolean
 	{
 		var t1:b2Vec2 = b.lowerBound;
 		var t2:b2Vec2 = a.upperBound;

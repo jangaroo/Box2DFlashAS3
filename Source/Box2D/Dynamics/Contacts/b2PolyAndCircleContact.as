@@ -51,7 +51,7 @@ public class b2PolyAndCircleContact extends b2Contact{
 		var bA:b2Body = m_fixtureA.m_body;
 		var bB:b2Body = m_fixtureB.m_body;
 		
-		b2Collision.b2CollidePolygonAndCircle(m_manifold, 
+		b2Collision.CollidePolygonAndCircle(m_manifold, 
 					m_fixtureA.GetShape() as b2PolygonShape, bA.m_xf, 
 					m_fixtureB.GetShape() as b2CircleShape, bB.m_xf);
 	}

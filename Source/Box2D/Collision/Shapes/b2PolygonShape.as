@@ -373,24 +373,33 @@ public class b2PolygonShape extends b2Shape
 
 
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	public override function ComputeAABB(aabb:b2AABB, xf:b2Transform) : void
 	{
-		var lower:b2Vec2 = b2Math.MulX(xf, m_vertices[0]);
-		var upper:b2Vec2 = lower;
-
+		//var lower:b2Vec2 = b2Math.MulX(xf, m_vertices[0]);
+		var tMat:b2Mat22 = xf.R;
+		var tVec:b2Vec2 = m_vertices[0];
+		var lowerX:Number = xf.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+		var lowerY:Number = xf.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+		var upperX:Number = lowerX;
+		var upperY:Number = lowerY;
+		
 		for (var i:int = 1; i < m_vertexCount; ++i)
 		{
-			var v:b2Vec2 = b2Math.MulX(xf, m_vertices[i]);
-			lower = b2Math.MinV(lower, v);
-			upper = b2Math.MaxV(upper, v);
+			tVec = m_vertices[i];
+			var vX:Number = xf.position.x + (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+			var vY:Number = xf.position.y + (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+			lowerX = lowerX < vX ? lowerX : vX;
+			lowerY = lowerY < vY ? lowerY : vY;
+			upperX = upperX > vX ? upperX : vX;
+			upperY = upperY > vY ? upperY : vY;
 		}
 
-		aabb.lowerBound.x = lower.x - m_radius;
-		aabb.lowerBound.y = lower.y - m_radius;
-		aabb.upperBound.x = upper.x + m_radius;
-		aabb.upperBound.y = upper.y + m_radius;
+		aabb.lowerBound.x = lowerX - m_radius;
+		aabb.lowerBound.y = lowerY - m_radius;
+		aabb.upperBound.x = upperX + m_radius;
+		aabb.upperBound.y = upperY + m_radius;
 	}
 
 

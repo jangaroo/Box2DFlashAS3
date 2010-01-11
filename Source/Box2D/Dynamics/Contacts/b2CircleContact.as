@@ -51,7 +51,7 @@ public class b2CircleContact extends b2Contact
 		var bA:b2Body = m_fixtureA.GetBody();
 		var bB:b2Body = m_fixtureB.GetBody();
 		
-		b2Collision.b2CollideCircles(m_manifold, 
+		b2Collision.CollideCircles(m_manifold, 
 					m_fixtureA.GetShape() as b2CircleShape, bA.m_xf, 
 					m_fixtureB.GetShape() as b2CircleShape, bB.m_xf);
 	}
