@@ -345,7 +345,7 @@ public class b2ContactSolver
 				
 				// b2Clamp the accumulated force
 				maxFriction = friction * ccp.normalImpulse;
-				newImpulse = b2Math.b2Clamp(ccp.tangentImpulse + lambda, -maxFriction, maxFriction);
+				newImpulse = b2Math.Clamp(ccp.tangentImpulse + lambda, -maxFriction, maxFriction);
 				lambda = newImpulse-ccp.tangentImpulse;
 				
 				// Apply contact impulse
@@ -890,7 +890,7 @@ public class b2ContactSolver
 				minSeparation = minSeparation < separation?minSeparation:separation;
 				
 				// Prevent large corrections and allow slop.
-				var C:Number = b2Math.b2Clamp(baumgarte * (separation + b2Settings.b2_linearSlop), -b2Settings.b2_maxLinearCorrection, 0.0);
+				var C:Number = b2Math.Clamp(baumgarte * (separation + b2Settings.b2_linearSlop), -b2Settings.b2_maxLinearCorrection, 0.0);
 				
 				// Compute normal impulse
 				var impulse:Number = -ccp.equalizedMass * C;

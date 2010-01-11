@@ -255,7 +255,7 @@ public class b2WeldJoint extends b2Joint
 		// Handle large detachment.
 		var k_allowedStretch:Number = 10.0 * b2Settings.b2_linearSlop;
 		var positionError:Number = Math.sqrt(C1X * C1X + C1Y * C1Y);
-		var angularError:Number = b2Math.b2Abs(C2);
+		var angularError:Number = b2Math.Abs(C2);
 		if (positionError > k_allowedStretch)
 		{
 			iA *= 1.0;

@@ -52,8 +52,8 @@ public function ReadCache(cache:b2SimplexCache,
 		v.indexB = cache.indexB[i];
 		wALocal = proxyA.GetVertex(v.indexA);
 		wBLocal = proxyB.GetVertex(v.indexB);
-		v.wA = b2Math.b2MulX(transformA, wALocal);
-		v.wB = b2Math.b2MulX(transformB, wALocal);
+		v.wA = b2Math.MulX(transformA, wALocal);
+		v.wB = b2Math.MulX(transformB, wALocal);
 		v.w = b2Math.SubtractVV(v.wB, v.wA);
 		v.a = 0;
 	}
@@ -79,8 +79,8 @@ public function ReadCache(cache:b2SimplexCache,
 		v.indexB = 0;
 		wALocal = proxyA.GetVertex(0);
 		wBLocal = proxyB.GetVertex(0);
-		v.wA = b2Math.b2MulX(transformA, wALocal);
-		v.wB = b2Math.b2MulX(transformB, wBLocal);
+		v.wA = b2Math.MulX(transformA, wALocal);
+		v.wB = b2Math.MulX(transformB, wBLocal);
 		v.w = b2Math.SubtractVV(v.wB, v.wA);
 		m_count = 1;
 	}
@@ -103,19 +103,19 @@ public function GetSearchDirection():b2Vec2
 	switch(m_count)
 	{
 		case 1:
-			return m_v1.w.Negative();
+			return m_v1.w.GetNegative();
 			
 		case 2:
 		{
 			var e12:b2Vec2 = b2Math.SubtractVV(m_v2.w, m_v1.w);
-			var sgn:Number = b2Math.b2CrossVV(e12, m_v1.w.Negative());
+			var sgn:Number = b2Math.CrossVV(e12, m_v1.w.GetNegative());
 			if (sgn > 0.0)
 			{
 				// Origin is left of e12.
-				return b2Math.b2CrossFV(1.0, e12);
+				return b2Math.CrossFV(1.0, e12);
 			}else {
 				// Origin is right of e12.
-				return b2Math.b2CrossVF(e12, 1.0);
+				return b2Math.CrossVF(e12, 1.0);
 			}
 		}
 		default:
@@ -185,7 +185,7 @@ public function GetMetric():Number
 		return b2Math.SubtractVV(m_v1.w, m_v2.w).Length();
 
 	case 3:
-		return b2Math.b2CrossVV(b2Math.SubtractVV(m_v2.w, m_v1.w),b2Math.SubtractVV(m_v3.w, m_v1.w));
+		return b2Math.CrossVV(b2Math.SubtractVV(m_v2.w, m_v1.w),b2Math.SubtractVV(m_v3.w, m_v1.w));
 
 	default:
 		b2Settings.b2Assert(false);
@@ -261,8 +261,8 @@ public function Solve3():void
 	// [w1.e12 w2.e12][a2] = [0]
 	// a3 = 0
 	var e12:b2Vec2 = b2Math.SubtractVV(w2, w1);
-	var w1e12:Number = b2Math.b2Dot(w1, e12);
-	var w2e12:Number = b2Math.b2Dot(w2, e12);
+	var w1e12:Number = b2Math.Dot(w1, e12);
+	var w2e12:Number = b2Math.Dot(w2, e12);
 	var d12_1:Number = w2e12;
 	var d12_2:Number = -w1e12;
 
@@ -271,8 +271,8 @@ public function Solve3():void
 	// [w1.e13 w3.e13][a3] = [0]
 	// a2 = 0
 	var e13:b2Vec2 = b2Math.SubtractVV(w3, w1);
-	var w1e13:Number = b2Math.b2Dot(w1, e13);
-	var w3e13:Number = b2Math.b2Dot(w3, e13);
+	var w1e13:Number = b2Math.Dot(w1, e13);
+	var w3e13:Number = b2Math.Dot(w3, e13);
 	var d13_1:Number = w3e13;
 	var d13_2:Number = -w1e13;
 
@@ -281,17 +281,17 @@ public function Solve3():void
 	// [w2.e23 w3.e23][a3] = [0]
 	// a1 = 0
 	var e23:b2Vec2 = b2Math.SubtractVV(w3, w2);
-	var w2e23:Number = b2Math.b2Dot(w2, e23);
-	var w3e23:Number = b2Math.b2Dot(w3, e23);
+	var w2e23:Number = b2Math.Dot(w2, e23);
+	var w3e23:Number = b2Math.Dot(w3, e23);
 	var d23_1:Number = w3e23;
 	var d23_2:Number = -w2e23;
 	
 	// Triangle123
-	var n123:Number = b2Math.b2CrossVV(e12, e13);
+	var n123:Number = b2Math.CrossVV(e12, e13);
 
-	var d123_1:Number = n123 * b2Math.b2CrossVV(w2, w3);
-	var d123_2:Number = n123 * b2Math.b2CrossVV(w3, w1);
-	var d123_3:Number = n123 * b2Math.b2CrossVV(w1, w2);
+	var d123_1:Number = n123 * b2Math.CrossVV(w2, w3);
+	var d123_2:Number = n123 * b2Math.CrossVV(w3, w1);
+	var d123_3:Number = n123 * b2Math.CrossVV(w1, w2);
 
 	// w1 region
 	if (d12_2 <= 0.0 && d13_2 <= 0.0)

@@ -316,7 +316,7 @@ public class b2DistanceJoint extends b2Joint
 		dY /= length;
 		//float32 C = length - m_length;
 		var C:Number = length - m_length;
-		C = b2Math.b2Clamp(C, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
+		C = b2Math.Clamp(C, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
 		
 		var impulse:Number = -m_mass * C;
 		//m_u = d;
@@ -339,7 +339,7 @@ public class b2DistanceJoint extends b2Joint
 		bA.SynchronizeTransform();
 		bB.SynchronizeTransform();
 		
-		return b2Math.b2Abs(C) < b2Settings.b2_linearSlop;
+		return b2Math.Abs(C) < b2Settings.b2_linearSlop;
 		
 	}
 

@@ -108,7 +108,7 @@ public class b2BuoyancyController extends b2Controller
 			if(area<Number.MIN_VALUE)
 				continue;
 			//Buoyancy
-			var buoyancyForce:b2Vec2 = gravity.Negative();
+			var buoyancyForce:b2Vec2 = gravity.GetNegative();
 			buoyancyForce.Multiply(density*area)
 			body.ApplyForce(buoyancyForce,massc);
 			//Linear drag

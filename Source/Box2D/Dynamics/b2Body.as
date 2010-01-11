@@ -51,7 +51,7 @@ public class b2Body
 		core = b2Math.AddVV(core, s2.GetVertex1());
 		var cornerDir: b2Vec2 = b2Math.AddVV(s1.GetDirectionVector(), s2.GetDirectionVector());
 		cornerDir.Normalize();
-		var convex: Boolean = b2Math.b2Dot(s1.GetDirectionVector(), s2.GetNormalVector()) > 0.0;
+		var convex: Boolean = b2Math.Dot(s1.GetDirectionVector(), s2.GetNormalVector()) > 0.0;
 		s1.SetNextEdge(s2, core, cornerDir, convex);
 		s2.SetPrevEdge(s1, core, cornerDir, convex);
 		return angle2;
@@ -539,11 +539,11 @@ public class b2Body
 		var center2:b2Vec2 = body2.GetWorldCenter();
 		
 		var velocity1:b2Vec2 = b2Math.AddVV(linearVelocity, 
-			b2Math.b2CrossFV(angularVelocity,
+			b2Math.CrossFV(angularVelocity,
 				b2Math.SubtractVV(center1, center)));
 				
 		var velocity2:b2Vec2 = b2Math.AddVV(linearVelocity, 
-			b2Math.b2CrossFV(angularVelocity,
+			b2Math.CrossFV(angularVelocity,
 				b2Math.SubtractVV(center2, center)));
 				
 		body1.SetLinearVelocity(velocity1);
@@ -635,7 +635,7 @@ public class b2Body
 	 * Note that this changes the center of mass position.
 	 * Note that creating or destroying fixtures can also alter the mass.
 	 * This function has no effect if the body isn't dynamic.
-	 * @warming The supplied rotational inertia should be relative to the center of mass
+	 * @warning The supplied rotational inertia should be relative to the center of mass
 	 * @param	data the mass properties.
 	 */
 	public function SetMassData(massData:b2MassData):void
@@ -674,7 +674,7 @@ public class b2Body
 		// Move center of mass
 		var oldCenter:b2Vec2 = m_sweep.c.Copy();
 		m_sweep.localCenter.SetV(massData.center);
-		m_sweep.c0.SetV(b2Math.b2MulX(m_xf, m_sweep.localCenter));
+		m_sweep.c0.SetV(b2Math.MulX(m_xf, m_sweep.localCenter));
 		m_sweep.c.SetV(m_sweep.c0);
 		
 		// Update center of mass velocity
@@ -750,7 +750,7 @@ public class b2Body
 		// Move center of mass
 		var oldCenter:b2Vec2 = m_sweep.c.Copy();
 		m_sweep.localCenter.SetV(center);
-		m_sweep.c0.SetV(b2Math.b2MulX(m_xf, m_sweep.localCenter));
+		m_sweep.c0.SetV(b2Math.MulX(m_xf, m_sweep.localCenter));
 		m_sweep.c.SetV(m_sweep.c0);
 		
 		// Update center of mass velocity
@@ -781,7 +781,7 @@ public class b2Body
 	 * @return the same vector expressed in world coordinates.
 	 */
 	public function GetWorldVector(localVector:b2Vec2) : b2Vec2{
-		return b2Math.b2MulMV(m_xf.R, localVector);
+		return b2Math.MulMV(m_xf.R, localVector);
 	}
 
 	/**
@@ -790,7 +790,7 @@ public class b2Body
 	 * @return the corresponding local point relative to the body's origin.
 	 */
 	public function GetLocalPoint(worldPoint:b2Vec2) : b2Vec2{
-		return b2Math.b2MulXT(m_xf, worldPoint);
+		return b2Math.MulXT(m_xf, worldPoint);
 	}
 
 	/**
@@ -799,7 +799,7 @@ public class b2Body
 	 * @return the corresponding local vector.
 	 */
 	public function GetLocalVector(worldVector:b2Vec2) : b2Vec2{
-		return b2Math.b2MulTMV(m_xf.R, worldVector);
+		return b2Math.MulTMV(m_xf.R, worldVector);
 	}
 	
 	/**
@@ -1092,6 +1092,9 @@ public class b2Body
 		return m_controllerList;
 	}
 	
+	/**
+	 * Get a list of all contacts attached to this body.
+	 */
 	public function GetContactList():b2ContactEdge {
 		return m_contactList;
 	}

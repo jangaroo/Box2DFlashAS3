@@ -160,8 +160,8 @@ public class b2CircleShape extends b2Shape
 			xf:b2Transform,
 			c:b2Vec2):Number
 	{
-		var p:b2Vec2 = b2Math.b2MulX(xf, m_p);
-		var l:Number = -(b2Math.b2Dot(normal, p) - offset);
+		var p:b2Vec2 = b2Math.MulX(xf, m_p);
+		var l:Number = -(b2Math.Dot(normal, p) - offset);
 		
 		if (l < -m_radius + Number.MIN_VALUE)
 		{

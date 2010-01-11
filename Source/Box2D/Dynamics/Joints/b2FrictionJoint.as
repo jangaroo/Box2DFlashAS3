@@ -229,7 +229,7 @@ public class b2FrictionJoint extends b2Joint
 
 			var oldImpulse:Number = m_angularImpulse;
 			maxImpulse = step.dt * m_maxTorque;
-			m_angularImpulse = b2Math.b2Clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
+			m_angularImpulse = b2Math.Clamp(m_angularImpulse + impulse, -maxImpulse, maxImpulse);
 			impulse = m_angularImpulse - oldImpulse;
 
 			wA -= iA * impulse;
@@ -242,7 +242,7 @@ public class b2FrictionJoint extends b2Joint
 			var CdotX:Number = vB.x - wB * rBY - vA.x + wA * rAY;
 			var CdotY:Number = vB.y + wB * rBX - vA.y - wA * rAX;
 
-			var impulseV:b2Vec2 = b2Math.b2MulMV(m_linearMass, new b2Vec2(-CdotX, -CdotY));
+			var impulseV:b2Vec2 = b2Math.MulMV(m_linearMass, new b2Vec2(-CdotX, -CdotY));
 			var oldImpulseV:b2Vec2 = m_linearImpulse.Copy();
 			
 			m_linearImpulse.Add(impulseV);

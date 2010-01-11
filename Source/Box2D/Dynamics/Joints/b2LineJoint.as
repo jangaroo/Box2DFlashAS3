@@ -363,7 +363,7 @@ public class b2LineJoint extends b2Joint
 		
 		// Compute motor Jacobian and effective mass.
 		{
-			m_axis.SetV(b2Math.b2MulMV(xf1.R, m_localXAxis1));
+			m_axis.SetV(b2Math.MulMV(xf1.R, m_localXAxis1));
 			//m_a1 = b2Math.b2Cross(d + r1, m_axis);
 			m_a1 = (dX + r1X) * m_axis.y - (dY + r1Y) * m_axis.x;
 			//m_a2 = b2Math.b2Cross(r2, m_axis);
@@ -375,7 +375,7 @@ public class b2LineJoint extends b2Joint
 		
 		// Prismatic constraint.
 		{
-			m_perp.SetV(b2Math.b2MulMV(xf1.R, m_localYAxis1));
+			m_perp.SetV(b2Math.MulMV(xf1.R, m_localYAxis1));
 			//m_s1 = b2Math.b2Cross(d + r1, m_perp);
 			m_s1 = (dX + r1X) * m_perp.y - (dY + r1Y) * m_perp.x;
 			//m_s2 = b2Math.b2Cross(r2, m_perp);
@@ -397,7 +397,7 @@ public class b2LineJoint extends b2Joint
 		{
 			//float32 jointTranslation = b2Dot(m_axis, d); 
 			var jointTransition:Number = m_axis.x * dX + m_axis.y * dY;
-			if (b2Math.b2Abs(m_upperTranslation - m_lowerTranslation) < 2.0 * b2Settings.b2_linearSlop)
+			if (b2Math.Abs(m_upperTranslation - m_lowerTranslation) < 2.0 * b2Settings.b2_linearSlop)
 			{
 				m_limitState = e_equalLimits;
 			}
@@ -487,7 +487,7 @@ public class b2LineJoint extends b2Joint
 			var impulse:Number = m_motorMass * (m_motorSpeed - Cdot);
 			var oldImpulse:Number = m_motorImpulse;
 			var maxImpulse:Number = step.dt * m_maxMotorForce;
-			m_motorImpulse = b2Math.b2Clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+			m_motorImpulse = b2Math.Clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
 			impulse = m_motorImpulse - oldImpulse;
 			
 			PX = impulse * m_axis.x;
@@ -520,11 +520,11 @@ public class b2LineJoint extends b2Joint
 			
 			if (m_limitState == e_atLowerLimit)
 			{
-				m_impulse.y = b2Math.b2Max(m_impulse.y, 0.0);
+				m_impulse.y = b2Math.Max(m_impulse.y, 0.0);
 			}
 			else if (m_limitState == e_atUpperLimit)
 			{
-				m_impulse.y = b2Math.b2Min(m_impulse.y, 0.0);
+				m_impulse.y = b2Math.Min(m_impulse.y, 0.0);
 			}
 			
 			// f2(1) = invK(1,1) * (-Cdot(1) - K(1,3) * (f2(2) - f1(2))) + f1(1) 
@@ -640,7 +640,7 @@ public class b2LineJoint extends b2Joint
 		
 		if (m_enableLimit)
 		{
-			m_axis = b2Math.b2MulMV(R1, m_localXAxis1);
+			m_axis = b2Math.MulMV(R1, m_localXAxis1);
 			
 			//m_a1 = b2Math.b2Cross(d + r1, m_axis);
 			m_a1 = (dX + r1X) * m_axis.y - (dY + r1Y) * m_axis.x;
@@ -648,30 +648,30 @@ public class b2LineJoint extends b2Joint
 			m_a2 = r2X * m_axis.y - r2Y * m_axis.x;
 			
 			var translation:Number = m_axis.x * dX + m_axis.y * dY;
-			if (b2Math.b2Abs(m_upperTranslation - m_lowerTranslation) < 2.0 * b2Settings.b2_linearSlop)
+			if (b2Math.Abs(m_upperTranslation - m_lowerTranslation) < 2.0 * b2Settings.b2_linearSlop)
 			{
 				// Prevent large angular corrections.
-				C2 = b2Math.b2Clamp(translation, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
-				linearError = b2Math.b2Abs(translation);
+				C2 = b2Math.Clamp(translation, -b2Settings.b2_maxLinearCorrection, b2Settings.b2_maxLinearCorrection);
+				linearError = b2Math.Abs(translation);
 				active = true;
 			}
 			else if (translation <= m_lowerTranslation)
 			{
 				// Prevent large angular corrections and allow some slop.
-				C2 = b2Math.b2Clamp(translation - m_lowerTranslation + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
+				C2 = b2Math.Clamp(translation - m_lowerTranslation + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
 				linearError = m_lowerTranslation - translation;
 				active = true;
 			}
 			else if (translation >= m_upperTranslation)
 			{
 				// Prevent large angular corrections and allow some slop.
-				C2 = b2Math.b2Clamp(translation - m_upperTranslation + b2Settings.b2_linearSlop, 0.0, b2Settings.b2_maxLinearCorrection);
+				C2 = b2Math.Clamp(translation - m_upperTranslation + b2Settings.b2_linearSlop, 0.0, b2Settings.b2_maxLinearCorrection);
 				linearError = translation - m_upperTranslation;
 				active = true;
 			}
 		}
 		
-		m_perp = b2Math.b2MulMV(R1, m_localYAxis1);
+		m_perp = b2Math.MulMV(R1, m_localYAxis1);
 		
 		//m_s1 = b2Cross(d + r1, m_perp); 
 		m_s1 = (dX + r1X) * m_perp.y - (dY + r1Y) * m_perp.x;
@@ -681,7 +681,7 @@ public class b2LineJoint extends b2Joint
 		var impulse:b2Vec2 = new b2Vec2();
 		var C1:Number = m_perp.x * dX + m_perp.y * dY;
 		
-		linearError = b2Math.b2Max(linearError, b2Math.b2Abs(C1));
+		linearError = b2Math.Max(linearError, b2Math.Abs(C1));
 		angularError = 0.0;
 		
 		if (active)

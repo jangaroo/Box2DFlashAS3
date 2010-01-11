@@ -106,11 +106,11 @@ public class b2TimeOfImpact
 				// to create additional clearance
 				if (separation > radius)
 				{
-					target = b2Math.b2Max(radius - tolerance, 0.75 * radius);
+					target = b2Math.Max(radius - tolerance, 0.75 * radius);
 				}
 				else
 				{
-					target = b2Math.b2Max(separation - tolerance, 0.02 * radius);
+					target = b2Math.Max(separation - tolerance, 0.02 * radius);
 				}
 			}
 			
@@ -189,7 +189,7 @@ public class b2TimeOfImpact
 					
 					var f:Number = s_fcn.Evaluate(s_xfA, s_xfB);
 					
-					if (b2Math.b2Abs(f - target) < 0.025 * tolerance)
+					if (b2Math.Abs(f - target) < 0.025 * tolerance)
 					{
 						newAlpha = x;
 						break;
@@ -215,7 +215,7 @@ public class b2TimeOfImpact
 					}
 				}
 				
-				b2_toiMaxRootIters = b2Math.b2Max(b2_toiMaxRootIters, rootIterCount);
+				b2_toiMaxRootIters = b2Math.Max(b2_toiMaxRootIters, rootIterCount);
 			}
 			
 			// Ensure significant advancement
@@ -235,7 +235,7 @@ public class b2TimeOfImpact
 			}
 		}
 		
-		b2_toiMaxIters = b2Math.b2Max(b2_toiMaxIters, iter);
+		b2_toiMaxIters = b2Math.Max(b2_toiMaxIters, iter);
 
 		return alpha;
 	}

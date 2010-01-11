@@ -228,8 +228,8 @@ package Box2D.Collision
 			r.Normalize();
 			
 			// v is perpendicular to the segment
-			var v:b2Vec2 = b2Math.b2CrossFV(1.0, r);
-			var abs_v:b2Vec2 = b2Math.b2AbsV(v);
+			var v:b2Vec2 = b2Math.CrossFV(1.0, r);
+			var abs_v:b2Vec2 = b2Math.AbsV(v);
 			
 			var maxFraction:Number = input.maxFraction;
 			

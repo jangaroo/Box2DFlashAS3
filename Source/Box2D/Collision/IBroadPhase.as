@@ -1,6 +1,9 @@
 ﻿package Box2D.Collision 
 {
 	import Box2D.Common.Math.b2Vec2;
+	/**
+	 * Interface for objects tracking overlap of many AABBs.
+	 */
 	public interface IBroadPhase 
 	{
 		/**

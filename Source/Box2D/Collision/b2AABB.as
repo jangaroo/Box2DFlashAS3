@@ -57,6 +57,9 @@ public class b2AABB
 		                   (upperBound.y - lowerBound.y) / 2);
 	}
 	
+	/**
+	 * Is an AABB contained within this one.
+	 */
 	public function Contains(aabb:b2AABB):Boolean
 	{
 		var result:Boolean = true;
@@ -68,6 +71,9 @@ public class b2AABB
 	}
 	
 	// From Real-time Collision Detection, p179.
+	/**
+	 * Perform a precise raycast against the AABB.
+	 */
 	public function RayCast(output:b2RayCastOutput, input:b2RayCastInput):Boolean
 	{
 		var tmin:Number = -Number.MAX_VALUE;
@@ -173,6 +179,9 @@ public class b2AABB
 		return true;
 	}
 	
+	/**
+	 * Tests if another AABB overlaps this one.
+	 */
 	public function TestOverlap(other:b2AABB):Boolean
 	{
 		var d1X:Number = other.lowerBound.x - upperBound.x;

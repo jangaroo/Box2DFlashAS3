@@ -30,7 +30,7 @@ public class b2Math{
 	* This function is used to ensure that a floating point number is
 	* not a NaN or infinity.
 	*/
-	static public function b2IsValid(x:Number) : Boolean
+	static public function IsValid(x:Number) : Boolean
 	{
 		return isFinite(x);
 	}
@@ -50,29 +50,29 @@ public class b2Math{
 		return x;
 	}*/
 
-	static public function b2Dot(a:b2Vec2, b:b2Vec2):Number
+	static public function Dot(a:b2Vec2, b:b2Vec2):Number
 	{
 		return a.x * b.x + a.y * b.y;
 	}
 
-	static public function b2CrossVV(a:b2Vec2, b:b2Vec2):Number
+	static public function CrossVV(a:b2Vec2, b:b2Vec2):Number
 	{
 		return a.x * b.y - a.y * b.x;
 	}
 
-	static public function b2CrossVF(a:b2Vec2, s:Number):b2Vec2
+	static public function CrossVF(a:b2Vec2, s:Number):b2Vec2
 	{
 		var v:b2Vec2 = new b2Vec2(s * a.y, -s * a.x);
 		return v;
 	}
 
-	static public function b2CrossFV(s:Number, a:b2Vec2):b2Vec2
+	static public function CrossFV(s:Number, a:b2Vec2):b2Vec2
 	{
 		var v:b2Vec2 = new b2Vec2(-s * a.y, s * a.x);
 		return v;
 	}
 
-	static public function b2MulMV(A:b2Mat22, v:b2Vec2):b2Vec2
+	static public function MulMV(A:b2Mat22, v:b2Vec2):b2Vec2
 	{
 		// (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y)
 		// (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y)
@@ -80,24 +80,24 @@ public class b2Math{
 		return u;
 	}
 
-	static public function b2MulTMV(A:b2Mat22, v:b2Vec2):b2Vec2
+	static public function MulTMV(A:b2Mat22, v:b2Vec2):b2Vec2
 	{
 		// (tVec.x * tMat.col1.x + tVec.y * tMat.col1.y)
 		// (tVec.x * tMat.col2.x + tVec.y * tMat.col2.y)
-		var u:b2Vec2 = new b2Vec2(b2Dot(v, A.col1), b2Dot(v, A.col2));
+		var u:b2Vec2 = new b2Vec2(Dot(v, A.col1), Dot(v, A.col2));
 		return u;
 	}
 	
-	static public function b2MulX(T:b2Transform, v:b2Vec2) : b2Vec2
+	static public function MulX(T:b2Transform, v:b2Vec2) : b2Vec2
 	{
-		var a:b2Vec2 = b2MulMV(T.R, v);
+		var a:b2Vec2 = MulMV(T.R, v);
 		a.x += T.position.x;
 		a.y += T.position.y;
 		//return T.position + b2Mul(T.R, v);
 		return a;
 	}
 
-	static public function b2MulXT(T:b2Transform, v:b2Vec2):b2Vec2
+	static public function MulXT(T:b2Transform, v:b2Vec2):b2Vec2
 	{
 		var a:b2Vec2 = SubtractVV(v, T.position);
 		//return b2MulT(T.R, v - T.position);
@@ -119,13 +119,13 @@ public class b2Math{
 		return v;
 	}
 	
-	static public function b2Distance(a:b2Vec2, b:b2Vec2) : Number{
+	static public function Distance(a:b2Vec2, b:b2Vec2) : Number{
 		var cX:Number = a.x-b.x;
 		var cY:Number = a.y-b.y;
 		return Math.sqrt(cX*cX + cY*cY);
 	}
 	
-	static public function b2DistanceSquared(a:b2Vec2, b:b2Vec2) : Number{
+	static public function DistanceSquared(a:b2Vec2, b:b2Vec2) : Number{
 		var cX:Number = a.x-b.x;
 		var cY:Number = a.y-b.y;
 		return (cX*cX + cY*cY);
@@ -144,71 +144,71 @@ public class b2Math{
 	}
 
 	// A * B
-	static public function b2MulMM(A:b2Mat22, B:b2Mat22):b2Mat22
+	static public function MulMM(A:b2Mat22, B:b2Mat22):b2Mat22
 	{
-		var C:b2Mat22 = b2Mat22.FromVV(b2MulMV(A, B.col1), b2MulMV(A, B.col2));
+		var C:b2Mat22 = b2Mat22.FromVV(MulMV(A, B.col1), MulMV(A, B.col2));
 		return C;
 	}
 
 	// A^T * B
-	static public function b2MulTMM(A:b2Mat22, B:b2Mat22):b2Mat22
+	static public function MulTMM(A:b2Mat22, B:b2Mat22):b2Mat22
 	{
-		var c1:b2Vec2 = new b2Vec2(b2Dot(A.col1, B.col1), b2Dot(A.col2, B.col1));
-		var c2:b2Vec2 = new b2Vec2(b2Dot(A.col1, B.col2), b2Dot(A.col2, B.col2));
+		var c1:b2Vec2 = new b2Vec2(Dot(A.col1, B.col1), Dot(A.col2, B.col1));
+		var c2:b2Vec2 = new b2Vec2(Dot(A.col1, B.col2), Dot(A.col2, B.col2));
 		var C:b2Mat22 = b2Mat22.FromVV(c1, c2);
 		return C;
 	}
 
-	static public function b2Abs(a:Number):Number
+	static public function Abs(a:Number):Number
 	{
 		return a > 0.0 ? a : -a;
 	}
 
-	static public function b2AbsV(a:b2Vec2):b2Vec2
+	static public function AbsV(a:b2Vec2):b2Vec2
 	{
-		var b:b2Vec2 = new b2Vec2(b2Abs(a.x), b2Abs(a.y));
+		var b:b2Vec2 = new b2Vec2(Abs(a.x), Abs(a.y));
 		return b;
 	}
 
-	static public function b2AbsM(A:b2Mat22):b2Mat22
+	static public function AbsM(A:b2Mat22):b2Mat22
 	{
-		var B:b2Mat22 = b2Mat22.FromVV(b2AbsV(A.col1), b2AbsV(A.col2));
+		var B:b2Mat22 = b2Mat22.FromVV(AbsV(A.col1), AbsV(A.col2));
 		return B;
 	}
 
-	static public function b2Min(a:Number, b:Number):Number
+	static public function Min(a:Number, b:Number):Number
 	{
 		return a < b ? a : b;
 	}
 
-	static public function b2MinV(a:b2Vec2, b:b2Vec2):b2Vec2
+	static public function MinV(a:b2Vec2, b:b2Vec2):b2Vec2
 	{
-		var c:b2Vec2 = new b2Vec2(b2Min(a.x, b.x), b2Min(a.y, b.y));
+		var c:b2Vec2 = new b2Vec2(Min(a.x, b.x), Min(a.y, b.y));
 		return c;
 	}
 
-	static public function b2Max(a:Number, b:Number):Number
+	static public function Max(a:Number, b:Number):Number
 	{
 		return a > b ? a : b;
 	}
 
-	static public function b2MaxV(a:b2Vec2, b:b2Vec2):b2Vec2
+	static public function MaxV(a:b2Vec2, b:b2Vec2):b2Vec2
 	{
-		var c:b2Vec2 = new b2Vec2(b2Max(a.x, b.x), b2Max(a.y, b.y));
+		var c:b2Vec2 = new b2Vec2(Max(a.x, b.x), Max(a.y, b.y));
 		return c;
 	}
 
-	static public function b2Clamp(a:Number, low:Number, high:Number):Number
+	static public function Clamp(a:Number, low:Number, high:Number):Number
 	{
-		return b2Max(low, b2Min(a, high));
+		return a < low ? low : a > high ? high : a;
 	}
 
-	static public function b2ClampV(a:b2Vec2, low:b2Vec2, high:b2Vec2):b2Vec2
+	static public function ClampV(a:b2Vec2, low:b2Vec2, high:b2Vec2):b2Vec2
 	{
-		return b2MaxV(low, b2MinV(a, high));
+		return MaxV(low, MinV(a, high));
 	}
 
-	static public function b2Swap(a:Array, b:Array) : void
+	static public function Swap(a:Array, b:Array) : void
 	{
 		var tmp:* = a[0];
 		a[0] = b[0];
@@ -216,12 +216,12 @@ public class b2Math{
 	}
 
 	// b2Random number in range [-1,1]
-	static public function b2Random():Number
+	static public function Random():Number
 	{
 		return Math.random() * 2 - 1;
 	}
 
-	static public function b2RandomRange(lo:Number, hi:Number) : Number
+	static public function RandomRange(lo:Number, hi:Number) : Number
 	{
 		var r:Number = Math.random();
 		r = (hi - lo) * r + lo;
@@ -233,7 +233,7 @@ public class b2Math{
 	// that recursively "folds" the upper bits into the lower bits. This process yields a bit vector with
 	// the same most significant 1 as x, but all 1's below it. Adding 1 to that value yields the next
 	// largest power of 2. For a 32-bit value:"
-	static public function b2NextPowerOfTwo(x:uint):uint
+	static public function NextPowerOfTwo(x:uint):uint
 	{
 		x |= (x >> 1) & 0x7FFFFFFF;
 		x |= (x >> 2) & 0x3FFFFFFF;
@@ -243,7 +243,7 @@ public class b2Math{
 		return x + 1;
 	}
 
-	static public function b2IsPowerOfTwo(x:uint):Boolean
+	static public function IsPowerOfTwo(x:uint):Boolean
 	{
 		var result:Boolean = x > 0 && (x & (x - 1)) == 0;
 		return result;

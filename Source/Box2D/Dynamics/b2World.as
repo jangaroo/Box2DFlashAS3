@@ -1506,7 +1506,7 @@ public class b2World
 			{
 				var circle:b2CircleShape = (shape as b2CircleShape);
 				
-				var center:b2Vec2 = b2Math.b2MulX(xf, circle.m_p);
+				var center:b2Vec2 = b2Math.MulX(xf, circle.m_p);
 				var radius:Number = circle.m_radius;
 				var axis:b2Vec2 = xf.R.col1;
 				
@@ -1525,7 +1525,7 @@ public class b2World
 				
 				for (i = 0; i < vertexCount; ++i)
 				{
-					vertices[i] = b2Math.b2MulX(xf, localVertices[i]);
+					vertices[i] = b2Math.MulX(xf, localVertices[i]);
 				}
 				
 				m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
@@ -1536,7 +1536,7 @@ public class b2World
 			{
 				var edge: b2EdgeShape = shape as b2EdgeShape;
 				
-				m_debugDraw.DrawSegment(b2Math.b2MulX(xf, edge.GetVertex1()), b2Math.b2MulX(xf, edge.GetVertex2()), color);
+				m_debugDraw.DrawSegment(b2Math.MulX(xf, edge.GetVertex1()), b2Math.MulX(xf, edge.GetVertex2()), color);
 				
 			}
 			break;

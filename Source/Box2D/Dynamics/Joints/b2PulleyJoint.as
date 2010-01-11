@@ -153,8 +153,8 @@ public class b2PulleyJoint extends b2Joint
 		
 		m_constant = def.lengthA + m_ratio * def.lengthB;
 		
-		m_maxLength1 = b2Math.b2Min(def.maxLengthA, m_constant - m_ratio * b2_minPulleyLength);
-		m_maxLength2 = b2Math.b2Min(def.maxLengthB, (m_constant - b2_minPulleyLength) / m_ratio);
+		m_maxLength1 = b2Math.Min(def.maxLengthA, m_constant - m_ratio * b2_minPulleyLength);
+		m_maxLength2 = b2Math.Min(def.maxLengthB, (m_constant - b2_minPulleyLength) / m_ratio);
 		
 		m_impulse = 0.0;
 		m_limitImpulse1 = 0.0;
@@ -356,7 +356,7 @@ public class b2PulleyJoint extends b2Joint
 			Cdot = -(m_u1.x * v1X + m_u1.y * v1Y) - m_ratio * (m_u2.x * v2X + m_u2.y * v2Y);
 			impulse = m_pulleyMass * (-Cdot);
 			oldImpulse = m_impulse;
-			m_impulse = b2Math.b2Max(0.0, m_impulse + impulse);
+			m_impulse = b2Math.Max(0.0, m_impulse + impulse);
 			impulse = m_impulse - oldImpulse;
 			
 			//b2Vec2 P1 = -impulse * m_u1;
@@ -387,7 +387,7 @@ public class b2PulleyJoint extends b2Joint
 			Cdot = -(m_u1.x * v1X + m_u1.y * v1Y);
 			impulse = -m_limitMass1 * Cdot;
 			oldImpulse = m_limitImpulse1;
-			m_limitImpulse1 = b2Math.b2Max(0.0, m_limitImpulse1 + impulse);
+			m_limitImpulse1 = b2Math.Max(0.0, m_limitImpulse1 + impulse);
 			impulse = m_limitImpulse1 - oldImpulse;
 			
 			//b2Vec2 P1 = -impulse * m_u1;
@@ -410,7 +410,7 @@ public class b2PulleyJoint extends b2Joint
 			Cdot = -(m_u2.x * v2X + m_u2.y * v2Y);
 			impulse = -m_limitMass2 * Cdot;
 			oldImpulse = m_limitImpulse2;
-			m_limitImpulse2 = b2Math.b2Max(0.0, m_limitImpulse2 + impulse);
+			m_limitImpulse2 = b2Math.Max(0.0, m_limitImpulse2 + impulse);
 			impulse = m_limitImpulse2 - oldImpulse;
 			
 			//b2Vec2 P2 = -impulse * m_u2;
@@ -514,8 +514,8 @@ public class b2PulleyJoint extends b2Joint
 			}
 			
 			C = m_constant - length1 - m_ratio * length2;
-			linearError = b2Math.b2Max(linearError, -C);
-			C = b2Math.b2Clamp(C + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
+			linearError = b2Math.Max(linearError, -C);
+			C = b2Math.Clamp(C + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
 			impulse = -m_pulleyMass * C;
 			
 			p1X = -impulse * m_u1.x;
@@ -564,8 +564,8 @@ public class b2PulleyJoint extends b2Joint
 			}
 			
 			C = m_maxLength1 - length1;
-			linearError = b2Math.b2Max(linearError, -C);
-			C = b2Math.b2Clamp(C + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
+			linearError = b2Math.Max(linearError, -C);
+			C = b2Math.Clamp(C + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
 			impulse = -m_limitMass1 * C;
 			
 			//P1 = -impulse * m_u1;
@@ -610,8 +610,8 @@ public class b2PulleyJoint extends b2Joint
 			}
 			
 			C = m_maxLength2 - length2;
-			linearError = b2Math.b2Max(linearError, -C);
-			C = b2Math.b2Clamp(C + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
+			linearError = b2Math.Max(linearError, -C);
+			C = b2Math.Clamp(C + b2Settings.b2_linearSlop, -b2Settings.b2_maxLinearCorrection, 0.0);
 			impulse = -m_limitMass2 * C;
 			
 			//P2 = -impulse * m_u2;

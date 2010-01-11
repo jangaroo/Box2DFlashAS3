@@ -16,6 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/**
+ * Specifies a segment for use with RayCast functions.
+ */
 package Box2D.Collision 
 {
 	import Box2D.Common.Math.b2Vec2;

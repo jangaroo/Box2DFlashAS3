@@ -132,10 +132,10 @@ public static function Distance(output:b2DistanceOutput, cache:b2SimplexCache, i
 		
 		// Compute a tentative new simplex vertex using support points
 		var vertex:b2SimplexVertex = vertices[simplex.m_count];
-		vertex.indexA = proxyA.GetSupport(b2Math.b2MulTMV(transformA.R, d.Negative()));
-		vertex.wA = b2Math.b2MulX(transformA, proxyA.GetVertex(vertex.indexA));
-		vertex.indexB = proxyB.GetSupport(b2Math.b2MulTMV(transformB.R, d));
-		vertex.wB = b2Math.b2MulX(transformB, proxyB.GetVertex(vertex.indexB));
+		vertex.indexA = proxyA.GetSupport(b2Math.MulTMV(transformA.R, d.GetNegative()));
+		vertex.wA = b2Math.MulX(transformA, proxyA.GetVertex(vertex.indexA));
+		vertex.indexB = proxyB.GetSupport(b2Math.MulTMV(transformB.R, d));
+		vertex.wB = b2Math.MulX(transformB, proxyB.GetVertex(vertex.indexB));
 		vertex.w = b2Math.SubtractVV(vertex.wB, vertex.wA);
 		
 		// Iteration count is equated to the number of support point calls.
@@ -163,7 +163,7 @@ public static function Distance(output:b2DistanceOutput, cache:b2SimplexCache, i
 		++simplex.m_count;
 	}
 	
-	b2_gjkMaxIters = b2Math.b2Max(b2_gjkMaxIters, iter);
+	b2_gjkMaxIters = b2Math.Max(b2_gjkMaxIters, iter);
 	
 	// Prepare output
 	simplex.GetWitnessPoints(output.pointA, output.pointB);

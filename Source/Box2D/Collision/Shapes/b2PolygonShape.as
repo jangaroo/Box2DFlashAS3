@@ -109,7 +109,7 @@ public class b2PolygonShape extends b2Shape
 			var i2:int = i + 1 < m_vertexCount ? i + 1 : 0;
 			var edge:b2Vec2 = b2Math.SubtractVV(m_vertices[i2], m_vertices[i1]);
 			b2Settings.b2Assert(edge.LengthSquared() > Number.MIN_VALUE /* * Number.MIN_VALUE*/);
-			m_normals[i].SetV(b2Math.b2CrossVF(edge, 1.0));
+			m_normals[i].SetV(b2Math.CrossVF(edge, 1.0));
 			m_normals[i].Normalize();
 		}
 		
@@ -205,8 +205,8 @@ public class b2PolygonShape extends b2Shape
 		// Transform vertices and normals.
 		for (var i:int = 0; i < m_vertexCount; ++i)
 		{
-			m_vertices[i] = b2Math.b2MulX(xf, m_vertices[i]);
-			m_normals[i] = b2Math.b2MulMV(xf.R, m_normals[i]);
+			m_vertices[i] = b2Math.MulX(xf, m_vertices[i]);
+			m_normals[i] = b2Math.MulMV(xf.R, m_normals[i]);
 		}
 	}
 	
@@ -228,9 +228,10 @@ public class b2PolygonShape extends b2Shape
 		m_vertices[1].SetV(v2);
 		m_centroid.x = 0.5 * (v1.x + v2.x);
 		m_centroid.y = 0.5 * (v1.y + v2.y);
-		m_normals[0] = b2Math.b2CrossVF(b2Math.SubtractVV(v2, v1), 1.0);
+		m_normals[0] = b2Math.CrossVF(b2Math.SubtractVV(v2, v1), 1.0);
 		m_normals[0].Normalize();
-		m_normals[1] = m_normals[0].Negative();
+		m_normals[1].x = -m_normals[0].x;
+		m_normals[1].y = -m_normals[0].y;
 	}
 	
 	/**
@@ -376,14 +377,14 @@ public class b2PolygonShape extends b2Shape
 	*/
 	public override function ComputeAABB(aabb:b2AABB, xf:b2Transform) : void
 	{
-		var lower:b2Vec2 = b2Math.b2MulX(xf, m_vertices[0]);
+		var lower:b2Vec2 = b2Math.MulX(xf, m_vertices[0]);
 		var upper:b2Vec2 = lower;
 
 		for (var i:int = 1; i < m_vertexCount; ++i)
 		{
-			var v:b2Vec2 = b2Math.b2MulX(xf, m_vertices[i]);
-			lower = b2Math.b2MinV(lower, v);
-			upper = b2Math.b2MaxV(upper, v);
+			var v:b2Vec2 = b2Math.MulX(xf, m_vertices[i]);
+			lower = b2Math.MinV(lower, v);
+			upper = b2Math.MaxV(upper, v);
 		}
 
 		aabb.lowerBound.x = lower.x - m_radius;
@@ -527,8 +528,8 @@ public class b2PolygonShape extends b2Shape
 			c:b2Vec2):Number
 	{
 		// Transform plane into shape co-ordinates
-		var normalL:b2Vec2 = b2Math.b2MulTMV(xf.R, normal);
-		var offsetL:Number = offset - b2Math.b2Dot(normal, xf.position);
+		var normalL:b2Vec2 = b2Math.MulTMV(xf.R, normal);
+		var offsetL:Number = offset - b2Math.Dot(normal, xf.position);
 		
 		var depths:Vector.<Number> = new Vector.<Number>();
 		var diveCount:int = 0;
@@ -539,7 +540,7 @@ public class b2PolygonShape extends b2Shape
 		var i:int;
 		for (i = 0; i < m_vertexCount;++i)
 		{
-			depths[i] = b2Math.b2Dot(normalL, m_vertices[i]) - offsetL;
+			depths[i] = b2Math.Dot(normalL, m_vertices[i]) - offsetL;
 			var isSubmerged:Boolean = depths[i] < -Number.MIN_VALUE;
 			if (i > 0)
 			{
@@ -570,7 +571,7 @@ public class b2PolygonShape extends b2Shape
 				// Completely submerged
 				var md:b2MassData = new b2MassData();
 				ComputeMass(md, 1);
-				c.SetV(b2Math.b2MulX(xf, md.center));
+				c.SetV(b2Math.MulX(xf, md.center));
 				return md.mass;
 			}
 			else
@@ -627,7 +628,7 @@ public class b2PolygonShape extends b2Shape
 		
 		//Normalize and transform centroid
 		center.Multiply(1 / area);
-		c.SetV(b2Math.b2MulX(xf, center));
+		c.SetV(b2Math.MulX(xf, center));
 		
 		return area;
 	}

@@ -139,7 +139,8 @@ internal class b2PositionSolverManifold
 				}
 				
 				// Ensure normal points from A to B
-				m_normal = m_normal.Negative();
+				m_normal.x *= -1;
+				m_normal.y *= -1;
 			}
 			break;
 		}

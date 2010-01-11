@@ -190,8 +190,8 @@ public class b2Island
 			// v2 = exp(-c * dt) * v1
 			// Taylor expansion:
 			// v2 = (1.0f - c * dt) * v1
-			b.m_linearVelocity.Multiply( b2Math.b2Clamp(1.0 - step.dt * b.m_linearDamping, 0.0, 1.0) );
-			b.m_angularVelocity *= b2Math.b2Clamp(1.0 - step.dt * b.m_angularDamping, 0.0, 1.0);
+			b.m_linearVelocity.Multiply( b2Math.Clamp(1.0 - step.dt * b.m_linearDamping, 0.0, 1.0) );
+			b.m_angularVelocity *= b2Math.Clamp(1.0 - step.dt * b.m_angularDamping, 0.0, 1.0);
 		}
 		
 		m_contactSolver.Initialize(step, m_contacts, m_contactCount, m_allocator);
@@ -318,7 +318,7 @@ public class b2Island
 				
 				if ((b.m_flags & b2Body.e_allowSleepFlag) == 0 ||
 					b.m_angularVelocity * b.m_angularVelocity > angTolSqr ||
-					b2Math.b2Dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr)
+					b2Math.Dot(b.m_linearVelocity, b.m_linearVelocity) > linTolSqr)
 				{
 					b.m_sleepTime = 0.0;
 					minSleepTime = 0.0;
@@ -326,7 +326,7 @@ public class b2Island
 				else
 				{
 					b.m_sleepTime += step.dt;
-					minSleepTime = b2Math.b2Min(minSleepTime, b.m_sleepTime);
+					minSleepTime = b2Math.Min(minSleepTime, b.m_sleepTime);
 				}
 			}
 			

@@ -267,7 +267,7 @@ public class b2RevoluteJoint extends b2Joint
 		{
 			//float32 jointAngle = bB->m_sweep.a - bA->m_sweep.a - m_referenceAngle;
 			var jointAngle:Number = bB.m_sweep.a - bA.m_sweep.a - m_referenceAngle;
-			if (b2Math.b2Abs(m_upperAngle - m_lowerAngle) < 2.0 * b2Settings.b2_angularSlop)
+			if (b2Math.Abs(m_upperAngle - m_lowerAngle) < 2.0 * b2Settings.b2_angularSlop)
 			{
 				m_limitState = e_equalLimits;
 			}
@@ -362,7 +362,7 @@ public class b2RevoluteJoint extends b2Joint
 			var oldImpulse:Number = m_motorImpulse;
 			var maxImpulse:Number = step.dt * m_maxMotorTorque;
 			
-			m_motorImpulse = b2Math.b2Clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
+			m_motorImpulse = b2Math.Clamp(m_motorImpulse + impulse, -maxImpulse, maxImpulse);
 			impulse = m_motorImpulse - oldImpulse;
 			
 			w1 -= i1 * impulse;
@@ -509,9 +509,9 @@ public class b2RevoluteJoint extends b2Joint
 			if (m_limitState == e_equalLimits)
 			{
 				// Prevent large angular corrections
-				C = b2Math.b2Clamp(angle - m_lowerAngle, -b2Settings.b2_maxAngularCorrection, b2Settings.b2_maxAngularCorrection);
+				C = b2Math.Clamp(angle - m_lowerAngle, -b2Settings.b2_maxAngularCorrection, b2Settings.b2_maxAngularCorrection);
 				limitImpulse = -m_motorMass * C;
-				angularError = b2Math.b2Abs(C);
+				angularError = b2Math.Abs(C);
 			}
 			else if (m_limitState == e_atLowerLimit)
 			{
@@ -519,7 +519,7 @@ public class b2RevoluteJoint extends b2Joint
 				angularError = -C;
 				
 				// Prevent large angular corrections and allow some slop.
-				C = b2Math.b2Clamp(C + b2Settings.b2_angularSlop, -b2Settings.b2_maxAngularCorrection, 0.0);
+				C = b2Math.Clamp(C + b2Settings.b2_angularSlop, -b2Settings.b2_maxAngularCorrection, 0.0);
 				limitImpulse = -m_motorMass * C;
 			}
 			else if (m_limitState == e_atUpperLimit)
@@ -528,7 +528,7 @@ public class b2RevoluteJoint extends b2Joint
 				angularError = C;
 				
 				// Prevent large angular corrections and allow some slop.
-				C = b2Math.b2Clamp(C - b2Settings.b2_angularSlop, 0.0, b2Settings.b2_maxAngularCorrection);
+				C = b2Math.Clamp(C - b2Settings.b2_angularSlop, 0.0, b2Settings.b2_maxAngularCorrection);
 				limitImpulse = -m_motorMass * C;
 			}
 			

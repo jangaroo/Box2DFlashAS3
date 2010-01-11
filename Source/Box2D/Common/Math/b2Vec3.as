@@ -66,9 +66,11 @@ public class b2Vec3
 	/**
 	 * Negate this vector
 	 */
-	public function Negative():b2Vec3 { return new b2Vec3( -x, -y, -z); }
+	public function GetNegative():b2Vec3 { return new b2Vec3( -x, -y, -z); }
 	
-		public function Copy():b2Vec3{
+	public function NegativeSelf():void { x = -x; y = -y; z = -z; }
+	
+	public function Copy():b2Vec3{
 		return new b2Vec3(x,y,z);
 	}
 	

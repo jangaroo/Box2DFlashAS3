@@ -87,7 +87,7 @@ internal class b2SeparationFunction
 			localPointB = m_proxyB.GetVertex(cache.indexB[0]);
 			m_localPoint.x = 0.5 * (localPointA1.x + localPointA2.x);
 			m_localPoint.y = 0.5 * (localPointA1.y + localPointA2.y);
-			m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
+			m_axis = b2Math.CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
 			m_axis.Normalize();
 			
 			//normal = b2Math.b2MulMV(transformA.R, m_axis);
@@ -110,7 +110,7 @@ internal class b2SeparationFunction
 			s = (pointBX - pointAX) * normalX + (pointBY - pointAY) * normalY;
 			if (s < 0.0)
 			{
-				m_axis = m_axis.Negative();
+				m_axis.NegativeSelf();
 			}
 		}
 		else if (cache.indexA[0] == cache.indexA[0])
@@ -122,7 +122,7 @@ internal class b2SeparationFunction
 			localPointA = m_proxyA.GetVertex(cache.indexA[0]);
 			m_localPoint.x = 0.5 * (localPointB1.x + localPointB2.x);
 			m_localPoint.y = 0.5 * (localPointB1.y + localPointB2.y);
-			m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
+			m_axis = b2Math.CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
 			m_axis.Normalize();
 			
 			//normal = b2Math.b2MulMV(transformB.R, m_axis);
@@ -145,7 +145,7 @@ internal class b2SeparationFunction
 			s = (pointAX - pointBX) * normalX + (pointAY - pointBY) * normalY;
 			if (s < 0.0)
 			{
-				m_axis = m_axis.Negative();
+				m_axis.NegativeSelf();
 			}
 		}
 		else
@@ -157,10 +157,10 @@ internal class b2SeparationFunction
 			localPointB1 = m_proxyB.GetVertex(cache.indexB[0]);
 			localPointB2 = m_proxyB.GetVertex(cache.indexB[1]);
 			
-			var pA:b2Vec2 = b2Math.b2MulX(transformA, localPointA);
-			var dA:b2Vec2 = b2Math.b2MulMV(transformA.R, b2Math.SubtractVV(localPointA2, localPointA1));
-			var pB:b2Vec2 = b2Math.b2MulX(transformB, localPointB);
-			var dB:b2Vec2 = b2Math.b2MulMV(transformB.R, b2Math.SubtractVV(localPointB2, localPointB1));
+			var pA:b2Vec2 = b2Math.MulX(transformA, localPointA);
+			var dA:b2Vec2 = b2Math.MulMV(transformA.R, b2Math.SubtractVV(localPointA2, localPointA1));
+			var pB:b2Vec2 = b2Math.MulX(transformB, localPointB);
+			var dB:b2Vec2 = b2Math.MulMV(transformB.R, b2Math.SubtractVV(localPointB2, localPointB1));
 			
 			var a:Number = dA.x * dA.x + dA.y * dA.y;
 			var e:Number = dB.x * dB.x + dB.y * dB.y;
@@ -174,14 +174,14 @@ internal class b2SeparationFunction
 			s = 0.0;
 			if (denom != 0.0)
 			{
-				s = b2Math.b2Clamp((b * f - c * e) / denom, 0.0, 1.0);
+				s = b2Math.Clamp((b * f - c * e) / denom, 0.0, 1.0);
 			}
 			
 			var t:Number = (b * s + f) / e;
 			if (t < 0.0)
 			{
 				t = 0.0;
-				s = b2Math.b2Clamp((b - c) / a, 0.0, 1.0);
+				s = b2Math.Clamp((b - c) / a, 0.0, 1.0);
 			}
 			
 			//b2Vec2 localPointA = localPointA1 + s * (localPointA2 - localPointA1);
@@ -196,7 +196,7 @@ internal class b2SeparationFunction
 			if (s == 0.0 || s == 1.0)
 			{
 				m_type = e_faceB;
-				m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
+				m_axis = b2Math.CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
 				
 				m_localPoint = localPointB;
 				
@@ -220,13 +220,13 @@ internal class b2SeparationFunction
 				sgn = (pointAX - pointBX) * normalX + (pointAY - pointBY) * normalY;
 				if (s < 0.0)
 				{
-					m_axis = m_axis.Negative();
+					m_axis.NegativeSelf();
 				}
 			}
 			else
 			{
 				m_type = e_faceA;
-				m_axis = b2Math.b2CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
+				m_axis = b2Math.CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
 				
 				m_localPoint = localPointA;
 				
@@ -250,7 +250,7 @@ internal class b2SeparationFunction
 				sgn = (pointBX - pointAX) * normalX + (pointBY - pointAY) * normalY;
 				if (s < 0.0)
 				{
-					m_axis = m_axis.Negative();
+					m_axis.NegativeSelf();
 				}
 			}
 		}
@@ -270,25 +270,25 @@ internal class b2SeparationFunction
 		{
 			case e_points:
 			{
-				axisA = b2Math.b2MulTMV(transformA.R, m_axis);
-				axisB = b2Math.b2MulTMV(transformB.R, m_axis.Negative());
+				axisA = b2Math.MulTMV(transformA.R, m_axis);
+				axisB = b2Math.MulTMV(transformB.R, m_axis.GetNegative());
 				localPointA = m_proxyA.GetSupportVertex(axisA);
 				localPointB = m_proxyB.GetSupportVertex(axisB);
-				pointA = b2Math.b2MulX(transformA, localPointA);
-				pointB = b2Math.b2MulX(transformB, localPointB);
+				pointA = b2Math.MulX(transformA, localPointA);
+				pointB = b2Math.MulX(transformB, localPointB);
 				//float32 separation = b2Dot(pointB - pointA, m_axis);
 				seperation = (pointB.x - pointA.x) * m_axis.x + (pointB.y - pointA.y) * m_axis.y;
 				return seperation;
 			}
 			case e_faceA:
 			{
-				normal = b2Math.b2MulMV(transformA.R, m_axis);
-				pointA = b2Math.b2MulX(transformA, m_localPoint);
+				normal = b2Math.MulMV(transformA.R, m_axis);
+				pointA = b2Math.MulX(transformA, m_localPoint);
 				
-				axisB = b2Math.b2MulTMV(transformB.R, normal.Negative());
+				axisB = b2Math.MulTMV(transformB.R, normal.GetNegative());
 				
 				localPointB = m_proxyB.GetSupportVertex(axisB);
-				pointB = b2Math.b2MulX(transformB, localPointB);
+				pointB = b2Math.MulX(transformB, localPointB);
 				
 				//float32 separation = b2Dot(pointB - pointA, normal);
 				seperation = (pointB.x - pointA.x) * normal.x + (pointB.y - pointA.y) * normal.y;
@@ -296,13 +296,13 @@ internal class b2SeparationFunction
 			}
 			case e_faceB:
 			{
-				normal = b2Math.b2MulMV(transformB.R, m_axis);
-				pointB = b2Math.b2MulX(transformB, m_localPoint);
+				normal = b2Math.MulMV(transformB.R, m_axis);
+				pointB = b2Math.MulX(transformB, m_localPoint);
 				
-				axisA = b2Math.b2MulTMV(transformA.R, normal.Negative());
+				axisA = b2Math.MulTMV(transformA.R, normal.GetNegative());
 				
 				localPointA = m_proxyA.GetSupportVertex(axisA);
-				pointA = b2Math.b2MulX(transformA, localPointA);
+				pointA = b2Math.MulX(transformA, localPointA);
 				
 				//float32 separation = b2Dot(pointA - pointB, normal);
 				seperation = (pointA.x - pointB.x) * normal.x + (pointA.y - pointB.y) * normal.y;

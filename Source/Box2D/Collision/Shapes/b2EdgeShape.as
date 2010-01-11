@@ -143,11 +143,11 @@ public class b2EdgeShape extends b2Shape
 		//b2Vec2 v0 = offset * normal;
 		var v0:b2Vec2 = new b2Vec2(normal.x * offset, normal.y * offset);
 		
-		var v1:b2Vec2 = b2Math.b2MulX(xf, m_v1);
-		var v2:b2Vec2 = b2Math.b2MulX(xf, m_v2);
+		var v1:b2Vec2 = b2Math.MulX(xf, m_v1);
+		var v2:b2Vec2 = b2Math.MulX(xf, m_v2);
 		
-		var d1:Number = b2Math.b2Dot(normal, v1) - offset;
-		var d2:Number = b2Math.b2Dot(normal, v2) - offset;
+		var d1:Number = b2Math.Dot(normal, v1) - offset;
+		var d2:Number = b2Math.Dot(normal, v2) - offset;
 		if (d1 > 0)
 		{
 			if (d2 > 0)

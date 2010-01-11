@@ -16,6 +16,9 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+/**
+ * Returns data on the collision between a ray and a shape.
+ */
 package Box2D.Collision 
 {
 	import Box2D.Common.Math.b2Vec2;

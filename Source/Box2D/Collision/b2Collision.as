@@ -343,6 +343,7 @@ public class b2Collision{
 	private static var s_planePoint:b2Vec2 = new b2Vec2();
 	private static var s_normal:b2Vec2 = new b2Vec2();
 	private static var s_tangent:b2Vec2 = new b2Vec2();
+	private static var s_tangent2:b2Vec2 = new b2Vec2();
 	// Find edge normal of max separation on A - return if separating axis is found
 	// Find edge normal of max separation on B - return if separation axis is found
 	// Choose reference edge as min(minA, minB)
@@ -436,18 +437,21 @@ public class b2Collision{
 		tMat = xf1.R;
 		tangent.x = (tMat.col1.x * localTangent.x + tMat.col2.x * localTangent.y);
 		tangent.y = (tMat.col1.y * localTangent.x + tMat.col2.y * localTangent.y);
+		var tangent2:b2Vec2 = s_tangent2;
+		tangent2.x = - tangent.x;
+		tangent2.y = - tangent.y;
 		var normal:b2Vec2 = s_normal;
 		normal.x = tangent.y;
 		normal.y = -tangent.x;
 		
-		v11 = b2Math.b2MulX(xf1, v11);
-		v12 = b2Math.b2MulX(xf1, v12);
+		v11 = b2Math.MulX(xf1, v11);
+		v12 = b2Math.MulX(xf1, v12);
 
 		// Face offset
-		var frontOffset:Number = b2Math.b2Dot(normal, v11);
+		var frontOffset:Number = b2Math.Dot(normal, v11);
 		// Side offsets, extended by polytope skin thickness
-		var sideOffset1:Number = -b2Math.b2Dot(tangent, v11) + totalRadius;
-		var sideOffset2:Number = b2Math.b2Dot(tangent, v12) + totalRadius;
+		var sideOffset1:Number = -b2Math.Dot(tangent, v11) + totalRadius;
+		var sideOffset2:Number = b2Math.Dot(tangent, v12) + totalRadius;
 
 		// Clip incident edge against extruded edge1 side edges.
 		var clipPoints1:Vector.<ClipVertex> = s_clipPoints1;
@@ -456,7 +460,7 @@ public class b2Collision{
 
 		// Clip to box side 1
 		//np = ClipSegmentToLine(clipPoints1, incidentEdge, -tangent, sideOffset1);
-		np = ClipSegmentToLine(clipPoints1, incidentEdge, tangent.Negative(), sideOffset1);
+		np = ClipSegmentToLine(clipPoints1, incidentEdge, tangent2, sideOffset1);
 
 		if (np < 2)
 			return;
