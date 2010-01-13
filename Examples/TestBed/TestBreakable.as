@@ -139,7 +139,7 @@ class ContactListener extends b2ContactListener
 		var maxImpulse:Number = 0.0;
 		for (var i:int = 0; i < count; i++)
 		{
-			maxImpulse = b2Math.b2Max(maxImpulse, impulse.normalImpulses[i]);
+			maxImpulse = b2Math.Max(maxImpulse, impulse.normalImpulses[i]);
 		}
 		
 		if (maxImpulse > 50)

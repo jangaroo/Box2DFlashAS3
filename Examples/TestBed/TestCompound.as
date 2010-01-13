@@ -55,9 +55,9 @@ package TestBed{
 				
 				for (i = 0; i < 5; ++i)
 				{
-					x = 320.0 + b2Math.b2RandomRange(-3.0, 3.0);
+					x = 320.0 + b2Math.RandomRange(-3.0, 3.0);
 					bd.position.Set((x + 150.0)/m_physScale, (31.5 + 75.0 * -i + 300.0)/m_physScale);
-					bd.angle = b2Math.b2RandomRange(-Math.PI, Math.PI);
+					bd.angle = b2Math.RandomRange(-Math.PI, Math.PI);
 					body = m_world.CreateBody(bd);
 					body.CreateFixture2(cd1, 2.0);
 					body.CreateFixture2(cd2, 0.0);
@@ -76,9 +76,9 @@ package TestBed{
 				
 				for (i = 0; i < 5; ++i)
 				{
-					x = 320.0 + b2Math.b2RandomRange(-3.0, 3.0);
+					x = 320.0 + b2Math.RandomRange(-3.0, 3.0);
 					bd.position.Set((x - 150.0)/m_physScale, (31.5 + 75.0 * -i + 300)/m_physScale);
-					bd.angle = b2Math.b2RandomRange(-Math.PI, Math.PI);
+					bd.angle = b2Math.RandomRange(-Math.PI, Math.PI);
 					body = m_world.CreateBody(bd);
 					body.CreateFixture2(pd1, 2.0);
 					body.CreateFixture2(pd2, 2.0);
@@ -88,24 +88,24 @@ package TestBed{
 			{
 				var xf1:b2Transform = new b2Transform();
 				xf1.R.Set(0.3524 * Math.PI);
-				xf1.position = b2Math.b2MulMV(xf1.R, new b2Vec2(1.0, 0.0));
+				xf1.position = b2Math.MulMV(xf1.R, new b2Vec2(1.0, 0.0));
 				
 				var sd1:b2PolygonShape = new b2PolygonShape();
 				sd1.SetAsArray([
-					b2Math.b2MulX(xf1, new b2Vec2(-30.0/m_physScale, 0.0)),
-					b2Math.b2MulX(xf1, new b2Vec2(30.0/m_physScale, 0.0)),
-					b2Math.b2MulX(xf1, new b2Vec2(0.0, 15.0 / m_physScale)),
+					b2Math.MulX(xf1, new b2Vec2(-30.0/m_physScale, 0.0)),
+					b2Math.MulX(xf1, new b2Vec2(30.0/m_physScale, 0.0)),
+					b2Math.MulX(xf1, new b2Vec2(0.0, 15.0 / m_physScale)),
 					]);
 				
 				var xf2:b2Transform = new b2Transform();
 				xf2.R.Set(-0.3524 * Math.PI);
-				xf2.position = b2Math.b2MulMV(xf2.R, new b2Vec2(-30.0/m_physScale, 0.0));
+				xf2.position = b2Math.MulMV(xf2.R, new b2Vec2(-30.0/m_physScale, 0.0));
 				
 				var sd2:b2PolygonShape = new b2PolygonShape();
 				sd2.SetAsArray([
-					b2Math.b2MulX(xf2, new b2Vec2(-30.0/m_physScale, 0.0)),
-					b2Math.b2MulX(xf2, new b2Vec2(30.0/m_physScale, 0.0)),
-					b2Math.b2MulX(xf2, new b2Vec2(0.0, 15.0 / m_physScale)),
+					b2Math.MulX(xf2, new b2Vec2(-30.0/m_physScale, 0.0)),
+					b2Math.MulX(xf2, new b2Vec2(30.0/m_physScale, 0.0)),
+					b2Math.MulX(xf2, new b2Vec2(0.0, 15.0 / m_physScale)),
 					]);
 				
 				bd = new b2BodyDef();
@@ -114,7 +114,7 @@ package TestBed{
 				
 				for (i = 0; i < 5; ++i)
 				{
-					x = 320.0 + b2Math.b2RandomRange(-3.0, 3.0);
+					x = 320.0 + b2Math.RandomRange(-3.0, 3.0);
 					bd.position.Set(x/m_physScale, (-61.5 + 55.0 * -i + 300)/m_physScale);
 					bd.angle = 0.0;
 					body = m_world.CreateBody(bd);
