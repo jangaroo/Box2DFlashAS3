@@ -124,7 +124,7 @@ public class b2Shape
 		input.proxyB.Set(shape2);
 		input.transformA = transform1;
 		input.transformB = transform2;
-		input.useRadii = false;
+		input.useRadii = true;
 		var simplexCache:b2SimplexCache = new b2SimplexCache();
 		simplexCache.count = 0;
 		var output:b2DistanceOutput = new b2DistanceOutput();
