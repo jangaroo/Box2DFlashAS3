@@ -32,9 +32,10 @@ use namespace b2internal;
 
 
 /**
-* An edge shape.
-* @see b2EdgeChainDef
-*/
+ * An edge shape.
+ * @private
+ * @see b2EdgeChainDef
+ */
 public class b2EdgeShape extends b2Shape
 {
 	/**

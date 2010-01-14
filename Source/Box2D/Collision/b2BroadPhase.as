@@ -101,10 +101,10 @@ public class b2BroadPhase implements IBroadPhase
 		d2X -= aabb.upperBound.x;
 		d2Y -= aabb.upperBound.y;
 		
-		dX = b2Math.b2Max(dX, d2X);
-		dY = b2Math.b2Max(dY, d2Y);
+		dX = b2Math.Max(dX, d2X);
+		dY = b2Math.Max(dY, d2Y);
 		
-		return b2Math.b2Max(dX, dY) < 0.0;
+		return b2Math.Max(dX, dY) < 0.0;
 	}
 
 	// Create and destroy proxies. These call Flush first.
@@ -422,7 +422,7 @@ public class b2BroadPhase implements IBroadPhase
 					//bound = prevEdge;
 					//prevEdge = temp;
 					bound.Swap(prevBound);
-					//b2Math.b2Swap(bound, prevEdge);
+					//b2Math.Swap(bound, prevEdge);
 					--index;
 				}
 			}
@@ -476,7 +476,7 @@ public class b2BroadPhase implements IBroadPhase
 					//bound = nextEdge;
 					//nextEdge = temp;
 					bound.Swap(nextBound);
-					//b2Math.b2Swap(bound, nextEdge);
+					//b2Math.Swap(bound, nextEdge);
 					index++;
 				}
 			}
@@ -535,7 +535,7 @@ public class b2BroadPhase implements IBroadPhase
 					//bound = nextEdge;
 					//nextEdge = temp;
 					bound.Swap(nextBound);
-					//b2Math.b2Swap(bound, nextEdge);
+					//b2Math.Swap(bound, nextEdge);
 					index++;
 				}
 			}
@@ -590,7 +590,7 @@ public class b2BroadPhase implements IBroadPhase
 					//bound = prevEdge;
 					//prevEdge = temp;
 					bound.Swap(prevBound);
-					//b2Math.b2Swap(bound, prevEdge);
+					//b2Math.Swap(bound, prevEdge);
 					index--;
 				}
 			}
@@ -890,21 +890,21 @@ public class b2BroadPhase implements IBroadPhase
 		//b2Settings.b2Assert(aabb.upperBound.x >= aabb.lowerBound.x);
 		//b2Settings.b2Assert(aabb.upperBound.y >= aabb.lowerBound.y);
 		
-		//var minVertex:b2Vec2 = b2Math.b2ClampV(aabb.minVertex, m_worldAABB.minVertex, m_worldAABB.maxVertex);
+		//var minVertex:b2Vec2 = b2Math.ClampV(aabb.minVertex, m_worldAABB.minVertex, m_worldAABB.maxVertex);
 		var minVertexX:Number = aabb.lowerBound.x;
 		var minVertexY:Number = aabb.lowerBound.y;
-		minVertexX = b2Math.b2Min(minVertexX, m_worldAABB.upperBound.x);
-		minVertexY = b2Math.b2Min(minVertexY, m_worldAABB.upperBound.y);
-		minVertexX = b2Math.b2Max(minVertexX, m_worldAABB.lowerBound.x);
-		minVertexY = b2Math.b2Max(minVertexY, m_worldAABB.lowerBound.y);
+		minVertexX = b2Math.Min(minVertexX, m_worldAABB.upperBound.x);
+		minVertexY = b2Math.Min(minVertexY, m_worldAABB.upperBound.y);
+		minVertexX = b2Math.Max(minVertexX, m_worldAABB.lowerBound.x);
+		minVertexY = b2Math.Max(minVertexY, m_worldAABB.lowerBound.y);
 		
-		//var maxVertex:b2Vec2 = b2Math.b2ClampV(aabb.maxVertex, m_worldAABB.minVertex, m_worldAABB.maxVertex);
+		//var maxVertex:b2Vec2 = b2Math.ClampV(aabb.maxVertex, m_worldAABB.minVertex, m_worldAABB.maxVertex);
 		var maxVertexX:Number = aabb.upperBound.x;
 		var maxVertexY:Number = aabb.upperBound.y;
-		maxVertexX = b2Math.b2Min(maxVertexX, m_worldAABB.upperBound.x);
-		maxVertexY = b2Math.b2Min(maxVertexY, m_worldAABB.upperBound.y);
-		maxVertexX = b2Math.b2Max(maxVertexX, m_worldAABB.lowerBound.x);
-		maxVertexY = b2Math.b2Max(maxVertexY, m_worldAABB.lowerBound.y);
+		maxVertexX = b2Math.Min(maxVertexX, m_worldAABB.upperBound.x);
+		maxVertexY = b2Math.Min(maxVertexY, m_worldAABB.upperBound.y);
+		maxVertexX = b2Math.Max(maxVertexX, m_worldAABB.lowerBound.x);
+		maxVertexY = b2Math.Max(maxVertexY, m_worldAABB.lowerBound.y);
 		
 		// Bump lower bounds downs and upper bounds up. This ensures correct sorting of
 		// lower/upper bounds that would have equal values.

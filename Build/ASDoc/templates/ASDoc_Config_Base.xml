@@ -48,7 +48,7 @@
 	</item>
   </annotate>
   -->
-  <appendixes show="true">
+  <appendixes show="false">
     <appendix label="Manual" overview="manual-appendix" href="http://www.box2d.org/wiki/index.php?title=Manual/AS3&amp;amp;printable=yes"/>
   </appendixes>
   <source base="http://box2dflash.svn.sourceforge.net/viewvc/box2dflash/Source/"/>

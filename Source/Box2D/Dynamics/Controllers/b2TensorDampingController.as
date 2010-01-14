@@ -76,15 +76,15 @@ public class b2TensorDampingController extends b2Controller
 			}
 			var damping:b2Vec2 =
 				body.GetWorldVector(
-					b2Math.b2MulMV(T,
+					b2Math.MulMV(T,
 						body.GetLocalVector(
 							body.GetLinearVelocity()
 						)
 					)
 				);
 			body.SetLinearVelocity(new b2Vec2(
-				body.GetLinearVelocity().x += damping.x * timestep,
-				body.GetLinearVelocity().y += damping.y * timestep
+				body.GetLinearVelocity().x + damping.x * timestep,
+				body.GetLinearVelocity().y + damping.y * timestep
 				));
 		}
 	}

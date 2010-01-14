@@ -21,6 +21,7 @@ package Box2D.Collision
 	
 	/**
 	 * A node in the dynamic tree. The client does not interact with this directly.
+	 * @private
 	 */
 	public class b2DynamicTreeNode 
 	{

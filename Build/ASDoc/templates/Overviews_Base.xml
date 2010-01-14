@@ -61,6 +61,12 @@
 			<propertiesDescription></propertiesDescription>
 			<functionsDescription></functionsDescription>
 		</package>
+		<package name="Box2D.Dynamics.Controllers">
+			<shortDescription>Contains classes managing groups of bodies.</shortDescription>
+			<description>Contains classes managing groups of bodies.</description>
+			<propertiesDescription></propertiesDescription>
+			<functionsDescription></functionsDescription>
+		</package>
 		<package name="Box2D.Dynamics.Joints">
 			<shortDescription>Contains joint classes and corresponding definitions.</shortDescription>
 			<description>Contains joint classes and corresponding definitions.</description>
