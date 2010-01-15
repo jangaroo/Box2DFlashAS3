@@ -38,6 +38,9 @@ package TestBed{
 			// Set Text field
 			Main.m_aboutText.text = "Continuous Collision Detection";
 			
+			// Always on, even if default is off
+			m_world.SetContinuousPhysics(true);
+			
 			var bd:b2BodyDef;
 			var body:b2Body;
 			var fixtureDef:b2FixtureDef = new b2FixtureDef();
