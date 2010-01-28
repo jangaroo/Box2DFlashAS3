@@ -418,6 +418,26 @@ public class b2Body
 		bd.userData = GetUserData();
 		return bd;
 	}
+	
+	/**
+	 * Sets all body properties.
+	 * @asonly
+	 */
+	public function SetDefinition(bd:b2BodyDef):void
+	{
+		
+		SetType(bd.type);
+		SetSleepingAllowed(bd.allowSleep);
+		SetPositionAndAngle(bd.position, bd.angle);
+		m_angularDamping = bd.angularDamping;
+		m_angularVelocity = bd.angularVelocity;
+		SetFixedRotation(bd.fixedRotation);
+		SetBullet(bd.bullet);
+		SetAwake(bd.awake);
+		m_linearDamping = bd.linearDamping;
+		m_linearVelocity.SetV(bd.linearVelocity);
+		m_userData = bd.userData;
+	}
 
 	/**
 	* Apply a force at a world point. If the force is not
@@ -987,6 +1007,14 @@ public class b2Body
 		}
 		
 		ResetMassData();
+	}
+	
+	/**
+	 * Get if the body has fixed rotation.
+	 */
+	public function GetFixedRotation():Boolean
+	{
+		return (m_flags & e_fixedRotationFlag) > 0;
 	}
 	
 	/**

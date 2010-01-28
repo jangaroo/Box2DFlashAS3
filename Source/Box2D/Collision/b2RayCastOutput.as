@@ -25,6 +25,12 @@ package Box2D.Collision
 	
 	public class b2RayCastOutput 
 	{
+		public function Set(other:b2RayCastOutput):void
+		{
+			normal.SetV(other.normal);
+			fraction = other.fraction;
+		}
+		
 		/**
 		 * The normal at the point of collision
 		 */

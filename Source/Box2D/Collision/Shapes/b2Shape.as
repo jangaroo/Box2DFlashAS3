@@ -152,11 +152,11 @@ public class b2Shape
 	*/
 	//enum b2ShapeType
 	//{
-		static b2internal const e_unknownShape:int = 	-1;
-		static b2internal const e_circleShape:int = 	0;
-		static b2internal const e_polygonShape:int = 	1;
-		static b2internal const e_edgeShape:int =       2;
-		static b2internal const e_shapeTypeCount:int = 	3;
+		static public const e_unknownShape:int = 	-1;
+		static public const e_circleShape:int = 	0;
+		static public const e_polygonShape:int = 	1;
+		static public const e_edgeShape:int =       2;
+		static public const e_shapeTypeCount:int = 	3;
 	//};
 	
 	/**

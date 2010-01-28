@@ -346,6 +346,23 @@ public class b2Fixture
 		var displacement:b2Vec2 = b2Math.SubtractVV(transform2.position, transform1.position);
 		broadPhase.MoveProxy(m_proxy, m_aabb, displacement);
 	}
+
+	/**
+	 * Get the definition containing the fixture properties.
+	 * @asonly
+	 */
+	public function GetDefinition():b2FixtureDef
+	{
+		var fd:b2FixtureDef = new b2FixtureDef();
+		fd.density = m_density;
+		fd.filter = m_filter.Copy();
+		fd.friction = m_friction;
+		fd.isSensor = m_isSensor;
+		fd.restitution = m_restitution;
+		fd.shape = m_shape;
+		fd.userData = m_userData;
+		return fd;
+	}
 	
 	private var m_massData:b2MassData;
 	

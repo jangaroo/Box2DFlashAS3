@@ -142,7 +142,7 @@ public class b2PolygonShape extends b2Shape
 		m_centroid = ComputeCentroid(m_vertices, m_vertexCount);
 	}
 	
-	public static function AsVector(vertices:Vector.<b2Vec2>, vertexCount:Number):b2PolygonShape
+	public static function AsVector(vertices:Vector.<b2Vec2>, vertexCount:Number = 0):b2PolygonShape
 	{
 		var polygonShape:b2PolygonShape = new b2PolygonShape();
 		polygonShape.SetAsVector(vertices, vertexCount);
