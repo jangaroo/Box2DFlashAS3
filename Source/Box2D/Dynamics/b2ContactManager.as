@@ -36,11 +36,11 @@ use namespace b2internal;
 */
 public class b2ContactManager 
 {
-	public function b2ContactManager() {
-		m_world = null;
+	public function b2ContactManager(world:b2World) {
+		m_world = world;
 		m_contactCount = 0;
 		m_contactFilter = b2ContactFilter.b2_defaultFilter;
-		m_contactListener = b2ContactListener.b2_defaultListener;
+		m_contactListener = new b2DefaultContactListener(world);
 		m_contactFactory = new b2ContactFactory(m_allocator);
 		m_broadPhase = new b2DynamicTreeBroadPhase();
 	};
@@ -279,7 +279,7 @@ public class b2ContactManager
 	b2internal var m_contactList:b2Contact;
 	b2internal var m_contactCount:int;
 	b2internal var m_contactFilter:b2ContactFilter;
-	b2internal var m_contactListener:b2ContactListener;
+	b2internal var m_contactListener:IContactListener;
 	b2internal var m_contactFactory:b2ContactFactory;
 	b2internal var m_allocator:*;
 };

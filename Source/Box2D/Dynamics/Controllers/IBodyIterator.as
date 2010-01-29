@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2006-2007 Adam Newgas
+* Copyright (c) 2010 Adam Newgas http://www.boristhebrave.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -16,41 +16,25 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics.Controllers{
-
-import Box2D.Common.Math.*;
-import Box2D.Common.*;
-import Box2D.Collision.Shapes.*;
-import Box2D.Dynamics.*;
-
-
-/**
- * Applies a force every frame
- */
-public class b2ConstantForceController extends b2Controller
-{	
+package Box2D.Dynamics.Controllers 
+{
+	import Box2D.Dynamics.b2Body;
+	
 	/**
-	 * The force to apply
+	 * A list of bodies that can be looped over once.
 	 */
-	public var F:b2Vec2 = new b2Vec2(0,0);
-	
-	public override function Step(step:b2TimeStep):void{
-		for (m_iterator = m_bodyIterable.ResetIterator(m_iterator); m_iterator.HasNext(); )
-		{
-			var body:b2Body = m_iterator.Next();
-			if(!body.IsAwake())
-				continue;
-			body.ApplyForce(F,body.GetWorldCenter());
-		}
-	}
-	
-	public override function SetBodyIterable(iterable:IBodyIterable):void 
+	public interface IBodyIterator 
 	{
-		super.SetBodyIterable(iterable);
-		m_iterator = m_bodyIterable.GetIterator();
+		/**
+		 * Call to see if another body is available
+		 */
+		function HasNext():Boolean;
+		
+		/**
+		 * Return the current body, and move on to the next.
+		 * Only valid to call after HasNext() returns true.
+		 */
+		function Next():b2Body;
 	}
 	
-	private var m_iterator:IBodyIterator;
-}
-
 }

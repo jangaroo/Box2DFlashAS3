@@ -23,12 +23,12 @@ import Box2D.Collision.b2Bound;
 import Box2D.Collision.b2BroadPhase;
 import Box2D.Collision.IBroadPhase;
 import Box2D.Dynamics.*;
-import Box2D.Dynamics.Controllers.b2ControllerEdge;
 import Box2D.Dynamics.Joints.*;
 import Box2D.Dynamics.Contacts.*;
 import Box2D.Collision.Shapes.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
+import flash.events.IEventDispatcher;
 
 import Box2D.Common.b2internal;
 use namespace b2internal;
@@ -145,6 +145,11 @@ public class b2Body
 		// at the beginning of the next time step.
 		m_world.m_flags |= b2World.e_newFixture;
 		
+		// Events
+		m_world.m_addFixtureEvent.fixture = fixture;
+		m_world.dispatchEvent(m_world.m_addFixtureEvent);
+		if (m_eventDispatcher) m_eventDispatcher.dispatchEvent(m_world.m_addFixtureEvent);
+		
 		return fixture;
 	}
 
@@ -181,6 +186,12 @@ public class b2Body
 		{
 			return;
 		}
+		
+		// Events
+		m_world.m_removeFixtureEvent.fixture = fixture;
+		if (m_eventDispatcher) m_eventDispatcher.dispatchEvent(m_world.m_removeFixtureEvent);
+		m_world.dispatchEvent(m_world.m_removeFixtureEvent);
+		
 		
 		//b2Settings.b2Assert(m_fixtureCount > 0);
 		//b2Fixture** node = &m_fixtureList;
@@ -1114,13 +1125,6 @@ public class b2Body
 	}
 	
 	/**
-	 * Get the list of all controllers attached to this body.
-	 */
-	public function GetControllerList() : b2ControllerEdge {
-		return m_controllerList;
-	}
-	
-	/**
 	 * Get a list of all contacts attached to this body.
 	 */
 	public function GetContactList():b2ContactEdge {
@@ -1128,30 +1132,59 @@ public class b2Body
 	}
 
 	/**
-	* Get the next body in the world's body list.
-	*/
+	 * Get the next body in the world's body list.
+	 */
 	public function GetNext() : b2Body{
 		return m_next;
 	}
 
 	/**
-	* Get the user data pointer that was provided in the body definition.
-	*/
+	 * Get the user data pointer that was provided in the body definition.
+	 */
 	public function GetUserData() : *{
 		return m_userData;
 	}
 
 	/**
-	* Set the user data. Use this to store your application specific data.
-	*/
+	 * Set the user data. Use this to store your application specific data.
+	 */
 	public function SetUserData(data:*) : void
 	{
 		m_userData = data;
 	}
+	
+	/**
+	 * Get the event dispatcher associated with this body.
+	 */
+	public function GetEventDispatcher() : IEventDispatcher{
+		return m_eventDispatcher;
+	}
 
 	/**
-	* Get the parent world of this body.
-	*/
+	 * Set the event dispatcher. Use this to recieve events relating to the body.
+	 * 
+	 * The following events can are dispatched:
+	 * <ul>
+	 * <li>BeginContact</li>
+	 * <li>EndContact</li>
+	 * <li>PreSolve</li>
+	 * <li>PostSolve</li>
+	 * <li>AddBody</li>
+	 * <li>RemoveBody</li>
+	 * <li>AddFixture</li>
+	 * <li>RemoveFixture</li>
+	 * <li>AddJoint</li>
+	 * <li>RemoveJoint</li>
+	 * </ul>
+	 */
+	public function SetEventDispatcher(dispatcher:IEventDispatcher) : void
+	{
+		m_eventDispatcher = dispatcher;
+	}
+
+	/**
+	 * Get the parent world of this body.
+	 */
 	public function GetWorld(): b2World
 	{
 		return m_world;
@@ -1222,9 +1255,7 @@ public class b2Body
 		m_sweep.c0.SetV(m_sweep.c);
 		
 		m_jointList = null;
-		m_controllerList = null;
 		m_contactList = null;
-		m_controllerCount = 0;
 		m_prev = null;
 		m_next = null;
 		
@@ -1347,9 +1378,6 @@ public class b2Body
 	b2internal var m_fixtureList:b2Fixture;
 	b2internal var m_fixtureCount:int;
 	
-	b2internal var m_controllerList:b2ControllerEdge;
-	b2internal var m_controllerCount:int;
-
 	b2internal var m_jointList:b2JointEdge;
 	b2internal var m_contactList:b2ContactEdge;
 
@@ -1364,6 +1392,7 @@ public class b2Body
 	b2internal var m_sleepTime:Number;
 
 	private var m_userData:*;
+	b2internal var m_eventDispatcher:IEventDispatcher;
 	
 	
 	// m_flags

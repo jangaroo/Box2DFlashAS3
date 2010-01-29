@@ -99,7 +99,7 @@ import Box2D.Common.*;
 import Box2D.Common.Math.*;
 import TestBed.TestOneSidedPlatform;
 
-class ContactListener extends b2ContactListener
+class ContactListener extends b2EmptyContactListener
 {
 	private var test:TestOneSidedPlatform;
 	public function ContactListener(test:TestOneSidedPlatform)

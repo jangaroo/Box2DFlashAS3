@@ -127,7 +127,7 @@ public class b2Island
 	contactCapacity:int,
 	jointCapacity:int,
 	allocator:*,
-	listener:b2ContactListener,
+	listener:IContactListener,
 	contactSolver:b2ContactSolver):void
 	{
 		var i:int;
@@ -484,7 +484,7 @@ public class b2Island
 	}
 
 	private var m_allocator:*;
-	private var m_listener:b2ContactListener;
+	private var m_listener:IContactListener;
 	private var m_contactSolver:b2ContactSolver;
 
 	b2internal var m_bodies:Vector.<b2Body>;

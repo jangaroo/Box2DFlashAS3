@@ -31,6 +31,19 @@ use namespace b2internal;
 */
 public class b2AABB
 {
+	public function Copy():b2AABB
+	{
+		var aabb:b2AABB = new b2AABB();
+		aabb.Set(this);
+		return aabb;
+	}
+	
+	public function Set(other:b2AABB):void
+	{
+		lowerBound.SetV(other.lowerBound);
+		upperBound.SetV(other.upperBound);
+	}
+	
 	/**
 	* Verify that the bounds are sorted.
 	*/

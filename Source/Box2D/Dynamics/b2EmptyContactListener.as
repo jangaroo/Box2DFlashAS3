@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2006-2007 Adam Newgas
+* Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -16,41 +16,26 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics.Controllers{
+package Box2D.Dynamics{
 
+
+import Box2D.Collision.*;
+import Box2D.Collision.Shapes.*;
+import Box2D.Dynamics.Contacts.*;
+import Box2D.Dynamics.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;
-import Box2D.Collision.Shapes.*;
-import Box2D.Dynamics.*;
-
 
 /**
- * Applies a force every frame
+ * Empty implementation of IContactListener
  */
-public class b2ConstantForceController extends b2Controller
-{	
-	/**
-	 * The force to apply
-	 */
-	public var F:b2Vec2 = new b2Vec2(0,0);
-	
-	public override function Step(step:b2TimeStep):void{
-		for (m_iterator = m_bodyIterable.ResetIterator(m_iterator); m_iterator.HasNext(); )
-		{
-			var body:b2Body = m_iterator.Next();
-			if(!body.IsAwake())
-				continue;
-			body.ApplyForce(F,body.GetWorldCenter());
-		}
-	}
-	
-	public override function SetBodyIterable(iterable:IBodyIterable):void 
-	{
-		super.SetBodyIterable(iterable);
-		m_iterator = m_bodyIterable.GetIterator();
-	}
-	
-	private var m_iterator:IBodyIterator;
+public class b2EmptyContactListener implements IContactListener
+{
+	public function BeginContact(contact:b2Contact):void {}
+	public function EndContact(contact:b2Contact):void {}
+	public function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void {}
+	public function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void {}
 }
-
+	
+	
 }

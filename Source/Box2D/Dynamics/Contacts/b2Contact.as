@@ -224,7 +224,7 @@ public class b2Contact
 		m_nodeB.other = null;
 	}
 	
-	b2internal function Update(listener:b2ContactListener) : void
+	b2internal function Update(listener:IContactListener) : void
 	{
 		// Swap old & new manifold
 		var tManifold:b2Manifold = m_oldManifold;

@@ -107,6 +107,7 @@ import flash.display.MovieClip;
 				TestOneSidedPlatform,	// One Sided Platform
 				TestBreakable,			// Breakable
 				TestRaycast,			// Raycast
+				TestSensor,				// Sensor & Customized Controller
 			null
 			];
 			tests.length -= 1;

@@ -68,8 +68,9 @@ public class b2TensorDampingController extends b2Controller
 			return;
 		if(timestep>maxTimestep && maxTimestep>0)
 			timestep = maxTimestep;
-		for(var i:b2ControllerEdge=m_bodyList;i;i=i.nextBody){
-			var body:b2Body = i.body;
+		for (m_iterator = m_bodyIterable.ResetIterator(m_iterator); m_iterator.HasNext(); )
+		{
+			var body:b2Body = m_iterator.Next();
 			if(!body.IsAwake()){
 				//Sleeping bodies are still - so have no damping
 				continue;
@@ -88,6 +89,14 @@ public class b2TensorDampingController extends b2Controller
 				));
 		}
 	}
+	
+	public override function SetBodyIterable(iterable:IBodyIterable):void 
+	{
+		super.SetBodyIterable(iterable);
+		m_iterator = m_bodyIterable.GetIterator();
+	}
+	
+	private var m_iterator:IBodyIterator;
 }
 
 }

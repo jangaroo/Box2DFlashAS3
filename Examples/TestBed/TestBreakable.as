@@ -117,7 +117,7 @@ import Box2D.Common.*;
 import Box2D.Common.Math.*;
 import TestBed.TestBreakable;
 
-class ContactListener extends b2ContactListener
+class ContactListener extends b2EmptyContactListener
 {
 	private var test:TestBreakable;
 	public function ContactListener(test:TestBreakable)

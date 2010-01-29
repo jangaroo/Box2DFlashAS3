@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2006-2007 Adam Newgas
+* Copyright (c) 2010 Adam Newgas http://www.boristhebrave.com
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -16,41 +16,25 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Dynamics.Controllers{
-
-import Box2D.Common.Math.*;
-import Box2D.Common.*;
-import Box2D.Collision.Shapes.*;
-import Box2D.Dynamics.*;
-
-
-/**
- * Applies a force every frame
- */
-public class b2ConstantForceController extends b2Controller
-{	
+package Box2D.Dynamics.Controllers 
+{
+	
 	/**
-	 * The force to apply
+	 * A container of bodies that can be looped over many times.
 	 */
-	public var F:b2Vec2 = new b2Vec2(0,0);
-	
-	public override function Step(step:b2TimeStep):void{
-		for (m_iterator = m_bodyIterable.ResetIterator(m_iterator); m_iterator.HasNext(); )
-		{
-			var body:b2Body = m_iterator.Next();
-			if(!body.IsAwake())
-				continue;
-			body.ApplyForce(F,body.GetWorldCenter());
-		}
+	public interface IBodyIterable 
+	{	
+		/**
+		 * Construct a new iterator for looping over the contained bodies once.
+		 */
+		function GetIterator():IBodyIterator;
+		
+		/**
+		 * Reset a prexisting iterator created by this iterable.
+		 * This is a performance optimization over just creating a new one with
+		 * #GetIterator.
+		 */
+		function ResetIterator(iterator:IBodyIterator):IBodyIterator;
 	}
 	
-	public override function SetBodyIterable(iterable:IBodyIterable):void 
-	{
-		super.SetBodyIterable(iterable);
-		m_iterator = m_bodyIterable.GetIterator();
-	}
-	
-	private var m_iterator:IBodyIterator;
-}
-
 }

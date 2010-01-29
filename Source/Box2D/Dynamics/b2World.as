@@ -25,8 +25,9 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
 import Box2D.Dynamics.Contacts.*;
 import Box2D.Dynamics.Controllers.b2Controller;
-import Box2D.Dynamics.Controllers.b2ControllerEdge;
 import Box2D.Dynamics.Joints.*;
+import flash.events.Event;
+import flash.events.EventDispatcher;
 
 import Box2D.Common.b2internal;
 use namespace b2internal;
@@ -36,8 +37,37 @@ use namespace b2internal;
 * The world class manages all physics entities, dynamic simulation,
 * and asynchronous queries. 
 */
-public class b2World
+public class b2World extends EventDispatcher
 {
+	// Step events
+	[Event(name="PreStep", type="flash.events.Event")]
+	public static var PRESTEP:String = "PreStep";
+	[Event(name="PostStep", type="flash.events.Event")]
+	public static var POSTSTEP:String = "PostStep";
+	
+	// Contact based events
+	[Event(name="BeginContact",type="Box2D.Dynamics.b2ContactEvent")]
+	public static var BEGINCONTACT:String = "BeginContact";
+	[Event(name="EndContact", type="Box2D.Dynamics.b2ContactEvent")]
+	public static var ENDCONTACT:String = "EndContact";
+	[Event(name="PreSolve", type="Box2D.Dynamics.b2PreSolveEvent")]
+	public static var PRESOLVE:String = "PreSolve";
+	[Event(name="PostSolve", type="Box2D.Dynamics.b2PostSolveEvent")]
+	public static var POSTSOLVE:String = "PostSolve";
+	
+	// Add/Remove based events
+	[Event(name="AddBody", type="Box2D.Dynamics.b2BodyEvent")]
+	public static var ADDBODY:String = "AddBody";
+	[Event(name="RemoveBody", type="Box2D.Dynamics.b2BodyEvent")]
+	public static var REMOVEBODY:String = "RemoveBody";
+	[Event(name="AddFixture", type="Box2D.Dynamics.b2FixtureEvent")]
+	public static var ADDFIXTURE:String = "AddFixture";
+	[Event(name="RemoveFixture", type="Box2D.Dynamics.b2FixtureEvent")]
+	public static var REMOVEFIXTURE:String = "RemoveJoint";
+	[Event(name="AddJoint", type="Box2D.Dynamics.b2JointEvent")]
+	public static var ADDJOINT:String = "AddJoint";
+	[Event(name="RemoveJoint", type="Box2D.Dynamics.b2JointEvent")]
+	public static var REMOVEJOINT:String = "RemoveJoint";
 	
 	// Construct a world object.
 	/**
@@ -67,7 +97,7 @@ public class b2World
 		
 		m_inv_dt0 = 0.0;
 		
-		m_contactManager.m_world = this;
+		m_contactManager = new b2ContactManager(this);
 		
 		var bd:b2BodyDef = new b2BodyDef();
 		m_groundBody = CreateBody(bd);
@@ -81,7 +111,7 @@ public class b2World
 	/**
 	* Register a destruction listener.
 	*/
-	public function SetDestructionListener(listener:b2DestructionListener) : void{
+	public function SetDestructionListener(listener:IDestructionListener) : void{
 		m_destructionListener = listener;
 	}
 
@@ -96,7 +126,7 @@ public class b2World
 	/**
 	* Register a contact event listener
 	*/
-	public function SetContactListener(listener:b2ContactListener) : void{
+	public function SetContactListener(listener:IContactListener) : void{
 		m_contactManager.m_contactListener = listener;
 	}
 
@@ -169,6 +199,11 @@ public class b2World
 		m_bodyList = b;
 		++m_bodyCount;
 		
+		// Events
+		m_addBodyEvent.body = b;
+		dispatchEvent(m_addBodyEvent);
+		if (b.m_eventDispatcher) b.m_eventDispatcher.dispatchEvent(m_addBodyEvent);
+		
 		return b;
 		
 	}
@@ -188,6 +223,11 @@ public class b2World
 			return;
 		}
 		
+		// Events
+		m_removeBodyEvent.body = b;
+		if (b.m_eventDispatcher) b.m_eventDispatcher.dispatchEvent(m_removeBodyEvent);
+		dispatchEvent(m_removeBodyEvent);
+		
 		// Delete the attached joints.
 		var jn:b2JointEdge = b.m_jointList;
 		while (jn)
@@ -201,15 +241,6 @@ public class b2World
 			}
 			
 			DestroyJoint(jn0.joint);
-		}
-		
-		// Detach controllers attached to this body
-		var coe:b2ControllerEdge = b.m_controllerList;
-		while (coe)
-		{
-			var coe0:b2ControllerEdge = coe;
-			coe = coe.nextController;
-			coe0.controller.RemoveBody(b);
 		}
 		
 		// Delete the attached contacts.
@@ -234,6 +265,11 @@ public class b2World
 			{
 				m_destructionListener.SayGoodbyeFixture(f0);
 			}
+			
+			// Events
+			m_removeFixtureEvent.fixture = f;
+			if (b.m_eventDispatcher) b.m_eventDispatcher.dispatchEvent(m_removeFixtureEvent);
+			dispatchEvent(m_removeFixtureEvent);
 			
 			f0.DestroyProxy(m_contactManager.m_broadPhase);
 			f0.Destroy();
@@ -322,6 +358,12 @@ public class b2World
 			}
 		}
 		
+		// Events
+		m_addJointEvent.joint = j;
+		dispatchEvent(m_addJointEvent);
+		if (bodyA.m_eventDispatcher) bodyA.m_eventDispatcher.dispatchEvent(m_addJointEvent);
+		if (bodyB.m_eventDispatcher) bodyB.m_eventDispatcher.dispatchEvent(m_addJointEvent);
+		
 		// Note: creating a joint doesn't wake the bodies.
 		
 		return j;
@@ -335,6 +377,15 @@ public class b2World
 	public function DestroyJoint(j:b2Joint) : void{
 		
 		//b2Settings.b2Assert(m_lock == false);
+		
+		var bodyA:b2Body = j.m_bodyA;
+		var bodyB:b2Body = j.m_bodyB;
+		
+		// Events
+		m_removeJointEvent.joint = j;
+		if (bodyB.m_eventDispatcher) bodyB.m_eventDispatcher.dispatchEvent(m_removeJointEvent);
+		if (bodyA.m_eventDispatcher) bodyA.m_eventDispatcher.dispatchEvent(m_removeJointEvent);
+		dispatchEvent(m_removeJointEvent);
 		
 		var collideConnected:Boolean = j.m_collideConnected;
 		
@@ -355,8 +406,6 @@ public class b2World
 		}
 		
 		// Disconnect from island graph.
-		var bodyA:b2Body = j.m_bodyA;
-		var bodyB:b2Body = j.m_bodyB;
 		
 		// Wake up connected bodies.
 		bodyA.SetAwake(true);
@@ -451,36 +500,6 @@ public class b2World
 			m_controllerList = c.m_next;
 			
 		m_controllerCount--;
-	}
-
-	public function CreateController(controller:b2Controller):b2Controller
-	{
-		if (controller.m_world != this)
-			throw new Error("Controller can only be a member of one world");
-		
-		controller.m_next = m_controllerList;
-		controller.m_prev = null;
-		if (m_controllerList)
-			m_controllerList.m_prev = controller;
-		m_controllerList = controller;
-		++m_controllerCount;
-		
-		controller.m_world = this;
-		
-		return controller;
-	}
-	
-	public function DestroyController(controller:b2Controller):void
-	{
-		//b2Settings.b2Assert(m_controllerCount > 0);
-		controller.Clear();
-		if (controller.m_next)
-			controller.m_next.m_prev = controller.m_prev;
-		if (controller.m_prev)
-			controller.m_prev.m_next = controller.m_next;
-		if (controller == m_controllerList)
-			m_controllerList = controller.m_next;
-		--m_controllerCount;
 	}
 	
 	/**
@@ -1545,7 +1564,7 @@ public class b2World
 	
 	b2internal var m_flags:int;
 
-	b2internal var m_contactManager:b2ContactManager = new b2ContactManager();
+	b2internal var m_contactManager:b2ContactManager;
 	
 	// These two are stored purely for efficiency purposes, they don't maintain
 	// any data outside of a call to Step
@@ -1568,7 +1587,7 @@ public class b2World
 
 	b2internal var m_groundBody:b2Body;
 
-	private var m_destructionListener:b2DestructionListener;
+	private var m_destructionListener:IDestructionListener;
 	private var m_debugDraw:b2DebugDraw;
 
 	// This is used to compute the time step ratio to support a variable time step.
@@ -1584,6 +1603,14 @@ public class b2World
 	public static const e_newFixture:int = 0x0001;
 	public static const e_locked:int = 0x0002;
 	
+	private var m_preStepEvent:Event = new Event(b2World.PRESTEP);
+	private var m_postStepEvent:Event = new Event(b2World.POSTSTEP);
+	private var m_addBodyEvent:b2BodyEvent = new b2BodyEvent(b2World.ADDBODY);
+	private var m_removeBodyEvent:b2BodyEvent = new b2BodyEvent(b2World.REMOVEBODY);
+	b2internal var m_addFixtureEvent:b2FixtureEvent = new b2FixtureEvent(b2World.ADDFIXTURE);
+	b2internal var m_removeFixtureEvent:b2FixtureEvent = new b2FixtureEvent(b2World.REMOVEFIXTURE);
+	private var m_addJointEvent:b2JointEvent = new b2JointEvent(b2World.ADDJOINT);
+	private var m_removeJointEvent:b2JointEvent = new b2JointEvent(b2World.REMOVEJOINT);
 };
 
 

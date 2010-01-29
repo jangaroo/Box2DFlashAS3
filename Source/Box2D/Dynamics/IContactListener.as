@@ -31,7 +31,7 @@ use namespace b2internal;
 
 
 /**
- * Implement this class to get contact information. You can use these results for
+ * Implement this interface to get contact information. You can use these results for
  * things like sounds and game logic. You can also get contact results by
  * traversing the contact lists after the time step. However, you might miss
  * some contacts because continuous physics leads to sub-stepping.
@@ -41,17 +41,17 @@ use namespace b2internal;
  * many callbacks per time step.
  * @warning You cannot create/destroy Box2D entities inside these callbacks.
  */
-public class b2ContactListener
+public interface IContactListener
 {
 	/**
 	 * Called when two fixtures begin to touch.
 	 */
-	public virtual function BeginContact(contact:b2Contact):void { }
+	function BeginContact(contact:b2Contact):void;
 
 	/**
 	 * Called when two fixtures cease to touch.
 	 */
-	public virtual function EndContact(contact:b2Contact):void { }
+	function EndContact(contact:b2Contact):void;
 
 	/**
 	 * This is called after a contact is updated. This allows you to inspect a
@@ -65,7 +65,7 @@ public class b2ContactListener
 	 * get an EndContact callback. However, you may get a BeginContact callback
 	 * the next step.
 	 */
-	public virtual function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void {}
+	function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void;
 
 	/**
 	 * This lets you inspect a contact after the solver is finished. This is useful
@@ -75,9 +75,9 @@ public class b2ContactListener
 	 * in a separate data structure.
 	 * Note: this is only called for contacts that are touching, solid, and awake.
 	 */
-	public virtual function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void { }
+	function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void;
 	
-	b2internal static var b2_defaultListener:b2ContactListener = new b2ContactListener();
+	
 };
 
 }

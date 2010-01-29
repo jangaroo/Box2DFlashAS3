@@ -22,6 +22,7 @@ import Box2D.Common.Math.*;
 import Box2D.Common.*;
 import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.*;
+import Box2D.Dynamics.Controllers.IBodyIterable;
 
 
 /**
@@ -68,13 +69,12 @@ public class b2BuoyancyController extends b2Controller
 	
 		
 	public override function Step(step:b2TimeStep):void{
-		if(!m_bodyList)
-			return;
 		if(useWorldGravity){
 			gravity = GetWorld().GetGravity().Copy();
 		}
-		for(var i:b2ControllerEdge=m_bodyList;i;i=i.nextBody){
-			var body:b2Body = i.body;
+		for (m_iterator = m_bodyIterable.ResetIterator(m_iterator); m_iterator.HasNext(); )
+		{
+			var body:b2Body = m_iterator.Next();
 			if(body.IsAwake() == false){
 				//Buoyancy force is just a function of position,
 				//so unlike most forces, it is safe to ignore sleeping bodes
@@ -137,6 +137,14 @@ public class b2BuoyancyController extends b2Controller
 		var color:b2Color = new b2Color(0,0,1);
 		debugDraw.DrawSegment(p1,p2,color);
 	}
+	
+	public override function SetBodyIterable(iterable:IBodyIterable):void 
+	{
+		super.SetBodyIterable(iterable);
+		m_iterator = m_bodyIterable.GetIterator();
+	}
+	
+	private var m_iterator:IBodyIterator;
 }
 
 }

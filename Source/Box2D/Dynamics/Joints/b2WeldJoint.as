@@ -83,7 +83,7 @@ public class b2WeldJoint extends b2Joint
 		var tX:Number;
 		
 		var bA:b2Body = m_bodyA;
-		var bB:b2Body= m_bodyB;
+		var bB:b2Body = m_bodyB;
 
 		// Compute the effective mass matrix.
 		//b2Vec2 rA = b2Mul(bA->m_xf.R, m_localAnchorA - bA->GetLocalCenter());
@@ -211,7 +211,7 @@ public class b2WeldJoint extends b2Joint
 	b2internal override function SolvePositionConstraints(baumgarte:Number):Boolean
 	{
 		//B2_NOT_USED(baumgarte);
-				var tMat:b2Mat22;
+		var tMat:b2Mat22;
 		var tX:Number;
 		
 		var bA:b2Body = m_bodyA;

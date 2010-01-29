@@ -30,7 +30,10 @@ import Box2D.Dynamics.*;
 public class b2GravityController extends b2Controller
 {	
 	/**
-	 * Specifies the strength of the gravitiation force
+	 * Specifies the strength of the gravitiation force.
+	 * 
+	 * Two bodies of unit mass, at distance 1 unit from each other, have a force of
+	 * G newtons between them.
 	 */
 	public var G:Number = 1;
 	/**
@@ -40,11 +43,9 @@ public class b2GravityController extends b2Controller
 	
 	public override function Step(step:b2TimeStep):void{
 		//Inlined
-		var i:b2ControllerEdge = null;
 		var body1:b2Body = null;
 		var p1:b2Vec2 = null;
 		var mass1:Number = 0;
-		var j:b2ControllerEdge = null;
 		var body2:b2Body = null;
 		var p2:b2Vec2 = null;
 		var dx:Number = 0;
@@ -52,12 +53,12 @@ public class b2GravityController extends b2Controller
 		var r2:Number = 0;
 		var f:b2Vec2 = null;
 		if(invSqr){
-			for(i=m_bodyList;i;i=i.nextBody){
-				body1 = i.body;
+			for (m_iterator1 = m_bodyIterable.ResetIterator(m_iterator1); m_iterator1.HasNext(); ) {
+				body1 = m_iterator1.Next();
 				p1 = body1.GetWorldCenter();
 				mass1 = body1.GetMass();
-				for(j=m_bodyList;j!=i;j=j.nextBody){
-					body2 = j.body;
+				for(m_iterator2 = m_bodyIterable.ResetIterator(m_iterator2); m_iterator2.HasNext(); ){
+					body2 = m_iterator2.Next();
 					p2 = body2.GetWorldCenter()
 					dx = p2.x - p1.x;
 					dy = p2.y - p1.y;
@@ -74,12 +75,12 @@ public class b2GravityController extends b2Controller
 				}
 			}
 		}else{
-			for(i=m_bodyList;i;i=i.nextBody){
-				body1 = i.body;
+			for(m_iterator1 = m_bodyIterable.ResetIterator(m_iterator1); m_iterator1.HasNext(); ){
+				body1 = m_iterator1.Next();
 				p1 = body1.GetWorldCenter();
 				mass1 = body1.GetMass();
-				for(j=m_bodyList;j!=i;j=j.nextBody){
-					body2 = j.body;
+				for(m_iterator2 = m_bodyIterable.ResetIterator(m_iterator2); m_iterator2.HasNext(); ){
+					body2 = m_iterator2.Next();
 					p2 = body2.GetWorldCenter()
 					dx = p2.x - p1.x;
 					dy = p2.y - p1.y;
@@ -97,6 +98,16 @@ public class b2GravityController extends b2Controller
 			}
 		}
 	}
+	
+	public override function SetBodyIterable(iterable:IBodyIterable):void 
+	{
+		super.SetBodyIterable(iterable);
+		m_iterator1 = m_bodyIterable.GetIterator();
+		m_iterator2 = m_bodyIterable.GetIterator();
+	}
+	
+	private var m_iterator1:IBodyIterator;
+	private var m_iterator2:IBodyIterator;
 }
 
 }
