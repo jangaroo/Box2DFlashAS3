@@ -1364,7 +1364,7 @@ public class b2World extends EventDispatcher
 					}
 					
 					// Synchronize the connected body.
-					if (other.GetType() != b2Body.b2_dynamicBody)
+					if (other.GetType() != b2Body.b2_staticBody)
 					{
 						other.Advance(minTOI);
 						other.SetAwake(true);
@@ -1398,7 +1398,7 @@ public class b2World extends EventDispatcher
 					continue;
 					
 				// Synchronize the connected body.
-				if (other.GetType() != b2Body.b2_dynamicBody)
+				if (other.GetType() != b2Body.b2_staticBody)
 				{
 					other.Advance(minTOI);
 					other.SetAwake(true);
