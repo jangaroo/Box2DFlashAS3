@@ -175,11 +175,25 @@ package Box2D.Collision
 		 */
 		public function Query(callback:Function, aabb:b2AABB):void
 		{
+			QueryStack(callback, aabb, new Vector.<b2DynamicTreeNode>())
+		}
+		
+		
+		private static var s_stack:Vector.<b2DynamicTreeNode> = new Vector.<b2DynamicTreeNode>();
+		/**
+		 * A non-allocation version of #Query(), providing you can guarantee that it
+		 * won't be called recursive
+		 */
+		public function QueryNonRecursive(callback:Function, aabb:b2AABB):void
+		{
+			QueryStack(callback, aabb, s_stack);
+		}
+		
+		private function QueryStack(callback:Function, aabb:b2AABB, stack:Vector.<b2DynamicTreeNode>):void
+		{
 			if (m_root == null)
 				return;
 				
-			var stack:Vector.<b2DynamicTreeNode> = new Vector.<b2DynamicTreeNode>();
-			
 			var count:int = 0;
 			stack[count++] = m_root;
 			

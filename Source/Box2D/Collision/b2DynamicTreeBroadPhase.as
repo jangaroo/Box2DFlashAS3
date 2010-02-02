@@ -106,7 +106,7 @@ public class b2DynamicTreeBroadPhase implements IBroadPhase
 			// We have to query the tree with the fat AABB so that
 			// we don't fail to create a pair that may touch later.
 			var fatAABB:b2AABB = m_tree.GetFatAABB(queryProxy);
-			m_tree.Query(QueryCallback, fatAABB);
+			m_tree.QueryNonRecursive(QueryCallback, fatAABB);
 		}
 		
 		// Reset move buffer
