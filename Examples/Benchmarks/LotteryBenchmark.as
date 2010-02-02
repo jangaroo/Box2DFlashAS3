@@ -109,9 +109,9 @@ internal class LotteryContactFilter extends b2ContactFilter
 	}
 }
 
-internal class LotteryContactListener extends b2ContactListener
+internal class LotteryContactListener implements IContactListener
 {
-	override public function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void 
+	public function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void 
 	{
 		
 		var udA:* = contact.GetFixtureA().GetBody().GetUserData();
@@ -119,4 +119,8 @@ internal class LotteryContactListener extends b2ContactListener
 		if(udA && udB && ((udA - udB) % 2 == 0))
 			contact.SetEnabled(false);
 	}
+	
+	public function BeginContact(contact:b2Contact):void {}
+	public function EndContact(contact:b2Contact):void {}
+	public function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void {}
 }
