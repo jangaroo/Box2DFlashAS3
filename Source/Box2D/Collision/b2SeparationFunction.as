@@ -197,6 +197,7 @@ internal class b2SeparationFunction
 			{
 				m_type = e_faceB;
 				m_axis = b2Math.CrossVF(b2Math.SubtractVV(localPointB2, localPointB1), 1.0);
+				m_axis.Normalize();
 				
 				m_localPoint = localPointB;
 				
@@ -227,6 +228,7 @@ internal class b2SeparationFunction
 			{
 				m_type = e_faceA;
 				m_axis = b2Math.CrossVF(b2Math.SubtractVV(localPointA2, localPointA1), 1.0);
+				m_axis.Normalize();
 				
 				m_localPoint = localPointA;
 				
