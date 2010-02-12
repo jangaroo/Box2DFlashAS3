@@ -975,7 +975,7 @@ public class b2Body
 	
 	/**
 	 * Set the sleep state of the body. A sleeping body has vety low CPU cost.
-	 * @param	flag - set to true to put body to sleep, false to wake it
+	 * @param	flag - set to false to put body to sleep, true to wake it
 	 */
 	public function SetAwake(flag:Boolean):void {
 		if (flag)
