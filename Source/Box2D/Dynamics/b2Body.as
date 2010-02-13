@@ -729,53 +729,53 @@ public class b2Body
 		m_invI = 0.0;
 		m_sweep.localCenter.SetZero();
 		
-		// Static and kinematic bodies have zero mass.
-		if (m_type == b2_staticBody || m_type == b2_kinematicBody)
-		{
-			return;
-		}
-		//b2Assert(m_type == b2_dynamicBody);
-		
-		// Accumulate mass over all fixtures.
 		var center:b2Vec2 = b2Vec2.Make(0, 0);
-		for (var f:b2Fixture = m_fixtureList; f; f = f.m_next)
+		
+		// Static and kinematic bodies have zero mass.
+		if (m_type == b2_dynamicBody)
 		{
-			if (f.m_density == 0.0)
+			//b2Assert(m_type == b2_dynamicBody);
+			
+			// Accumulate mass over all fixtures.
+			for (var f:b2Fixture = m_fixtureList; f; f = f.m_next)
 			{
-				continue;
+				if (f.m_density == 0.0)
+				{
+					continue;
+				}
+				
+				var massData:b2MassData = f.GetMassData();
+				m_mass += massData.mass;
+				center.x += massData.center.x * massData.mass;
+				center.y += massData.center.y * massData.mass;
+				m_I += massData.I;
 			}
 			
-			var massData:b2MassData = f.GetMassData();
-			m_mass += massData.mass;
-			center.x += massData.center.x * massData.mass;
-			center.y += massData.center.y * massData.mass;
-			m_I += massData.I;
-		}
-		
-		// Compute the center of mass.
-		if (m_mass > 0.0)
-		{
-			m_invMass = 1.0 / m_mass;
-			center.x *= m_invMass;
-			center.y *= m_invMass;
-		}
-		else
-		{
-			// Force all dynamic bodies to have a positive mass.
-			m_mass = 1.0;
-			m_invMass = 1.0;
-		}
-		
-		if (m_I > 0.0 && (m_flags & e_fixedRotationFlag) == 0)
-		{
-			// Center the inertia about the center of mass
-			m_I -= m_mass * (center.x * center.x + center.y * center.y);
-			m_I *= m_inertiaScale;
-			b2Settings.b2Assert(m_I > 0);
-			m_invI = 1.0 / m_I;
-		}else {
-			m_I = 0.0;
-			m_invI = 0.0;
+			// Compute the center of mass.
+			if (m_mass > 0.0)
+			{
+				m_invMass = 1.0 / m_mass;
+				center.x *= m_invMass;
+				center.y *= m_invMass;
+			}
+			else
+			{
+				// Force all dynamic bodies to have a positive mass.
+				m_mass = 1.0;
+				m_invMass = 1.0;
+			}
+			
+			if (m_I > 0.0 && (m_flags & e_fixedRotationFlag) == 0)
+			{
+				// Center the inertia about the center of mass
+				m_I -= m_mass * (center.x * center.x + center.y * center.y);
+				m_I *= m_inertiaScale;
+				b2Settings.b2Assert(m_I > 0);
+				m_invI = 1.0 / m_I;
+			}else {
+				m_I = 0.0;
+				m_invI = 0.0;
+			}
 		}
 		
 		// Move center of mass
@@ -924,7 +924,8 @@ public class b2Body
 		for (var ce:b2ContactEdge = m_contactList; ce; ce = ce.next)
 		{
 			ce.contact.FlagForFiltering();
-		} 
+		}
+		SynchronizeTransform();
 	}
 	
 	/**
