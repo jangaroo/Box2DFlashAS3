@@ -53,7 +53,7 @@ public function ReadCache(cache:b2SimplexCache,
 		wALocal = proxyA.GetVertex(v.indexA);
 		wBLocal = proxyB.GetVertex(v.indexB);
 		v.wA = b2Math.MulX(transformA, wALocal);
-		v.wB = b2Math.MulX(transformB, wALocal);
+		v.wB = b2Math.MulX(transformB, wBLocal);
 		v.w = b2Math.SubtractVV(v.wB, v.wA);
 		v.a = 0;
 	}
