@@ -1550,15 +1550,6 @@ public class b2World extends EventDispatcher
 				m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
 			}
 			break;
-		
-		case b2Shape.e_edgeShape:
-			{
-				var edge: b2EdgeShape = shape as b2EdgeShape;
-				
-				m_debugDraw.DrawSegment(b2Math.MulX(xf, edge.GetVertex1()), b2Math.MulX(xf, edge.GetVertex2()), color);
-				
-			}
-			break;
 		}
 	}
 	

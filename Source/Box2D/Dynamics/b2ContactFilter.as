@@ -54,21 +54,6 @@ public class b2ContactFilter
 		return collide;
 	}
 	
-	/**
-	* Return true if the given fixture should be considered for ray intersection.
-	* By default, userData is cast as a b2Fixture and collision is resolved according to ShouldCollide
-	* @see ShouldCollide()
-	* @see b2World#Raycast
-	* @param userData	arbitrary data passed from Raycast or RaycastOne
-	* @param fixture		the fixture that we are testing for filtering
-	* @return a Boolean, with a value of false indicating that this fixture should be ignored.
-	*/
-	public virtual function RayCollide(userData:*, fixture:b2Fixture) : Boolean{
-		if(!userData)
-			return true;
-		return ShouldCollide(userData as b2Fixture,fixture);
-	}
-	
 	static b2internal var b2_defaultFilter:b2ContactFilter = new b2ContactFilter();
 	
 };

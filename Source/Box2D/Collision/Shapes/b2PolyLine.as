@@ -28,27 +28,19 @@ use namespace b2internal;
 
 
 /**
-* This structure is used to build edge shapes.
-* @see b2EdgeShape
-*/
-public class b2EdgeChainDef// extends b2ShapeDef
+ * This structure is will "decompose" to a series of 
+ * two-vertex polygons.
+ * This is useful for scenery, and complex shapes, but
+ * as the objects have no interior they won't add the mass of a body.
+ * @note Previously known as EdgeChain
+ */
+public class b2PolyLine extends b2Shape
 {
-	public function b2EdgeChainDef()
-	{
-		//type = b2Shape.e_edgeShape;
-		vertexCount = 0;
-		isALoop = true;
-		vertices = [];
-	}
-
 	/** The vertices in local coordinates. */
-	public var vertices: Array;
-	
-	/** The number of vertices in the chain. */
-	public var vertexCount: int;
+	public var vertices:Vector.<b2Vec2> = new Vector.<b2Vec2>(); 
 	
 	/** Whether to create an extra edge between the first and last vertices. */
-	public var isALoop: Boolean;
+	public var isALoop: Boolean = false;
 };
 
 }
