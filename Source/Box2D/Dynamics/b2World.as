@@ -85,7 +85,6 @@ public class b2World extends EventDispatcher
 		m_controllerList = null;
 		
 		m_bodyCount = 0;
-		m_contactCount = 0;
 		m_jointCount = 0;
 		m_controllerCount = 0;
 		
@@ -533,7 +532,7 @@ public class b2World extends EventDispatcher
 	*/
 	public function GetContactCount() : int
 	{
-		return m_contactCount;
+		return m_contactManager.m_contactCount;
 	}
 	
 	/**
@@ -952,7 +951,7 @@ public class b2World extends EventDispatcher
 		
 		// Size the island for the worst case.
 		var island:b2Island = m_island;
-		island.Initialize(m_bodyCount, m_contactCount, m_jointCount, null, m_contactManager.m_contactListener, m_contactSolver);
+		island.Initialize(m_bodyCount, m_contactManager.m_contactCount, m_jointCount, null, m_contactManager.m_contactListener, m_contactSolver);
 		
 		// Clear all the island flags.
 		for (b = m_bodyList; b; b = b.m_next)
@@ -1568,7 +1567,6 @@ public class b2World extends EventDispatcher
 	b2internal var m_contactList:b2Contact;
 
 	private var m_bodyCount:int;
-	b2internal var m_contactCount:int;
 	private var m_jointCount:int;
 	private var m_controllerList:b2Controller;
 	private var m_controllerCount:int;
