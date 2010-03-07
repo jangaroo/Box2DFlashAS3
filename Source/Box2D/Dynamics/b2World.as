@@ -92,7 +92,9 @@ public class b2World extends EventDispatcher
 		m_continuousPhysics = true;
 		
 		m_allowSleep = doSleep;
-		m_gravity = gravity;
+		m_gravity = gravity.Copy();
+		
+		m_flags = e_clearForces;
 		
 		m_inv_dt0 = 0.0;
 		
@@ -611,6 +613,10 @@ public class b2World extends EventDispatcher
 		{
 			m_inv_dt0 = step.inv_dt;
 		}
+		if (m_flags & e_clearForces)
+		{
+			ClearForces();
+		}
 		m_flags &= ~e_locked;
 	}
 	
@@ -933,6 +939,27 @@ public class b2World extends EventDispatcher
 	public function IsLocked():Boolean
 	{
 		return (m_flags & e_locked) > 0;
+	}
+	
+	/**
+	 * Set flag to control automatic clearing of forces after each time step.
+	 */
+	public function SetAutoClearForces(flag:Boolean):void
+	{
+		if (flag)
+		{
+			m_flags |= e_clearForces;
+		}else {
+			m_flags &= ~e_clearForces;
+		}
+	}
+	
+	/**
+	 * Get the flag that controls automatic clearing of forces after each time step.
+	 */
+	public function GetAutoClearForces():Boolean
+	{
+		return (m_flags & e_clearForces) == e_clearForces;
 	}
 
 	//--------------- Internals Below -------------------
@@ -1591,6 +1618,7 @@ public class b2World extends EventDispatcher
 	// m_flags
 	public static const e_newFixture:int = 0x0001;
 	public static const e_locked:int = 0x0002;
+	public static const e_clearForces:int = 0x0004;
 	
 	private var m_preStepEvent:Event = new Event(b2World.PRESTEP);
 	private var m_postStepEvent:Event = new Event(b2World.POSTSTEP);

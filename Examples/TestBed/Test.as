@@ -102,7 +102,6 @@ package TestBed{
 			// Update physics
 			var physStart:uint = getTimer();
 			m_world.Step(m_timeStep, m_velocityIterations, m_positionIterations);
-			m_world.ClearForces();
 			
 			Main.m_fpsCounter.updatePhys(physStart);
 			

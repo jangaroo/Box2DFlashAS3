@@ -88,6 +88,19 @@ package Box2D.Collision
 			node.userData = userData;
 			
 			InsertLeaf(node);
+			
+			// Rebalance if necessary
+			// Actually, the tree has no max depth, but it would still be bad.
+			var iterationCount:int = m_nodeCount >> 4;
+			var tryCount:int = 0;
+			var height:int = ComputeFullHeight();
+			while (height > 64 && tryCount < 10)
+			{
+				Rebalance(iterationCount);
+				height = ComputeFullHeight();
+				++tryCount;
+			}
+			
 			return node;
 		}
 		
@@ -318,6 +331,7 @@ package Box2D.Collision
 		
 		private function AllocateNode():b2DynamicTreeNode
 		{
+			m_nodeCount++;
 			// Peel a node off the free list
 			if (m_freeList)
 			{
@@ -336,6 +350,7 @@ package Box2D.Collision
 		
 		private function FreeNode(node:b2DynamicTreeNode):void
 		{
+			m_nodeCount--;
 			node.parent = m_freeList;
 			m_freeList = node;
 		}
@@ -477,6 +492,22 @@ package Box2D.Collision
 			}
 		}
 		
+		private function ComputeHeight(node:b2DynamicTreeNode):int
+		{
+			if (node == null)
+				return 0;
+			
+			return 1 + b2Math.Max(
+				ComputeHeight(node.child1),
+				ComputeHeight(node.child2));
+		}
+		
+		private function ComputeFullHeight():int
+		{
+			return ComputeHeight(m_root);
+		}
+		
+		private var m_nodeCount:int = 0;
 		private var m_root:b2DynamicTreeNode;
 		private var m_freeList:b2DynamicTreeNode;
 		

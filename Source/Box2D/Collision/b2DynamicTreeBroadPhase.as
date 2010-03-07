@@ -136,6 +136,9 @@ public class b2DynamicTreeBroadPhase implements IBroadPhase
 				++i;
 			}
 		}
+		
+		// Try to keep the tree balanced
+		m_tree.Rebalance(4);
 	}
 	
 	/**

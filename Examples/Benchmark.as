@@ -166,7 +166,6 @@ import flash.display.MovieClip;
 			for (var n:int = 0; n < steps; n++)
 			{
 				world.Step(timeStep, velocityIterations, positionIterations);
-				world.ClearForces();
 			}
 			var end:int = getTimer();
 			return end - start;

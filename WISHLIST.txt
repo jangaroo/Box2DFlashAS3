@@ -1,0 +1,3 @@
+Things that need doing or at least would be nice to have.
+- Port the new TOI changes r33,50 etc
+- A hash based broadphase, to contrast to the search-and-prune and dynamic tree ones

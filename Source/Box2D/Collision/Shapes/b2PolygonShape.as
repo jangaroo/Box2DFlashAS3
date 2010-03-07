@@ -280,14 +280,6 @@ public class b2PolygonShape extends b2Shape
 	 */
 	public override function RayCast(output:b2RayCastOutput, input:b2RayCastInput, transform:b2Transform):Boolean
 	{
-		var lower:Number = 0.0;
-		var upper:Number = input.maxFraction;
-		
-		var tX:Number;
-		var tY:Number;
-		var tMat:b2Mat22;
-		var tVec:b2Vec2;
-		
 		// Put the ray into the polygon's frame of reference. (AS3 Port Manual inlining follows)
 		//b2Vec2 p1 = b2MulT(transform.R, segment.p1 - transform.position);
 		tX = input.p1.x - transform.position.x;
@@ -304,71 +296,127 @@ public class b2PolygonShape extends b2Shape
 		//b2Vec2 d = p2 - p1;
 		var dX:Number = p2X - p1X;
 		var dY:Number = p2Y - p1Y;
-		var index:int = -1;
 		
-		for (var i:int = 0; i < m_vertexCount; ++i)
+		var numerator:Number;
+		var denominator:Number;
+		
+		if (m_vertexCount == 2)
 		{
-			// p = p1 + a * d
-			// dot(normal, p - v) = 0
-			// dot(normal, p1 - v) + a * dot(normal, d) = 0
+			var v1:b2Vec2 = m_vertices[0];
+			var v2:b2Vec2 = m_vertices[1];
+			var normal:b2Vec2 = m_normals[0];
 			
-			//float32 numerator = b2Dot(m_normals[i], m_vertices[i] - p1);
-			tVec = m_vertices[i];
-			tX = tVec.x - p1X;
-			tY = tVec.y - p1Y;
-			tVec = m_normals[i];
-			var numerator:Number = (tVec.x*tX + tVec.y*tY);
-			//float32 denominator = b2Dot(m_normals[i], d);
-			var denominator:Number = (tVec.x * dX + tVec.y * dY);
+			// q = p1 + t * d
+			
+			// dot(normal, q - v1) = 0
+			// dot(normal, p1 - v1) + t * dot(normal, d) = 0
+			
+			numerator = normal.x * (v1.x - p1X) + normal.y * (v1.y - p1Y);
+			denominator = normal.x * dX + normal.y * dY;
 			
 			if (denominator == 0.0)
+				return false;
+			
+			var t:Number = numerator / denominator;
+			if (t < 0.0 || 1.0 < t)
+				return false;
+				
+			var qX:Number = p1X + t * dX;
+			var qY:Number = p1Y + t * dY;
+			
+			// q = v1 + s * r
+			// s = dot(q - v1, r) / dot(r, r)
+			//b2Vec2 r = v2 - v1;
+			var rX:Number = v2.x - v1.x;
+			var rY:Number = v2.y - v1.y;
+			var rr:Number = rX * rX + rY * rY;
+			if (rr == 0.0)
+				return false;
+				
+			//float32 s = b2Dot(q - v1, r) / rr;
+			var s:Number = ((qX - v1.x) * rX + (qY - v1.y) * rY) / rr;
+			
+			if (s < 0.0 || 1.0 < s)
+				return false;
+				
+			output.fraction = t;
+			output.normal.SetV(normal);
+			return true;
+		} else {
+			var lower:Number = 0.0;
+			var upper:Number = input.maxFraction;
+			
+			var tX:Number;
+			var tY:Number;
+			var tMat:b2Mat22;
+			var tVec:b2Vec2;
+			
+			var index:int = -1;
+			
+			for (var i:int = 0; i < m_vertexCount; ++i)
 			{
-				if (numerator < 0.0)
+				// p = p1 + a * d
+				// dot(normal, p - v) = 0
+				// dot(normal, p1 - v) + a * dot(normal, d) = 0
+				
+				//float32 numerator = b2Dot(m_normals[i], m_vertices[i] - p1);
+				tVec = m_vertices[i];
+				tX = tVec.x - p1X;
+				tY = tVec.y - p1Y;
+				tVec = m_normals[i];
+				numerator = (tVec.x*tX + tVec.y*tY);
+				//float32 denominator = b2Dot(m_normals[i], d);
+				denominator = (tVec.x * dX + tVec.y * dY);
+				
+				if (denominator == 0.0)
+				{
+					if (numerator < 0.0)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					// Note: we want this predicate without division:
+					// lower < numerator / denominator, where denominator < 0
+					// Since denominator < 0, we have to flip the inequality:
+					// lower < numerator / denominator <==> denominator * lower > numerator.
+					if (denominator < 0.0 && numerator < lower * denominator)
+					{
+						// Increase lower.
+						// The segment enters this half-space.
+						lower = numerator / denominator;
+						index = i;
+					}
+					else if (denominator > 0.0 && numerator < upper * denominator)
+					{
+						// Decrease upper.
+						// The segment exits this half-space.
+						upper = numerator / denominator;
+					}
+				}
+				
+				if (upper < lower - Number.MIN_VALUE)
 				{
 					return false;
 				}
 			}
-			else
+			
+			//b2Settings.b2Assert(0.0 <= lower && lower <= input.maxLambda);
+			
+			if (index >= 0)
 			{
-				// Note: we want this predicate without division:
-				// lower < numerator / denominator, where denominator < 0
-				// Since denominator < 0, we have to flip the inequality:
-				// lower < numerator / denominator <==> denominator * lower > numerator.
-				if (denominator < 0.0 && numerator < lower * denominator)
-				{
-					// Increase lower.
-					// The segment enters this half-space.
-					lower = numerator / denominator;
-					index = i;
-				}
-				else if (denominator > 0.0 && numerator < upper * denominator)
-				{
-					// Decrease upper.
-					// The segment exits this half-space.
-					upper = numerator / denominator;
-				}
+				output.fraction = lower;
+				//output.normal = b2Mul(transform.R, m_normals[index]);
+				tMat = transform.R;
+				tVec = m_normals[index];
+				output.normal.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
+				output.normal.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
+				return true;
 			}
 			
-			if (upper < lower - Number.MIN_VALUE)
-			{
-				return false;
-			}
+			return false;
 		}
-		
-		//b2Settings.b2Assert(0.0 <= lower && lower <= input.maxLambda);
-		
-		if (index >= 0)
-		{
-			output.fraction = lower;
-			//output.normal = b2Mul(transform.R, m_normals[index]);
-			tMat = transform.R;
-			tVec = m_normals[index];
-			output.normal.x = (tMat.col1.x * tVec.x + tMat.col2.x * tVec.y);
-			output.normal.y = (tMat.col1.y * tVec.x + tMat.col2.y * tVec.y);
-			return true;
-		}
-		
-		return false;
 	}
 
 
