@@ -150,7 +150,7 @@ public class b2ContactManager
 		var bodyA:b2Body = fixtureA.GetBody();
 		var bodyB:b2Body = fixtureB.GetBody();
 		
-		if (c.m_manifold.m_pointCount > 0)
+		if (c.IsTouching())
 		{
 			m_contactListener.EndContact(c);
 		}
