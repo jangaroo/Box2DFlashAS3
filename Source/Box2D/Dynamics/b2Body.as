@@ -51,11 +51,7 @@ public class b2Body
 	 * @warning This function is locked during callbacks.
 	 */
 	public function CreateFixture(def:b2FixtureDef) : b2Fixture{
-		//b2Settings.b2Assert(m_world.IsLocked() == false);
-		if (m_world.IsLocked() == true)
-		{
-			return null;
-		}
+		m_world.CheckUnlocked();
 		
 		// TODO: We shouldn't have special cases like this
 		if (def.shape is b2PolyLine)
@@ -140,11 +136,7 @@ public class b2Body
 	 * @warning This function is locked during callbacks.
 	 */
 	public function DestroyFixture(fixture:b2Fixture) : void{
-		//b2Settings.b2Assert(m_world.IsLocked() == false);
-		if (m_world.IsLocked() == true)
-		{
-			return;
-		}
+		m_world.CheckUnlocked();
 		
 		// Events
 		m_world.m_removeFixtureEvent.fixture = fixture;
@@ -225,11 +217,7 @@ public class b2Body
 		
 		var f:b2Fixture;
 		
-		//b2Settings.b2Assert(m_world.IsLocked() == false);
-		if (m_world.IsLocked() == true)
-		{
-			return;
-		}
+		m_world.CheckUnlocked();
 		
 		m_xf.R.Set(angle);
 		m_xf.position.SetV(position);
@@ -630,11 +618,7 @@ public class b2Body
 	 */
 	public function SetMassData(massData:b2MassData):void
 	{
-		b2Settings.b2Assert(m_world.IsLocked() == false);
-		if (m_world.IsLocked() == true)
-		{
-			return;
-		}
+		m_world.CheckUnlocked();
 		
 		if (m_type != b2_dynamicBody)
 		{

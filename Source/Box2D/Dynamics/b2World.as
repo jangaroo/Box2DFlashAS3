@@ -181,11 +181,7 @@ public class b2World extends EventDispatcher
 	*/
 	public function CreateBody(def:b2BodyDef) : b2Body{
 		
-		//b2Settings.b2Assert(m_lock == false);
-		if (IsLocked() == true)
-		{
-			return null;
-		}
+		CheckUnlocked();
 		
 		//void* mem = m_blockAllocator.Allocate(sizeof(b2Body));
 		var b:b2Body = new b2Body(def, this);
@@ -218,11 +214,7 @@ public class b2World extends EventDispatcher
 	public function DestroyBody(b:b2Body) : void{
 		
 		//b2Settings.b2Assert(m_bodyCount > 0);
-		//b2Settings.b2Assert(m_lock == false);
-		if (IsLocked() == true)
-		{
-			return;
-		}
+		CheckUnlocked();
 		
 		// Events
 		m_removeBodyEvent.body = b;
@@ -939,6 +931,15 @@ public class b2World extends EventDispatcher
 	public function IsLocked():Boolean
 	{
 		return (m_flags & e_locked) > 0;
+	}
+	
+	/**
+	 * Throws if the world is locked
+	 */
+	b2internal function CheckUnlocked():void
+	{
+		if (IsLocked())
+			throw new Error("You cannot call this method while the world is locked");
 	}
 	
 	/**
