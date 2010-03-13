@@ -1402,39 +1402,39 @@ public class b2World extends EventDispatcher
 					++queueSize;
 					other.m_flags |= b2Body.e_islandFlag;
 				}
-			}
-			
-			for (var jEdge:b2JointEdge = b.m_jointList; jEdge; jEdge = jEdge.next) 
-			{
-				if (island.m_jointCount == island.m_jointCapacity) 
-					continue;
 				
-				if (jEdge.joint.m_islandFlag == true)
-					continue;
-				
-				other = jEdge.other;
-				if (other.IsActive() == false)
+				for (var jEdge:b2JointEdge = b.m_jointList; jEdge; jEdge = jEdge.next) 
 				{
-					continue;
-				}
-				
-				island.AddJoint(jEdge.joint);
-				jEdge.joint.m_islandFlag = true;
-				
-				if (other.m_flags & b2Body.e_islandFlag)
-					continue;
+					if (island.m_jointCount == island.m_jointCapacity) 
+						continue;
 					
-				// Synchronize the connected body.
-				if (other.GetType() != b2Body.b2_staticBody)
-				{
-					other.Advance(minTOI);
-					other.SetAwake(true);
+					if (jEdge.joint.m_islandFlag == true)
+						continue;
+					
+					other = jEdge.other;
+					if (other.IsActive() == false)
+					{
+						continue;
+					}
+					
+					island.AddJoint(jEdge.joint);
+					jEdge.joint.m_islandFlag = true;
+					
+					if (other.m_flags & b2Body.e_islandFlag)
+						continue;
+						
+					// Synchronize the connected body.
+					if (other.GetType() != b2Body.b2_staticBody)
+					{
+						other.Advance(minTOI);
+						other.SetAwake(true);
+					}
+					
+					//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
+					queue[queueStart + queueSize] = other;
+					++queueSize;
+					other.m_flags |= b2Body.e_islandFlag;
 				}
-				
-				//b2Settings.b2Assert(queueStart + queueSize < queueCapacity);
-				queue[queueStart + queueSize] = other;
-				++queueSize;
-				other.m_flags |= b2Body.e_islandFlag;
 			}
 			
 			var subStep:b2TimeStep = s_timestep;
