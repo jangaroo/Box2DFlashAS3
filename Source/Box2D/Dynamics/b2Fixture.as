@@ -331,19 +331,24 @@ public class b2Fixture
 		m_proxy = null;
 	}
 	
+	private static var s_aabb1:b2AABB = new b2AABB();
+	private static var s_aabb2:b2AABB = new b2AABB();
+	private static var s_displacement:b2Vec2 = new b2Vec2();
 	b2internal function Synchronize(broadPhase:IBroadPhase, transform1:b2Transform, transform2:b2Transform):void
 	{
 		if (!m_proxy)
 			return;
 			
 		// Compute an AABB that ocvers the swept shape (may miss some rotation effect)
-		var aabb1:b2AABB = new b2AABB();
-		var aabb2:b2AABB = new b2AABB();
+		var aabb1:b2AABB = s_aabb1;
+		var aabb2:b2AABB = s_aabb2;
 		m_shape.ComputeAABB(aabb1, transform1);
 		m_shape.ComputeAABB(aabb2, transform2);
 		
 		m_aabb.Combine(aabb1, aabb2);
-		var displacement:b2Vec2 = b2Math.SubtractVV(transform2.position, transform1.position);
+		var displacement:b2Vec2 = s_displacement;
+		displacement.x = transform2.position.x - transform1.position.x;
+		displacement.y = transform2.position.y - transform1.position.y;
 		broadPhase.MoveProxy(m_proxy, m_aabb, displacement);
 	}
 

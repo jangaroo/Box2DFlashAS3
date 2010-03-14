@@ -30,7 +30,7 @@ import flash.display.*;
 import flash.system.Capabilities;
 import flash.system.System;
 import flash.text.*;
-import flash.utils.getTimer;
+import flash.utils.*;
 import General.*
 import Benchmarks.*;
 
@@ -98,8 +98,10 @@ import flash.display.MovieClip;
 					</parameters>
 					{test.Details()}
 				</benchmark>;
-			
-			this.addEventListener(Event.ENTER_FRAME, RunTest);
+				
+			// Wait 1 second for flash startup stuff to abate, then start
+			// Running tests
+			setTimeout(Start, 1000);
 		
 			if (preview)
 			{
@@ -107,6 +109,11 @@ import flash.display.MovieClip;
 				steps = 1;
 				InitWorld();
 			}
+		}
+		
+		private function Start():void
+		{
+			this.addEventListener(Event.ENTER_FRAME, RunTest);
 		}
 		
 		private function InitWorld():void
@@ -137,6 +144,12 @@ import flash.display.MovieClip;
 		
 		private function SummarizeResults():void
 		{
+			{
+				// Drop the first result
+				// It's always slower as tht JITing gets done,
+				// Which we don't want to count.
+				data.shift();
+			}
 			var n:int = data.length;
 			var sum:Number = 0;
 			var sum2:Number = 0;
