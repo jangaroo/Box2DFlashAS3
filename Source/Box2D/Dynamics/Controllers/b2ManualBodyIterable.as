@@ -72,7 +72,7 @@ package Box2D.Dynamics.Controllers
 			if (p != -1)
 				return;
 			m_bodyList[m_bodyList.length] = body;
-			GetEventDispatcher(body).addEventListener(b2World.REMOVEBODY, RemoveBody, false, 0, true);
+			GetEventDispatcher(body).addEventListener(b2World.REMOVEBODY, OnBodyRemoved, false, 0, true);
 		}
 		
 		/** Removes a body to a controller */
@@ -82,7 +82,7 @@ package Box2D.Dynamics.Controllers
 			if (p == -1)
 				return;
 			m_bodyList.splice(p, 1);
-			GetEventDispatcher(body).removeEventListener(b2World.REMOVEBODY, RemoveBody);
+			GetEventDispatcher(body).removeEventListener(b2World.REMOVEBODY, OnBodyRemoved);
 		}
 		
 		/** Removes all bodies */
@@ -90,6 +90,11 @@ package Box2D.Dynamics.Controllers
 		{
 			while (m_bodyList.length > 0)
 				RemoveBody(m_bodyList[0]);
+		}
+		
+		private function OnBodyRemoved(e:b2BodyEvent):void
+		{
+			RemoveBody(e.body);
 		}
 		
 		private function GetEventDispatcher(body:b2Body):IEventDispatcher
