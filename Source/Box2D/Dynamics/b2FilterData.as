@@ -32,10 +32,15 @@ public class b2FilterData
 {
 	public function Copy() : b2FilterData {
 		var copy: b2FilterData = new b2FilterData();
-		copy.categoryBits = categoryBits;
-		copy.maskBits = maskBits;
-		copy.groupIndex = groupIndex;
+		copy.Set(this);
 		return copy;
+	}
+	
+	public function Set(other:b2FilterData):void
+	{
+		categoryBits = other.categoryBits;
+		maskBits = other.maskBits;
+		groupIndex = other.groupIndex;
 	}
 	
 	/**

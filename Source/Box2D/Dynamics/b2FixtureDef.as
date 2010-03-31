@@ -52,6 +52,24 @@ public class b2FixtureDef
 		isSensor = false;
 	}
 	
+	public function Copy():b2FixtureDef
+	{
+		var fd:b2FixtureDef = new b2FixtureDef();
+		fd.Set(this);
+		return fd;
+	}
+	
+	public function Set(other:b2FixtureDef):void
+	{
+		shape = other.shape;
+		userData = other.userData;
+		friction = other.friction;
+		restitution = other.restitution;
+		density = other.density;
+		isSensor = other.isSensor;
+		filter.Set(other.filter);
+	}
+	
 	/**
 	 * The shape, this must be set. The shape will be cloned, so you
 	 * can create the shape on the stack.

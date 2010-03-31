@@ -176,8 +176,14 @@ public class b2BroadPhase implements IBroadPhase
 			tBound2.value = upperValues[axis];
 			tBound2.proxy = proxy;
 			
-			var tBoundAS3:b2Bound = bounds[int(lowerIndex-1)];
-			tBound1.stabbingCount = lowerIndex == 0 ? 0 : tBoundAS3.stabbingCount;
+			var tBoundAS3:b2Bound;
+			if (lowerIndex == 0)
+			{
+				tBound1.stabbingCount = 0;
+			}else{
+				tBoundAS3 = bounds[int(lowerIndex-1)];
+				tBound1.stabbingCount = tBoundAS3.stabbingCount;
+			}
 			tBoundAS3 = bounds[int(upperIndex-1)];
 			tBound2.stabbingCount = tBoundAS3.stabbingCount;
 			
@@ -776,7 +782,7 @@ public class b2BroadPhase implements IBroadPhase
 			
 		// Callback for starting proxies:
 		for (var i:int = 0; i < m_queryResultCount; i++) {
-			subInput.maxFraction = callback(m_queryResults[i], subInput);
+			subInput.maxFraction = callback(subInput, m_queryResults[i]);
 		}
 		
 		//Now work through the rest of the segment
@@ -811,12 +817,12 @@ public class b2BroadPhase implements IBroadPhase
 						if(sy>=0){
 							if(proxy.lowerBounds[1]<=yIndex-1&&proxy.upperBounds[1]>=yIndex){
 								//Add the proxy
-								subInput.maxFraction = callback(proxy, subInput);
+								subInput.maxFraction = callback(subInput, proxy);
 							}
 						}else{
 							if(proxy.lowerBounds[1]<=yIndex&&proxy.upperBounds[1]>=yIndex+1){
 								//Add the proxy
-								subInput.maxFraction = callback(proxy, subInput);
+								subInput.maxFraction = callback(subInput, proxy);
 							}
 						}
 					}
@@ -847,12 +853,12 @@ public class b2BroadPhase implements IBroadPhase
 						if(sx>=0){
 							if(proxy.lowerBounds[0]<=xIndex-1&&proxy.upperBounds[0]>=xIndex){
 								//Add the proxy
-								subInput.maxFraction = callback(proxy, subInput);
+								subInput.maxFraction = callback(subInput, proxy);
 							}
 						}else{
 							if(proxy.lowerBounds[0]<=xIndex&&proxy.upperBounds[0]>=xIndex+1){
 								//Add the proxy
-								subInput.maxFraction = callback(proxy, subInput);
+								subInput.maxFraction = callback(subInput, proxy);
 							}
 						}
 					}
