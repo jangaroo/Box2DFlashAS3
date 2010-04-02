@@ -59,6 +59,15 @@ public class b2PolygonShape extends b2Shape
 		}
 	}
 	
+	override public function MulBy(xf:b2Transform):void 
+	{
+		for (var i:int = 0; i < m_vertexCount; ++i)
+		{
+			m_vertices[i].SetV(b2Math.MulX(xf, m_vertices[i]));
+			m_normals[i].SetV(b2Math.MulMV(xf.R, m_normals[i]));
+		}
+	}
+	
 	/**
 	 * Copy vertices. This assumes the vertices define a convex polygon.
 	 * It is assumed that the exterior is the the right of each edge.

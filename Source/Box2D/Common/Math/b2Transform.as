@@ -58,12 +58,20 @@ public class b2Transform
 		R.SetIdentity();
 	}
 
-	public function Set(x:b2Transform) : void{
-
+	public function Set(x:b2Transform) : void
+	{
 		position.SetV(x.position);
-
 		R.SetM(x.R);
-
+	}
+	
+	public function GetInverse(out:b2Transform = null):b2Transform
+	{
+		if (!out)
+			out = new b2Transform();
+		R.GetInverse(out.R);
+		out.position.SetV(b2Math.MulMV(out.R, position));
+		out.position.NegativeSelf();
+		return out;
 	}
 	
 	/** 
@@ -75,7 +83,7 @@ public class b2Transform
 	}
 	 
 
-	public var position:b2Vec2 = new b2Vec2;
+	public var position:b2Vec2 = new b2Vec2();
 	public var R:b2Mat22 = new b2Mat22();
 };
 

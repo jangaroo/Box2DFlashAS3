@@ -106,6 +106,14 @@ public class b2Math{
 		a.x = tX;
 		return a;
 	}
+	
+	static public function MulXX(T1:b2Transform, T2:b2Transform):b2Transform
+	{
+		var out:b2Transform = new b2Transform();
+		out.R.SetM(b2Math.MulMM(T1.R, T2.R));
+		out.position.SetV(b2Math.MulX(T1, T2.position));
+		return out;
+	}
 
 	static public function AddVV(a:b2Vec2, b:b2Vec2):b2Vec2
 	{

@@ -100,7 +100,7 @@ public class b2Fixture
 	{
 		m_filter = filter.Copy();
 		
-		if (m_body)
+		if (!m_body)
 			return;
 			
 		var edge:b2ContactEdge = m_body.GetContactList();

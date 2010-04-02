@@ -18,10 +18,8 @@
 
 package Box2D.Dynamics.Controllers 
 {
-	import Box2D.Dynamics.b2Body;
-	import Box2D.Dynamics.b2World;
-	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
+import Box2D.Dynamics.*;
+import flash.events.*;
 	
 	/**
 	 * Adapts a regular vector to a IBodyIterable.

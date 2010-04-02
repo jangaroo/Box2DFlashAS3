@@ -60,6 +60,8 @@ public class b2Shape
 		m_radius = other.m_radius;
 	}
 	
+	virtual public function MulBy(xf:b2Transform):void {}
+	
 	/**
 	* Get the type of this shape. You can use this to down cast to the concrete shape.
 	* @return the shape type.

@@ -542,42 +542,67 @@ public class b2Body
 	 */
 	public function Merge(other:b2Body):void
 	{
-		var f:b2Fixture;
-		for (f = other.m_fixtureList; f; )
-		{
-			var next:b2Fixture = f.m_next;
-			
-			// Remove fixture
-			other.m_fixtureCount--;
-			
-			// Add fixture
-			f.m_next = m_fixtureList;
-			m_fixtureList = f;
-			m_fixtureCount++;
-			
-			f.m_body = body2;
-			
-			f = next;
-		}
-		body1.m_fixtureCount = 0;
+		m_world.CheckUnlocked();
 		
-		// Recalculate velocities
 		var body1:b2Body = this;
 		var body2:b2Body = other;
 		
 		// Compute consistent velocites for new bodies based on cached velocity
+		
 		var center1:b2Vec2 = body1.GetWorldCenter();
 		var center2:b2Vec2 = body2.GetWorldCenter();
 		
-		var velocity1:b2Vec2 = body1.GetLinearVelocity().Copy();
-		var velocity2:b2Vec2 = body2.GetLinearVelocity().Copy();
+		var v1:b2Vec2 = body1.GetLinearVelocity();
+		var v2:b2Vec2 = body2.GetLinearVelocity();
 		
-		var angular1:Number = body1.GetAngularVelocity();
-		var angular:Number = body2.GetAngularVelocity();
+		var m1:Number = body1.GetMass();
+		var m2:Number = body2.GetMass();
 		
-		// TODO
+		var c:b2Vec2 = b2Math.AddVV(
+			b2Math.MulFV(m1, center1),
+			b2Math.MulFV(m2, center2));
+		var mass:Number = m1 + m2;
+		c.x /= mass;
+		c.y /= mass;
 		
-		body1.ResetMassData();
+		var v:b2Vec2 = b2Math.AddVV(
+			b2Math.MulFV(m1, v1),
+			b2Math.MulFV(m2, v2));
+		
+		var r1:b2Vec2 = b2Math.SubtractVV(center1, c);
+		var r2:b2Vec2 = b2Math.SubtractVV(center2, c);
+		
+		var angularMomentum:Number = 
+			body1.GetAngularVelocity() * body1.GetInertia() + m1 * b2Math.CrossVV(r1, v1)
+			body2.GetAngularVelocity() * body2.GetInertia() + m2 * b2Math.CrossVV(r2, v2);
+		
+		var I:Number = 
+			body1.GetInertia() + m1 * r1.LengthSquared() + 
+			body2.GetInertia() + m2 * r2.LengthSquared();
+			
+		// Copy fixtures
+		var xf:b2Transform = b2Math.MulXX(
+			body1.GetTransform().GetInverse(),
+			body2.GetTransform());
+		var f:b2Fixture;
+		for (f = other.m_fixtureList; f; f=f.m_next)
+		{
+			var fd:b2FixtureDef = f.GetDefinition();
+			fd.shape.MulBy(xf);
+			body1.CreateFixture(fd);
+		}
+		
+		var md:b2MassData = new b2MassData();
+		md.center = b2Math.MulXT(body1.GetTransform(), c);
+		md.I = I + mass * md.center.LengthSquared();
+		md.mass = mass;
+		SetMassData(md);
+		
+		m_linearVelocity.x = (v1.x * m1 + v2.x * m2) / mass;
+		m_linearVelocity.y = (v1.y * m1 + v2.y * m2) / mass;
+		m_angularVelocity = angularMomentum / I;
+		
+		m_world.DestroyBody(body2);
 		
 		SynchronizeFixtures();
 	}

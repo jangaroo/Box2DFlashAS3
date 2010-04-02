@@ -54,6 +54,11 @@ public class b2CircleShape extends b2Shape
 		}
 	}
 	
+	override public function MulBy(xf:b2Transform):void 
+	{
+		m_p.SetV(b2Math.MulX(xf, m_p));
+	}
+	
 	/**
 	* @inheritDoc
 	*/
