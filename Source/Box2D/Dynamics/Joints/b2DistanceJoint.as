@@ -79,6 +79,7 @@ public class b2DistanceJoint extends b2Joint
 	}
 	
 	/// Get the natural length
+	/// Manipulating the length can lead to non-physical behavior when the frequency is zero.
 	public function SetLength(length:Number):void
 	{
 		m_length = length;

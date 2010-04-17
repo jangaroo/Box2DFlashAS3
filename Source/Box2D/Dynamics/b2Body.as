@@ -251,6 +251,7 @@ public class b2Body
 	 * This breaks any contacts and wakes the other bodies.
 	 * Note this is less efficient than the other overload - you should use that
 	 * if the angle is available.
+	 * Manipulating a body's transform may cause non-physical behavior.
 	 * @param xf the transform of position and angle to set the bdoy to.
 	 */
 	public function SetTransform(xf:b2Transform):void
