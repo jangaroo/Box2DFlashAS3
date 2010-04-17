@@ -18,6 +18,7 @@
 
 /**
  * Specifies a segment for use with RayCast functions.
+ * The ray extends from p1 to p1 + maxFraction * (p2 - p1).
  */
 package Box2D.Collision 
 {
