@@ -68,6 +68,37 @@ public class b2PolygonShape extends b2Shape
 		}
 	}
 	
+	override public function ScaleBy(scale:Number):void
+	{
+		b2Settings.b2Assert(scale > 0.0);
+		for (var i:int = 0; i < m_vertexCount; ++i)
+		{
+			m_vertices[i].x *= scale;
+			m_vertices[i].y *= scale;
+		}
+	}
+	
+	override public function ReflectX():void
+	{
+		for (var i:int = 0; i < m_vertexCount; ++i)
+		{
+			m_vertices[i].x *= -1;
+
+		}
+		// Reverse order
+		var t:b2Vec2;
+		var i1:int = 0;
+		var i2:int = m_vertexCount-1;
+		for (; i1 < i2; ++i1, --i2)
+		{
+			t = m_vertices[i1];
+			m_vertices[i1] = m_vertices[i2];
+			m_vertices[i2] = t;
+		}
+		// Could adjust normals as we go, instead
+		SetAsVector(m_vertices);
+	}
+	
 	/**
 	 * Copy vertices. This assumes the vertices define a convex polygon.
 	 * It is assumed that the exterior is the the right of each edge.

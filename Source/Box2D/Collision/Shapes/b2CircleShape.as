@@ -59,6 +59,18 @@ public class b2CircleShape extends b2Shape
 		m_p.SetV(b2Math.MulX(xf, m_p));
 	}
 	
+	override public function ScaleBy(scale:Number):void
+	{
+		b2Settings.b2Assert(scale > 0.0);
+		m_p.Multiply(scale);
+		m_radius *= scale;
+	}
+	
+	override public function ReflectX():void
+	{
+		m_p.x = -m_p.x;
+	}
+	
 	/**
 	* @inheritDoc
 	*/

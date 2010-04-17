@@ -62,6 +62,10 @@ public class b2Shape
 	
 	virtual public function MulBy(xf:b2Transform):void {}
 	
+	virtual public function ScaleBy(scale:Number):void { }
+	
+	virtual public function ReflectX():void { }
+	
 	/**
 	* Get the type of this shape. You can use this to down cast to the concrete shape.
 	* @return the shape type.
