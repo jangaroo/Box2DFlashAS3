@@ -1,4 +1,4 @@
-package TestBed
+package com.boristhebrave.Box2DWith
 {
   import Box2D.Common.Math.b2Vec2;
   
@@ -21,7 +21,7 @@ package TestBed
     //cPoints[2] = end point control point
     //cPoints[3] = end point
     
-    public static function parseCurve(cPoints:Array, resolution:Number): Array
+    public static function parseCurve(cPoints:Vector.<b2Vec2>, resolution:Number): Array
     {
       if (resolution == 0) {
         return null;

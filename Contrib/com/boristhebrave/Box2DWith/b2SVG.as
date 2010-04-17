@@ -14,18 +14,14 @@
 *    rather than relying on the more finicky winding direction.
 */
 
-package TestBed
+package com.boristhebrave.Box2DWith
 {
-  import Box2D.Dynamics.b2World;
   import Box2D.Common.Math.b2Vec2;
-  import Box2D.Collision.Shapes.b2EdgeChainDef;
-  import Box2D.Collision.Shapes.b2ShapeDef;
-  import Box2D.Collision.Shapes.b2Shape;
-  import TestBed.b2Bezier;
   public class b2SVG
   {
     
-    public static function parseSVG(svg: XML, world: b2World, RATIO:Number, useDefaultCurveResolution:Number): void {
+    public static function parseSVG(svg: XML, RATIO:Number, useDefaultCurveResolution:Number): Vector.<Vector.<b2Vec2>> 
+	{
       var ns: Namespace = svg.namespace("");
       var useCurveThickness:Boolean = false;
       var resolution:Number;
@@ -36,9 +32,7 @@ package TestBed
         useCurveThickness = true;
       }
       
-      var chainDef: b2EdgeChainDef = new b2EdgeChainDef();
-      chainDef.friction = 0.5;
-      chainDef.restitution = 0.0;
+      var results:Vector.<Vector.<b2Vec2>>  = new Vector.<Vector.<b2Vec2>>();
       for each (var path: XML in svg..ns::path)
       {
         if (useCurveThickness) resolution = Math.round(returnStrokeWidth(path.@style) * 10);
@@ -79,18 +73,16 @@ package TestBed
         var prevCommand: String = null;
         var relative: Boolean = false;
         var curve: Array;
+		var cPoints:Vector.<b2Vec2>;
         
-        chainDef.vertices.length = 0;
+        var chain:Vector.<b2Vec2> = new Vector.<b2Vec2>();
         var i: int = 0;
         while (true)
         {
           if (i == args.length) {
             // cleanup: If a path is incomplete, finish it without closing the loop
-            //          and add it to the Box2D world.
-            if (chainDef.vertices.length >= 2) {
-              chainDef.vertexCount = chainDef.vertices.length;
-              chainDef.isALoop = false;
-              world.GetGroundBody().CreateShape(chainDef);
+            if (chain.length >= 2) {
+              results.push(chain);
             }
             break;
           }
@@ -103,25 +95,19 @@ package TestBed
             case "Z":
             case "z":
               // closepath: If a path is incomplete, finish it, close the loop,
-              //            and add it to the Box2D world. 
-              if (chainDef.vertices.length >= 3) {
-                chainDef.vertices.pop(); // the last vertex of the loop is redundant.
-                chainDef.vertexCount = chainDef.vertices.length;
-                chainDef.isALoop = true;
-                world.GetGroundBody().CreateShape(chainDef);
+              if (chain.length >= 3) {
+                results.push(chain);
               }
-              chainDef.vertices.length = 0;
-              chainDef.vertices.push(currentPosition);
+              chain = new Vector.<b2Vec2>();
+              chain.push(currentPosition);
               break;
             case "M":
             case "m":
               // moveto: If a path is incomplete, finish it without closing the loop
               //          and add it to the Box2D world.
               //          Start a new path.
-              if (chainDef.vertices.length >= 2) {
-                chainDef.vertexCount = chainDef.vertices.length;
-                chainDef.isALoop = false;
-                world.GetGroundBody().CreateShape(chainDef);
+              if (chain.length >= 2) {
+                results.push(chain);
               }
               relative = (command == "m");
               if (relative) {
@@ -131,8 +117,8 @@ package TestBed
                 currentPosition = new b2Vec2(args[i] / RATIO, args[i+1] / RATIO);
               }
               i += 2;
-              chainDef.vertices.length = 0;
-              chainDef.vertices.push(currentPosition);
+              chain = new Vector.<b2Vec2>();
+              chain.push(currentPosition);
               
               // According to the SVG spec, a moveto command can be implicitly followed
               // by lineto coordinates. So there is no "break" here.
@@ -150,7 +136,7 @@ package TestBed
                   currentPosition = new b2Vec2(args[i] / RATIO, args[i+1] / RATIO);
                 }
                 i += 2;
-                chainDef.vertices.push(currentPosition);
+                chain.push(currentPosition);
               }
               break;
             case "H":
@@ -170,7 +156,7 @@ package TestBed
                 }
                 i++;
               } while (!isNaN(parseFloat(args[i])));
-              chainDef.vertices.push(currentPosition);
+              chain.push(currentPosition);
               break;
             case "V":
             case "v":
@@ -189,7 +175,7 @@ package TestBed
                 }
                 i++;
               } while (!isNaN(parseFloat(args[i])));
-              chainDef.vertices.push(currentPosition);
+              chain.push(currentPosition);
               break;
             case "C":
             case "c":
@@ -210,10 +196,14 @@ package TestBed
                   control3 = new b2Vec2(args[i+4] / RATIO, args[i+5] / RATIO);
                 }
                 i += 6;
-                
-                curve = b2Bezier.parseCurve([currentPosition, control1, control2, control3], resolution);
+                cPoints = new Vector.<b2Vec2> ();
+				cPoints[0] = currentPosition;
+				cPoints[1] = control1;
+				cPoints[2] = control2;
+				cPoints[3] = control3;
+                curve = b2Bezier.parseCurve(cPoints, resolution);
                 curve.shift(); // the first point is redundant, "currentPosition" is already added.
-                chainDef.vertices = chainDef.vertices.concat(curve);
+                chain = chain.concat(curve);
                 
                 currentPosition = control3;
               } while (!isNaN(parseFloat(args[i])));
@@ -244,10 +234,14 @@ package TestBed
                   control3 = new b2Vec2(args[i+2] / RATIO, args[i+3] / RATIO);
                 }
                 i += 4;
-                
-                curve = b2Bezier.parseCurve([currentPosition, control1, control2, control3], resolution);
+				cPoints = new Vector.<b2Vec2> ();
+				cPoints[0] = currentPosition;
+				cPoints[1] = control1;
+				cPoints[2] = control2;
+				cPoints[3] = control3;
+                curve = b2Bezier.parseCurve(cPoints, resolution);
                 curve.shift(); // the first point is redundant, "currentPosition" is already added.
-                chainDef.vertices = chainDef.vertices.concat(curve);
+                chain = chain.concat(curve);
                 
                 currentPosition = control3;
                 prevControl = control2;
@@ -268,6 +262,7 @@ package TestBed
           prevCommand = command;
         }
       }
+	  return results;
     }
     
     private static function filterEmptyString(item: *, index: int, array: Array): Boolean {
