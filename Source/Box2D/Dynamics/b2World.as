@@ -614,7 +614,9 @@ public class b2World extends EventDispatcher
 	
 	/**
 	 * Call this after you are done with time steps to clear the forces. You normally
-	 * call this after each call to Step, unless you are performing sub-steps.
+	 * call this after each call to Step, unless you are performing sub-steps. By default,
+	 * forces will be automatically cleared, so you don't need to call this function.
+	 * @see SetAutoClearForces
 	 */
 	public function ClearForces() : void
 	{
