@@ -81,7 +81,7 @@ public class b2ContactManager
 		}
 		
 		// Check user filtering
-		if (m_contactFilter.ShouldCollide(fixtureA, fixtureB) == false)
+		if (m_contactFilter && m_contactFilter.ShouldCollide(fixtureA, fixtureB) == false)
 		{
 			return;
 		}
@@ -150,7 +150,7 @@ public class b2ContactManager
 		var bodyA:b2Body = fixtureA.GetBody();
 		var bodyB:b2Body = fixtureB.GetBody();
 		
-		if (c.IsTouching())
+		if (m_contactListener && c.IsTouching())
 		{
 			m_contactListener.EndContact(c);
 		}
@@ -241,7 +241,7 @@ public class b2ContactManager
 				}
 				
 				// Check user filtering.
-				if (m_contactFilter.ShouldCollide(fixtureA, fixtureB) == false)
+				if (m_contactFilter && m_contactFilter.ShouldCollide(fixtureA, fixtureB) == false)
 				{
 					cNuke = c;
 					c = cNuke.GetNext();
