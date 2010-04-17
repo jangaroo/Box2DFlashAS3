@@ -1172,7 +1172,7 @@ public class b2World extends EventDispatcher
 		
 		// Reserve an island and a queue for TOI island solution.
 		var island:b2Island = m_island;
-		island.Initialize(m_bodyCount, b2Settings.b2_maxTOIContactsPerIsland, b2Settings.b2_maxTOIJointsPerIsland, null, m_contactManager.m_contactListener, m_contactSolver);
+		island.Initialize(m_bodyCount, b2Settings.b2_maxTOIContacts, b2Settings.b2_maxTOIJoints, null, m_contactManager.m_contactListener, m_contactSolver);
 		
 		//Simple one pass queue
 		//Relies on the fact that we're only making one pass

@@ -97,12 +97,12 @@ public class b2Settings{
 	/**
 	* Maximum number of contacts to be handled to solve a TOI island.
 	*/
-	static public const b2_maxTOIContactsPerIsland:int = 32;
+	static public const b2_maxTOIContacts:int = 32;
 	
 	/**
 	* Maximum number of joints to be handled to solve a TOI island.
 	*/
-	static public const b2_maxTOIJointsPerIsland:int = 32;
+	static public const b2_maxTOIJoints:int = 32;
 	
 	/**
 	* A velocity threshold for elastic collisions. Any collision with a relative linear
