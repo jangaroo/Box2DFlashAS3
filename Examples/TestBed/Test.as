@@ -76,20 +76,20 @@ package TestBed{
 			wallBd.position.Set( -95 / m_physScale, 360 / m_physScale / 2);
 			wall.SetAsBox(100/m_physScale, 400/m_physScale/2);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateFixture2(wall);
+			wallB.CreateFixture2(wall, 0.0);
 			// Right
 			wallBd.position.Set((640 + 95) / m_physScale, 360 / m_physScale / 2);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateFixture2(wall);
+			wallB.CreateFixture2(wall, 0.0);
 			// Top
 			wallBd.position.Set(640 / m_physScale / 2, -95 / m_physScale);
 			wall.SetAsBox(680/m_physScale/2, 100/m_physScale);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateFixture2(wall);
+			wallB.CreateFixture2(wall, 0.0);
 			// Bottom
 			wallBd.position.Set(640 / m_physScale / 2, (360 + 95) / m_physScale);
 			wallB = m_world.CreateBody(wallBd);
-			wallB.CreateFixture2(wall);
+			wallB.CreateFixture2(wall, 0.0);
 		}
 		
 		

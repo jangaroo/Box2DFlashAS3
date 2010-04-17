@@ -49,7 +49,7 @@ package TestBed{
 				body = m_world.CreateBody(bd);
 				
 				var polygon:b2PolygonShape = b2PolygonShape.AsBox(3.0, 0.5);
-				m_platform = body.CreateFixture2(polygon);
+				m_platform = body.CreateFixture2(polygon, 0.0);
 				
 				m_bottom = bd.position.y + 0.5;
 				m_top = bd.position.y - 0.5;

@@ -117,7 +117,7 @@ public class b2Body
 	 * @param density the shape density (set to zero for static bodies).
 	 * @warning This function is locked during callbacks.
 	 */
-	public function CreateFixture2(shape:b2Shape, density:Number=0.0):b2Fixture
+	public function CreateFixture2(shape:b2Shape, density:Number):b2Fixture
 	{
 		var def:b2FixtureDef = new b2FixtureDef();
 		def.shape = shape;

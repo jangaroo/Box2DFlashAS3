@@ -53,7 +53,7 @@ package TestBed{
 			bd.type = b2Body.b2_staticBody;
 			bd.position.Set(10, 6);
 			var sensorBody:b2Body = m_world.CreateBody(bd);
-			var fixture:b2Fixture = sensorBody.CreateFixture2(new b2CircleShape(2));
+			var fixture:b2Fixture = sensorBody.CreateFixture2(new b2CircleShape(2), 0.0);
 			fixture.SetSensor(true);
 			
 			// Fit a custom controller to it

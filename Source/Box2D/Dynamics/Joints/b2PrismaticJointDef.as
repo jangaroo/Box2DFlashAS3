@@ -33,6 +33,7 @@ use namespace b2internal;
 * can violate the constraint slightly. The joint translation is zero
 * when the local anchor points coincide in world space. Using local
 * anchors and a local axis helps when saving and loading a game.
+* @warning at least one body should be dynamic with a non-fixed rotation.
 * @see b2PrismaticJoint
 */
 public class b2PrismaticJointDef extends b2JointDef
