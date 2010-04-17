@@ -68,9 +68,9 @@ public class b2DefaultContactListener implements IContactListener
 		m_world.dispatchEvent(m_beginContact);
 		var dispatcher:IEventDispatcher;
 		dispatcher = contact.m_fixtureA.m_body.m_eventDispatcher;
-		if (dispatcher) dispatcher.dispatchEvent(m_beginContact);
+		if (dispatcher) dispatcher.dispatchEvent(m_preSolveContact);
 		dispatcher = contact.m_fixtureB.m_body.m_eventDispatcher;
-		if (dispatcher) dispatcher.dispatchEvent(m_beginContact);
+		if (dispatcher) dispatcher.dispatchEvent(m_preSolveContact);
 	}
 	public function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void
 	{
