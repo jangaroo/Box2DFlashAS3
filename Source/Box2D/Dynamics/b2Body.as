@@ -700,7 +700,13 @@ public class b2Body
 		var center:b2Vec2 = b2Vec2.Make(0, 0);
 		
 		// Static and kinematic bodies have zero mass.
-		if (m_type == b2_dynamicBody)
+		if (m_type == b2_staticBody || m_type == b2_kinematicBody)
+		{
+			m_sweep.c0.x = m_sweep.c.x  = m_xf.position.x;
+			m_sweep.c0.y = m_sweep.c.y  = m_xf.position.y;
+			return;
+		}
+		
 		{
 			//b2Assert(m_type == b2_dynamicBody);
 			
