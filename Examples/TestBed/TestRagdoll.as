@@ -63,7 +63,7 @@ package TestBed{
 				var head:b2Body = m_world.CreateBody(bd);
 				head.CreateFixture(fixtureDef);
 				//if (i == 0){
-					head.ApplyImpulse(new b2Vec2(Math.random() * 100 - 50, Math.random() * 100 - 50), head.GetWorldCenter());
+					head.ApplyLinearImpulse(new b2Vec2(Math.random() * 100 - 50, Math.random() * 100 - 50), head.GetWorldCenter());
 				//}
 				
 				// Torso1

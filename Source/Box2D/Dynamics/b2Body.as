@@ -448,7 +448,7 @@ public class b2Body
 	* @param impulse the world impulse vector, usually in N-seconds or kg-m/s.
 	* @param point the world position of the point of application.
 	*/
-	public function ApplyImpulse(impulse:b2Vec2, point:b2Vec2) : void{
+	public function ApplyLinearImpulse(impulse:b2Vec2, point:b2Vec2) : void{
 		if (m_type != b2_dynamicBody)
 		{
 			return;
@@ -463,6 +463,21 @@ public class b2Body
 		m_linearVelocity.y += m_invMass * impulse.y;
 		//m_angularVelocity += m_invI * b2Cross(point - m_sweep.c, impulse);
 		m_angularVelocity += m_invI * ((point.x - m_sweep.c.x) * impulse.y - (point.y - m_sweep.c.y) * impulse.x);
+	}
+	
+	/**
+	 * Apply an angular impulse
+	 * @param impulse the angular impulse in units of kg*m*m/s
+	 */
+	public function ApplyAngularImpulse(impulse:Number):void
+	{
+		if (m_type != b2_dynamicBody)
+			return;
+			
+		if (IsAwake() == false)
+			SetAwake(true);
+			
+		m_angularVelocity += m_invI * impulse;
 	}
 	
 	/**
