@@ -349,7 +349,14 @@ public class b2PolygonShape extends b2Shape
 				return false;
 				
 			output.fraction = t;
-			output.normal.SetV(normal);
+			if (numerator > 0.0)
+			{
+				output.normal.x = -normal.x;
+				output.normal.y = -normal.y;
+			}else {
+				output.normal.x = normal.x;
+				output.normal.y = normal.y;
+			}
 			return true;
 		} else {
 			var lower:Number = 0.0;
