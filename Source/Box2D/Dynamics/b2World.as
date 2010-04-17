@@ -1137,7 +1137,7 @@ public class b2World extends EventDispatcher
 		for (b = m_bodyList; b; b = b.m_next)
 		{
 			// If a body was not in an island then it did not move.
-			if (b.m_flags & b2Body.e_islandFlag == 0)
+			if ((b.m_flags & b2Body.e_islandFlag) == 0)
 			{
 				continue;
 			}
