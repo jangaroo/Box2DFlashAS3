@@ -845,11 +845,13 @@ public class b2World extends EventDispatcher
 	 * ):Number
 	 * </code>
 	 * Callback should return the new length of the ray as a fraction of the original length.
+	 * By returning -1, you ignore this fixture and continue
 	 * By returning 0, you immediately terminate.
 	 * By returning 1, you continue wiht the original ray.
 	 * By returning the current fraction, you proceed to find the closest point.
 	 * @param point1 the ray starting point
 	 * @param point2 the ray ending point
+	 * @return -1 to filter, 0 to terminate, fraction to clip, 1 to continue.
 	 */
 	public function RayCast(callback:Function, point1:b2Vec2, point2:b2Vec2):void
 	{

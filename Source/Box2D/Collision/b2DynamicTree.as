@@ -304,19 +304,25 @@ package Box2D.Collision
 					subInput.p2 = input.p2;
 					subInput.maxFraction = input.maxFraction;
 					
-					maxFraction = callback(subInput, node);
+					var value:Number = callback(subInput, node);
 					
-					if (maxFraction == 0.0)
-						return;
-						
-					//Update the segment bounding box
+					if (value == 0.0)
 					{
-						tX = p1.x + maxFraction * (p2.x - p1.x);
-						tY = p1.y + maxFraction * (p2.y - p1.y);
-						segmentAABB.lowerBound.x = Math.min(p1.x, tX);
-						segmentAABB.lowerBound.y = Math.min(p1.y, tY);
-						segmentAABB.upperBound.x = Math.max(p1.x, tX);
-						segmentAABB.upperBound.y = Math.max(p1.y, tY);
+						// The client has terminated the ray cast.
+						return;
+					}
+					
+					if (value > 0.0)
+					{
+						//Update the segment bounding box
+						{
+							tX = p1.x + maxFraction * (p2.x - p1.x);
+							tY = p1.y + maxFraction * (p2.y - p1.y);
+							segmentAABB.lowerBound.x = Math.min(p1.x, tX);
+							segmentAABB.lowerBound.y = Math.min(p1.y, tY);
+							segmentAABB.upperBound.x = Math.max(p1.x, tX);
+							segmentAABB.upperBound.y = Math.max(p1.y, tY);
+						}
 					}
 				}
 				else
