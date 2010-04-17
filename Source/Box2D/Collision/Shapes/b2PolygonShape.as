@@ -412,7 +412,11 @@ public class b2PolygonShape extends b2Shape
 					}
 				}
 				
-				if (upper < lower - Number.MIN_VALUE)
+				// The use of epsilon here causes the assert on lower to trip
+				// in some cases. Apparently the use of epsilon was to make edge
+				// shapes work, but now those are handled separately.
+				//if (upper < lower - Number.MIN_VALUE)
+				if (upper < lower)
 				{
 					return false;
 				}

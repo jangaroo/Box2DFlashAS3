@@ -30,7 +30,7 @@ public class b2Settings{
     /**
     * The current version of Box2D
     */
-    static public const VERSION:String = "2.1alpha";
+    static public const VERSION:String = "2.1beta";
 
 	static public const USHRT_MAX:int = 0x0000ffff;
 
