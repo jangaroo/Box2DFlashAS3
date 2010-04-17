@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="world">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="body"/>
+        <xs:element ref="joint"/>
+      </xs:choice>
+      <xs:attribute name="left" type="xs:double"/>
+      <xs:attribute name="right" type="xs:double"/>
+      <xs:attribute name="top" type="xs:double"/>
+      <xs:attribute name="bottom" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="vec2">
+    <xs:restriction>
+      <xs:simpleType>
+        <xs:list>
+          <xs:simpleType>
+            <xs:union memberTypes="xs:double xs:double"/>
+          </xs:simpleType>
+        </xs:list>
+      </xs:simpleType>
+      <xs:length value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="body">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="shape"/>
+      </xs:sequence>
+      <xs:attribute name="x" type="xs:double"/>
+      <xs:attribute name="y" type="xs:double"/>
+      <xs:attribute name="position" type="vec2"/>
+      <xs:attribute name="allowSleep" type="xs:boolean"/>
+      <xs:attribute name="angle" type="xs:double"/>
+      <xs:attribute name="angularDamping" type="xs:double"/>
+      <xs:attribute name="fixedRotation" type="xs:boolean"/>
+      <xs:attribute name="isBullet" type="xs:boolean"/>
+      <xs:attribute name="isSleeping" type="xs:boolean"/>
+      <xs:attribute name="linearDamping" type="xs:double"/>
+      <xs:attribute name="center" type="vec2"/>
+      <xs:attribute name="I" type="xs:double"/>
+      <xs:attribute name="mass" type="xs:double"/>
+      <xs:attribute name="userData"/>
+      <xs:attribute name="id" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <!-- shapes -->
+  <xs:element name="shape" abstract="true"/>
+  <xs:attributeGroup name="shapeAttributes">
+    <xs:attribute name="density" type="xs:double"/>
+    <xs:attribute name="restitution" type="xs:double"/>
+    <xs:attribute name="friction" type="xs:double"/>
+    <xs:attribute name="restitution" type="xs:double"/>
+    <xs:attribute name="isSensor" type="xs:boolean"/>
+    <xs:attribute name="userData"/>
+    <xs:attribute name="categoryBits" type="xs:short"/>
+    <xs:attribute name="maskBits" type="xs:short"/>
+    <xs:attribute name="groupIndex" type="xs:integer"/>
+  </xs:attributeGroup>
+  <xs:element name="circle" substitutionGroup="shape">
+    <xs:complexType>
+      <xs:attributeGroup ref="shapeAttributes"/>
+      <xs:attribute name="radius" use="required" type="xs:double"/>
+      <xs:attribute name="x" type="xs:double"/>
+      <xs:attribute name="y" type="xs:double"/>
+      <xs:attribute name="localPosition" type="vec2"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="polygon" substitutionGroup="shape">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="vertex"/>
+      </xs:sequence>
+      <xs:attributeGroup ref="shapeAttributes"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="vertex">
+    <xs:complexType>
+      <xs:attribute name="x" use="required" type="xs:double"/>
+      <xs:attribute name="y" use="required" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="box" substitutionGroup="shape">
+    <xs:complexType>
+      <xs:attributeGroup ref="shapeAttributes"/>
+      <xs:attribute name="angle" type="xs:double"/>
+      <xs:attribute name="x" type="xs:double"/>
+      <xs:attribute name="y" type="xs:double"/>
+      <xs:attribute name="width" type="xs:double"/>
+      <xs:attribute name="height" type="xs:double"/>
+      <xs:attribute name="left" type="xs:double"/>
+      <xs:attribute name="right" type="xs:double"/>
+      <xs:attribute name="top" type="xs:double"/>
+      <xs:attribute name="bottom" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+  <!-- joints -->
+  <xs:element name="joint" abstract="true"/>
+  <xs:attributeGroup name="jointAttributes">
+    <xs:attributeGroup ref="jointBodies"/>
+    <xs:attributeGroup ref="jointAnchors"/>
+    <xs:attribute name="collideConnected" type="xs:boolean"/>
+    <xs:attribute name="id" type="xs:ID"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="jointBodies">
+    <xs:attribute name="body1" use="required" type="xs:ID"/>
+    <xs:attribute name="body2" use="required" type="xs:ID"/>
+  </xs:attributeGroup>
+  <!--
+    There are a lot of anchor combinations, but it boils down to:
+    Anchors are be defined as relative to the world or local by prepending "world-" or "local-".
+    The two anchors can be defined together or seperately by appending "1" and "2" or nothing. Local anchors must be separate.
+    
+    Anchors may be ommited, separately or entirely, in which case they will be treated as at the origin in local co-ordinages.
+  -->
+  <xs:attributeGroup name="jointAnchors">
+    <xs:attribute name="world-anchor" type="vec2"/>
+    <xs:attribute name="world-anchor1" type="vec2"/>
+    <xs:attribute name="local-anchor1" type="vec2"/>
+    <xs:attribute name="world-anchor2" type="vec2"/>
+    <xs:attribute name="local-anchor2" type="vec2"/>
+  </xs:attributeGroup>
+  <xs:element name="prismatic" substitutionGroup="joint">
+    <xs:complexType>
+      <xs:attributeGroup ref="jointAttributes"/>
+      <xs:attribute name="enableMotor" type="xs:boolean"/>
+      <xs:attribute name="motorSpeed" type="xs:double"/>
+      <xs:attribute name="maxMotorForce" type="xs:double"/>
+      <xs:attribute name="enableLimit" type="xs:boolean"/>
+      <xs:attribute name="lower" type="xs:double"/>
+      <xs:attribute name="upper" type="xs:double"/>
+      <xs:attribute name="referenceAngle" type="xs:double"/>
+      <xs:attribute name="world-axis" type="vec2"/>
+      <xs:attribute name="local-axis1" type="vec2"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="gear" substitutionGroup="joint">
+    <xs:complexType>
+      <xs:attributeGroup ref="jointAttributes"/>
+      <xs:attribute name="ratio" type="xs:double"/>
+      <xs:attribute name="joint1" type="xs:ID"/>
+      <xs:attribute name="joint2" type="xs:ID"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="revolute" substitutionGroup="joint">
+    <xs:complexType>
+      <xs:attributeGroup ref="jointAttributes"/>
+      <xs:attribute name="motorSpeed" type="xs:double"/>
+      <xs:attribute name="maxMotorTorque" type="xs:double"/>
+      <xs:attribute name="enableMotor" type="xs:boolean"/>
+      <xs:attribute name="enableLimit" type="xs:boolean"/>
+      <xs:attribute name="lower" type="xs:double"/>
+      <xs:attribute name="upper" type="xs:double"/>
+      <xs:attribute name="referenceAngle" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="distance" substitutionGroup="joint">
+    <xs:complexType>
+      <xs:attributeGroup ref="jointAttributes"/>
+      <xs:attribute name="dampingRatio" type="xs:double"/>
+      <xs:attribute name="frequencyHz" type="xs:double"/>
+      <xs:attribute name="length" type="xs:double"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="pulley" substitutionGroup="joint">
+    <xs:complexType>
+      <xs:attributeGroup ref="jointAttributes"/>
+      <xs:attribute name="ratio" type="xs:double"/>
+      <xs:attribute name="maxLength1" type="xs:double"/>
+      <xs:attribute name="maxLength2" type="xs:double"/>
+      <xs:attribute name="length1" type="xs:double"/>
+      <xs:attribute name="length2" type="xs:double"/>
+      <xs:attribute name="world-ground" type="vec2"/>
+      <xs:attribute name="world-ground1" type="vec2"/>
+      <xs:attribute name="world-ground2" type="vec2"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="mouse" substitutionGroup="joint">
+    <xs:complexType>
+      <xs:attributeGroup ref="jointAttributes"/>
+      <xs:attribute name="dampingRatio" type="xs:double"/>
+      <xs:attribute name="frequencyHz" type="xs:double"/>
+      <xs:attribute name="maxForce" type="xs:double"/>
+      <xs:attribute name="target" type="vec2"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

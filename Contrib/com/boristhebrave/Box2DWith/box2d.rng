@@ -1,0 +1,311 @@
+﻿<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<start>
+  <ref name="world"/>
+</start>
+<define name="world">
+  <element name="world">
+    <optional>
+      <attribute name="left"><data type="double"/></attribute>
+    </optional>
+    <optional>
+      <attribute name="right"><data type="double"/></attribute>
+    </optional>
+    <optional>
+      <attribute name="top"><data type="double"/></attribute>
+    </optional>
+    <optional>
+      <attribute name="bottom"><data type="double"/></attribute>
+    </optional>
+    <zeroOrMore>
+      <choice>
+        <ref name="body"/>
+        <ref name="joint"/>
+      </choice>
+    </zeroOrMore>
+  </element>
+</define>
+
+<define name="vec2">
+    <list>
+      <data type="double"/>
+      <data type="double"/>
+    </list>
+</define>
+
+<define name="body">
+  <element name="body">
+    <optional><attribute name="x"><data type="double"/></attribute></optional>
+    <optional><attribute name="y"><data type="double"/></attribute></optional>
+    <optional><attribute name="position"><ref name="vec2"/></attribute></optional>
+    <optional><attribute name="allowSleep"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="angle"><data type="double"/></attribute></optional>
+    <optional><attribute name="angularDamping"><data type="double"/></attribute></optional>
+    <optional><attribute name="fixedRotation"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="isBullet"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="isSleeping"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="linearDamping"><data type="double"/></attribute></optional>
+    <optional><attribute name="center"><ref name="vec2"/></attribute></optional>
+    <optional><attribute name="I"><data type="double"/></attribute></optional>
+    <optional><attribute name="mass"><data type="double"/></attribute></optional>
+    <optional><attribute name="userData"></attribute></optional>
+    <optional><attribute name="id"><data type="ID"/></attribute></optional>
+    <zeroOrMore>
+      <ref name="shape"/>
+    </zeroOrMore>
+  </element>
+</define>
+
+<!-- shapes -->
+<div>
+
+<define name="shape">
+  <choice>
+    <ref name="circle"/>
+    <ref name="polygon"/>
+    <ref name="box"/>
+  </choice>
+</define>
+
+<define name="shapeAttributes">
+  <optional><attribute name="density"><data type="double"/></attribute></optional>
+  <optional><attribute name="restitution"><data type="double"/></attribute></optional>
+  <optional><attribute name="friction"><data type="double"/></attribute></optional>
+  <optional><attribute name="restitution"><data type="double"/></attribute></optional>
+  <optional><attribute name="isSensor"><data type="boolean"/></attribute></optional>
+  <optional><attribute name="userData"></attribute></optional>
+  <optional><attribute name="categoryBits"><data type="short"/></attribute></optional>
+  <optional><attribute name="maskBits"><data type="short"/></attribute></optional>
+  <optional><attribute name="groupIndex"><data type="integer"/></attribute></optional>
+</define>
+
+<define name="circle">
+  <element name="circle">
+    <ref name="shapeAttributes"/>
+    <attribute name="radius"><data type="double"/></attribute>
+    <optional><attribute name="x"><data type="double"/></attribute></optional>
+    <optional><attribute name="y"><data type="double"/></attribute></optional>
+    <optional><attribute name="localPosition"><ref name="vec2"/></attribute></optional>
+  </element>
+</define>
+
+<define name="polygon">
+  <element name="polygon">
+    <ref name="shapeAttributes"/>
+    <zeroOrMore>
+      <element name="vertex">
+        <attribute name="x"><data type="double"/></attribute>
+        <attribute name="y"><data type="double"/></attribute>
+      </element>
+    </zeroOrMore>
+  </element>
+</define>
+
+<define name="box">
+  <element name="box">
+    <ref name="shapeAttributes"/>
+    <optional>
+      <attribute name="angle"><data type="double"/></attribute>
+    </optional>
+    <choice>
+      <!--Basic format-->
+      <group>
+        <optional>
+          <attribute name="x"><data type="double"/></attribute>
+        </optional>
+        <optional>
+          <attribute name="y"><data type="double"/></attribute>
+        </optional>
+        <optional>
+          <attribute name="width"><data type="double"/></attribute>
+        </optional>
+        <optional>
+          <attribute name="height"><data type="double"/></attribute>
+        </optional>
+      </group>
+      <!--AABB format-->
+      <group>
+        <choice>
+          <group>
+            <attribute name="left"><data type="double"/></attribute>
+            <attribute name="right"><data type="double"/></attribute>
+          </group>
+          <group>
+            <attribute name="left"><data type="double"/></attribute>
+            <attribute name="width"><data type="double"/></attribute>
+          </group>
+          <group>
+            <attribute name="width"><data type="double"/></attribute>
+            <attribute name="right"><data type="double"/></attribute>
+          </group>
+        </choice>
+        <choice>
+          <group>
+            <attribute name="top"><data type="double"/></attribute>
+            <attribute name="bottom"><data type="double"/></attribute>
+          </group>
+          <group>
+            <attribute name="top"><data type="double"/></attribute>
+            <attribute name="height"><data type="double"/></attribute>
+          </group>
+          <group>
+            <attribute name="height"><data type="double"/></attribute>
+            <attribute name="bottom"><data type="double"/></attribute>
+          </group>
+        </choice>
+      </group>
+    </choice>
+  </element>
+</define>
+
+</div>
+
+<!-- joints -->
+<div>
+
+<define name="joint">
+  <choice>
+    <ref name="prismatic"/>
+    <ref name="gear"/>
+    <ref name="revolute"/>
+    <ref name="distance"/>
+    <ref name="pulley"/>
+    <ref name="mouse"/>
+  </choice>
+</define>
+
+<define name="jointAttributes">
+  <ref name="jointBodies"/>
+  <ref name="jointAnchors"/>
+  <optional><attribute name="collideConnected"><data type="boolean"/></attribute></optional>
+  <optional><attribute name="id"><data type="ID"/></attribute></optional>
+</define>
+
+<define name="jointBodies">
+  <attribute name="body1"><data type="ID"/></attribute>
+  <attribute name="body2"><data type="ID"/></attribute>
+</define>
+
+<!-- There are a lot of anchor combinations, but it boils down to:
+Anchors are be defined as relative to the world or local by prepending "world-" or "local-".
+The two anchors can be defined together or seperately by appending "1" and "2" or nothing. Local anchors must be separate.
+
+Anchors may be ommited, separately or entirely, in which case they will be treated as at the origin in local co-ordinages.
+-->
+<define name="jointAnchors">
+  <optional>
+    <choice>
+      <!-- Single world angle -->
+      <attribute name="world-anchor">
+        <ref name="vec2"/>
+      </attribute>
+      <group>
+        <optional>
+          <choice>
+            <attribute name="world-anchor1">
+              <ref name="vec2"/>
+            </attribute>
+            <attribute name="local-anchor1">
+              <ref name="vec2"/>
+            </attribute>
+          </choice>
+        </optional>
+        <optional>
+          <choice>
+            <attribute name="world-anchor2">
+              <ref name="vec2"/>
+            </attribute>
+            <attribute name="local-anchor2">
+              <ref name="vec2"/>
+            </attribute>
+          </choice>
+        </optional>
+      </group>
+    </choice>
+  </optional>
+</define>
+
+<define name="prismatic">
+  <element name="prismatic">
+    <ref name="jointAttributes"/>
+    <optional><attribute name="enableMotor"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="motorSpeed"><data type="double"/></attribute></optional>
+    <optional><attribute name="maxMotorForce"><data type="double"/></attribute></optional>
+    <optional><attribute name="enableLimit"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="lower"><data type="double"/></attribute></optional>
+    <optional><attribute name="upper"><data type="double"/></attribute></optional>
+    <optional><attribute name="referenceAngle"><data type="double"/></attribute></optional>
+    <choice>
+      <attribute name="world-axis">
+        <ref name="vec2"/>
+      </attribute>
+      <attribute name="local-axis1">
+        <ref name="vec2"/>
+      </attribute>
+    </choice>
+  </element>
+</define>
+
+<define name="gear">
+  <element name="gear">
+    <ref name="jointAttributes"/>
+    <optional><attribute name="ratio"><data type="double"/></attribute></optional>
+    <optional><attribute name="joint1"><data type="ID"/></attribute></optional>
+    <optional><attribute name="joint2"><data type="ID"/></attribute></optional>
+  </element>
+</define>
+
+<define name="revolute">
+  <element name="revolute">
+    <ref name="jointAttributes"/>
+    <optional><attribute name="motorSpeed"><data type="double"/></attribute></optional>
+    <optional><attribute name="maxMotorTorque"><data type="double"/></attribute></optional>
+    <optional><attribute name="enableMotor"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="enableLimit"><data type="boolean"/></attribute></optional>
+    <optional><attribute name="lower"><data type="double"/></attribute></optional>
+    <optional><attribute name="upper"><data type="double"/></attribute></optional>
+    <optional><attribute name="referenceAngle"><data type="double"/></attribute></optional>
+  </element>
+</define>
+
+<define name="distance">
+  <element name="distance">
+    <ref name="jointAttributes"/>
+    <optional><attribute name="dampingRatio"><data type="double"/></attribute></optional>
+    <optional><attribute name="frequencyHz"><data type="double"/></attribute></optional>
+    <optional><attribute name="length"><data type="double"/></attribute></optional>
+  </element>
+</define>
+
+<define name="pulley">
+  <element name="pulley">
+    <ref name="jointAttributes"/>
+    <optional><attribute name="ratio"><data type="double"/></attribute></optional>
+    <optional><attribute name="maxLength1"><data type="double"/></attribute></optional>
+    <optional><attribute name="maxLength2"><data type="double"/></attribute></optional>
+    <optional><attribute name="length1"><data type="double"/></attribute></optional>
+    <optional><attribute name="length2"><data type="double"/></attribute></optional>
+    <optional>
+      <choice>
+        <optional><attribute name="world-ground"><ref name="vec2"/></attribute></optional>
+        <group>
+          <optional><attribute name="world-ground1"><ref name="vec2"/></attribute></optional>
+          <optional><attribute name="world-ground2"><ref name="vec2"/></attribute></optional>
+        </group>
+      </choice>
+    </optional>
+  </element>
+</define>
+
+<define name="mouse">
+  <element name="mouse">
+    <ref name="jointAttributes"/>
+    <optional><attribute name="dampingRatio"><data type="double"/></attribute></optional>
+    <optional><attribute name="frequencyHz"><data type="double"/></attribute></optional>
+    <optional><attribute name="maxForce"><data type="double"/></attribute></optional>
+    <optional><attribute name="target"><ref name="vec2"/></attribute></optional>
+  </element>
+</define>
+
+</div>
+
+</grammar>
