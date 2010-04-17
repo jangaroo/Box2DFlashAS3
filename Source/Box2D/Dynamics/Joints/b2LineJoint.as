@@ -87,10 +87,10 @@ use namespace b2internal;
 // df = f2 - f1
 
 /**
- * A line joint. This joint provides one degree of freedom: translation
- * along an axis fixed in body1. You can use a joint limit to restrict
- * the range of motion and a joint motor to drive the motion or to
- * model joint friction.
+ * A line joint. This joint provides two degrees of freedom: translation
+ * along an axis fixed in body1 and rotation in the plane. You can use a 
+ * joint limit to restrict the range of motion and a joint motor to drive
+ * the motion or to model joint friction.
  * @see b2LineJointDef
  */
 public class b2LineJoint extends b2Joint
