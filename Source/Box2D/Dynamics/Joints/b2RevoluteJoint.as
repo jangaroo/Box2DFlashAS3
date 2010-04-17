@@ -256,7 +256,11 @@ public class b2RevoluteJoint extends b2Joint
 		m_mass.col3.z = i1 + i2;
 		
 		
-		m_motorMass = 1.0 / (i1 + i2);
+		m_motorMass = i1 + i2;
+		if (m_motorMass > 0.0)
+		{
+			m_motorMass = 1.0 / m_motorMass;
+		}
 		
 		if (m_enableMotor == false)
 		{
