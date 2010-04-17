@@ -318,17 +318,17 @@ public class b2Contact
 			m_flags &= ~e_touchingFlag;
 		}
 
-		if (wasTouching == false && touching == true && listener)
+		if (!wasTouching && touching && listener)
 		{
 			listener.BeginContact(this);
 		}
 
-		if (wasTouching == true && touching == false  && listener)
+		if (wasTouching && !touching  && listener)
 		{
 			listener.EndContact(this);
 		}
 
-		if ((m_flags & e_sensorFlag) == 0  && listener)
+		if ((m_flags & e_sensorFlag) == 0 && touching && listener)
 		{
 			listener.PreSolve(this, m_oldManifold);
 		}
