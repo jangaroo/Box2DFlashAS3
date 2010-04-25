@@ -61,7 +61,7 @@ package com.kerchmar.tim.bayazit {
 			return null;
 		}
 		
-		public function combineColinearPoints() {
+		public function combineColinearPoints():void {
 			// combine similar points
 			var combinedPoints:Array = [];
 			

@@ -72,7 +72,7 @@ package com.boristhebrave.Box2DWith
         var prevControl: b2Vec2 = null;
         var prevCommand: String = null;
         var relative: Boolean = false;
-        var curve: Array;
+        var curve: Vector.<b2Vec2>;
 		var cPoints:Vector.<b2Vec2>;
         
         var chain:Vector.<b2Vec2> = new Vector.<b2Vec2>();
