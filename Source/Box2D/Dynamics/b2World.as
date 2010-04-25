@@ -570,7 +570,10 @@ public class b2World extends EventDispatcher
 	* @param velocityIterations for the velocity constraint solver.
 	* @param positionIterations for the position constraint solver.
 	*/
-	public function Step(dt:Number, velocityIterations:int, positionIterations:int) : void{
+	public function Step(dt:Number, velocityIterations:int, positionIterations:int) : void {
+		
+		dispatchEvent(m_preStepEvent);
+		
 		if (m_flags & e_newFixture)
 		{
 			m_contactManager.FindNewContacts();
@@ -620,6 +623,8 @@ public class b2World extends EventDispatcher
 			ClearForces();
 		}
 		m_flags &= ~e_locked;
+		
+		dispatchEvent(m_postStepEvent);
 	}
 	
 	/**
