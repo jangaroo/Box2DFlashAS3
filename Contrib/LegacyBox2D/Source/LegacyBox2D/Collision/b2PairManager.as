@@ -20,7 +20,7 @@
 // of overlapping proxies. It is based closely on code provided by Pierre Terdiman.
 // http://www.codercorner.com/IncrementalSAP.txt
 
-package Box2D.Collision{
+package LegacyBox2D.Collision{
 
 
 import Box2D.Common.*;
@@ -46,7 +46,7 @@ public class b2PairManager
 	}
 	//~b2PairManager();
 	
-	public function Initialize(broadPhase:b2BroadPhase) : void{
+	public function Initialize(broadPhase:b2SAPBroadPhase) : void{
 		m_broadPhase = broadPhase;
 	}
 	
@@ -87,7 +87,7 @@ public class b2PairManager
 		// Confirm this pair for the subsequent call to Commit.
 		pair.ClearRemoved();
 		
-		if (b2BroadPhase.s_validate)
+		if (b2SAPBroadPhase.s_validate)
 		{
 			ValidateBuffer();
 		}
@@ -120,7 +120,7 @@ public class b2PairManager
 		
 		pair.SetRemoved();
 		
-		if (b2BroadPhase.s_validate)
+		if (b2SAPBroadPhase.s_validate)
 		{
 			ValidateBuffer();
 		}
@@ -180,7 +180,7 @@ public class b2PairManager
 		
 		m_pairBufferCount = 0;
 		
-		if (b2BroadPhase.s_validate)
+		if (b2SAPBroadPhase.s_validate)
 		{
 			ValidateTable();
 		}	
@@ -263,7 +263,7 @@ public class b2PairManager
 	}
 
 //public:
-	private var m_broadPhase:b2BroadPhase;
+	private var m_broadPhase:b2SAPBroadPhase;
 	b2internal var m_pairs:Array;
 	private var m_freePair:b2Pair;
 	b2internal var m_pairCount:int;

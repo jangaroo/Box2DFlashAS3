@@ -19,12 +19,10 @@
 package Box2D.Dynamics{
 
 
-import Box2D.Collision.b2Bound;
-import Box2D.Collision.b2BroadPhase;
-import Box2D.Collision.IBroadPhase;
 import Box2D.Dynamics.*;
 import Box2D.Dynamics.Joints.*;
 import Box2D.Dynamics.Contacts.*;
+import Box2D.Collision.*;
 import Box2D.Collision.Shapes.*;
 import Box2D.Common.Math.*;
 import Box2D.Common.*;

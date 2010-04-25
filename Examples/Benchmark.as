@@ -25,6 +25,7 @@ import Box2D.Collision.Shapes.*;
 import Box2D.Dynamics.Joints.*;
 import Box2D.Dynamics.Contacts.*;
 import Box2D.Common.Math.*;
+import LegacyBox2D.Collision.*;
 import flash.events.Event;
 import flash.display.*;
 import flash.system.Capabilities;
@@ -225,7 +226,7 @@ import flash.display.MovieClip;
 			aabb.lowerBound.y = -100000;
 			aabb.upperBound.x = 100000;
 			aabb.upperBound.y = 100000;
-			world.SetBroadPhase(new b2BroadPhase(aabb));
+			world.SetBroadPhase(new b2SAPBroadPhase(aabb));
 		}
 		
 	}

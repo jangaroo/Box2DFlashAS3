@@ -53,13 +53,13 @@ import Box2D.Common.Math.*;
 			var body:b2Body;
 			body = world.CreateBody(groundDef);
 			ground.SetAsOrientedBox(.5, 5, new b2Vec2(-4.5, 0));
-			body.CreateFixture2(ground);
+			body.CreateFixture2(ground, 0.0);
 			ground.SetAsOrientedBox(5, .5, new b2Vec2(0, -4.5));
-			body.CreateFixture2(ground);
+			body.CreateFixture2(ground, 0.0);
 			ground.SetAsOrientedBox(5, .5, new b2Vec2(0, 4.5));
-			body.CreateFixture2(ground);
+			body.CreateFixture2(ground, 0.0);
 			ground.SetAsOrientedBox(.5, 5, new b2Vec2(4.5, 0));
-			body.CreateFixture2(ground);
+			body.CreateFixture2(ground, 0.0);
 			
 			var bodyDef:b2BodyDef = new b2BodyDef();
 			bodyDef.type = b2Body.b2_dynamicBody;

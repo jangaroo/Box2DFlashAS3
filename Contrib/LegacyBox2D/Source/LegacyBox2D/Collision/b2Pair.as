@@ -20,7 +20,7 @@
 // of overlapping proxies. It is based closely on code provided by Pierre Terdiman.
 // http://www.codercorner.com/IncrementalSAP.txt
 
-package Box2D.Collision{
+package LegacyBox2D.Collision{
 
 
 import Box2D.Common.*;

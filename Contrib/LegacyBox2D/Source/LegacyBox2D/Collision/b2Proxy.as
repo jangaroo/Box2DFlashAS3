@@ -16,25 +16,29 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision {
-	
+package LegacyBox2D.Collision{
+
+import Box2D.Common.b2internal;
+import flash.utils.Dictionary;
+use namespace b2internal;
 	
 /**
 * @private
 */
-public class b2BoundValues {
-	public function b2BoundValues()
-	{
-		lowerValues = new Vector.<Number>();
-		lowerValues[0] = 0.0;
-		lowerValues[1] = 0.0;
-		upperValues = new Vector.<Number>();
-		upperValues[0] = 0.0;
-		upperValues[1] = 0.0;
-	}
+public class b2Proxy{
+	public function IsValid():Boolean { return overlapCount != b2SAPBroadPhase.b2_invalid; }
+
+	public var lowerBounds:Vector.<uint> = new Vector.<uint>(2);
+	public var upperBounds:Vector.<uint> = new Vector.<uint>(2);
+	public var overlapCount:uint;
+	public var timeStamp:uint;
 	
-	public var lowerValues:Vector.<Number>;
-	public var upperValues:Vector.<Number>;
+	// Maps from the other b2Proxy to their mutual b2Pair.
+	public var pairs:Dictionary = new Dictionary();
+	
+	public var next:b2Proxy;
+	
+	public var userData:* = null;
 }
 	
 	

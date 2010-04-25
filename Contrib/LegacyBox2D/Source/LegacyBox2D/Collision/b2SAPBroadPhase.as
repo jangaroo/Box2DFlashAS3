@@ -16,7 +16,7 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-package Box2D.Collision{
+package LegacyBox2D.Collision{
 	
 	
 import Box2D.Common.*;
@@ -50,10 +50,10 @@ Bullet (http:/www.bulletphysics.com).
 /**
 * @private
 */
-public class b2BroadPhase implements IBroadPhase
+public class b2SAPBroadPhase implements IBroadPhase
 {
 //public:
-	public function b2BroadPhase(worldAABB:b2AABB){
+	public function b2SAPBroadPhase(worldAABB:b2AABB){
 		//b2Settings.b2Assert(worldAABB.IsValid());
 		var i:int;
 		
