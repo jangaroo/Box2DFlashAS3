@@ -216,6 +216,10 @@ public class b2World extends EventDispatcher
 		//b2Settings.b2Assert(m_bodyCount > 0);
 		CheckUnlocked();
 		
+		if (!b.m_world)
+			throw new Error("You cannot delete a body twice");
+		b.m_world = null;
+		
 		// Events
 		m_removeBodyEvent.body = b;
 		if (b.m_eventDispatcher) b.m_eventDispatcher.dispatchEvent(m_removeBodyEvent);
@@ -370,9 +374,15 @@ public class b2World extends EventDispatcher
 	public function DestroyJoint(j:b2Joint) : void{
 		
 		//b2Settings.b2Assert(m_lock == false);
+		CheckUnlocked();
 		
 		var bodyA:b2Body = j.m_bodyA;
 		var bodyB:b2Body = j.m_bodyB;
+		
+		if (!j.m_bodyA)
+			throw new Error("You cannot delete a joint twice.");
+		j.m_bodyA = null;
+		j.m_bodyB = null;
 		
 		// Events
 		m_removeJointEvent.joint = j;

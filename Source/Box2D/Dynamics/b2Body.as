@@ -48,7 +48,8 @@ public class b2Body
 	 * @param fixtureDef the fixture definition.
 	 * @warning This function is locked during callbacks.
 	 */
-	public function CreateFixture(def:b2FixtureDef) : b2Fixture{
+	public function CreateFixture(def:b2FixtureDef) : b2Fixture
+	{
 		m_world.CheckUnlocked();
 		
 		// TODO: We shouldn't have special cases like this
@@ -133,8 +134,13 @@ public class b2Body
 	 * @param fixture the fixture to be removed.
 	 * @warning This function is locked during callbacks.
 	 */
-	public function DestroyFixture(fixture:b2Fixture) : void{
+	public function DestroyFixture(fixture:b2Fixture) : void
+	{
 		m_world.CheckUnlocked();
+		
+		if (!fixture.m_body)
+			throw new Error("You cannot delete a fixture twice.");
+		fixture.m_body = null;
 		
 		// Events
 		m_world.m_removeFixtureEvent.fixture = fixture;
