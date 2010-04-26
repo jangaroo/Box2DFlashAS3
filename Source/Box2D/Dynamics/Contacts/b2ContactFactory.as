@@ -84,39 +84,32 @@ public class b2ContactFactory
 		//b2Settings.b2Assert(b2Shape.e_unknownShape < type2 && type2 < b2Shape.e_shapeTypeCount);
 		
 		var reg:b2ContactRegister = m_registers[type1][type2];
+		var poolReg:b2ContactRegister = reg;
+		if (!reg.primary) poolReg = m_registers[type2][type1];
 		
 		var c:b2Contact;
-		
-		if (reg.pool)
+		if (poolReg.pool)
 		{
 			// Pop a contact off the pool
-			c = reg.pool;
-			reg.pool = c.m_next;
-			reg.poolCount--;
-			c.Reset(fixtureA, fixtureB);
-			return c;
+			c = poolReg.pool;
+			poolReg.pool = c.m_next;
+			poolReg.poolCount--;
+		}else {
+			var createFcn:Function = reg.createFcn;
+			if (createFcn == null) return null;
+			c = createFcn(m_allocator);
 		}
 		
-		var createFcn:Function = reg.createFcn;
-		if (createFcn != null)
+		if (reg.primary)
 		{
-			if (reg.primary)
-			{
-				c = createFcn(m_allocator);
-				c.Reset(fixtureA, fixtureB);
-				return c;
-			}
-			else
-			{
-				c = createFcn(m_allocator);
-				c.Reset(fixtureB, fixtureA);
-				return c;
-			}
+			c.Reset(fixtureA, fixtureB);
 		}
 		else
 		{
-			return null;
+			c.Reset(fixtureB, fixtureA);
 		}
+		
+		return c;
 	}
 	public function Destroy(contact:b2Contact) : void{
 		if (contact.m_manifold.m_pointCount > 0)
@@ -132,6 +125,8 @@ public class b2ContactFactory
 		//b2Settings.b2Assert(b2Shape.e_unknownShape < type2 && type2 < b2Shape.e_shapeTypeCount);
 		
 		var reg:b2ContactRegister = m_registers[type1][type2];
+		
+		b2Settings.b2Assert(reg.primary);
 		
 		if (true)
 		{
