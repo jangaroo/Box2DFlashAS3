@@ -113,7 +113,7 @@ internal class b2SeparationFunction
 				m_axis.NegativeSelf();
 			}
 		}
-		else if (cache.indexA[0] == cache.indexA[0])
+		else if (cache.indexA[0] == cache.indexA[1])
 		{
 			// Two points on B and one on A
 			m_type = e_faceB;
@@ -157,19 +157,19 @@ internal class b2SeparationFunction
 			localPointB1 = m_proxyB.GetVertex(cache.indexB[0]);
 			localPointB2 = m_proxyB.GetVertex(cache.indexB[1]);
 			
-			var pA:b2Vec2 = b2Math.MulX(transformA, localPointA);
+			var pA:b2Vec2 = b2Math.MulX(transformA, localPointA1);
 			var dA:b2Vec2 = b2Math.MulMV(transformA.R, b2Math.SubtractVV(localPointA2, localPointA1));
-			var pB:b2Vec2 = b2Math.MulX(transformB, localPointB);
+			var pB:b2Vec2 = b2Math.MulX(transformB, localPointB1);
 			var dB:b2Vec2 = b2Math.MulMV(transformB.R, b2Math.SubtractVV(localPointB2, localPointB1));
 			
 			var a:Number = dA.x * dA.x + dA.y * dA.y;
 			var e:Number = dB.x * dB.x + dB.y * dB.y;
-			var r:b2Vec2 = b2Math.SubtractVV(dB, dA);
+			var r:b2Vec2 = b2Math.SubtractVV(pA, pB);
 			var c:Number = dA.x * r.x + dA.y * r.y;
 			var f:Number = dB.x * r.x + dB.y * r.y;
 			
 			var b:Number = dA.x * dB.x + dA.y * dB.y;
-			var denom:Number = a * e-b * b;
+			var denom:Number = a * e - b * b;
 			
 			s = 0.0;
 			if (denom != 0.0)
