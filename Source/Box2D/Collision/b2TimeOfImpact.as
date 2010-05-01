@@ -68,31 +68,37 @@ public class b2TimeOfImpact
 		var target:Number = 0.0;
 		
 		// Prepare input for distance query.
-		s_cache.count = 0;
-		s_distanceInput.useRadii = false;
+		var cache:b2SimplexCache = s_cache;
+		cache.count = 0;
+		var distanceInput:b2DistanceInput = s_distanceInput;
+		distanceInput.useRadii = false;
+		
+		var xfA:b2Transform = s_xfA;
+		var xfB:b2Transform = s_xfB;
 		
 		for (;; )
 		{
-			sweepA.GetTransform(s_xfA, alpha);
-			sweepB.GetTransform(s_xfB, alpha);
+			sweepA.GetTransform(xfA, alpha);
+			sweepB.GetTransform(xfB, alpha);
 			
 			// Get the distance between shapes
-			s_distanceInput.proxyA = proxyA;
-			s_distanceInput.proxyB = proxyB;
-			s_distanceInput.transformA = s_xfA;
-			s_distanceInput.transformB = s_xfB;
+			distanceInput.proxyA = proxyA;
+			distanceInput.proxyB = proxyB;
+			distanceInput.transformA = xfA;
+			distanceInput.transformB = xfB;
+			var distanceOutput:b2DistanceOutput = s_distanceOutput;
+			b2Distance.Distance(distanceOutput, cache, distanceInput);
 			
-			b2Distance.Distance(s_distanceOutput, s_cache, s_distanceInput);
-			
-			if (s_distanceOutput.distance <= 0.0)
+			if (distanceOutput.distance <= 0.0)
 			{
 				alpha = 1.0;
 				break;
 			}
 			
-			s_fcn.Initialize(s_cache, proxyA, s_xfA, proxyB, s_xfB);
+			var fcn:b2SeparationFunction = s_fcn;
+			fcn.Initialize(cache, proxyA, xfA, proxyB, xfB);
 			
-			var separation:Number = s_fcn.Evaluate(s_xfA, s_xfB);
+			var separation:Number = fcn.Evaluate(xfA, xfB);
 			if (separation <= 0.0)
 			{
 				alpha = 1.0;
@@ -155,10 +161,10 @@ public class b2TimeOfImpact
 				
 				var f1:Number = separation;
 				
-				sweepA.GetTransform(s_xfA, x2);
-				sweepB.GetTransform(s_xfB, x2);
+				sweepA.GetTransform(xfA, x2);
+				sweepB.GetTransform(xfB, x2);
 				
-				var f2:Number = s_fcn.Evaluate(s_xfA, s_xfB);
+				var f2:Number = fcn.Evaluate(xfA, xfB);
 				
 				// If intervals don't overlap at t2, then we are done
 				if (f2 >= target)
@@ -184,8 +190,8 @@ public class b2TimeOfImpact
 						x = 0.5 * (x1 + x2);
 					}
 					
-					sweepA.GetTransform(s_xfA, x);
-					sweepB.GetTransform(s_xfB, x);
+					sweepA.GetTransform(xfA, x);
+					sweepB.GetTransform(xfB, x);
 					
 					var f:Number = s_fcn.Evaluate(s_xfA, s_xfB);
 					
