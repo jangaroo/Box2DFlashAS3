@@ -137,6 +137,8 @@ public function GetClosestPoint():b2Vec2
 			return new b2Vec2(
 					m_v1.a * m_v1.w.x + m_v2.a * m_v2.w.x,
 					m_v1.a * m_v1.w.y + m_v2.a * m_v2.w.y);
+		case 3:
+			return new b2Vec2();
 		default:
 			b2Settings.b2Assert(false);
 			return new b2Vec2();
