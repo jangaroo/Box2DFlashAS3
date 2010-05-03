@@ -1051,10 +1051,7 @@ public class b2World extends EventDispatcher
 				island.AddBody(b);
 				
 				// Make sure the body is awake.
-				if (b.IsAwake() == false)
-				{
-					b.SetAwake(true);
-				}
+				b.SetAwake(true);
 				
 				// To keep islands as small as possible, we don't
 				// propagate islands across static bodies.
@@ -1067,22 +1064,23 @@ public class b2World extends EventDispatcher
 				// Search all contacts connected to this body.
 				for (var ce:b2ContactEdge = b.m_contactList; ce; ce = ce.next)
 				{
+					var contact:b2Contact = ce.contact;
 					// Has this contact already been added to an island?
-					if (ce.contact.m_flags & b2Contact.e_islandFlag)
+					if (contact.m_flags & b2Contact.e_islandFlag)
 					{
 						continue;
 					}
 					
 					// Is this contact solid and touching?
-					if (ce.contact.IsSensor() == true ||
-						ce.contact.IsEnabled() == false ||
-						ce.contact.IsTouching() == false)
+					if (contact.IsSensor() == true ||
+						contact.IsEnabled() == false ||
+						contact.IsTouching() == false)
 					{
 						continue;
 					}
 					
-					island.AddContact(ce.contact);
-					ce.contact.m_flags |= b2Contact.e_islandFlag;
+					island.AddContact(contact);
+					contact.m_flags |= b2Contact.e_islandFlag;
 					
 					//var other:b2Body = ce.other;
 					other = ce.other;
@@ -1101,12 +1099,13 @@ public class b2World extends EventDispatcher
 				// Search all joints connect to this body.
 				for (var jn:b2JointEdge = b.m_jointList; jn; jn = jn.next)
 				{
-					if (jn.joint.m_islandFlag == true)
+					var joint:b2Joint = jn.joint;
+					if (joint.m_islandFlag == true)
 					{
 						continue;
 					}
 					
-					other = jn.other;
+					other = other;
 					
 					// Don't simulate joints connected to inactive bodies.
 					if (other.IsActive() == false)
@@ -1114,8 +1113,8 @@ public class b2World extends EventDispatcher
 						continue;
 					}
 					
-					island.AddJoint(jn.joint);
-					jn.joint.m_islandFlag = true;
+					island.AddJoint(joint);
+					joint.m_islandFlag = true;
 					
 					if (other.m_flags & b2Body.e_islandFlag)
 					{
@@ -1176,7 +1175,7 @@ public class b2World extends EventDispatcher
 	private static var s_timestep:b2TimeStep = new b2TimeStep();
 	private static var s_queue:Vector.<b2Body> = new Vector.<b2Body>();
 	// Find TOI contacts and solve them.
-	b2internal function SolveTOI(step:b2TimeStep) : void{
+	b2internal function SolveTOI() : void{
 		
 		var b:b2Body;
 		var fA:b2Fixture;
@@ -1516,6 +1515,11 @@ public class b2World extends EventDispatcher
 		}
 		
 		//m_stackAllocator.Free(queue);
+	}
+	
+	b2internal function SolveTOIBody(body:b2Body):void
+	{
+		
 	}
 	
 	static private var s_jointColor:b2Color = new b2Color(0.5, 0.8, 0.8);
