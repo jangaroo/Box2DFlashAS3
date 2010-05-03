@@ -72,6 +72,8 @@ def get_sources():
         yield filename
     for filename in find_as_files("../../Examples"):
         yield filename
+    for filename in find_as_files("../../Contrib"):
+        yield filename
         
 def usage():
     print """\
