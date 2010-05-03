@@ -1105,7 +1105,7 @@ public class b2World extends EventDispatcher
 						continue;
 					}
 					
-					other = other;
+					other = jn.other;
 					
 					// Don't simulate joints connected to inactive bodies.
 					if (other.IsActive() == false)
@@ -1175,7 +1175,7 @@ public class b2World extends EventDispatcher
 	private static var s_timestep:b2TimeStep = new b2TimeStep();
 	private static var s_queue:Vector.<b2Body> = new Vector.<b2Body>();
 	// Find TOI contacts and solve them.
-	b2internal function SolveTOI() : void{
+	b2internal function SolveTOI(step:b2TimeStep) : void{
 		
 		var b:b2Body;
 		var fA:b2Fixture;
@@ -1515,11 +1515,6 @@ public class b2World extends EventDispatcher
 		}
 		
 		//m_stackAllocator.Free(queue);
-	}
-	
-	b2internal function SolveTOIBody(body:b2Body):void
-	{
-		
 	}
 	
 	static private var s_jointColor:b2Color = new b2Color(0.5, 0.8, 0.8);
