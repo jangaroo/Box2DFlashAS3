@@ -846,6 +846,8 @@ public class b2PolygonShape extends b2Shape
 		//b2Settings.b2Assert(def.type == e_polygonShape);
 		m_type = e_polygonShape;
 		
+		m_radius = b2Settings.b2_polygonRadius;
+		
 		m_centroid = new b2Vec2();
 		m_vertices = new Vector.<b2Vec2>();
 		m_normals = new Vector.<b2Vec2>();
