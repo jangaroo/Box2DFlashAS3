@@ -140,7 +140,6 @@ public class b2Body
 		
 		if (!fixture.m_body)
 			throw new Error("You cannot delete a fixture twice.");
-		fixture.m_body = null;
 		
 		// Events
 		m_world.m_removeFixtureEvent.fixture = fixture;
@@ -208,6 +207,8 @@ public class b2Body
 		
 		// Reset the mass data.
 		ResetMassData();
+		
+		fixture.m_body = null;
 	}
 
 	/**

@@ -59,7 +59,7 @@ public class b2DefaultContactListener implements IContactListener
 		if (dispatcher) dispatcher.dispatchEvent(m_endContact);
 		dispatcher = contact.m_fixtureB.m_body.m_eventDispatcher;
 		if (dispatcher) dispatcher.dispatchEvent(m_endContact);
-		m_world.dispatchEvent(m_beginContact);
+		m_world.dispatchEvent(m_endContact);
 	}
 	public function PreSolve(contact:b2Contact, oldManifold:b2Manifold):void
 	{
