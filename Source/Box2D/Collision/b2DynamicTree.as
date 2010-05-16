@@ -314,6 +314,7 @@ package Box2D.Collision
 					
 					if (value > 0.0)
 					{
+						maxFraction = value;
 						//Update the segment bounding box
 						{
 							tX = p1.x + maxFraction * (p2.x - p1.x);
