@@ -182,7 +182,7 @@ public class b2Contact
 	}
 	
 	/** @private */
-	b2internal function Reset(fixtureA:b2Fixture = null, fixtureB:b2Fixture = null):void
+	b2internal function b2internal_Reset(fixtureA:b2Fixture = null, fixtureB:b2Fixture = null):void
 	{
 		m_flags = e_enabledFlag;
 		

@@ -102,11 +102,11 @@ public class b2ContactFactory
 		
 		if (reg.primary)
 		{
-			c.Reset(fixtureA, fixtureB);
+			c.b2internal_Reset(fixtureA, fixtureB);
 		}
 		else
 		{
-			c.Reset(fixtureB, fixtureA);
+			c.b2internal_Reset(fixtureB, fixtureA);
 		}
 		
 		return c;

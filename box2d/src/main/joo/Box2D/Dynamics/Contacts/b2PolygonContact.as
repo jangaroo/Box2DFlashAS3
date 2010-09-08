@@ -44,7 +44,7 @@ public class b2PolygonContact extends b2Contact
 	}
 
 	public function Reset(fixtureA:b2Fixture, fixtureB:b2Fixture): void{
-		super.Reset(fixtureA, fixtureB);
+		super.b2internal_Reset(fixtureA, fixtureB);
 		//b2Settings.b2Assert(m_shape1.m_type == b2Shape.e_polygonShape);
 		//b2Settings.b2Assert(m_shape2.m_type == b2Shape.e_polygonShape);
 	}
