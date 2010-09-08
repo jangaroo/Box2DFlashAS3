@@ -37,7 +37,7 @@ use namespace b2internal;
 public class b2PolyLine extends b2Shape
 {
 	/** The vertices in local coordinates. */
-	public var vertices:Vector.<b2Vec2> = new Vector.<b2Vec2>(); 
+	public var vertices:Array/*b2Vec2*/ = new Array/*b2Vec2*/(); 
 	
 	/** Whether to create an extra edge between the first and last vertices. */
 	public var isALoop: Boolean = false;

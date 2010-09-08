@@ -903,9 +903,9 @@ public class b2World extends EventDispatcher
 		return result;
 	}
 	
-	public function RayCastAll(point1:b2Vec2, point2:b2Vec2):Vector.<b2Fixture>
+	public function RayCastAll(point1:b2Vec2, point2:b2Vec2):Array/*b2Fixture*/
 	{
-		var result:Vector.<b2Fixture> = new Vector.<b2Fixture>();
+		var result:Array/*b2Fixture*/ = new Array/*b2Fixture*/();
 		function RayCastAllWrapper(fixture:b2Fixture, point:b2Vec2, normal:b2Vec2, fraction:Number):Number
 		{
 			result[result.length] = fixture;
@@ -986,7 +986,7 @@ public class b2World extends EventDispatcher
 	// Internal yet public to make life easier.
 
 	// Find islands, integrate and solve constraints, solve position constraints
-	private var s_stack:Vector.<b2Body> = new Vector.<b2Body>();
+	private var s_stack:Array/*b2Body*/ = new Array/*b2Body*/();
 	b2internal function Solve(step:b2TimeStep) : void{
 		var b:b2Body;
 		
@@ -1017,7 +1017,7 @@ public class b2World extends EventDispatcher
 		// Build and simulate all awake islands.
 		var stackSize:int = m_bodyCount;
 		//b2Body** stack = (b2Body**)m_stackAllocator.Allocate(stackSize * sizeof(b2Body*));
-		var stack:Vector.<b2Body> = s_stack;
+		var stack:Array/*b2Body*/ = s_stack;
 		for (var seed:b2Body = m_bodyList; seed; seed = seed.m_next)
 		{
 			if (seed.m_flags & b2Body.e_islandFlag )
@@ -1173,7 +1173,7 @@ public class b2World extends EventDispatcher
 	private static var s_backupA:b2Sweep = new b2Sweep();
 	private static var s_backupB:b2Sweep = new b2Sweep();
 	private static var s_timestep:b2TimeStep = new b2TimeStep();
-	private static var s_queue:Vector.<b2Body> = new Vector.<b2Body>();
+	private static var s_queue:Array/*b2Body*/ = new Array/*b2Body*/();
 	// Find TOI contacts and solve them.
 	b2internal function SolveTOI(step:b2TimeStep) : void{
 		
@@ -1198,7 +1198,7 @@ public class b2World extends EventDispatcher
 		//  poppedElement = queue[queueStart++];
 		//  --queueSize;
 		
-		var queue:Vector.<b2Body> = s_queue;
+		var queue:Array/*b2Body*/ = s_queue;
 		
 		for (b = m_bodyList; b; b = b.m_next)
 		{
@@ -1584,9 +1584,9 @@ public class b2World extends EventDispatcher
 				var i:int;
 				var poly:b2PolygonShape = (shape as b2PolygonShape);
 				var vertexCount:int = poly.GetVertexCount();
-				var localVertices:Vector.<b2Vec2> = poly.GetVertices();
+				var localVertices:Array/*b2Vec2*/ = poly.GetVertices();
 				
-				var vertices:Vector.<b2Vec2> = new Vector.<b2Vec2>(vertexCount);
+				var vertices:Array/*b2Vec2*/ = new Array/*b2Vec2*/(vertexCount);
 				
 				for (i = 0; i < vertexCount; ++i)
 				{

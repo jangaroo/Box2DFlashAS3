@@ -65,7 +65,7 @@ package TestBed{
 				</svg>;
 				
 			// This converts SVG to a series of polylines.
-			var paths:Vector.<Vector.<b2Vec2>> = b2SVG.parseSVG(svg, m_physScale, 10);
+			var paths:Array/*Vector.<b2Vec2>*/ = b2SVG.parseSVG(svg, m_physScale, 10);
 			
 			// Write out the polylines using thin edges
 			writeLines(paths);
@@ -101,9 +101,9 @@ package TestBed{
 			writePolys(paths);
 		}
 		
-		private function writeLines(paths:Vector.<Vector.<b2Vec2>>):void
+		private function writeLines(paths:Array/*Vector.<b2Vec2>*/):void
 		{
-			for each(var path:Vector.<b2Vec2> in paths)
+			for each(var path:Array/*b2Vec2*/ in paths)
 			{
 				var last:b2Vec2;
 				for each(var v:b2Vec2 in path)
@@ -118,9 +118,9 @@ package TestBed{
 			}
 		}
 		
-		private function writePolys(paths:Vector.<Vector.<b2Vec2>>):void
+		private function writePolys(paths:Array/*Vector.<b2Vec2>*/):void
 		{
-			for each(var path:Vector.<b2Vec2> in paths)
+			for each(var path:Array/*b2Vec2*/ in paths)
 			{
 				var points:Array = [];
 				for each(var v:b2Vec2 in path)
@@ -135,7 +135,7 @@ package TestBed{
 		private function decomposeCallback(decomp:PolyDecompBayazit):void
 		{
 			// Make a polygon out of the points
-			var points:Vector.<b2Vec2> = new Vector.<b2Vec2>();
+			var points:Array/*b2Vec2*/ = new Array/*b2Vec2*/();
 			for each(var p:Point in decomp.points)
 			{
 				points.push(new b2Vec2(p.x, p.y));

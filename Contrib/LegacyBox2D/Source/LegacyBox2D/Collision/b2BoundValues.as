@@ -25,16 +25,16 @@ package LegacyBox2D.Collision {
 public class b2BoundValues {
 	public function b2BoundValues()
 	{
-		lowerValues = new Vector.<Number>();
+		lowerValues = new Array/*Number*/();
 		lowerValues[0] = 0.0;
 		lowerValues[1] = 0.0;
-		upperValues = new Vector.<Number>();
+		upperValues = new Array/*Number*/();
 		upperValues[0] = 0.0;
 		upperValues[1] = 0.0;
 	}
 	
-	public var lowerValues:Vector.<Number>;
-	public var upperValues:Vector.<Number>;
+	public var lowerValues:Array/*Number*/;
+	public var upperValues:Array/*Number*/;
 }
 	
 	

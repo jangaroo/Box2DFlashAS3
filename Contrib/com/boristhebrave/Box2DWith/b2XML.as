@@ -267,7 +267,7 @@ package com.boristhebrave.Box2DWith
 					var vertices:XMLList = shape.ns::vertex;
 					if (vertices.length() == 0)
 						vertices = shape.vertex;
-					var vertices2:Vector.<b2Vec2> = new Vector.<b2Vec2>();
+					var vertices2:Array/*b2Vec2*/ = new Array/*b2Vec2*/();
 					for (var i:int = 0; i < vertices.length(); i++) {
 						vertices2[i] = new b2Vec2(parseFloat(vertices[i].@x),
 						                          parseFloat(vertices[i].@y));
@@ -778,7 +778,7 @@ package com.boristhebrave.Box2DWith
 						return boxXML;
 					}else {
 						var polyXML:XML = <polygon/>
-						var vertices:Vector.<b2Vec2> = poly.GetVertices();
+						var vertices:Array/*b2Vec2*/ = poly.GetVertices();
 						for (var i:int = 0; i < poly.GetVertexCount(); i++)
 						{
 							polyXML.appendChild(<vertex x={vertices[i].x} y={vertices[i].y}/>);

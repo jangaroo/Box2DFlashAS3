@@ -31,7 +31,7 @@ public class b2WorldManifold
 {
 	public function b2WorldManifold()
 	{
-		m_points = new Vector.<b2Vec2>(b2Settings.b2_maxManifoldPoints)
+		m_points = new Array/*b2Vec2*/(b2Settings.b2_maxManifoldPoints)
 		for (var i:int = 0; i < b2Settings.b2_maxManifoldPoints; i++)
 		{
 			m_points[i] = new b2Vec2();
@@ -178,7 +178,7 @@ public class b2WorldManifold
 	/**
 	 * world contact point (point of intersection)
 	 */
-	public var m_points:Vector.<b2Vec2>;
+	public var m_points:Array/*b2Vec2*/;
 	
 }
 	

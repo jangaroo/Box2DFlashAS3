@@ -39,7 +39,7 @@ import flash.events.*;
 		 */
 		public static function FromArray(bodyList:Array):b2ManualBodyIterable
 		{
-			var bodyList2:Vector.<b2Body> = new Vector.<b2Body>();
+			var bodyList2:Array/*b2Body*/ = new Array/*b2Body*/();
 			for each(var body:b2Body in bodyList)
 			{
 				bodyList2[bodyList2.length] = body;
@@ -50,9 +50,9 @@ import flash.events.*;
 		/**
 		 * Constructs a b2ManualBodyIterable from a Vector of bodies.
 		 */
-		public function b2ManualBodyIterable(bodyList:Vector.<b2Body> = null)
+		public function b2ManualBodyIterable(bodyList:Array/*b2Body*/ = null)
 		{
-			var bodyList2:Vector.<b2Body> = new Vector.<b2Body>();
+			var bodyList2:Array/*b2Body*/ = new Array/*b2Body*/();
 			if (bodyList)
 			{
 				for each(var body:b2Body in bodyList)
@@ -123,7 +123,7 @@ import flash.events.*;
 			return iter;
 		}
 		
-		private var m_bodyList:Vector.<b2Body>;
+		private var m_bodyList:Array/*b2Body*/;
 	}
 	
 }

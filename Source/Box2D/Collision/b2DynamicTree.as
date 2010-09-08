@@ -188,11 +188,11 @@ package Box2D.Collision
 		 */
 		public function Query(callback:Function, aabb:b2AABB):void
 		{
-			QueryStack(callback, aabb, new Vector.<b2DynamicTreeNode>())
+			QueryStack(callback, aabb, new Array/*b2DynamicTreeNode*/())
 		}
 		
 		
-		private static var s_stack:Vector.<b2DynamicTreeNode> = new Vector.<b2DynamicTreeNode>();
+		private static var s_stack:Array/*b2DynamicTreeNode*/ = new Array/*b2DynamicTreeNode*/();
 		/**
 		 * A non-allocation version of #Query(), providing you can guarantee that it
 		 * won't be called recursive
@@ -202,7 +202,7 @@ package Box2D.Collision
 			QueryStack(callback, aabb, s_stack);
 		}
 		
-		private function QueryStack(callback:Function, aabb:b2AABB, stack:Vector.<b2DynamicTreeNode>):void
+		private function QueryStack(callback:Function, aabb:b2AABB, stack:Array/*b2DynamicTreeNode*/):void
 		{
 			if (m_root == null)
 				return;
@@ -273,7 +273,7 @@ package Box2D.Collision
 				segmentAABB.upperBound.y = Math.max(p1.y, tY);
 			}
 			
-			var stack:Vector.<b2DynamicTreeNode> = new Vector.<b2DynamicTreeNode>();
+			var stack:Array/*b2DynamicTreeNode*/ = new Array/*b2DynamicTreeNode*/();
 			
 			var count:int = 0;
 			stack[count++] = m_root;

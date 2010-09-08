@@ -40,7 +40,7 @@ package Box2D.Dynamics.Controllers
 		public function GetIterator():IBodyIterator
 		{
 			var iterator:b2ManualBodyIterator = new b2ManualBodyIterator();
-			iterator.bodyList = new Vector.<b2Body>();
+			iterator.bodyList = new Array/*b2Body*/();
 			return ResetIterator(iterator);
 		}
 		
@@ -48,7 +48,7 @@ package Box2D.Dynamics.Controllers
 		public function ResetIterator(iterator:IBodyIterator):IBodyIterator
 		{
 			var iterator2:b2ManualBodyIterator = iterator as b2ManualBodyIterator;
-			var bodyList:Vector.<b2Body> = iterator2.bodyList;
+			var bodyList:Array/*b2Body*/ = iterator2.bodyList;
 			bodyList.length = 0;
 			function callback(fixture:b2Fixture):Boolean
 			{

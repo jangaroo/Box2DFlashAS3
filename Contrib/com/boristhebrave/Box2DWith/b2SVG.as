@@ -20,7 +20,7 @@ package com.boristhebrave.Box2DWith
   public class b2SVG
   {
     
-    public static function parseSVG(svg: XML, RATIO:Number, useDefaultCurveResolution:Number): Vector.<Vector.<b2Vec2>> 
+    public static function parseSVG(svg: XML, RATIO:Number, useDefaultCurveResolution:Number): Array/*Vector.<b2Vec2>*/ 
 	{
       var ns: Namespace = svg.namespace("");
       var useCurveThickness:Boolean = false;
@@ -32,7 +32,7 @@ package com.boristhebrave.Box2DWith
         useCurveThickness = true;
       }
       
-      var results:Vector.<Vector.<b2Vec2>>  = new Vector.<Vector.<b2Vec2>>();
+      var results:Array/*Vector.<b2Vec2>*/  = new Array/*Vector.<b2Vec2>*/();
       for each (var path: XML in svg..ns::path)
       {
         if (useCurveThickness) resolution = Math.round(returnStrokeWidth(path.@style) * 10);
@@ -72,10 +72,10 @@ package com.boristhebrave.Box2DWith
         var prevControl: b2Vec2 = null;
         var prevCommand: String = null;
         var relative: Boolean = false;
-        var curve: Vector.<b2Vec2>;
-		var cPoints:Vector.<b2Vec2>;
+        var curve: Array/*b2Vec2*/;
+		var cPoints:Array/*b2Vec2*/;
         
-        var chain:Vector.<b2Vec2> = new Vector.<b2Vec2>();
+        var chain:Array/*b2Vec2*/ = new Array/*b2Vec2*/();
         var i: int = 0;
         while (true)
         {
@@ -98,7 +98,7 @@ package com.boristhebrave.Box2DWith
               if (chain.length >= 3) {
                 results.push(chain);
               }
-              chain = new Vector.<b2Vec2>();
+              chain = new Array/*b2Vec2*/();
               chain.push(currentPosition);
               break;
             case "M":
@@ -117,7 +117,7 @@ package com.boristhebrave.Box2DWith
                 currentPosition = new b2Vec2(args[i] / RATIO, args[i+1] / RATIO);
               }
               i += 2;
-              chain = new Vector.<b2Vec2>();
+              chain = new Array/*b2Vec2*/();
               chain.push(currentPosition);
               
               // According to the SVG spec, a moveto command can be implicitly followed
@@ -196,7 +196,7 @@ package com.boristhebrave.Box2DWith
                   control3 = new b2Vec2(args[i+4] / RATIO, args[i+5] / RATIO);
                 }
                 i += 6;
-                cPoints = new Vector.<b2Vec2> ();
+                cPoints = new Array/*b2Vec2*/ ();
 				cPoints[0] = currentPosition;
 				cPoints[1] = control1;
 				cPoints[2] = control2;
@@ -234,7 +234,7 @@ package com.boristhebrave.Box2DWith
                   control3 = new b2Vec2(args[i+2] / RATIO, args[i+3] / RATIO);
                 }
                 i += 4;
-				cPoints = new Vector.<b2Vec2> ();
+				cPoints = new Array/*b2Vec2*/ ();
 				cPoints[0] = currentPosition;
 				cPoints[1] = control1;
 				cPoints[2] = control2;

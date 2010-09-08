@@ -88,7 +88,7 @@ package com.boristhebrave.Box2DWith
 			}
 			if (shape is b2PolygonShape)
 			{
-				var vertices:Vector.<b2Vec2> = (shape as b2PolygonShape).GetVertices();
+				var vertices:Array/*b2Vec2*/ = (shape as b2PolygonShape).GetVertices();
 				var n:int = (shape as b2PolygonShape).GetVertexCount();
 				if (!n)
 					return;
@@ -119,7 +119,7 @@ package com.boristhebrave.Box2DWith
 			}
 			if (shape is b2PolygonShape)
 			{
-				var vertices:Vector.<b2Vec2> = (shape as b2PolygonShape).GetVertices();
+				var vertices:Array/*b2Vec2*/ = (shape as b2PolygonShape).GetVertices();
 				vertices = vertices.map(function(v:b2Vec2, a:*, b:*):b2Vec2 { return b2Math.MulX(xf, v);} );
 				var n:int = (shape as b2PolygonShape).GetVertexCount();
 				if (!n)

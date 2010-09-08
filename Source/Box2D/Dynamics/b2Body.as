@@ -58,7 +58,7 @@ public class b2Body
 			var pl:b2PolyLine = (def.shape as b2PolyLine);
 			var p:b2PolygonShape = new b2PolygonShape();
 			def.shape = p;
-			var vertices:Vector.<b2Vec2> = pl.vertices;
+			var vertices:Array/*b2Vec2*/ = pl.vertices;
 			for (var i:int = 1; i < vertices.length; i++ )
 			{
 				p.SetAsEdge(vertices[i - 1], vertices[i]);

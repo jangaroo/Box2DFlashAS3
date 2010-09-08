@@ -44,7 +44,7 @@ public function ReadCache(cache:b2SimplexCache,
 	
 	// Copy data from cache.
 	m_count = cache.count;
-	var vertices:Vector.<b2SimplexVertex> = m_vertices;
+	var vertices:Array/*b2SimplexVertex*/ = m_vertices;
 	for (var i:int = 0; i < m_count; i++)
 	{
 		var v:b2SimplexVertex = vertices[i];
@@ -90,7 +90,7 @@ public function WriteCache(cache:b2SimplexCache):void
 {
 	cache.metric = GetMetric();
 	cache.count = uint(m_count);
-	var vertices:Vector.<b2SimplexVertex> = m_vertices;
+	var vertices:Array/*b2SimplexVertex*/ = m_vertices;
 	for (var i:int = 0; i < m_count; i++)
 	{
 		cache.indexA[i] = uint(vertices[i].indexA);
@@ -364,7 +364,7 @@ public function Solve3():void
 public var m_v1:b2SimplexVertex = new b2SimplexVertex();
 public var m_v2:b2SimplexVertex = new b2SimplexVertex();
 public var m_v3:b2SimplexVertex = new b2SimplexVertex();
-public var m_vertices:Vector.<b2SimplexVertex> = new Vector.<b2SimplexVertex>(3);
+public var m_vertices:Array/*b2SimplexVertex*/ = new Array/*b2SimplexVertex*/(3);
 public var m_count:int;
 }
 	

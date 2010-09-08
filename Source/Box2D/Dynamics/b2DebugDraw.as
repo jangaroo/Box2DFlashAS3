@@ -190,7 +190,7 @@ public class b2DebugDraw
 	/**
 	* Draw a solid closed polygon provided in CCW order.
 	*/
-	public virtual function DrawSolidPolygon(vertices:Vector.<b2Vec2>, vertexCount:int, color:b2Color) : void{
+	public virtual function DrawSolidPolygon(vertices:Array/*b2Vec2*/, vertexCount:int, color:b2Color) : void{
 		
 		m_sprite.graphics.lineStyle(m_lineThickness, color.color, m_alpha);
 		m_sprite.graphics.moveTo(vertices[0].x * m_drawScale, vertices[0].y * m_drawScale);
