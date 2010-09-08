@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
@@ -28,35 +28,32 @@ import Box2D.Common.Math.*;
 import Box2D.Common.b2internal;
 use namespace b2internal;
 
-
 /**
 * @private
 */
-public class b2PolygonContact extends b2Contact
+public class b2CircleContact extends b2Contact
 {
 	static public function Create(allocator:*):b2Contact{
-		//void* mem = allocator->Allocate(sizeof(b2PolyContact));
-		return new b2PolygonContact();
+		return new b2CircleContact();
 	}
-	static public function Destroy(contact:b2Contact, allocator:*): void{
-		//((b2PolyContact*)contact)->~b2PolyContact();
-		//allocator->Free(contact, sizeof(b2PolyContact));
+	static public function Destroy(contact:b2Contact, allocator:*) : void{
+		//
 	}
 
-	public function Reset(fixtureA:b2Fixture, fixtureB:b2Fixture): void{
+	public function Reset(fixtureA:b2Fixture, fixtureB:b2Fixture):void{
 		super.Reset(fixtureA, fixtureB);
-		//b2Settings.b2Assert(m_shape1.m_type == b2Shape.e_polygonShape);
-		//b2Settings.b2Assert(m_shape2.m_type == b2Shape.e_polygonShape);
+		//b2Settings.b2Assert(m_shape1.m_type == b2Shape.e_circleShape);
+		//b2Settings.b2Assert(m_shape2.m_type == b2Shape.e_circleShape);
 	}
-	//~b2PolyContact() {}
-
-	b2internal override function Evaluate(): void{
+	//~b2CircleContact() {}
+	
+	b2internal override function Evaluate() : void{
 		var bA:b2Body = m_fixtureA.GetBody();
 		var bB:b2Body = m_fixtureB.GetBody();
-
-		b2Collision.CollidePolygons(m_manifold, 
-					m_fixtureA.GetShape() as b2PolygonShape, bA.m_xf, 
-					m_fixtureB.GetShape() as b2PolygonShape, bB.m_xf);
+		
+		b2Collision.CollideCircles(m_manifold, 
+					m_fixtureA.GetShape() as b2CircleShape, bA.m_xf, 
+					m_fixtureB.GetShape() as b2CircleShape, bB.m_xf);
 	}
 };
 

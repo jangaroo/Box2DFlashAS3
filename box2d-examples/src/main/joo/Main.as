@@ -108,7 +108,7 @@ import flash.display.MovieClip;
 				TestBreakable,			// Breakable
 				TestRaycast,			// Raycast
 				TestSensor,				// Sensor & Customized Controller
-				TestSVG,				// Edge + SVG + Convex decomposition
+			//	TestSVG,				// Edge + SVG + Convex decomposition
 			null
 			];
 			tests.length -= 1;

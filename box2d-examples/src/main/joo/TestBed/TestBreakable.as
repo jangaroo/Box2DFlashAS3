@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Copyright (c) 2006-2007 Erin Catto http://www.gphysics.com
 *
 * This software is provided 'as-is', without any express or implied
@@ -34,7 +34,7 @@ package TestBed{
 	public class TestBreakable extends Test{
 		
 		public function TestBreakable(){
-			
+
 			// Set Text field
 			Main.m_aboutText.text = "Breakable";
 			
@@ -125,7 +125,7 @@ class ContactListener extends b2EmptyContactListener
 		this.test = test;
 	}
 	
-	override public function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void 
+	override public function PostSolve(contact:b2Contact, impulse:b2ContactImpulse):void
 	{
 		if (test.m_broke)
 		{
