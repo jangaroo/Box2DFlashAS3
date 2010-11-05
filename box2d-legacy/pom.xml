@@ -10,7 +10,6 @@
 
   <groupId>net.jangaroo.flash</groupId>
   <artifactId>box2d-legacy</artifactId>
-  <version>0.7.0-SNAPSHOT</version>
 
   <packaging>jangaroo</packaging>
 
