@@ -42,26 +42,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jangaroo_version>0.7.1</jangaroo_version>
-    <jangaroo_libs_version>0.7.4</jangaroo_libs_version>
+    <jangaroo_version>0.7.9</jangaroo_version>
+    <jangaroo_libs_version>0.7.9</jangaroo_libs_version>
   </properties>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>jangaroo</id>
-      <name>Jangaroo repository</name>
-      <url>http://repo.jangaroo.net/maven2</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-
-  <repositories>
-    <repository>
-      <id>jangaroo</id>
-      <name>Jangaroo repository</name>
-      <url>http://repo.jangaroo.net/maven2</url>
-    </repository>
-  </repositories>
 
   <build>
     <sourceDirectory>src/main/joo</sourceDirectory>

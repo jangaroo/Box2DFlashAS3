@@ -104,9 +104,6 @@ package TestBed{
 		public var m_piece2:b2Fixture;
 		public var m_broke:Boolean;
 		public var m_break:Boolean;
-
-		// FIXME: trigger dependency of helper class to avoid Jangaroo bug:
-		private function dummy():void { new b2EmptyContactListener(); }
 	}
 	
 }
