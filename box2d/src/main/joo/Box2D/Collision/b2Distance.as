@@ -95,7 +95,7 @@ public static function Distance(output:b2DistanceOutput, cache:b2SimplexCache, i
 				simplex.Solve3();
 				break;
 			default:
-				b2Settings.b2Assert(false);
+				assert(false);
 		}
 		
 		// If we have 3 points, then the origin is in the corresponding triangle.

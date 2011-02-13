@@ -61,7 +61,7 @@ public class b2CircleShape extends b2Shape
 	
 	override public function ScaleBy(scale:Number):void
 	{
-		b2Settings.b2Assert(scale > 0.0);
+		assert(scale > 0.0);
 		m_p.Multiply(scale);
 		m_radius *= scale;
 	}

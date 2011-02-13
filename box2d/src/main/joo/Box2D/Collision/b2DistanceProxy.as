@@ -57,7 +57,7 @@ use namespace b2internal;
 				}
 				break;
 				default:
-				b2Settings.b2Assert(false);
+				assert(false);
 			}
 		}
 		
@@ -111,7 +111,7 @@ use namespace b2internal;
  		 */
  		public function GetVertex(index:int):b2Vec2
 		{
-			b2Settings.b2Assert(0 <= index && index < m_count);
+			assert(0 <= index && index < m_count);
 			return m_vertices[index];
 		}
 		

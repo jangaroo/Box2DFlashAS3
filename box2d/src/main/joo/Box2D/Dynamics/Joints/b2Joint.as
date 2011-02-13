@@ -230,7 +230,7 @@ public class b2Joint
 
 	/** @private */
 	public function b2Joint(def:b2JointDef) {
-		b2Settings.b2Assert(def.bodyA != def.bodyB);
+		assert(def.bodyA != def.bodyB);
 		m_type = def.type;
 		m_prev = null;
 		m_next = null;

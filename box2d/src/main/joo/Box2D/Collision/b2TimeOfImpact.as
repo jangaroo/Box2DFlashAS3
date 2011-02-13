@@ -55,8 +55,8 @@ public class b2TimeOfImpact
 		var sweepA:b2Sweep = input.sweepA;
 		var sweepB:b2Sweep = input.sweepB;
 		
-		b2Settings.b2Assert(sweepA.t0 == sweepB.t0);
-		b2Settings.b2Assert(1.0 - sweepA.t0 > Number.MIN_VALUE);
+		assert(sweepA.t0 == sweepB.t0);
+		assert(1.0 - sweepA.t0 > Number.MIN_VALUE);
 		
 		var radius:Number = proxyA.m_radius + proxyB.m_radius;
 		var tolerance:Number = input.tolerance;

@@ -70,7 +70,7 @@ public class b2PolygonShape extends b2Shape
 	
 	override public function ScaleBy(scale:Number):void
 	{
-		b2Settings.b2Assert(scale > 0.0);
+		assert(scale > 0.0);
 		for (var i:int = 0; i < m_vertexCount; ++i)
 		{
 			m_vertices[i].x *= scale;
@@ -129,7 +129,7 @@ public class b2PolygonShape extends b2Shape
 		if (vertexCount == 0)
 			vertexCount = vertices.length;
 			
-		b2Settings.b2Assert(2 <= vertexCount);
+		assert(2 <= vertexCount);
 		m_vertexCount = vertexCount;
 		
 		Reserve(vertexCount);
@@ -148,7 +148,7 @@ public class b2PolygonShape extends b2Shape
 			var i1:int = i;
 			var i2:int = i + 1 < m_vertexCount ? i + 1 : 0;
 			var edge:b2Vec2 = b2Math.SubtractVV(m_vertices[i2], m_vertices[i1]);
-			b2Settings.b2Assert(edge.LengthSquared() > Number.MIN_VALUE /* * Number.MIN_VALUE*/);
+			assert(edge.LengthSquared() > Number.MIN_VALUE /* * Number.MIN_VALUE*/);
 			m_normals[i].SetV(b2Math.CrossVF(edge, 1.0));
 			m_normals[i].Normalize();
 		}

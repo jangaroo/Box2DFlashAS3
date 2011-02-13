@@ -85,7 +85,7 @@ public class b2ContactSolver
 			var wA:Number = bodyA.m_angularVelocity;
 			var wB:Number = bodyB.m_angularVelocity;
 			
-			b2Settings.b2Assert(manifold.m_pointCount > 0);
+			assert(manifold.m_pointCount > 0);
 			
 			s_worldManifold.Initialize(manifold, bodyA.m_xf, radiusA, bodyB.m_xf, radiusB);
 			

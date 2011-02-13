@@ -126,7 +126,7 @@ public class b2ContactFactory
 		
 		var reg:b2ContactRegister = m_registers[type1][type2];
 		
-		b2Settings.b2Assert(reg.primary);
+		assert(reg.primary);
 		
 		if (true)
 		{

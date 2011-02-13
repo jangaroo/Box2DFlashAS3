@@ -42,8 +42,8 @@ public class b2PolyAndCircleContact extends b2Contact{
 
 	public function Reset(fixtureA:b2Fixture, fixtureB:b2Fixture):void{
 		super.b2internal_Reset(fixtureA, fixtureB);
-		b2Settings.b2Assert(fixtureA.GetType() == b2Shape.e_polygonShape);
-		b2Settings.b2Assert(fixtureB.GetType() == b2Shape.e_circleShape);
+		assert(fixtureA.GetType() == b2Shape.e_polygonShape);
+		assert(fixtureB.GetType() == b2Shape.e_circleShape);
 	}
 	//~b2PolyAndCircleContact() {}
 

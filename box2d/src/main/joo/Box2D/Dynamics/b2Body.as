@@ -765,7 +765,7 @@ public class b2Body
 				// Center the inertia about the center of mass
 				m_I -= m_mass * (center.x * center.x + center.y * center.y);
 				m_I *= m_inertiaScale;
-				b2Settings.b2Assert(m_I > 0);
+				assert(m_I > 0);
 				m_invI = 1.0 / m_I;
 			}else {
 				m_I = 0.0;

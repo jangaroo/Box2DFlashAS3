@@ -37,7 +37,7 @@ public function ReadCache(cache:b2SimplexCache,
 			proxyA:b2DistanceProxy, transformA:b2Transform,
 			proxyB:b2DistanceProxy, transformB:b2Transform):void
 {
-	b2Settings.b2Assert(0 <= cache.count && cache.count <= 3);
+	assert(0 <= cache.count && cache.count <= 3);
 	
 	var wALocal:b2Vec2;
 	var wBLocal:b2Vec2;
@@ -119,7 +119,7 @@ public function GetSearchDirection():b2Vec2
 			}
 		}
 		default:
-		b2Settings.b2Assert(false);
+		assert(false);
 		return new b2Vec2();
 	}
 }
@@ -129,7 +129,7 @@ public function GetClosestPoint():b2Vec2
 	switch(m_count)
 	{
 		case 0:
-			b2Settings.b2Assert(false);
+			assert(false);
 			return new b2Vec2();
 		case 1:
 			return m_v1.w;
@@ -140,7 +140,7 @@ public function GetClosestPoint():b2Vec2
 		case 3:
 			return new b2Vec2();
 		default:
-			b2Settings.b2Assert(false);
+			assert(false);
 			return new b2Vec2();
 	}
 }
@@ -150,7 +150,7 @@ public function GetWitnessPoints(pA:b2Vec2, pB:b2Vec2):void
 	switch(m_count)
 	{
 		case 0:
-			b2Settings.b2Assert(false);
+			assert(false);
 			break;
 		case 1:
 			pA.SetV(m_v1.wA);
@@ -167,7 +167,7 @@ public function GetWitnessPoints(pA:b2Vec2, pB:b2Vec2):void
 			pB.y = pA.y = m_v1.a * m_v1.wA.y + m_v2.a * m_v2.wA.y + m_v3.a * m_v3.wA.y;
 			break;
 		default:
-			b2Settings.b2Assert(false);
+			assert(false);
 			break;
 	}
 }
@@ -177,7 +177,7 @@ public function GetMetric():Number
 	switch (m_count)
 	{
 	case 0:
-		b2Settings.b2Assert(false);
+		assert(false);
 		return 0.0;
 
 	case 1:
@@ -190,7 +190,7 @@ public function GetMetric():Number
 		return b2Math.CrossVV(b2Math.SubtractVV(m_v2.w, m_v1.w),b2Math.SubtractVV(m_v3.w, m_v1.w));
 
 	default:
-		b2Settings.b2Assert(false);
+		assert(false);
 		return 0.0;
 	}
 }

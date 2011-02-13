@@ -1275,7 +1275,7 @@ public class b2World extends EventDispatcher
 					
 					// Compute the time of impact.
 					toi = c.ComputeTOI(bA.m_sweep, bB.m_sweep);
-					b2Settings.b2Assert(0.0 <= toi && toi <= 1.0);
+					assert(0.0 <= toi && toi <= 1.0);
 					
 					// If the TOI is in range ...
 					if (toi > 0.0 && toi < 1.0)

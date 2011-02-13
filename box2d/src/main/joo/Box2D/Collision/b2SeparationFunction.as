@@ -39,7 +39,7 @@ internal class b2SeparationFunction
 		m_proxyA = proxyA;
 		m_proxyB = proxyB;
 		var count:int = cache.count;
-		b2Settings.b2Assert(0 < count && count < 3);
+		assert(0 < count && count < 3);
 		
 		var localPointA:b2Vec2;
 		var localPointA1:b2Vec2;
@@ -311,7 +311,7 @@ internal class b2SeparationFunction
 				return seperation;
 			}
 			default:
-			b2Settings.b2Assert(false);
+			assert(false);
 			return 0.0;
 		}
 	}

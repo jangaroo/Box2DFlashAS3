@@ -45,7 +45,7 @@ internal class b2PositionSolverManifold
 	private static var circlePointB:b2Vec2 = new b2Vec2();
 	public function Initialize(cc:b2ContactConstraint):void
 	{
-		b2Settings.b2Assert(cc.pointCount > 0);
+		assert(cc.pointCount > 0);
 		
 		var i:int;
 		var clipPointX:Number;

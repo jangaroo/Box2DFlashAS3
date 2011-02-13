@@ -121,7 +121,7 @@ package Box2D.Collision
 		 */
 		public function MoveProxy(proxy:b2DynamicTreeNode, aabb:b2AABB, displacement:b2Vec2):Boolean
 		{
-			b2Settings.b2Assert(proxy.IsLeaf());
+			assert(proxy.IsLeaf());
 			
 			if (proxy.aabb.Contains(aabb))
 			{
