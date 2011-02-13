@@ -1,0 +1,18 @@
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+*~
+# idea:
+*.iml
+*.ipr
+*.iws
+.idea/
+# maven:
+target/
+overlays/
+build.log
+repository-export.xml
+# eclipse:
+.classpath
+.project
+.settings/
+.DS_Store
