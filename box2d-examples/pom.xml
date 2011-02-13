@@ -5,7 +5,7 @@
   <parent>
     <groupId>net.jangaroo.flash.examples</groupId>
     <artifactId>box2d-parent</artifactId>
-    <version>0.7.0-SNAPSHOT</version>
+    <version>0.8.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>box2d-examples</artifactId>
@@ -31,17 +31,11 @@
 
   <build>
     <plugins>
-      <!-- Register the packaging type "jangaroo". -->
-      <plugin>
-        <groupId>net.jangaroo</groupId>
-        <artifactId>jangaroo-lifecycle</artifactId>
-        <extensions>true</extensions>
-      </plugin>
-
       <!-- Use the Jangaroo compiler in "war mode". -->
       <plugin>
         <groupId>net.jangaroo</groupId>
         <artifactId>jangaroo-maven-plugin</artifactId>
+        <extensions>true</extensions>
         <executions>
           <execution>
             <goals>
@@ -68,7 +62,7 @@
     <dependency>
       <groupId>net.jangaroo.flash</groupId>
       <artifactId>box2d</artifactId>
-      <version>0.7.0-SNAPSHOT</version>
+      <version>0.8.0-SNAPSHOT</version>
       <type>jangaroo</type>
     </dependency>
   </dependencies>

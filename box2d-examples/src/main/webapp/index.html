@@ -45,14 +45,7 @@
   Jangaroo Box2D demo not (yet) loaded
 </div>
 
-<script type="text/javascript" src="scripts/jangaroo-runtime.js"></script>
-<!-- comment-out any of the following libraries (but not jooflash-native!) to load classes separately: -->
-<script type="text/javascript" src="scripts/jangaroo-browser.js"></script>
-<script type="text/javascript" src="scripts/jooflash-native.js"></script>
-<script type="text/javascript" src="scripts/jooflash.js"></script>
-<script type="text/javascript" src="scripts/box2d.js"></script>
-<script type="text/javascript" src="scripts/box2d-examples.js"></script>
-
+<script type="text/javascript" src="joo/jangaroo-application.js"></script>
 <script type="text/javascript">
   joo.classLoader.run(
     "joo.flash.Run",
@@ -108,8 +101,8 @@
     <a href="http://www.jangaroo.net">Jangaroo AS3 to JS compiler</a>, using a
     <a href="http://repo.jangaroo.net/maven2/net/jangaroo/jooflash">Jangaroo Flash API re-implementation</a>,
     which implements Flash drawing using <a href="http://en.wikipedia.org/wiki/Canvas_element">HTML5 canvas</a>.
-    This means it runs in every modern browser, except Microsoft Internet Explorer (sorry, maybe in version 9).
-    For best performance, use Google Chrome 5. Safari 5 is also fast, but stops every other second
+    This means it runs in every modern browser (for Microsoft Internet Explorer, you need version 9).
+    For best performance, use Google Chrome 5 or IE 9. Safari 5 is also fast, but stops every other second
     (garbage collection?). Safari mobile (iPhone, iPad, iPod) works, but the demos do not yet support touch events, so
     only the falling 'Ragdolls' can be viewed. Firefox 3.6 is slower than Chrome, but steady. Opera 10 flickers and
     pops up the JavaScript console with strange exceptions.
