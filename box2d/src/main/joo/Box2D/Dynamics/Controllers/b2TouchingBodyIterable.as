@@ -59,7 +59,7 @@ import Box2D.Dynamics.Controllers.IBodyIterator;
 internal class b2TouchingBodyIterator implements IBodyIterator
 {
 	public var contactEdge:b2ContactEdge;
-	public var seen:Array/*b2Body*/ = new Array/*b2Body*/();
+	public var seen:Vector.<b2Body> = new Vector.<b2Body>();
 	
 	public function HasNext():Boolean
 	{

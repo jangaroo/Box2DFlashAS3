@@ -45,6 +45,14 @@
   Jangaroo Box2D demo not (yet) loaded
 </div>
 
+<!--
+  Following inline script is a patch for Jangaroo 0.8.3 Vector bug, see
+  https://github.com/CoreMedia/jangaroo-tools/commit/2a7b27d4b5af1aa3fbbde8d8d8797ef029d159f6
+  TODO: remove patch when updating to 0.8.4
+-->
+<script type="text/javascript">
+  Vector$object = Array;
+</script>
 <script type="text/javascript" src="joo/jangaroo-application.js"></script>
 <script type="text/javascript">
   joo.classLoader.run(

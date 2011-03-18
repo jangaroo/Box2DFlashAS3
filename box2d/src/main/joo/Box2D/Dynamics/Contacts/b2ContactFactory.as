@@ -64,9 +64,9 @@ public class b2ContactFactory
 		}
 	}
 	b2internal function InitializeRegisters() : void{
-		m_registers = new Array/*Vector.<b2ContactRegister> */(b2Shape.e_shapeTypeCount);
+		m_registers = new Vector.<Vector.<b2ContactRegister> >(b2Shape.e_shapeTypeCount);
 		for (var i:int = 0; i < b2Shape.e_shapeTypeCount; i++){
-			m_registers[i] = new Array/*b2ContactRegister*/(b2Shape.e_shapeTypeCount);
+			m_registers[i] = new Vector.<b2ContactRegister>(b2Shape.e_shapeTypeCount);
 			for (var j:int = 0; j < b2Shape.e_shapeTypeCount; j++){
 				m_registers[i][j] = new b2ContactRegister();
 			}
@@ -140,7 +140,7 @@ public class b2ContactFactory
 	}
 
 	
-	private var m_registers:Array/*Vector.<b2ContactRegister> */;
+	private var m_registers:Vector.<Vector.<b2ContactRegister> >;
 	private var m_allocator:*;
 };
 

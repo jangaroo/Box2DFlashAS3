@@ -29,9 +29,9 @@ package Box2D.Collision
 	public var metric:Number;		
 	public var count:uint;
 	/** Vertices on shape a */	
-	public var indexA:Array/*int*/ = new Array/*int*/(3);	
+	public var indexA:Vector.<int> = new Vector.<int>(3);	
 	/** Vertices on shape b */	
-	public var indexB:Array/*int*/ = new Array/*int*/(3);	
+	public var indexB:Vector.<int> = new Vector.<int>(3);	
 }
 	
 }

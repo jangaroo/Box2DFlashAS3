@@ -33,8 +33,8 @@ internal class b2PositionSolverManifold
 	public function b2PositionSolverManifold()
 	{
 		m_normal = new b2Vec2();
-		m_separations = new Array/*Number*/(b2Settings.b2_maxManifoldPoints);
-		m_points = new Array/*b2Vec2*/(b2Settings.b2_maxManifoldPoints);
+		m_separations = new Vector.<Number>(b2Settings.b2_maxManifoldPoints);
+		m_points = new Vector.<b2Vec2>(b2Settings.b2_maxManifoldPoints);
 		for (var i:int = 0; i < b2Settings.b2_maxManifoldPoints; i++)
 		{
 			m_points[i] = new b2Vec2();
@@ -147,8 +147,8 @@ internal class b2PositionSolverManifold
 	}
 	
 	public var m_normal:b2Vec2;
-	public var m_points:Array/*b2Vec2*/;
-	public var m_separations:Array/*Number*/;
+	public var m_points:Vector.<b2Vec2>;
+	public var m_separations:Vector.<Number>;
 }
 	
 }

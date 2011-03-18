@@ -40,7 +40,7 @@ public class b2ContactSolver
 	}
 	
 	private static var s_worldManifold:b2WorldManifold = new b2WorldManifold();
-	public function Initialize(step:b2TimeStep, contacts:Array/*b2Contact*/, contactCount:int, allocator:*):void
+	public function Initialize(step:b2TimeStep, contacts:Vector.<b2Contact>, contactCount:int, allocator:*):void
 	{
 		var contact:b2Contact;
 		
@@ -922,7 +922,7 @@ public class b2ContactSolver
 //#endif
 	private var m_step:b2TimeStep = new b2TimeStep();
 	private var m_allocator:*;
-	b2internal var m_constraints:Array/*b2ContactConstraint*/ = new Array/*b2ContactConstraint*/ ();
+	b2internal var m_constraints:Vector.<b2ContactConstraint> = new Vector.<b2ContactConstraint> ();
 	private var m_constraintCount:int;
 };
 

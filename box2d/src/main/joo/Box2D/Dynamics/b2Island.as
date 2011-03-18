@@ -117,9 +117,9 @@ public class b2Island
 	
 	public function b2Island()
 	{
-		m_bodies = new Array/*b2Body*/();
-		m_contacts = new Array/*b2Contact*/();
-		m_joints = new Array/*b2Joint*/();
+		m_bodies = new Vector.<b2Body>();
+		m_contacts = new Vector.<b2Contact>();
+		m_joints = new Vector.<b2Joint>();
 	}
 	
 	public function Initialize(
@@ -442,7 +442,7 @@ public class b2Island
 	}
 
 	private static var s_impulse:b2ContactImpulse = new b2ContactImpulse();
-	public function Report(constraints:Array/*b2ContactConstraint*/) : void
+	public function Report(constraints:Vector.<b2ContactConstraint>) : void
 	{
 		if (m_listener == null)
 		{
@@ -487,9 +487,9 @@ public class b2Island
 	private var m_listener:IContactListener;
 	private var m_contactSolver:b2ContactSolver;
 
-	b2internal var m_bodies:Array/*b2Body*/;
-	b2internal var m_contacts:Array/*b2Contact*/;
-	b2internal var m_joints:Array/*b2Joint*/;
+	b2internal var m_bodies:Vector.<b2Body>;
+	b2internal var m_contacts:Vector.<b2Contact>;
+	b2internal var m_joints:Vector.<b2Joint>;
 
 	b2internal var m_bodyCount:int;
 	b2internal var m_jointCount:int;

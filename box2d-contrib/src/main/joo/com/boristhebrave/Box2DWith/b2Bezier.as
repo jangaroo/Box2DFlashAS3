@@ -21,7 +21,7 @@ package com.boristhebrave.Box2DWith
     //cPoints[2] = end point control point
     //cPoints[3] = end point
     
-    public static function parseCurve(cPoints:Array/*b2Vec2*/, resolution:Number): Array/*b2Vec2*/
+    public static function parseCurve(cPoints:Vector.<b2Vec2>, resolution:Number): Vector.<b2Vec2>
     {
       if (resolution == 0) {
         return null;
@@ -60,7 +60,7 @@ package com.boristhebrave.Box2DWith
       fddd_per_6.x = (1.0 / 3) * fddd_per_2.x;
       fddd_per_6.y = (1.0 / 3) * fddd_per_2.y;
       
-      var ret:Array/*b2Vec2*/= new Array/*b2Vec2*/(resolution);
+      var ret:Vector.<b2Vec2>= new Vector.<b2Vec2>(resolution);
       
       if (!ret) {
         return null;

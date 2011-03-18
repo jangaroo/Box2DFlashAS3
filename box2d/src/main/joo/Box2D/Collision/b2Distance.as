@@ -39,8 +39,8 @@ private static var b2_gjkIters:int;
 private static var b2_gjkMaxIters:int;
 
 private static var s_simplex:b2Simplex = new b2Simplex();
-private static var s_saveA:Array/*int*/ = new Array/*int*/(3);
-private static var s_saveB:Array/*int*/ = new Array/*int*/(3);
+private static var s_saveA:Vector.<int> = new Vector.<int>(3);
+private static var s_saveB:Vector.<int> = new Vector.<int>(3);
 public static function Distance(output:b2DistanceOutput, cache:b2SimplexCache, input:b2DistanceInput):void
 {
 	++b2_gjkCalls;
@@ -56,13 +56,13 @@ public static function Distance(output:b2DistanceOutput, cache:b2SimplexCache, i
 	simplex.ReadCache(cache, proxyA, transformA, proxyB, transformB);
 	
 	// Get simplex vertices as an vector.
-	var vertices:Array/*b2SimplexVertex*/ = simplex.m_vertices;
+	var vertices:Vector.<b2SimplexVertex> = simplex.m_vertices;
 	const k_maxIters:int = 20;
 	
 	// These store the vertices of the last simplex so that we
 	// can check for duplicates and preven cycling
-	var saveA:Array/*int*/ = s_saveA;
-	var saveB:Array/*int*/ = s_saveB;
+	var saveA:Vector.<int> = s_saveA;
+	var saveB:Vector.<int> = s_saveB;
 	var saveCount:int = 0;
 	
 	var closestPoint:b2Vec2 = simplex.GetClosestPoint();

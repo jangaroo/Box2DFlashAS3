@@ -135,8 +135,8 @@ public class b2TimeOfImpact
 			//{
 				//const N:int = 100;
 				//var dx:Number = 1.0 / N;
-				//var xs:Array/*Number*/ = new Array(N + 1);
-				//var fs:Array/*Number*/ = new Array(N + 1);
+				//var xs:Vector.<Number> = new Array(N + 1);
+				//var fs:Vector.<Number> = new Array(N + 1);
 				//
 				//var x:Number = 0.0;
 				//for (var i:int = 0; i <= N; i++)

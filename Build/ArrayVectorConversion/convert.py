@@ -7,7 +7,7 @@ def find_as_files(root):
                 yield os.path.join(dirpath,filename)
 
 def write_file(filename, text):
-    print "Changing "+filename
+    print("Changing "+filename)
     file = open(filename, "w")
     file.write(text)
     file.close()
@@ -68,20 +68,22 @@ def convert_to_array(text):
         return new_text
     
 def get_sources():
-    for filename in find_as_files("../../Source"):
+    for filename in find_as_files("../../box2d/src/main/joo"):
         yield filename
-    for filename in find_as_files("../../Examples"):
+    for filename in find_as_files("../../box2d-examples/src/main/joo"):
         yield filename
-    for filename in find_as_files("../../Contrib"):
+    for filename in find_as_files("../../box2d-contrib/src/main/joo"):
+        yield filename
+    for filename in find_as_files("../../box2d-legacy/src/main/joo"):
         yield filename
         
 def usage():
-    print """\
+    print("""\
 convert.py [-v] [-a] [<filename>]
 -v        Convert to use Vectors (Flash 10)
 -a        Convert to use Arrays (Flash 9)
 [<file>]  Convert a specific file (default is all files)
-"""
+""")
 import sys
 import getopt
 
